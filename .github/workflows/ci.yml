@@ -1,0 +1,70 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  build:
+    name: build（py_compile 语法门禁）
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: pip
+      - name: 安装核心依赖
+        run: pip install -r requirements.txt
+      - name: 语法检查
+        run: python -m compileall -q app eval scripts tests
+
+  test:
+    name: test（离线单测 + 服务导入冒烟）
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: pip
+      - name: 安装核心依赖
+        run: pip install -r requirements.txt
+      - name: 稳定性工程离线单测
+        run: python tests/test_stability.py
+      - name: 服务可导入冒烟
+        run: python -c "from app.main import app; print('import OK, routes:', len(app.routes))"
+
+  eval:
+    name: eval（RAGAS 冒烟，前 5 条）
+    needs: test
+    # 配置仓库 Secrets.AIROBOT_LLM_API_KEY / AIROBOT_EMBEDDING_API_KEY 后自动启用；
+    # 未配置时该 job 跳过，build/test 门禁仍生效
+    if: ${{ secrets.AIROBOT_LLM_API_KEY != '' && secrets.AIROBOT_EMBEDDING_API_KEY != '' }}
+    runs-on: ubuntu-latest
+    env:
+      AIROBOT_LLM_BASE_URL: https://dashscope.aliyuncs.com/compatible-mode/v1
+      AIROBOT_LLM_API_KEY: ${{ secrets.AIROBOT_LLM_API_KEY }}
+      AIROBOT_LLM_MODEL: qwen-plus
+      AIROBOT_EMBEDDING_BASE_URL: https://dashscope.aliyuncs.com/compatible-mode/v1
+      AIROBOT_EMBEDDING_API_KEY: ${{ secrets.AIROBOT_EMBEDDING_API_KEY }}
+      AIROBOT_EMBEDDING_MODEL: text-embedding-v4
+      # CI 不下载重排模型（约 1.1GB），评测只覆盖 向量+BM25+RRF
+      AIROBOT_RERANK_ENABLED: "false"
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: pip
+      - name: 安装核心 + 评测依赖
+        run: pip install -r requirements.txt -r requirements-eval.txt
+      - name: RAGAS 冒烟评测（前 5 条）
+        run: python eval/run_eval.py --limit 5 --top-k 3
+      - name: 上传评测报告
+        uses: actions/upload-artifact@v4
+        with:
+          name: eval-report
+          path: eval/reports/

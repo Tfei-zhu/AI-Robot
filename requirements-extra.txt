@@ -1,0 +1,5 @@
+# ============ 可选能力（按需安装，未安装时系统自动降级） ============
+# 多智能体编排：未安装时自动降级为内置 LangChain 路由；1.15+ 需显式安装 crewai-tools
+crewai[tools]>=1.15.0
+# bge-reranker 重排：会拉入 torch（体积大）；未安装时检索保留 RRF 融合顺序
+sentence-transformers>=5.0

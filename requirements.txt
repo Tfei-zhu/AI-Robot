@@ -1,0 +1,19 @@
+# ============ 核心运行时（Docker 镜像 / CI build+test 也只用这一份） ============
+# 服务 + RAG 全链路 + 稳定性工程开箱即用；多 Agent / 评测 / 重排为可选能力：
+#   pip install -r requirements-extra.txt   # crewai 多智能体 + bge-reranker 重排（含 torch，体积大）
+#   pip install -r requirements-eval.txt    # RAGAS 评测（CI eval 门禁用）
+fastapi>=0.110
+uvicorn[standard]>=0.29
+python-dotenv>=1.0
+sse-starlette>=1.6
+python-multipart>=0.0.9
+langchain>=0.3.0
+langchain-openai>=0.2.0
+langchain-text-splitters>=0.3.0
+pypdf>=4.2.0
+python-docx>=1.1.0
+# 检索工程（jieba 分词 + BM25 词面检索）
+jieba>=0.42
+rank_bm25>=0.2.2
+# 稳定性工程（重试 / 退避）
+tenacity>=9.0

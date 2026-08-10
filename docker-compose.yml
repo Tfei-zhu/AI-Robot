@@ -1,0 +1,52 @@
+# 第 5 批：一键部署。docker compose up -d --build
+# 本地模式（默认）：airobot 容器内的 LLM/Embedding 指向 compose 内置的 ollama 服务
+# （服务名 ollama 可被容器解析），首次启动自动 pull 模型（qwen2.5:3b / nomic-embed-text）。
+# 云端模式：把 airobot.environment 里两个 *_BASE_URL 改成
+#   https://dashscope.aliyuncs.com/compatible-mode/v1 并去掉 ollama 服务即可。
+services:
+  airobot:
+    build: .
+    image: airobot:latest
+    container_name: airobot
+    ports:
+      - "8000:8000"
+    env_file:
+      - .env
+    environment:
+      # 容器内 localhost 指向容器自身，本地 Ollama 必须用服务名 ollama
+      AIROBOT_LLM_BASE_URL: http://ollama:11434/v1
+      AIROBOT_EMBEDDING_BASE_URL: http://ollama:11434/v1
+      # 镜像默认关闭重排（模型约 1.1GB）；需要时置 true 并挂载 hf-cache 复用下载
+      AIROBOT_RERANK_ENABLED: "false"
+    volumes:
+      - ./data:/app/data                  # 知识库热更新（重启容器生效）
+      - hf-cache:/root/.cache/huggingface
+    depends_on:
+      - ollama
+    restart: unless-stopped
+
+  ollama:
+    image: ollama/ollama:latest
+    container_name: ollama
+    environment:
+      # 首次启动自动 pull 与 .env 一致的模型（若已在本地 pull 过则秒过）
+      AIROBOT_LLM_MODEL: ${AIROBOT_LLM_MODEL:-qwen2.5:3b}
+      AIROBOT_EMBEDDING_MODEL: ${AIROBOT_EMBEDDING_MODEL:-nomic-embed-text}
+    entrypoint:
+      - /bin/sh
+      - -c
+      - >-
+        ollama serve &
+        sleep 3 &&
+        ollama pull "$${AIROBOT_LLM_MODEL}" &&
+        ollama pull "$${AIROBOT_EMBEDDING_MODEL}" &&
+        wait
+    ports:
+      - "11434:11434"
+    volumes:
+      - ollama-data:/root/.ollama
+    restart: unless-stopped
+
+volumes:
+  hf-cache:
+  ollama-data:

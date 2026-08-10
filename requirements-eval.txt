@@ -1,0 +1,4 @@
+# ============ RAG 评测（CI eval 门禁 / 本地跑 eval/run_eval.py 用） ============
+# ragas 0.3.9 需搭配 langchain-community 0.3.x（0.4 版与 ragas 不兼容，勿升级）
+ragas==0.3.9
+langchain-community==0.3.31
