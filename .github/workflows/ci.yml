@@ -41,8 +41,8 @@ jobs:
     name: eval（RAGAS 冒烟，前 5 条）
     needs: test
     # 配置仓库 Secrets.AIROBOT_LLM_API_KEY / AIROBOT_EMBEDDING_API_KEY 后自动启用；
-    # 未配置时该 job 跳过，build/test 门禁仍生效
-    if: ${{ secrets.AIROBOT_LLM_API_KEY != '' && secrets.AIROBOT_EMBEDDING_API_KEY != '' }}
+    # 未配置时评测步骤跳过，build/test 门禁仍生效。
+    # 注意：secrets 上下文不允许出现在 if 条件中，因此先映射到 job 级 env 再在步骤中判断。
     runs-on: ubuntu-latest
     env:
       AIROBOT_LLM_BASE_URL: https://dashscope.aliyuncs.com/compatible-mode/v1
@@ -59,11 +59,19 @@ jobs:
         with:
           python-version: "3.11"
           cache: pip
-      - name: 安装核心 + 评测依赖
-        run: pip install -r requirements.txt -r requirements-eval.txt
+      - name: 安装核心依赖
+        run: pip install -r requirements.txt
+      - name: 未配置评测密钥，跳过 RAGAS
+        if: ${{ env.AIROBOT_LLM_API_KEY == '' || env.AIROBOT_EMBEDDING_API_KEY == '' }}
+        run: echo "SKIP：未配置 Secrets（AIROBOT_LLM_API_KEY / AIROBOT_EMBEDDING_API_KEY），RAGAS 评测已跳过"
+      - name: 安装评测依赖
+        if: ${{ env.AIROBOT_LLM_API_KEY != '' && env.AIROBOT_EMBEDDING_API_KEY != '' }}
+        run: pip install -r requirements-eval.txt
       - name: RAGAS 冒烟评测（前 5 条）
+        if: ${{ env.AIROBOT_LLM_API_KEY != '' && env.AIROBOT_EMBEDDING_API_KEY != '' }}
         run: python eval/run_eval.py --limit 5 --top-k 3
       - name: 上传评测报告
+        if: ${{ env.AIROBOT_LLM_API_KEY != '' && env.AIROBOT_EMBEDDING_API_KEY != '' }}
         uses: actions/upload-artifact@v4
         with:
           name: eval-report
