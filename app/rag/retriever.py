@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """RAG 全链路：分块 -> 向量 + BM25 双路索引 -> RRF 融合 -> bge-reranker 重排 -> 检索增强生成。
-当前使用内存向量库（InMemoryVectorStore）便于开箱即用；
-生产环境可无痛替换为 Chroma / FAISS / Milvus（接口一致）。
+向量库后端可切换：inmemory（默认，进程内，零依赖）| milvus（持久化 ANN，设置 AIROBOT_VECTOR_STORE=milvus）。
+两路接口一致（add_documents / similarity_search / embedding），BM25 词面索引始终在进程内。
 """
 import asyncio
 import time
@@ -57,11 +57,39 @@ def build_markdown_splitter() -> MarkdownHeaderTextSplitter:
     )
 
 
+def build_vector_store():
+    """按配置构建向量库后端：inmemory（默认）| milvus（需 pip install langchain-milvus）。"""
+    if settings.vector_store == "milvus":
+        try:
+            from langchain_milvus import Milvus
+        except ImportError as exc:
+            raise RuntimeError(
+                "AIROBOT_VECTOR_STORE=milvus 但未安装 langchain-milvus，请执行："
+                "pip install -r requirements-extra.txt（或 pip install langchain-milvus）"
+            ) from exc
+        connection_args = {"uri": settings.milvus_uri}
+        if settings.milvus_token:
+            connection_args["token"] = settings.milvus_token
+        return Milvus(
+            embedding_function=build_embeddings(),
+            collection_name=settings.milvus_collection,
+            connection_args=connection_args,
+            auto_id=True,
+        )
+    return InMemoryVectorStore(embedding=build_embeddings())
+
+
 class KnowledgeBase:
     """进程内知识库：向量 + BM25 双路索引，RRF 融合，可选 bge-reranker 重排。"""
 
     def __init__(self) -> None:
-        self._store = InMemoryVectorStore(embedding=build_embeddings())
+        self._store = build_vector_store()
+        if settings.vector_store == "milvus" and settings.milvus_reset_on_start:
+            # 与内存库"重启即初始"语义一致：先清空集合，启动导入 data/ 时不会重复入库
+            try:
+                self._store.drop_collection()
+            except Exception:
+                pass
         self._splitter = build_splitter()
         self._markdown_splitter = build_markdown_splitter()
         self._bm25 = BM25Index()
@@ -170,8 +198,16 @@ class KnowledgeBase:
 
     def search_vector(self, query: str, top_k: int | None = None) -> List[Document]:
         """纯向量检索（对照用）。"""
-        return invoke_with_retry(
-            self._store.similarity_search, query, k=top_k or settings.hybrid_vector_top_k)
+        if isinstance(self._store, InMemoryVectorStore) and self.chunk_count == 0:
+            return []
+        try:
+            return invoke_with_retry(
+                self._store.similarity_search, query, k=top_k or settings.hybrid_vector_top_k)
+        except Exception:
+            # Milvus 集合尚未创建（未导入数据）等场景兜底为空，避免打断混合检索
+            if settings.vector_store == "milvus":
+                return []
+            raise
 
     def search_bm25(self, query: str, top_k: int | None = None) -> List[Document]:
         """纯 BM25 词面检索（对照用）。"""

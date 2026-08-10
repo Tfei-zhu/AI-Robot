@@ -1,0 +1,30 @@
+# Milvus Standalone 单容器最小化部署（供 AIROBOT_VECTOR_STORE=milvus 使用）：
+#   进程内嵌 etcd（ETCD_USE_EMBED=true）+ 本地磁盘存储（COMMON_STORAGETYPE=local）
+#   不启用外部 etcd/MinIO 容器，仅暴露 19530(gRPC)/9091(健康检查)
+# 用法：docker compose -f docker-compose-milvus.yml up -d
+# 就绪检查：curl http://localhost:9091/healthz  -> OK
+services:
+  milvus:
+    container_name: milvus-standalone
+    image: milvusdb/milvus:v2.5.4
+    command: ["milvus", "run", "standalone"]
+    security_opt:
+      - seccomp:unconfined
+    environment:
+      ETCD_USE_EMBED: "true"
+      ETCD_DATA_DIR: /var/lib/milvus/etcd
+      COMMON_STORAGETYPE: local
+    volumes:
+      - milvus_data:/var/lib/milvus
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:9091/healthz"]
+      interval: 30s
+      start_period: 60s
+      timeout: 20s
+      retries: 3
+    ports:
+      - "19530:19530"
+      - "9091:9091"
+
+volumes:
+  milvus_data:

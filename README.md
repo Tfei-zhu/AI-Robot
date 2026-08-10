@@ -91,7 +91,7 @@ Spring Cloud / Node.js 后端）通过 HTTP/SSE 集成调用。
   - 其他文件用 `RecursiveCharacterTextSplitter`（默认 400 字/重叠 80，中文标点优先断句）。
 - **双路索引 + 融合**：
   - 向量路：OpenAI 兼容 Embedding（DashScope `text-embedding-v4` / Ollama `nomic-embed-text`），
-    `InMemoryVectorStore`（生产可无痛替换 Chroma/FAISS/Milvus）；
+    向量库后端可切换：`InMemoryVectorStore`（默认，零依赖）或 Milvus（`AIROBOT_VECTOR_STORE=milvus`，持久化 ANN），接口一致；
   - 词面路：jieba 中文分词 + `rank_bm25`（BM25Okapi），解决向量模型对专有名词不敏感的问题；
   - 融合：`reciprocal_rank_fusion`（RRF）合并两路排名（`app/rag/fusion.py`）。
 - **语义重排**（reranker.py）：`BAAI/bge-reranker-base` CrossEncoder 对候选打分重排；
@@ -127,7 +127,7 @@ Spring Cloud / Node.js 后端）通过 HTTP/SSE 集成调用。
 | 层 | 组件 | 说明 |
 |---|---|---|
 | 服务框架 | FastAPI + uvicorn + Pydantic | 异步接口、自动 OpenAPI 文档（`/docs`）、SSE 支持 |
-| LLM 编排 | LangChain（LCEL / ChatPromptTemplate / InMemoryVectorStore） | 意图路由、RAG 链路、流式生成 |
+| LLM 编排 | LangChain（LCEL / ChatPromptTemplate / InMemoryVectorStore / Milvus） | 意图路由、RAG 链路、流式生成 |
 | 多智能体 | CrewAI（Agent/Task/Crew） | 可选；未安装自动降级 |
 | 模型接入 | OpenAI 兼容协议 | DashScope（qwen-plus / text-embedding-v4）、DeepSeek、Ollama（qwen2.5 / nomic-embed-text） |
 | 检索 | jieba + rank_bm25（BM25Okapi）、RRF 融合 | 词面召回与多路融合 |
@@ -449,7 +449,7 @@ python scripts\ingest.py data\knowledge_base.md # CLI 导入知识文件（独�
 
 | 当前实现 | 生产替换 |
 |---|---|
-| InMemoryVectorStore | Chroma / FAISS / Milvus（持久化 + ANN 索引） |
+| InMemoryVectorStore / Milvus（已内置，`AIROBOT_VECTOR_STORE` 切换） | Chroma / FAISS（持久化 + ANN 索引，接口一致可再替换） |
 | 进程内会话记忆 | Redis / SQLite 持久化 |
 | 进程内语义缓存 / 限流 | Redis（分布式缓存与计数），网关层限流 |
 | 无鉴权 | 网关统一鉴权 + `X-API-Key` 头校验 |
@@ -473,7 +473,7 @@ airobot/
 ├── scripts/               检索/分块对比实验、CLI 导入
 ├── tests/                 test_stability.py / test_tracing.py 离线单测
 ├── .github/workflows/     ci.yml（build → test → eval 门禁）
-├── Dockerfile / docker-compose.yml / .dockerignore   容器化部署
+├── Dockerfile / docker-compose.yml / docker-compose-milvus.yml / .dockerignore   容器化部署（Milvus 单容器编排）
 ├── start.ps1 / stop.ps1 / start.bat   一键启动/停止（Windows）
 ├── requirements.txt       核心运行时依赖
 ├── requirements-eval.txt  RAGAS 评测依赖
@@ -495,6 +495,7 @@ airobot/
 | AIROBOT_RATELIMIT_ENABLED / RATELIMIT_PER_MINUTE | 限流开关与每分钟上限（按 IP，60 秒窗口） |
 | AIROBOT_CACHE_ENABLED / CACHE_THRESHOLD / CACHE_LEXICAL_THRESHOLD / CACHE_MAX_ENTRIES | 语义缓存开关与双门限参数 |
 | AIROBOT_MEMORY_MAX_TURNS / AIROBOT_MEMORY_RETRIEVE_TURNS | 会话记忆保留轮次 / 带入上下文的轮次 |
+| AIROBOT_VECTOR_STORE / MILVUS_URI / MILVUS_TOKEN / MILVUS_COLLECTION / MILVUS_RESET_ON_START | 向量库后端（inmemory/milvus）与 Milvus 连接、集合、启动重置开关 |
 
 ## 常见问题
 

@@ -1,4 +1,4 @@
-﻿# -*- coding: utf-8 -*-
+# -*- coding: utf-8 -*-
 """全局配置：全部从环境变量 / .env 读取，密钥不落盘。"""
 import os
 from pathlib import Path
@@ -43,6 +43,13 @@ class Settings:
     hybrid_fusion_top_k: int = int(_env("AIROBOT_HYBRID_FUSION_TOP_K", "10"))
     rerank_enabled: bool = _env("AIROBOT_RERANK_ENABLED", "true").lower() == "true"
     rerank_model: str = _env("AIROBOT_RERANK_MODEL", "BAAI/bge-reranker-base")
+    # 向量库后端：inmemory（默认，零依赖）| milvus（持久化 ANN，需 langchain-milvus + 运行中的 Milvus）
+    vector_store: str = _env("AIROBOT_VECTOR_STORE", "inmemory").lower()
+    milvus_uri: str = _env("AIROBOT_MILVUS_URI", "http://localhost:19530")
+    milvus_token: str = _env("AIROBOT_MILVUS_TOKEN")
+    milvus_collection: str = _env("AIROBOT_MILVUS_COLLECTION", "airobot_kb")
+    # 启动时清空 Milvus 集合再重建（与内存库"重启即初始"语义一致，避免重复导入；需要持久化时置 false）
+    milvus_reset_on_start: bool = _env("AIROBOT_MILVUS_RESET_ON_START", "true").lower() == "true"
     # 稳定性工程（重试 / 限流 / 语义缓存）
     retry_attempts: int = int(_env("AIROBOT_RETRY_ATTEMPTS", "3"))
     retry_max_wait: float = float(_env("AIROBOT_RETRY_MAX_WAIT", "8"))

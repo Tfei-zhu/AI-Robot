@@ -3,3 +3,6 @@
 crewai[tools]>=1.15.0
 # bge-reranker 重排：会拉入 torch（体积大）；未安装时检索保留 RRF 融合顺序
 sentence-transformers>=5.0
+
+# Milvus 向量库（AIROBOT_VECTOR_STORE=milvus 时使用；会拉入 pymilvus）
+langchain-milvus>=0.1.0
