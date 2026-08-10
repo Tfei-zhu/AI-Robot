@@ -11,6 +11,7 @@ Spring Cloud / Node.js 后端）通过 HTTP/SSE 集成调用。
 ![License](https://img.shields.io/badge/License-MIT-green)
 ![CI](https://img.shields.io/badge/CI-GitHub%20Actions-2088FF)
 
+[![CI Status](https://github.com/liubaijiangde-bot/airobot/actions/workflows/ci.yml/badge.svg)](https://github.com/liubaijiangde-bot/airobot/actions/workflows/ci.yml)
 
 ## 目录
 
