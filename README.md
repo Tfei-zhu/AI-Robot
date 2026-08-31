@@ -11,6 +11,7 @@
 ## 目录
 
 - [核心能力](#核心能力)
+- [与 Go 文章社区集成](#与-go-文章社区集成)
 - [功能详解](#功能详解)
 - [快速开始](#快速开始)
 - [接口说明](#接口说明)
@@ -30,9 +31,39 @@
 | 社区对话 | 意图路由（`knowledge/article/chat`）、RAG 问答、文章查询与多轮记忆 | `POST /api/v1/chat` |
 | 流式对话 | SSE 逐 token 推送；缓存或文章查询会整段快速返回 | `POST /api/v1/chat/stream` |
 | 多智能体 | CrewAI：意图识别官 → 社区助手；不可用时自动降级 | `app/agents/crew.py` |
-| Go 知识库 | 自动导入 Go 社区示例库；支持 PDF、DOCX、Markdown、TXT 上传 | `POST /api/v1/ingest` |
-| 文章工具 | Mock 文章状态/互动数据查询；生产环境可接入文章服务 | `app/agents/tools.py` |
+| Go 知识库 | 社区文章经 RabbitMQ 事件**自动入库**；也支持 PDF、DOCX、Markdown、TXT 手动上传 | `POST /api/v1/ingest` |
+| 文章工具 | 查询文章**真实数据**（标题/作者/标签/点赞/评论，来自 Go 文章服务） | `app/agents/tools.py` |
 | 可观测性 | 实时控制台、请求追踪、缓存与限流指标 | `/dashboard`、`/api/v1/traces`、`/api/v1/stats` |
+
+## 与 Go 文章社区集成
+
+本服务已与 Go 文章社区后端（仓库 `Tfei-zhu/csdn_article_go`）完成服务级集成——**AI 的知识来源就是社区里的真实文章，文章查询工具读的也是真实数据**。整条链路分三步：
+
+```text
+① 自动学习：Go 发布文章 → RabbitMQ 发出事件
+   → 本服务的消费者收到 → 调 Go 内部接口拿全文
+   → 切块、向量化 → 存入知识库（下次提问即可命中）
+
+② 真实查询：用户问「文章 12 的数据」
+   → query_article 工具 → 调 Go 内部接口 → 返回真实的标题/作者/标签/点赞/评论
+
+③ 网关代理：网页端的所有 AI 请求都先经过 Go 网关
+   → Go 校验登录态和限流 → 转发本服务 → SSE 逐字流回网页
+```
+
+**涉及本仓库的改动：**
+
+| 文件 | 作用 |
+|---|---|
+| `app/services/article_consumer.py` | RabbitMQ 消费者：订阅文章发布事件并自动入库；断线自动重连、重复投递去重、坏消息跳过不堵队列 |
+| `app/services/go_client.py` | Go 服务客户端：查文章详情（异步 + 同步双通道），网络错误自动重试，404 友好提示 |
+| `app/agents/tools.py` | `query_article` 从 Mock 升级为真实数据（保留原有中文回答风格）；新增异步版供流式接口使用 |
+| `app/rag/retriever.py` | 新增文章入库方法（元数据带 `article_id`，可追溯到具体文章） |
+| `app/rag/lexical.py` | 修复 BM25 词面索引的增量更新缺陷（多次入库后检索错位的问题） |
+| `app/main.py` | 应用启动时拉起消费者、关闭时释放资源；网关流量按账号限流 |
+| `tests/test_integration.py` | 集成测试：Go 客户端、消费者去重、BM25 回归等 10 项 |
+
+**启用方式（两行配置）：** 在 `.env` 中设置 `AIROBOT_GO_API_BASE_URL`（指向 Go 服务）与 `AIROBOT_AMQP_URL`（指向 RabbitMQ），两侧共用 `AIROBOT_GO_INTERNAL_TOKEN` 口令。不配置则本服务独立运行，所有功能照常（文章工具返回降级提示）。详见 `.env.example` 中「Go 文章服务集成」一节。
 
 ## 技术栈
 
