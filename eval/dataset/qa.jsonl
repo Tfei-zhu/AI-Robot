@@ -1,52 +1,52 @@
-{"id":"kb-001","category":"发布商品","question":"怎么发布商品？","reference":"登录后点击发布商品，填写标题、描述、价格与实物图片，商品需真实存在并如实描述成色与瑕疵，发布后进入审核，审核通过后上架展示。","keywords":["发布商品","审核"]}
-{"id":"kb-002","category":"发布商品","question":"发布商品需要填写哪些信息？","reference":"需要填写标题、描述、价格和实物图片。","keywords":["标题","描述","价格","实物图片"]}
-{"id":"kb-003","category":"发布商品","question":"发布商品对商品描述有什么要求？","reference":"商品必须真实存在，要如实描述成色与瑕疵。","keywords":["真实存在","如实描述","成色","瑕疵"]}
-{"id":"kb-004","category":"发布商品","question":"商品发布成功后什么时候上架？","reference":"发布成功后商品进入审核，审核通过后上架展示。","keywords":["审核","上架"]}
-{"id":"kb-005","category":"发布商品","question":"发布商品要收费吗？","reference":"平台发布商品暂不收取发布费，交易成功后按成交金额收取 1% 服务费。","keywords":["发布费","服务费","1%"]}
-{"id":"kb-006","category":"发布商品","question":"发布商品必须上传什么材料？","reference":"必须上传实物图片。","keywords":["实物图片"]}
-{"id":"kb-007","category":"发布商品","question":"商品成色和瑕疵需要写清楚吗？","reference":"需要，平台要求如实描述成色与瑕疵。","keywords":["如实描述","成色","瑕疵"]}
-{"id":"kb-008","category":"发布商品","question":"商品发布后要经过什么流程才能展示？","reference":"发布后进入平台审核，审核通过后上架展示。","keywords":["审核","上架"]}
-{"id":"kb-009","category":"联系卖家","question":"怎么联系卖家？","reference":"在商品详情页点击联系卖家进入站内聊天；建议先确认商品成色、瑕疵与是否支持当面交易；不要在站外私下交易。","keywords":["联系卖家","站内聊天"]}
-{"id":"kb-010","category":"联系卖家","question":"联系卖家前建议确认什么？","reference":"建议先确认商品成色、瑕疵、是否支持当面交易。","keywords":["成色","瑕疵","当面交易"]}
-{"id":"kb-011","category":"联系卖家","question":"在站外私下交易安全吗？","reference":"不建议，平台无法保障站外交易的资金安全。","keywords":["站外","私下交易","资金安全"]}
-{"id":"kb-012","category":"联系卖家","question":"在哪里可以联系到卖家？","reference":"在商品详情页点击联系卖家，进入站内聊天。","keywords":["商品详情页","联系卖家","站内聊天"]}
-{"id":"kb-013","category":"联系卖家","question":"支持当面交易吗？","reference":"需与卖家在站内聊天确认是否支持当面交易。","keywords":["当面交易","联系卖家"]}
-{"id":"kb-014","category":"下单支付","question":"怎么下单支付？","reference":"在商品详情页点击立即购买，确认收货地址后提交订单，支持微信、支付宝与平台余额支付。","keywords":["立即购买","收货地址","微信","支付宝"]}
-{"id":"kb-015","category":"下单支付","question":"支付支持哪些方式？","reference":"支持微信、支付宝和平台余额。","keywords":["微信","支付宝","平台余额"]}
-{"id":"kb-016","category":"下单支付","question":"支付成功后卖家会收到什么？","reference":"卖家会收到发货提醒。","keywords":["发货提醒"]}
-{"id":"kb-017","category":"下单支付","question":"提交订单前需要确认什么？","reference":"需要确认收货地址。","keywords":["收货地址"]}
-{"id":"kb-018","category":"下单支付","question":"可以用平台余额支付吗？","reference":"可以，支付支持微信、支付宝与平台余额。","keywords":["平台余额","支付"]}
-{"id":"kb-019","category":"下单支付","question":"下单后多久发货？","reference":"知识库中没有明确的发货时限信息，不能编造，应如实说明不清楚。","keywords":["发货"]}
-{"id":"kb-020","category":"下单支付","question":"收货地址填错了怎么办？","reference":"知识库中没有修改收货地址的说明，应如实说明不清楚并引导联系客服。","keywords":["收货地址"]}
-{"id":"kb-021","category":"退货规则","question":"平台退货规则是什么？","reference":"签收后 7 天内可申请无理由退货且需不影响二次销售；商品与描述不符、破损或功能故障的运费由卖家承担；在订单详情页申请售后并上传凭证。","keywords":["7 天","无理由退货","订单详情页","凭证"]}
-{"id":"kb-022","category":"退货规则","question":"签收后多久内可以申请无理由退货？","reference":"签收后 7 天内可申请，需不影响二次销售。","keywords":["7 天","无理由退货"]}
-{"id":"kb-023","category":"退货规则","question":"无理由退货需要满足什么条件？","reference":"需不影响二次销售。","keywords":["不影响二次销售"]}
-{"id":"kb-024","category":"退货规则","question":"商品破损了，退货运费谁承担？","reference":"商品破损或功能故障属于质量问题，运费由卖家承担。","keywords":["破损","运费由卖家承担"]}
-{"id":"kb-025","category":"退货规则","question":"怎么申请退货？","reference":"在订单详情页点击申请售后，并按提示上传凭证。","keywords":["订单详情页","申请售后","上传凭证"]}
-{"id":"kb-026","category":"退货规则","question":"商品与描述不符，运费由谁承担？","reference":"商品与描述严重不符的，运费由卖家承担。","keywords":["描述不符","运费由卖家承担"]}
-{"id":"kb-027","category":"退货规则","question":"申请退货需要上传凭证吗？","reference":"需要，申请退货请在订单详情页点击申请售后并上传凭证。","keywords":["上传凭证","申请售后"]}
-{"id":"kb-028","category":"退货运费","question":"退货运费由谁承担？","reference":"因商品质量问题或与描述不符的退货，运费由卖家承担；买家个人原因退货，运费由买家承担。","keywords":["运费由卖家承担","运费由买家承担"]}
-{"id":"kb-029","category":"退货运费","question":"质量问题退货，运费谁出？","reference":"质量问题导致的退货，运费由卖家承担。","keywords":["质量问题","运费由卖家承担"]}
-{"id":"kb-030","category":"退货运费","question":"个人原因退货，运费谁出？","reference":"买家个人原因（不想要、拍错等）退货，运费由买家承担。","keywords":["个人原因","运费由买家承担"]}
-{"id":"kb-031","category":"退货运费","question":"拍错了想退货，运费谁承担？","reference":"拍错属于买家个人原因，运费由买家承担。","keywords":["拍错","个人原因","运费由买家承担"]}
-{"id":"kb-032","category":"七天无理由退货","question":"什么是七天无理由退货？","reference":"除定制类、贴身类等特殊商品外，签收 7 天内支持无理由退货，需保持完好、附件齐全、不影响二次销售。","keywords":["7 天","无理由退货","定制类","贴身类"]}
-{"id":"kb-033","category":"七天无理由退货","question":"哪些商品不支持七天无理由退货？","reference":"定制类、贴身类等特殊商品不支持。","keywords":["定制类","贴身类"]}
-{"id":"kb-034","category":"七天无理由退货","question":"七天无理由退货的商品需要保持什么状态？","reference":"需保持完好、附件齐全、不影响二次销售。","keywords":["完好","附件齐全","不影响二次销售"]}
-{"id":"kb-035","category":"七天无理由退货","question":"商品影响二次销售还能退货吗？","reference":"不能，无理由退货需不影响二次销售。","keywords":["不影响二次销售","无理由退货"]}
-{"id":"kb-036","category":"保证金与服务费","question":"平台服务费怎么收取？","reference":"交易成功后平台按成交金额收取 1% 服务费，发布商品暂不收发布费。","keywords":["1%","服务费","成交金额"]}
-{"id":"kb-037","category":"保证金与服务费","question":"服务费是发布时收还是交易后收？","reference":"发布商品暂不收发布费，交易成功后按成交金额收取 1% 服务费。","keywords":["交易成功","1%","服务费"]}
-{"id":"kb-038","category":"保证金与服务费","question":"发布商品收服务费吗？","reference":"发布商品暂不收取发布费，交易成功后按成交金额收 1% 服务费。","keywords":["发布费","服务费"]}
-{"id":"kb-039","category":"保证金与服务费","question":"什么情况会扣保证金？","reference":"恶意违约、售假等行为会扣除保证金并限制账号功能。","keywords":["恶意违约","售假","保证金"]}
-{"id":"kb-040","category":"保证金与服务费","question":"售假会有什么后果？","reference":"售假会扣除保证金并限制账号功能。","keywords":["售假","保证金","限制账号"]}
-{"id":"kb-041","category":"保证金与服务费","question":"恶意违约有什么后果？","reference":"恶意违约将扣除保证金并限制账号功能。","keywords":["恶意违约","保证金","限制账号"]}
-{"id":"kb-042","category":"跨主题组合","question":"商品破损想退货，运费和流程是什么？","reference":"商品破损属质量问题，运费由卖家承担；在订单详情页申请售后并上传凭证。","keywords":["破损","运费由卖家承担","申请售后","凭证"]}
-{"id":"kb-043","category":"跨主题组合","question":"拍错了想退货，谁出运费？","reference":"拍错属买家个人原因，运费由买家承担。","keywords":["个人原因","运费由买家承担"]}
-{"id":"kb-044","category":"跨主题组合","question":"定制商品能七天无理由退货吗？","reference":"定制类属特殊商品，不支持七天无理由退货。","keywords":["定制类","无理由退货"]}
-{"id":"kb-045","category":"跨主题组合","question":"服务费和保证金是一回事吗？","reference":"不是。服务费是交易成功后按成交金额收 1%；保证金在恶意违约、售假时被扣除。","keywords":["服务费","保证金","1%"]}
-{"id":"kb-046","category":"跨主题组合","question":"在站外跟卖家私下交易安全吗？","reference":"不安全，平台无法保障站外交易的资金安全。","keywords":["站外","私下交易","资金安全"]}
-{"id":"kb-047","category":"跨主题组合","question":"付款后多久能收到货？","reference":"知识库中没有明确的发货与配送时限，应如实说明不清楚，不能编造。","keywords":["发货"]}
-{"id":"kb-048","category":"跨主题组合","question":"退货申请后多久退款到账？","reference":"知识库中没有退款到账时限说明，应如实说明不清楚。","keywords":["退款"]}
-{"id":"kb-049","category":"跨主题组合","question":"卖家让我私下转账可以吗？","reference":"不建议，站外私下交易平台无法保障资金安全。","keywords":["私下交易","资金安全"]}
-{"id":"kb-050","category":"跨主题组合","question":"商品发布后审核需要多久？","reference":"知识库中没有审核时长说明，应如实说明不清楚。","keywords":["审核"]}
-{"id":"kb-051","category":"跨主题组合","question":"贴身衣物想退货可以吗？","reference":"贴身类属特殊商品，不支持七天无理由退货。","keywords":["贴身类","无理由退货"]}
-{"id":"kb-052","category":"跨主题组合","question":"不想要了退货，运费谁出？","reference":"不想要属于买家个人原因，运费由买家承担。","keywords":["个人原因","运费由买家承担"]}
+{"id":"kb-001","category":"发布文章","question":"怎么发布 Go 技术文章？","reference":"登录后点击写文章，填写标题、摘要、正文和至少一个标签；正文说明 Go 版本、运行环境与依赖，代码示例应可复制运行；提交审核通过后发布。","keywords":["写文章","标签","Go 版本","审核"]}
+{"id":"kb-002","category":"发布文章","question":"发布文章要填写哪些内容？","reference":"需要填写标题、摘要、正文和至少一个标签。","keywords":["标题","摘要","正文","标签"]}
+{"id":"kb-003","category":"发布文章","question":"Go 文章需要说明版本吗？","reference":"需要，正文应说明适用的 Go 版本、运行环境和依赖。","keywords":["Go 版本","运行环境","依赖"]}
+{"id":"kb-004","category":"发布文章","question":"代码示例有什么要求？","reference":"代码示例应可复制运行。","keywords":["代码示例","复制运行"]}
+{"id":"kb-005","category":"发布文章","question":"文章提交后会立刻发布吗？","reference":"提交后会进入内容审核，审核通过后才发布到社区。","keywords":["内容审核","审核通过","发布"]}
+{"id":"kb-006","category":"发布文章","question":"不写标签能提交文章吗？","reference":"不能，发布文章时至少需要添加一个标签。","keywords":["至少一个标签","标签"]}
+{"id":"kb-007","category":"发布文章","question":"正文里应该写运行环境吗？","reference":"应该，正文需说明适用的 Go 版本、运行环境和依赖。","keywords":["运行环境","Go 版本"]}
+{"id":"kb-008","category":"发布文章","question":"发布的文章主要是什么内容？","reference":"社区用于发布 Go 技术文章，内容应包含准确的标题、摘要、正文、标签和可运行的示例。","keywords":["Go 技术文章","可运行"]}
+{"id":"kb-009","category":"标题标签","question":"文章标题怎么写比较合适？","reference":"标题应准确描述问题和解决方案，避免求助、干货等无信息标题。","keywords":["准确描述","问题","解决方案"]}
+{"id":"kb-010","category":"标题标签","question":"一篇文章可以加几个标签？","reference":"每篇文章可添加 1 至 5 个标签。","keywords":["1 至 5 个标签"]}
+{"id":"kb-011","category":"标题标签","question":"Go 社区推荐哪些标签？","reference":"推荐使用 Go、并发、网络、工程实践、标准库等技术标签。","keywords":["Go","并发","网络","标准库"]}
+{"id":"kb-012","category":"标题标签","question":"介绍 Go 新版本特性时要标注版本吗？","reference":"要在标题或正文开头明确标注 Go 版本。","keywords":["标题","正文开头","Go 版本"]}
+{"id":"kb-013","category":"标题标签","question":"标题可以写成 Go 干货分享吗？","reference":"不建议。标题应准确描述问题和解决方案，避免干货等无信息标题。","keywords":["准确描述","无信息标题"]}
+{"id":"kb-014","category":"Markdown","question":"文章支持 Markdown 吗？","reference":"支持 Markdown。","keywords":["Markdown"]}
+{"id":"kb-015","category":"Markdown","question":"Go 代码块应该怎么写？","reference":"Go 代码应使用带 go 标识的 fenced code block。","keywords":["go 标识","code block"]}
+{"id":"kb-016","category":"Markdown","question":"长代码可以整段贴上去吗？","reference":"长代码应只保留解释所需的最小可运行片段，并说明预期输出。","keywords":["最小可运行片段","预期输出"]}
+{"id":"kb-017","category":"Markdown","question":"可以在截图里展示 Token 吗？","reference":"不可以。不要在代码或截图中公开 API Key、Token、数据库密码等敏感信息。","keywords":["API Key","Token","敏感信息"]}
+{"id":"kb-018","category":"Markdown","question":"示例需要说明输出结果吗？","reference":"需要说明预期输出。","keywords":["预期输出"]}
+{"id":"kb-019","category":"审核修订","question":"文章审核不通过怎么办？","reference":"请根据提示修改标题、内容或引用来源后重新提交。","keywords":["修改","引用来源","重新提交"]}
+{"id":"kb-020","category":"审核修订","question":"已发布的文章还能编辑吗？","reference":"可以编辑；重大修订会在文章页保留修订记录。","keywords":["编辑","修订记录"]}
+{"id":"kb-021","category":"审核修订","question":"新文章怎么审核？","reference":"新文章通常会进行自动和人工审核，审核通过后公开展示。","keywords":["自动","人工审核","公开展示"]}
+{"id":"kb-022","category":"审核修订","question":"审核需要多长时间？","reference":"知识库没有给出审核时长，应如实说明不清楚，不能编造。","keywords":["审核时长"]}
+{"id":"kb-023","category":"审核修订","question":"大改文章会留下记录吗？","reference":"会，重大修订会在文章页保留修订记录。","keywords":["重大修订","修订记录"]}
+{"id":"kb-024","category":"版权引用","question":"引用别人的代码需要写来源吗？","reference":"需要。引用文档、代码或图片时应标注原始来源和许可证。","keywords":["原始来源","许可证"]}
+{"id":"kb-025","category":"版权引用","question":"可以直接转载别人的文章吗？","reference":"需要先取得授权，并在正文显著位置注明作者与原文链接。","keywords":["授权","作者","原文链接"]}
+{"id":"kb-026","category":"版权引用","question":"能发付费课程的资料吗？","reference":"不能发布未经授权的付费资料。","keywords":["未经授权","付费资料"]}
+{"id":"kb-027","category":"版权引用","question":"可以在文章中公开他人隐私吗？","reference":"不可以，不得发布他人隐私信息。","keywords":["隐私信息"]}
+{"id":"kb-028","category":"评论讨论","question":"评论区应该讨论什么？","reference":"评论应围绕文章的 Go 技术内容，可补充依据、复现步骤或更优实现。","keywords":["Go 技术","复现步骤","更优实现"]}
+{"id":"kb-029","category":"评论讨论","question":"给代码提建议时怎么写？","reference":"请说明适用场景，避免只给结论。","keywords":["适用场景","避免只给结论"]}
+{"id":"kb-030","category":"评论讨论","question":"评论区允许发广告吗？","reference":"不允许。禁止广告引流、刷屏和与技术主题无关的内容。","keywords":["广告引流","刷屏"]}
+{"id":"kb-031","category":"评论讨论","question":"可以攻击文章作者吗？","reference":"不可以。社区禁止人身攻击，应友善讨论技术问题。","keywords":["人身攻击","友善讨论"]}
+{"id":"kb-032","category":"互动反馈","question":"如何收藏文章？","reference":"可在文章页收藏文章，并在个人中心查看收藏列表。","keywords":["文章页","收藏","个人中心"]}
+{"id":"kb-033","category":"互动反馈","question":"怎么关注作者？","reference":"可在文章页关注作者。","keywords":["文章页","关注作者"]}
+{"id":"kb-034","category":"互动反馈","question":"发现文章有错误怎么反馈？","reference":"可在评论区说明问题，或使用文章页的反馈入口提交勘误。","keywords":["评论区","反馈","勘误"]}
+{"id":"kb-035","category":"互动反馈","question":"阅读数会实时更新吗？","reference":"文章数据可能有短暂延迟，以文章页显示为准。","keywords":["短暂延迟","文章页"]}
+{"id":"kb-036","category":"示例质量","question":"Go 示例可以随便用第三方库吗？","reference":"可以使用，但应注明模块路径和安装方式；示例优先使用标准库。","keywords":["模块路径","安装方式","标准库"]}
+{"id":"kb-037","category":"示例质量","question":"并发示例要交代哪些内容？","reference":"需要说明 goroutine 的退出方式、context 的传播和错误处理。","keywords":["goroutine","context","错误处理"]}
+{"id":"kb-038","category":"示例质量","question":"性能文章怎么证明结论？","reference":"应给出基准环境和可复现的 benchmark，避免将个例写成通用结论。","keywords":["基准环境","benchmark","可复现"]}
+{"id":"kb-039","category":"示例质量","question":"Go 示例优先使用什么？","reference":"示例应优先使用标准库。","keywords":["标准库"]}
+{"id":"kb-040","category":"示例质量","question":"并发代码只写 goroutine 就够了吗？","reference":"不够，还需说明 goroutine 的退出方式、context 的传播和错误处理。","keywords":["退出方式","context","错误处理"]}
+{"id":"kb-041","category":"跨主题组合","question":"文章用了第三方库，应该补充什么？","reference":"应注明模块路径和安装方式，并说明适用的 Go 版本、运行环境和依赖。","keywords":["模块路径","安装方式","Go 版本"]}
+{"id":"kb-042","category":"跨主题组合","question":"转载 Go 文章时标题和来源有什么要求？","reference":"应先取得授权，在正文显著位置注明作者与原文链接；标题还应准确描述问题和解决方案。","keywords":["授权","作者","原文链接","准确描述"]}
+{"id":"kb-043","category":"跨主题组合","question":"代码中不小心泄露了密码怎么办？","reference":"不要公开 API Key、Token、数据库密码等敏感信息；应移除敏感内容后再提交或修订文章。","keywords":["API Key","Token","数据库密码"]}
+{"id":"kb-044","category":"跨主题组合","question":"审核被拒是因为引用没写清楚，怎么处理？","reference":"根据提示补充引用来源或许可证后重新提交。","keywords":["引用来源","许可证","重新提交"]}
+{"id":"kb-045","category":"跨主题组合","question":"文章中如何展示一个长的并发示例？","reference":"保留解释所需的最小可运行片段，说明预期输出，并交代 goroutine 退出、context 传播和错误处理。","keywords":["最小可运行","预期输出","goroutine","context"]}
+{"id":"kb-046","category":"跨主题组合","question":"可以在评论里推广课程吗？","reference":"不可以，社区禁止广告引流和与技术主题无关的内容。","keywords":["广告引流","技术主题"]}
+{"id":"kb-047","category":"跨主题组合","question":"文章审核通过后在哪里看？","reference":"审核通过后文章会公开展示；文章页可查看内容、修订记录和互动数据。","keywords":["公开展示","文章页"]}
+{"id":"kb-048","category":"跨主题组合","question":"收藏后能在哪里找到文章？","reference":"可在个人中心查看收藏列表。","keywords":["个人中心","收藏列表"]}
+{"id":"kb-049","category":"跨主题组合","question":"文章阅读数为什么和预期不一样？","reference":"阅读、点赞、评论等数据可能有短暂延迟，应以文章页显示为准。","keywords":["短暂延迟","文章页"]}
+{"id":"kb-050","category":"跨主题组合","question":"Go 1.22 的新特性文章要特别写什么？","reference":"应在标题或正文开头明确标注 Go 版本，并提供可复制运行的示例。","keywords":["Go 版本","可复制运行"]}
+{"id":"kb-051","category":"知识库未覆盖","question":"文章点赞可以提现吗？","reference":"知识库没有点赞收益或提现规则，应如实说明不清楚。","keywords":["点赞","提现"]}
+{"id":"kb-052","category":"知识库未覆盖","question":"社区每天可以发布多少篇文章？","reference":"知识库没有给出每日发布数量限制，应如实说明不清楚。","keywords":["发布数量"]}

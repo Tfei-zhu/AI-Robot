@@ -12,7 +12,7 @@ def test_trace_recorder_ring_and_summary():
     r = TraceRecorder(max_entries=5)
     r.record({"total_ms": 100, "cache_hit": True, "cache_checked": True, "intent": "knowledge"})
     r.record({"total_ms": 200, "cache_hit": False, "cache_checked": True, "intent": "chat"})
-    r.record({"total_ms": 300, "cache_hit": False, "cache_checked": False, "intent": "order"})
+    r.record({"total_ms": 300, "cache_hit": False, "cache_checked": False, "intent": "article"})
     r.record({"total_ms": 400, "status": 200})
     assert len(r.recent()) == 4
     s = r.summary()

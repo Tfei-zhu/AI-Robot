@@ -13,7 +13,7 @@ from langchain_core.output_parsers import StrOutputParser
 from langchain_core.prompts import ChatPromptTemplate, MessagesPlaceholder
 from langchain_openai import ChatOpenAI
 
-from app.agents.tools import CREW_TOOLS_READY, query_order
+from app.agents.tools import CREW_TOOLS_READY, query_article
 from app.config import settings
 from app.rag.retriever import aanswer_with_rag, kb
 from app.services.resilience import ainvoke_with_retry
@@ -25,12 +25,13 @@ logger = logging.getLogger("airobot.chat")
 
 INTENT_PROMPT = ChatPromptTemplate.from_messages([
     ("system",
-     "你是意图分类器，只输出 JSON：{{\"intent\": \"knowledge|order|chat\", \"reason\": \"简短理由\"}}"),
+     "你是 Go 文章社区助手的意图分类器，只输出 JSON：{{\"intent\": \"knowledge|article|chat\", \"reason\": \"简短理由\"}}。"
+     "article 用于查询指定文章的状态或数据；knowledge 用于 Go 技术、发文与社区规则问题。"),
     ("human", "{message}"),
 ])
 
 CHAT_PROMPT = ChatPromptTemplate.from_messages([
-    ("system", "你是二手交易平台的智能客服，语气友好简洁；涉及订单或平台规则时引导用户使用对应功能。"),
+    ("system", "你是 Go 文章社区助手，语气友好、准确、简洁。帮助用户阅读和发布 Go 技术文章、理解社区规范；不确定时如实说明。"),
     MessagesPlaceholder("history"),
     ("human", "{message}"),
 ])
@@ -65,8 +66,9 @@ async def fallback_chat(message: str, session_id: str) -> dict:
     """内置路由：不依赖 CrewAI，逻辑与 Crew 中 Task 一致；带会话记忆。"""
     history = memory.get_messages(session_id)
     intent = await classify_intent(message)
-    if intent == "order":
-        return {"reply": query_order(message), "intent": intent, "sources": [], "engine": "langchain"}
+    if intent == "article":
+        reply = await query_article(message)
+        return {"reply": reply, "intent": intent, "sources": [], "engine": "langchain"}
     if intent == "knowledge":
         answer, sources = await aanswer_with_rag(message, get_llm(), history)
         return {"reply": answer, "intent": intent, "sources": sources, "engine": "langchain"}
@@ -76,8 +78,8 @@ async def fallback_chat(message: str, session_id: str) -> dict:
 
 
 def _maybe_cache(query_vec: list | None, result: dict, message: str = "") -> None:
-    """动态数据（订单）不缓存；无上下文问题才写入语义缓存。"""
-    if query_vec is not None and result.get("intent") != "order":
+    """动态文章数据不缓存；无上下文问题才写入语义缓存。"""
+    if query_vec is not None and result.get("intent") != "article":
         semantic_cache.put(query_vec, result, message)
 
 

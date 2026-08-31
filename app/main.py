@@ -5,6 +5,7 @@
 import asyncio
 import json
 import logging
+import secrets
 import tempfile
 import time
 from contextlib import asynccontextmanager
@@ -17,7 +18,9 @@ from app.agents.tools import CREW_TOOLS_READY
 from app.config import settings
 from app.rag.retriever import kb
 from app.schemas import ChatRequest, ChatResponse, IngestResponse, StatsResponse
+from app.services.article_consumer import ArticleIngestConsumer
 from app.services.chat import CHAT_PROMPT, chat, classify_intent
+from app.services.go_client import go_client
 from app.services.ratelimit import limiter
 from app.services.semantic_cache import semantic_cache
 from app.services.tracing import traces
@@ -28,18 +31,23 @@ logger = logging.getLogger("airobot.main")
 
 @asynccontextmanager
 async def lifespan(_: FastAPI):
-    """启动时自动导入示例知识库，保证开箱即用。"""
+    """启动时自动导入示例知识库并拉起文章入库消费者；关闭时释放资源。"""
     sample = BASE_DIR / "data" / "knowledge_base.md"
     if sample.exists() and kb.chunk_count == 0:
         try:
             kb.ingest_file(sample)
         except Exception as exc:
             logger.warning("启动时导入示例知识库失败（请检查 AIROBOT_EMBEDDING_API_KEY）: %s", exc)
+    consumer = ArticleIngestConsumer(kb, go_client)
+    consumer_task = await consumer.start()
     yield
+    if consumer_task is not None:
+        await consumer.stop()
+    await go_client.aclose()
 
 
 app = FastAPI(
-    title="AI Robot 智能客服服务（FastAPI + LangChain RAG + CrewAI 多 Agent）",
+    title="Go 文章社区助手（FastAPI + LangChain RAG + CrewAI 多 Agent）",
     version="1.0.0",
     lifespan=lifespan,
 )
@@ -59,14 +67,24 @@ async def log_requests(request: Request, call_next):
 
 @app.middleware("http")
 async def rate_limit_middleware(request: Request, call_next):
-    """接口限流：滑动窗口（按 IP，60 秒），返回 JSON 429。"""
+    """接口限流：滑动窗口（60 秒），返回 JSON 429。
+
+    限流键默认按客户端 IP；Go 网关代理的请求携带合法 X-Internal-Token 时，
+    改按 X-Account-Id 限流，避免所有代理流量挤占同一个 IP 桶。
+    """
     if (settings.ratelimit_enabled and request.url.path.startswith("/api/v1")
             and request.url.path not in ("/api/v1/stats", "/api/v1/traces")):
-        client_ip = request.client.host if request.client else "unknown"
-        if not limiter.allow(client_ip):
-            logger.warning("限流拦截: %s %s from %s", request.method, request.url.path, client_ip)
+        key = None
+        token = request.headers.get("X-Internal-Token", "")
+        if settings.ai_internal_token and secrets.compare_digest(
+                token.encode(), settings.ai_internal_token.encode()):
+            key = request.headers.get("X-Account-Id") or None
+        if key is None:
+            key = request.client.host if request.client else "unknown"
+        if not limiter.allow(key):
+            logger.warning("限流拦截: %s %s from %s", request.method, request.url.path, key)
             traces.record({"message": f"{request.method} {request.url.path}",
-                           "session_id": client_ip, "intent": "ratelimited",
+                           "session_id": key, "intent": "ratelimited",
                            "status": 429, "cache_checked": False, "total_ms": 0.0})
             return JSONResponse(status_code=429, content={"detail": "请求过于频繁，请稍后再试。"})
     return await call_next(request)
@@ -162,7 +180,7 @@ def _sse(payload: dict) -> str:
 
 @app.post("/api/v1/chat/stream")
 async def chat_stream(req: ChatRequest):
-    """SSE 流式对话：意图 -> (RAG/闲聊) 逐 token 输出；订单查询整段返回；带会话记忆。"""
+    """SSE 流式对话：意图 -> (RAG/闲聊) 逐 token 输出；文章查询整段返回；带会话记忆。"""
 
     async def _error(message: str):
         yield _sse({"type": "token", "content": message})
@@ -174,7 +192,7 @@ async def chat_stream(req: ChatRequest):
 
     from langchain_core.output_parsers import StrOutputParser
 
-    from app.agents.tools import query_order
+    from app.agents.tools import query_article
     from app.rag.retriever import RAG_PROMPT, build_llm
     from app.services.memory import memory
 
@@ -224,12 +242,12 @@ async def chat_stream(req: ChatRequest):
             yield _sse({"type": "stage", "stage": "intent", "msg": f"意图识别为 {intent}",
                         "intent": intent, "ms": intent_ms, "ok": True})
 
-            if intent == "order":
+            if intent == "article":
                 t_tool = time.perf_counter()
-                reply = query_order(req.message)
+                reply = await query_article(req.message)
                 tool_ms = round((time.perf_counter() - t_tool) * 1000, 1)
-                yield _sse({"type": "stage", "stage": "tool", "tool": "query_order",
-                            "msg": "调用订单查询工具 query_order", "ms": tool_ms, "ok": True})
+                yield _sse({"type": "stage", "stage": "tool", "tool": "query_article",
+                            "msg": "调用文章查询工具 query_article", "ms": tool_ms, "ok": True})
                 yield _sse({"type": "token", "content": reply})
                 yield _sse({"type": "done", "intent": intent,
                             "total_ms": round((time.perf_counter() - t_start) * 1000, 1)})

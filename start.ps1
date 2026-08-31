@@ -1,5 +1,5 @@
 ﻿<#
-一键启动 AI Robot（本地 Ollama 模式）：
+一键启动 Go 文章社区助手（本地 Ollama 模式）：
   检查 .env / 虚拟环境 / 依赖 / Ollama 模型 -> 启动 uvicorn -> 等待健康检查 -> 打开控制台
 用法：powershell -ExecutionPolicy Bypass -File .\start.ps1   （或直接双击 start.bat）
 参数：-NoBrowser  不自动打开浏览器（远程/CI 场景）
@@ -13,7 +13,7 @@ $port = 8000
 $url  = "http://localhost:$port"
 
 Write-Host "=========================================" -ForegroundColor Cyan
-Write-Host "  AI Robot 一键启动（本地 Ollama 模式）" -ForegroundColor Cyan
+Write-Host "  Go 文章社区助手一键启动（本地 Ollama 模式）" -ForegroundColor Cyan
 Write-Host "=========================================" -ForegroundColor Cyan
 
 # 1) 配置

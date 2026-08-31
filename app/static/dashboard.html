@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>AI Robot 控制台</title>
+<title>Go 文章社区助手控制台</title>
 <style>
 :root{
   --bg:#0d1117; --card:#161b27; --card2:#1c2333; --line:#273349;
@@ -40,7 +40,7 @@ td{padding:9px 10px;border-bottom:1px solid #1f2839;vertical-align:middle}
 tr:hover td{background:#1a2130}
 .chip{display:inline-block;background:var(--chip);border-radius:6px;padding:2px 8px;font-size:12px}
 .chip.knowledge{color:#93c5fd;background:#1e3a5f}
-.chip.order{color:#fcd34d;background:#5f4a1e}
+.chip.article{color:#fcd34d;background:#5f4a1e}
 .chip.chat{color:#a7f3d0;background:#14532d}
 .chip.crew{color:#c4b5fd;background:#3b2f6e}
 .chip.ratelimited{color:#fca5a5;background:#5f1e1e}
@@ -105,8 +105,8 @@ tr:hover td{background:#1a2130}
 <div class="wrap">
   <header>
     <div>
-      <h1>🤖 AI Robot <span class="dot">控制台</span></h1>
-      <div class="sub">FastAPI + LangChain RAG + CrewAI 多智能体 · 功能导览 &amp; 实时执行监控</div>
+      <h1>🐹 Go 文章社区助手 <span class="dot">控制台</span></h1>
+      <div class="sub">FastAPI + LangChain RAG + CrewAI 多智能体 · Go 技术文章问答与实时执行监控</div>
     </div>
     <div>
       <span id="refreshAt">等待连接…</span>
@@ -126,7 +126,7 @@ tr:hover td{background:#1a2130}
   </div>
 
     <section>
-    <h2>💬 用户模拟对话 <span class="tag">在控制台模拟用户提问，右侧实时查看全链路执行过程</span></h2>
+    <h2>💬 社区助手对话 <span class="tag">模拟 Go 技术提问，右侧实时查看全链路执行过程</span></h2>
     <div class="console-grid">
       <div class="chat-panel">
         <div class="chat-head">
@@ -136,7 +136,7 @@ tr:hover td{background:#1a2130}
         <div class="chat-body" id="chatBody"></div>
         <div class="chat-sugs" id="chatSugs"></div>
         <div class="chat-input">
-          <input id="chatInput" placeholder="输入用户问题，Enter 发送…" spellcheck="false">
+          <input id="chatInput" placeholder="输入 Go 技术或社区问题，Enter 发送…" spellcheck="false">
           <button class="btn" id="sendBtn" onclick="sendChat()">发送</button>
         </div>
       </div>
@@ -178,17 +178,17 @@ tr:hover td{background:#1a2130}
 
 <script>
 const FEATS = [
-  ["🧠","多智能体编排","CrewAI 意图识别官 → 客服执行员，多工具协作，失败自动降级内置路由"],
-  ["📚","知识库问答","RAG 检索增强生成，启动自动导入示例知识库，支持上传文档"],
+  ["🧠","多智能体编排","CrewAI 意图识别官 → 社区助手，多工具协作，失败自动降级内置路由"],
+  ["📚","Go 知识库问答","RAG 检索增强生成，启动自动导入 Go 社区示例知识库，支持上传文档"],
   ["🔍","混合检索","向量 + jieba/BM25 词面双路 → RRF 融合，命中率 85%→98%"],
   ["⚖️","语义重排","bge-reranker 对候选打分重排，懒加载 + 异常自动降级"],
   ["💬","会话记忆","session_id 多轮上下文，保留最近 N 轮"],
   ["⚡","SSE 流式","逐 token 流式输出，缓存命中时整段秒回"],
   ["📄","文档解析分块","PDF / Word / Markdown / TXT 解析，标题分块 + 递归分块"],
-  ["📦","订单工具","Mock 订单/物流查询，真实项目对接 order-server"],
+  ["📄","文章工具","Mock 文章状态与数据查询，真实项目可对接 article-server"],
   ["🔁","重试机制","tenacity 指数退避，429 / 5xx / 网络错误自动重试"],
   ["🛡️","限流","按 IP 滑动窗口（60 秒），超限返回 JSON 429"],
-  ["💾","语义缓存","余弦 + 词面双门限命中复用答案，动态数据不缓存"],
+  ["💾","语义缓存","余弦 + 词面双门限命中复用答案，动态文章数据不缓存"],
   ["📊","效果评测","RAGAS 四指标 + LLM-as-Judge + 52 条评测集"],
   ["🧪","检索实验","vector / bm25 / hybrid 命中率对比脚本"],
   ["📐","分块实验","chunk_size / overlap 对检索的影响对比"],
@@ -203,7 +203,7 @@ feats.innerHTML = FEATS.map(f =>
 
 function fmt(t){ if(!t) return "-"; const d=new Date(t*1000); const p=n=>String(n).padStart(2,"0"); return `${p(d.getHours())}:${p(d.getMinutes())}:${p(d.getSeconds())}`; }
 function ms(v){ return v==null?"-":(v<1000?`${v}ms`:`${(v/1000).toFixed(1)}s`); }
-const INTENT_CHIP = {knowledge:"knowledge",order:"order",chat:"chat",crew:"crew",ratelimited:"ratelimited"};
+const INTENT_CHIP = {knowledge:"knowledge",article:"article",chat:"chat",crew:"crew",ratelimited:"ratelimited"};
 function chip(k){ const c=INTENT_CHIP[k]||""; return `<span class="chip ${c}">${k||"-"}</span>`; }
 
 function stageBar(e){
@@ -267,7 +267,7 @@ const STAGES=[
 ];
 const pipeState={};
 STAGES.forEach(s=>pipeState[s.key]={status:"wait",ms:null,msg:"",detail:""});
-const SUGS=["如何发布商品？","查询订单 202608090001 的物流","你好，简单介绍下你们平台"];
+const SUGS=["Go 文章如何添加标签？","查询文章 20260831 的状态","如何写好 Go 并发示例？"];
 let sending=false;
 
 function escHtml(t){const d=document.createElement("div");d.textContent=t;return d.innerHTML;}

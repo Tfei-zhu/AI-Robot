@@ -17,3 +17,6 @@ jieba>=0.42
 rank_bm25>=0.2.2
 # 稳定性工程（重试 / 退避）
 tenacity>=9.0
+# Go 文章服务集成（HTTP 客户端 + RabbitMQ 消费者）
+httpx>=0.27
+aio-pika>=9.4

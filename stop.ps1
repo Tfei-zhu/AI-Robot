@@ -1,4 +1,4 @@
-﻿<# 停止本地 AI Robot 服务（8000 端口） #>
+﻿<# 停止本地 Go 文章社区助手服务（8000 端口） #>
 $conn = Get-NetTCPConnection -LocalPort 8000 -State Listen -ErrorAction SilentlyContinue
 if ($conn) {
     $ids = @($conn | Select-Object -ExpandProperty OwningProcess -Unique)

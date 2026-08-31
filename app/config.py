@@ -59,6 +59,17 @@ class Settings:
     cache_threshold: float = float(_env("AIROBOT_CACHE_THRESHOLD", "0.75"))
     cache_lexical_threshold: float = float(_env("AIROBOT_CACHE_LEXICAL_THRESHOLD", "0.5"))
     cache_max_entries: int = int(_env("AIROBOT_CACHE_MAX_ENTRIES", "1000"))
+    # Go 文章服务对接（article 工具真实数据 + RabbitMQ 文章入库）
+    go_api_base_url: str = _env("AIROBOT_GO_API_BASE_URL")          # 例: http://localhost:8080；空 = 未启用
+    go_api_internal_token: str = _env("AIROBOT_GO_INTERNAL_TOKEN")  # 调 Go /internal/ai 的内部令牌
+    ai_internal_token: str = _env("AIROBOT_AI_INTERNAL_TOKEN")      # 校验 Go 网关身份头（X-Internal-Token）
+    go_api_timeout: float = float(_env("AIROBOT_GO_API_TIMEOUT", "5"))
+    # RabbitMQ 文章发布事件订阅（未配置 AIROBOT_AMQP_URL 时不启动消费者）
+    amqp_url: str = _env("AIROBOT_AMQP_URL")
+    amqp_exchange: str = _env("AIROBOT_AMQP_EXCHANGE", "article.timeline.events")
+    amqp_queue: str = _env("AIROBOT_AMQP_QUEUE", "article.ai.ingest.queue")
+    amqp_routing_key: str = _env("AIROBOT_AMQP_ROUTING_KEY", "article.timeline.publish")
+    amqp_prefetch: int = int(_env("AIROBOT_AMQP_PREFETCH", "5"))
 
 
 settings = Settings()

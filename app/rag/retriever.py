@@ -118,13 +118,46 @@ class KnowledgeBase:
             self.chunk_count += len(docs)
         return len(docs)
 
+    def build_article_docs(self, article_id: int, title: str, content: str,
+                           summary: str = "", tags: List[str] | None = None) -> List[Document]:
+        """把社区文章构建为分块文档（纯函数，可离线测试）；入库请用 ingest_article。"""
+        if not content or not content.strip():
+            return []
+        text = f"# {title}\n\n{content}"
+        chunks = self._split_text(title, text, markdown=True)
+        return [
+            Document(
+                page_content=c.page_content,
+                metadata={**c.metadata, "title": title, "chunk": i,
+                          "doc_id": f"article:{article_id}#{i}", "article_id": article_id,
+                          "source": "go_article", "summary": summary,
+                          "tags": ",".join(tags or [])},
+            )
+            for i, c in enumerate(chunks)
+        ]
+
+    def ingest_article(self, article_id: int, title: str, content: str,
+                       summary: str = "", tags: List[str] | None = None) -> int:
+        """社区文章入库：按 Markdown 标题分块，metadata 带 article_id 便于溯源。
+
+        注意：本方法不做去重/更新，同一 article_id 重复调用会产生重复分块；
+        去重由调用方（article_consumer）负责。
+        """
+        docs = self.build_article_docs(article_id, title, content, summary, tags)
+        if docs:
+            self._documents.extend(docs)
+            invoke_with_retry(self._store.add_documents, docs)
+            self._bm25.add_documents([d.page_content for d in docs])
+            self.chunk_count += len(docs)
+        return len(docs)
+
     def embed_query(self, query: str) -> list[float]:
         """查询向量化（语义缓存用），带重试。"""
         return invoke_with_retry(self._store.embedding.embed_query, query)
 
-    def _split_text(self, title: str, text: str) -> List[Document]:
+    def _split_text(self, title: str, text: str, markdown: bool = False) -> List[Document]:
         """按文件类型选择分块策略：Markdown 先按标题层级，再对超长章节二次切分。"""
-        if title.lower().endswith((".md", ".markdown")):
+        if markdown or title.lower().endswith((".md", ".markdown")):
             return self._split_markdown(text)
         return [Document(page_content=c) for c in self._splitter.split_text(text)]
 
@@ -235,7 +268,7 @@ kb = KnowledgeBase()
 
 RAG_PROMPT = ChatPromptTemplate.from_messages([
     ("system",
-     "你是二手交易平台的智能客服助手。只能依据给定的资料回答问题；"
+     "你是 Go 文章社区助手。只能依据给定的资料回答问题；"
      "资料中没有的信息要如实说明不知道，禁止编造。回答使用简洁友好的中文。"),
     MessagesPlaceholder("history"),
     ("human", "资料：\n{context}\n\n问题：{question}"),
