@@ -1,0 +1,749 @@
+{
+  "meta": {
+    "timestamp": "2026-09-04 12:12:47",
+    "dataset": "/Users/xumanchun/Documents/agent项目/AI-Robot-FastAPI-LangChain-RAG-CrewAI-Agent-/eval/dataset/qa.jsonl",
+    "total": 52,
+    "llm_model": "qwen-plus",
+    "embedding_model": "text-embedding-v4",
+    "top_k": 5,
+    "elapsed_sec": 238.2,
+    "ragas": true
+  },
+  "summary": {
+    "avg": {
+      "judge_score": 4.79,
+      "baseline_hit_rate": 0.9423,
+      "faithfulness": 0.7957,
+      "answer_relevancy": 0.7152,
+      "context_precision": 0.8455,
+      "context_recall": 0.9615
+    },
+    "judge_buckets": [
+      {
+        "bucket": 1,
+        "count": 0
+      },
+      {
+        "bucket": 2,
+        "count": 2
+      },
+      {
+        "bucket": 3,
+        "count": 0
+      },
+      {
+        "bucket": 4,
+        "count": 5
+      },
+      {
+        "bucket": 5,
+        "count": 45
+      }
+    ],
+    "worst_cases": [
+      {
+        "id": "kb-004",
+        "category": "发布文章",
+        "question": "代码示例有什么要求？",
+        "judge_score": 2,
+        "judge_reason": "助手回答列出了大量具体但未在标准答案中提及的详细要求，完全偏离了标准答案‘代码示例应可复制运行’这一核心且唯一的要求，属于错误扩展，答非所问。"
+      },
+      {
+        "id": "kb-036",
+        "category": "示例质量",
+        "question": "Go 示例可以随便用第三方库吗？",
+        "judge_score": 2,
+        "judge_reason": "助手回答错误地声称'不可以随便用第三方库'，与标准答案'可以使用'直接矛盾；虽后文提到注明路径和安装方式、优先标准库，但开头否定性定论导致核心信息错误。"
+      },
+      {
+        "id": "kb-002",
+        "category": "发布文章",
+        "question": "发布文章要填写哪些内容？",
+        "judge_score": 4,
+        "judge_reason": "回答基本正确，完整列出了标准答案中的四项必要内容，但额外添加了‘适用的 Go 版本、运行环境、依赖’和‘代码示例应可复制运行’等非标准答案要求，属于略缺精准性但无实质性错误的冗余补充。"
+      },
+      {
+        "id": "kb-030",
+        "category": "评论讨论",
+        "question": "评论区允许发广告吗？",
+        "judge_score": 4,
+        "judge_reason": "回答基本正确，指出不允许发广告并引用了规则依据，但未提及刷屏和与技术主题无关的内容等标准答案中的其他禁止情形，略缺细节。"
+      },
+      {
+        "id": "kb-041",
+        "category": "跨主题组合",
+        "question": "文章用了第三方库，应该补充什么？",
+        "judge_score": 4,
+        "judge_reason": "回答正确指出了模块路径和安装方式，但遗漏了标准答案中要求的适用 Go 版本、运行环境和依赖说明。"
+      }
+    ]
+  },
+  "by_category": {
+    "Markdown": {
+      "count": 5,
+      "judge_avg": 5.0
+    },
+    "互动反馈": {
+      "count": 4,
+      "judge_avg": 5.0
+    },
+    "发布文章": {
+      "count": 8,
+      "judge_avg": 4.5
+    },
+    "审核修订": {
+      "count": 5,
+      "judge_avg": 5.0
+    },
+    "标题标签": {
+      "count": 5,
+      "judge_avg": 5.0
+    },
+    "版权引用": {
+      "count": 4,
+      "judge_avg": 5.0
+    },
+    "知识库未覆盖": {
+      "count": 2,
+      "judge_avg": 5.0
+    },
+    "示例质量": {
+      "count": 5,
+      "judge_avg": 4.4
+    },
+    "评论讨论": {
+      "count": 4,
+      "judge_avg": 4.75
+    },
+    "跨主题组合": {
+      "count": 10,
+      "judge_avg": 4.7
+    }
+  },
+  "samples": [
+    {
+      "id": "kb-001",
+      "category": "发布文章",
+      "question": "怎么发布 Go 技术文章？",
+      "judge_score": 5,
+      "judge_reason": "助手回答完全覆盖标准答案所有要点（登录写文章、填标题摘要正文标签、说明Go版本/环境/依赖、代码可复制运行、提交审核后发布），且额外补充了合理细节（如代码用```go包裹、标题规范建议），无错误，表述清晰完整。",
+      "hit": true,
+      "faithfulness": 0.7142857142857143,
+      "answer_relevancy": 0.8347419802374761,
+      "context_precision": null,
+      "context_recall": 1.0
+    },
+    {
+      "id": "kb-002",
+      "category": "发布文章",
+      "question": "发布文章要填写哪些内容？",
+      "judge_score": 4,
+      "judge_reason": "回答基本正确，完整列出了标准答案中的四项必要内容，但额外添加了‘适用的 Go 版本、运行环境、依赖’和‘代码示例应可复制运行’等非标准答案要求，属于略缺精准性但无实质性错误的冗余补充。",
+      "hit": true,
+      "faithfulness": 1.0,
+      "answer_relevancy": 0.6270462216287532,
+      "context_precision": 0.9999999999,
+      "context_recall": 1.0
+    },
+    {
+      "id": "kb-003",
+      "category": "发布文章",
+      "question": "Go 文章需要说明版本吗？",
+      "judge_score": 5,
+      "judge_reason": "回答完全正确且完整，准确复现了标准答案的核心要求（说明适用的 Go 版本、运行环境和依赖），并进一步细化了实践建议（如标题或正文开头标注版本、确保代码可复制运行），信息无误、逻辑清晰、无冗余或错误。",
+      "hit": true,
+      "faithfulness": 0.6666666666666666,
+      "answer_relevancy": 0.9863133360250733,
+      "context_precision": 0.99999999995,
+      "context_recall": 1.0
+    },
+    {
+      "id": "kb-004",
+      "category": "发布文章",
+      "question": "代码示例有什么要求？",
+      "judge_score": 2,
+      "judge_reason": "助手回答列出了大量具体但未在标准答案中提及的详细要求，完全偏离了标准答案‘代码示例应可复制运行’这一核心且唯一的要求，属于错误扩展，答非所问。",
+      "hit": true,
+      "faithfulness": 1.0,
+      "answer_relevancy": 0.8018681835451511,
+      "context_precision": 0.3333333333,
+      "context_recall": 1.0
+    },
+    {
+      "id": "kb-005",
+      "category": "发布文章",
+      "question": "文章提交后会立刻发布吗？",
+      "judge_score": 5,
+      "judge_reason": "回答完全正确且完整，准确复现了标准答案的核心信息（不立刻发布、需经审核、审核通过后才发布），表述清晰无歧义。",
+      "hit": true,
+      "faithfulness": 1.0,
+      "answer_relevancy": 0.8997616088223636,
+      "context_precision": 0.99999999995,
+      "context_recall": 1.0
+    },
+    {
+      "id": "kb-006",
+      "category": "发布文章",
+      "question": "不写标签能提交文章吗？",
+      "judge_score": 5,
+      "judge_reason": "回答完全正确且完整，准确引用标准答案核心要求（‘至少一个标签’），并明确得出‘不能提交’的结论，逻辑清晰、无冗余或错误。",
+      "hit": true,
+      "faithfulness": 1.0,
+      "answer_relevancy": 0.9287073733463551,
+      "context_precision": 0.99999999995,
+      "context_recall": 1.0
+    },
+    {
+      "id": "kb-007",
+      "category": "发布文章",
+      "question": "正文里应该写运行环境吗？",
+      "judge_score": 5,
+      "judge_reason": "回答完全正确且完整，明确肯定问题，并准确复现标准答案中的关键要素（Go版本、运行环境、依赖），引用规范，无冗余或错误信息。",
+      "hit": true,
+      "faithfulness": 1.0,
+      "answer_relevancy": 0.9648240362955004,
+      "context_precision": 0.5833333333041666,
+      "context_recall": 1.0
+    },
+    {
+      "id": "kb-008",
+      "category": "发布文章",
+      "question": "发布的文章主要是什么内容？",
+      "judge_score": 5,
+      "judge_reason": "助手回答完全覆盖标准答案中的所有要素（Go技术文章、标题/摘要/正文/标签/可运行示例），并进一步细化了技术主题、实践要求和规范性，表述准确、完整且无冗余。",
+      "hit": true,
+      "faithfulness": 1.0,
+      "answer_relevancy": 0.6757162719567145,
+      "context_precision": 0.9999999999,
+      "context_recall": 1.0
+    },
+    {
+      "id": "kb-009",
+      "category": "标题标签",
+      "question": "文章标题怎么写比较合适？",
+      "judge_score": 5,
+      "judge_reason": "回答完全符合标准答案，准确传达标题应准确描述问题和解决方案、避免空洞词汇的核心要求，并补充了具体示例和版本标注建议，内容正确且完整。",
+      "hit": true,
+      "faithfulness": 0.6,
+      "answer_relevancy": 0.781159299277579,
+      "context_precision": 0.9999999999,
+      "context_recall": 1.0
+    },
+    {
+      "id": "kb-010",
+      "category": "标题标签",
+      "question": "一篇文章可以加几个标签？",
+      "judge_score": 5,
+      "judge_reason": "助手回答与标准答案完全一致，准确且完整。",
+      "hit": true,
+      "faithfulness": 1.0,
+      "answer_relevancy": 0.9929984184248061,
+      "context_precision": 0.9999999999,
+      "context_recall": 1.0
+    },
+    {
+      "id": "kb-011",
+      "category": "标题标签",
+      "question": "Go 社区推荐哪些标签？",
+      "judge_score": 5,
+      "judge_reason": "助手回答完全正确且完整，准确列出了标准答案中的全部推荐标签，并补充了合理使用建议（数量限制和优先级），未添加错误信息，符合社区实践。",
+      "hit": true,
+      "faithfulness": 0.6666666666666666,
+      "answer_relevancy": 0.7593974247933261,
+      "context_precision": 0.49999999995,
+      "context_recall": 1.0
+    },
+    {
+      "id": "kb-012",
+      "category": "标题标签",
+      "question": "介绍 Go 新版本特性时要标注版本吗？",
+      "judge_score": 5,
+      "judge_reason": "回答完全正确且完整，准确引用标准答案要求，并明确指出标注位置（标题或正文开头）和依据来源。",
+      "hit": true,
+      "faithfulness": 1.0,
+      "answer_relevancy": 0.9170950492225042,
+      "context_precision": 0.99999999995,
+      "context_recall": 1.0
+    },
+    {
+      "id": "kb-013",
+      "category": "标题标签",
+      "question": "标题可以写成 Go 干货分享吗？",
+      "judge_score": 5,
+      "judge_reason": "回答完全正确且完整，准确传达了标准答案的核心要求，并补充了同类禁用词（如“求助”），表述清晰、规范。",
+      "hit": true,
+      "faithfulness": 1.0,
+      "answer_relevancy": 0.7088897405889306,
+      "context_precision": 0.9999999999,
+      "context_recall": 1.0
+    },
+    {
+      "id": "kb-014",
+      "category": "Markdown",
+      "question": "文章支持 Markdown 吗？",
+      "judge_score": 5,
+      "judge_reason": "回答完全正确且完整，明确肯定支持 Markdown，并准确限定在‘文章正文’范围内，与标准答案语义一致。",
+      "hit": true,
+      "faithfulness": 1.0,
+      "answer_relevancy": 0.8435336866341623,
+      "context_precision": 0.99999999998,
+      "context_recall": 1.0
+    },
+    {
+      "id": "kb-015",
+      "category": "Markdown",
+      "question": "Go 代码块应该怎么写？",
+      "judge_score": 5,
+      "judge_reason": "回答完全正确且完整，准确指出应使用 ```go 标识的围栏式代码块，并给出规范示例、正误对比和关键注意事项，与标准答案一致并进行了合理扩展。",
+      "hit": true,
+      "faithfulness": 0.875,
+      "answer_relevancy": 0.79354589751154,
+      "context_precision": 0.9999999999,
+      "context_recall": 1.0
+    },
+    {
+      "id": "kb-016",
+      "category": "Markdown",
+      "question": "长代码可以整段贴上去吗？",
+      "judge_score": 5,
+      "judge_reason": "回答完全正确且完整，准确复现标准答案核心要求，并补充了目的说明，逻辑清晰、表述严谨。",
+      "hit": true,
+      "faithfulness": 0.5,
+      "answer_relevancy": 0.7232784774639597,
+      "context_precision": 0.9999999999,
+      "context_recall": 1.0
+    },
+    {
+      "id": "kb-017",
+      "category": "Markdown",
+      "question": "可以在截图里展示 Token 吗？",
+      "judge_score": 5,
+      "judge_reason": "回答完全正确且完整，准确指出不可以，并引用标准答案中的关键要求，无冗余或错误信息。",
+      "hit": true,
+      "faithfulness": 0.6666666666666666,
+      "answer_relevancy": 0.6454515220328143,
+      "context_precision": 0.9999999999,
+      "context_recall": 1.0
+    },
+    {
+      "id": "kb-018",
+      "category": "Markdown",
+      "question": "示例需要说明输出结果吗？",
+      "judge_score": 5,
+      "judge_reason": "回答完全正确且完整，明确肯定‘需要说明预期输出’，并准确引用规范条款（第2条）及具体内容，与标准答案严格一致。",
+      "hit": true,
+      "faithfulness": 1.0,
+      "answer_relevancy": 0.769870086009826,
+      "context_precision": 0.6388888888675925,
+      "context_recall": 1.0
+    },
+    {
+      "id": "kb-019",
+      "category": "审核修订",
+      "question": "文章审核不通过怎么办？",
+      "judge_score": 5,
+      "judge_reason": "回答完全正确且完整，准确复现了标准答案的核心要素（修改标题、内容或引用来源，重新提交），语言简洁清晰，无冗余或错误。",
+      "hit": true,
+      "faithfulness": 1.0,
+      "answer_relevancy": 0.9914780867454908,
+      "context_precision": 0.9999999999,
+      "context_recall": 1.0
+    },
+    {
+      "id": "kb-020",
+      "category": "审核修订",
+      "question": "已发布的文章还能编辑吗？",
+      "judge_score": 5,
+      "judge_reason": "回答完全正确且完整，准确传达了‘可以编辑’和‘重大修订保留修订记录’两个关键信息，与标准答案一致。",
+      "hit": true,
+      "faithfulness": 1.0,
+      "answer_relevancy": 0.9072989646425677,
+      "context_precision": 0.9999999999,
+      "context_recall": 1.0
+    },
+    {
+      "id": "kb-021",
+      "category": "审核修订",
+      "question": "新文章怎么审核？",
+      "judge_score": 5,
+      "judge_reason": "回答完全正确且比标准答案更完整，补充了审核不通过的处理流程，信息准确、逻辑清晰。",
+      "hit": true,
+      "faithfulness": 0.6666666666666666,
+      "answer_relevancy": 0.6564372646688861,
+      "context_precision": 0.9999999999,
+      "context_recall": 1.0
+    },
+    {
+      "id": "kb-022",
+      "category": "审核修订",
+      "question": "审核需要多长时间？",
+      "judge_score": 5,
+      "judge_reason": "助手准确指出知识库未提供审核时长信息，表述客观、严谨，符合标准答案要求，未编造信息。",
+      "hit": false,
+      "faithfulness": 1.0,
+      "answer_relevancy": 0.0,
+      "context_precision": 0.8666666666377778,
+      "context_recall": 1.0
+    },
+    {
+      "id": "kb-023",
+      "category": "审核修订",
+      "question": "大改文章会留下记录吗？",
+      "judge_score": 5,
+      "judge_reason": "回答完全正确且完整，准确复现了标准答案的核心信息，并用引号标注来源，表述清晰无误。",
+      "hit": true,
+      "faithfulness": 1.0,
+      "answer_relevancy": 0.6700978171474231,
+      "context_precision": 0.9999999999,
+      "context_recall": 1.0
+    },
+    {
+      "id": "kb-024",
+      "category": "版权引用",
+      "question": "引用别人的代码需要写来源吗？",
+      "judge_score": 5,
+      "judge_reason": "回答完全正确且完整，明确肯定需要标注来源，并准确引用了标准答案中的具体依据（‘引用、转载与版权’第1条）和核心要求（标注原始来源和许可证）。",
+      "hit": true,
+      "faithfulness": 1.0,
+      "answer_relevancy": 0.7635597997004905,
+      "context_precision": 0.9999999999,
+      "context_recall": 1.0
+    },
+    {
+      "id": "kb-025",
+      "category": "版权引用",
+      "question": "可以直接转载别人的文章吗？",
+      "judge_score": 5,
+      "judge_reason": "回答完全正确且完整，准确传达了需授权、注明作者与原文链接的核心要求，并强调了未经许可转载的违规性质。",
+      "hit": true,
+      "faithfulness": 1.0,
+      "answer_relevancy": 0.8977547249840437,
+      "context_precision": 0.9999999999,
+      "context_recall": 1.0
+    },
+    {
+      "id": "kb-026",
+      "category": "版权引用",
+      "question": "能发付费课程的资料吗？",
+      "judge_score": 5,
+      "judge_reason": "回答完全正确且完整，明确否定并准确援引版权规范，与标准答案核心要求一致，还补充了合理依据（侵权、隐私等），增强了严谨性。",
+      "hit": true,
+      "faithfulness": 0.75,
+      "answer_relevancy": 0.6599925985058246,
+      "context_precision": 0.9999999999,
+      "context_recall": 1.0
+    },
+    {
+      "id": "kb-027",
+      "category": "版权引用",
+      "question": "可以在文章中公开他人隐私吗？",
+      "judge_score": 5,
+      "judge_reason": "回答完全正确且完整，明确否定公开他人隐私，并准确援引相关条款（“引用、转载与版权”第3条）支撑结论，信息精准、表述清晰。",
+      "hit": true,
+      "faithfulness": 1.0,
+      "answer_relevancy": 0.6022300337457889,
+      "context_precision": 0.9999999999,
+      "context_recall": 1.0
+    },
+    {
+      "id": "kb-028",
+      "category": "评论讨论",
+      "question": "评论区应该讨论什么？",
+      "judge_score": 5,
+      "judge_reason": "回答完全符合标准答案，准确涵盖围绕Go技术内容、补充依据、复现步骤、更优实现等核心要求，并额外合理扩展了禁止项，表述清晰完整。",
+      "hit": true,
+      "faithfulness": 0.9166666666666666,
+      "answer_relevancy": 0.5172635781218625,
+      "context_precision": 0.699999999965,
+      "context_recall": 1.0
+    },
+    {
+      "id": "kb-029",
+      "category": "评论讨论",
+      "question": "给代码提建议时怎么写？",
+      "judge_score": 5,
+      "judge_reason": "回答完全符合标准答案要求，不仅强调‘说明适用场景’这一核心要点，还进一步扩展了补充依据、示例写法和禁止行为，内容完整、准确、可操作性强。",
+      "hit": true,
+      "faithfulness": 0.42857142857142855,
+      "answer_relevancy": 0.7109275130348077,
+      "context_precision": 0.9999999999,
+      "context_recall": 1.0
+    },
+    {
+      "id": "kb-030",
+      "category": "评论讨论",
+      "question": "评论区允许发广告吗？",
+      "judge_score": 4,
+      "judge_reason": "回答基本正确，指出不允许发广告并引用了规则依据，但未提及刷屏和与技术主题无关的内容等标准答案中的其他禁止情形，略缺细节。",
+      "hit": true,
+      "faithfulness": 1.0,
+      "answer_relevancy": 0.8435331433707697,
+      "context_precision": 0.9999999999,
+      "context_recall": 1.0
+    },
+    {
+      "id": "kb-031",
+      "category": "评论讨论",
+      "question": "可以攻击文章作者吗？",
+      "judge_score": 5,
+      "judge_reason": "回答完全正确且完整，不仅明确否定人身攻击，还准确传达禁止人身攻击的核心规则，强调尊重友善氛围、聚焦技术讨论，并补充举报机制，信息全面、表述严谨，与标准答案一致且更详实。",
+      "hit": false,
+      "faithfulness": 0.2,
+      "answer_relevancy": 0.5825419932081989,
+      "context_precision": 0.0,
+      "context_recall": 0.0
+    },
+    {
+      "id": "kb-032",
+      "category": "互动反馈",
+      "question": "如何收藏文章？",
+      "judge_score": 5,
+      "judge_reason": "回答与标准答案完全一致，准确完整地说明了收藏操作路径（文章页）和查看路径（个人中心）",
+      "hit": true,
+      "faithfulness": 1.0,
+      "answer_relevancy": 0.6981668281753436,
+      "context_precision": 0.9999999999,
+      "context_recall": 1.0
+    },
+    {
+      "id": "kb-033",
+      "category": "互动反馈",
+      "question": "怎么关注作者？",
+      "judge_score": 5,
+      "judge_reason": "回答与标准答案完全一致，准确、简洁且完整。",
+      "hit": true,
+      "faithfulness": 1.0,
+      "answer_relevancy": 0.9127477177421959,
+      "context_precision": 0.9999999999,
+      "context_recall": 1.0
+    },
+    {
+      "id": "kb-034",
+      "category": "互动反馈",
+      "question": "发现文章有错误怎么反馈？",
+      "judge_score": 5,
+      "judge_reason": "回答完全正确且完整，准确复现了标准答案的核心信息（评论区说明问题、使用文章页反馈入口提交勘误），并保持了自然流畅的表达。",
+      "hit": true,
+      "faithfulness": 1.0,
+      "answer_relevancy": 0.9258218514492922,
+      "context_precision": 0.9999999999,
+      "context_recall": 1.0
+    },
+    {
+      "id": "kb-035",
+      "category": "互动反馈",
+      "question": "阅读数会实时更新吗？",
+      "judge_score": 5,
+      "judge_reason": "助手回答与标准答案完全一致，准确传达了阅读数存在短暂延迟且应以文章页显示为准的关键信息。",
+      "hit": true,
+      "faithfulness": 1.0,
+      "answer_relevancy": 0.0,
+      "context_precision": 0.49999999995,
+      "context_recall": 1.0
+    },
+    {
+      "id": "kb-036",
+      "category": "示例质量",
+      "question": "Go 示例可以随便用第三方库吗？",
+      "judge_score": 2,
+      "judge_reason": "助手回答错误地声称'不可以随便用第三方库'，与标准答案'可以使用'直接矛盾；虽后文提到注明路径和安装方式、优先标准库，但开头否定性定论导致核心信息错误。",
+      "hit": true,
+      "faithfulness": 0.75,
+      "answer_relevancy": 0.859348863749864,
+      "context_precision": 0.9999999999,
+      "context_recall": 1.0
+    },
+    {
+      "id": "kb-037",
+      "category": "示例质量",
+      "question": "并发示例要交代哪些内容？",
+      "judge_score": 5,
+      "judge_reason": "回答完全正确且完整，准确列出了 goroutine 的退出方式、context 的传播和错误处理三项核心内容，与标准答案完全一致，并额外注明依据，增强了可信度。",
+      "hit": true,
+      "faithfulness": 1.0,
+      "answer_relevancy": 0.8720497652542388,
+      "context_precision": 0.9999999999,
+      "context_recall": 1.0
+    },
+    {
+      "id": "kb-038",
+      "category": "示例质量",
+      "question": "性能文章怎么证明结论？",
+      "judge_score": 5,
+      "judge_reason": "助手回答完全覆盖标准答案的三个核心要点（基准环境、可复现benchmark、避免个例泛化），且补充了具体细节（如Go版本、操作系统、go test -bench等）和延伸要求（多种输入规模、适用边界），表述准确、完整、专业。",
+      "hit": true,
+      "faithfulness": 0.3076923076923077,
+      "answer_relevancy": 0.5326110919258867,
+      "context_precision": 0.99999999995,
+      "context_recall": 1.0
+    },
+    {
+      "id": "kb-039",
+      "category": "示例质量",
+      "question": "Go 示例优先使用什么？",
+      "judge_score": 5,
+      "judge_reason": "回答与标准答案完全一致，准确且完整。",
+      "hit": true,
+      "faithfulness": 1.0,
+      "answer_relevancy": 0.7828865848341033,
+      "context_precision": 0.9999999999,
+      "context_recall": 1.0
+    },
+    {
+      "id": "kb-040",
+      "category": "示例质量",
+      "question": "并发代码只写 goroutine 就够了吗？",
+      "judge_score": 5,
+      "judge_reason": "回答完全正确且完整，准确覆盖标准答案中的三个核心要点（退出方式、context传播、错误处理），并补充了必要背景说明和风险警示，表述清晰严谨。",
+      "hit": true,
+      "faithfulness": 0.3125,
+      "answer_relevancy": 0.7516507017826541,
+      "context_precision": 0.9999999999,
+      "context_recall": 1.0
+    },
+    {
+      "id": "kb-041",
+      "category": "跨主题组合",
+      "question": "文章用了第三方库，应该补充什么？",
+      "judge_score": 4,
+      "judge_reason": "回答正确指出了模块路径和安装方式，但遗漏了标准答案中要求的适用 Go 版本、运行环境和依赖说明。",
+      "hit": true,
+      "faithfulness": 0.6666666666666666,
+      "answer_relevancy": 0.7447812818601719,
+      "context_precision": 0.0,
+      "context_recall": 0.0
+    },
+    {
+      "id": "kb-042",
+      "category": "跨主题组合",
+      "question": "转载 Go 文章时标题和来源有什么要求？",
+      "judge_score": 4,
+      "judge_reason": "回答基本正确，强调了授权、显著位置注明作者与原文链接，并指出标题应准确不歪曲原意；但标准答案明确要求‘标题还应准确描述问题和解决方案’，该关键要求在助手回答中未体现（仅提‘不歪曲原意’和加转载前缀，未强调标题需体现问题与解决方案），略缺细节。",
+      "hit": true,
+      "faithfulness": 0.36363636363636365,
+      "answer_relevancy": 0.8195401744324989,
+      "context_precision": 0.0,
+      "context_recall": 1.0
+    },
+    {
+      "id": "kb-043",
+      "category": "跨主题组合",
+      "question": "代码中不小心泄露了密码怎么办？",
+      "judge_score": 5,
+      "judge_reason": "回答完全正确且完整，不仅涵盖标准答案中的‘移除敏感内容后再提交或修订’，还补充了撤销凭证、清理历史提交、预防措施等关键实操步骤，并准确引用规范条款，信息全面、专业、可执行。",
+      "hit": true,
+      "faithfulness": 0.17647058823529413,
+      "answer_relevancy": 0.7716916710667451,
+      "context_precision": 0.9999999999,
+      "context_recall": 1.0
+    },
+    {
+      "id": "kb-044",
+      "category": "跨主题组合",
+      "question": "审核被拒是因为引用没写清楚，怎么处理？",
+      "judge_score": 5,
+      "judge_reason": "回答完全正确且完整，准确指出需补充/修正引用来源和许可证信息，并明确要求重新提交，同时标注了依据条款，与标准答案核心要求一致。",
+      "hit": true,
+      "faithfulness": 0.6,
+      "answer_relevancy": 0.0,
+      "context_precision": 0.99999999995,
+      "context_recall": 1.0
+    },
+    {
+      "id": "kb-045",
+      "category": "跨主题组合",
+      "question": "文章中如何展示一个长的并发示例？",
+      "judge_score": 5,
+      "judge_reason": "回答完全符合标准答案要求，准确涵盖最小可运行片段、预期输出、goroutine退出、context传播和错误处理五大要素，且表述清晰完整。",
+      "hit": true,
+      "faithfulness": 0.65,
+      "answer_relevancy": 0.8339081913744503,
+      "context_precision": 0.9999999999,
+      "context_recall": 1.0
+    },
+    {
+      "id": "kb-046",
+      "category": "跨主题组合",
+      "question": "可以在评论里推广课程吗？",
+      "judge_score": 5,
+      "judge_reason": "回答完全正确且完整，明确否定推广课程，并准确引用规范条款、说明原因（广告引流）和合规要求（围绕Go技术内容），与标准答案语义一致、信息无缺失。",
+      "hit": true,
+      "faithfulness": 0.6,
+      "answer_relevancy": 0.8061174452269851,
+      "context_precision": 0.3333333333,
+      "context_recall": 1.0
+    },
+    {
+      "id": "kb-047",
+      "category": "跨主题组合",
+      "question": "文章审核通过后在哪里看？",
+      "judge_score": 4,
+      "judge_reason": "回答基本正确，指出审核通过后公开展示及多个查看路径（社区首页、搜索、标签页、个人中心「已发布」列表），但未提及标准答案中的关键要素「文章页可查看内容、修订记录和互动数据」，略缺细节。",
+      "hit": true,
+      "faithfulness": 0.3333333333333333,
+      "answer_relevancy": 0.9903486032608774,
+      "context_precision": 0.9999999999,
+      "context_recall": 1.0
+    },
+    {
+      "id": "kb-048",
+      "category": "跨主题组合",
+      "question": "收藏后能在哪里找到文章？",
+      "judge_score": 5,
+      "judge_reason": "回答与标准答案完全一致，且加粗强调了关键信息，表述准确、完整。",
+      "hit": true,
+      "faithfulness": 1.0,
+      "answer_relevancy": 0.7722079218025103,
+      "context_precision": 0.9999999999,
+      "context_recall": 1.0
+    },
+    {
+      "id": "kb-049",
+      "category": "跨主题组合",
+      "question": "文章阅读数为什么和预期不一样？",
+      "judge_score": 5,
+      "judge_reason": "回答完全正确且完整，准确指出阅读数存在短暂延迟，并强调以文章页显示为准，与标准答案一致，语言简洁清晰。",
+      "hit": true,
+      "faithfulness": 0.5,
+      "answer_relevancy": 0.7870774374122294,
+      "context_precision": 0.249999999975,
+      "context_recall": 1.0
+    },
+    {
+      "id": "kb-050",
+      "category": "跨主题组合",
+      "question": "Go 1.22 的新特性文章要特别写什么？",
+      "judge_score": 5,
+      "judge_reason": "回答完全正确且完整，准确指出需在标题或正文开头明确标注 Go 版本，并强调提供可复制运行的示例，与标准答案完全一致，同时合理说明未补充新特性细节的原因。",
+      "hit": true,
+      "faithfulness": 0.6666666666666666,
+      "answer_relevancy": 0.0,
+      "context_precision": 0.49999999995,
+      "context_recall": 1.0
+    },
+    {
+      "id": "kb-051",
+      "category": "知识库未覆盖",
+      "question": "文章点赞可以提现吗？",
+      "judge_score": 5,
+      "judge_reason": "回答完全正确且完整，准确指出知识库未提及点赞提现、收益或金钱相关内容，并如实说明不清楚，符合标准答案要求。",
+      "hit": true,
+      "faithfulness": 0.8,
+      "answer_relevancy": 0.8734730047213387,
+      "context_precision": 0.9999999999,
+      "context_recall": 1.0
+    },
+    {
+      "id": "kb-052",
+      "category": "知识库未覆盖",
+      "question": "社区每天可以发布多少篇文章？",
+      "judge_score": 5,
+      "judge_reason": "回答准确反映了知识库中无相关信息的事实，与标准答案完全一致。",
+      "hit": false,
+      "faithfulness": 1.0,
+      "answer_relevancy": 0.0,
+      "context_precision": 0.9166666666361111,
+      "context_recall": 1.0
+    }
+  ]
+}
