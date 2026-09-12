@@ -15,6 +15,9 @@ import asyncio
 import json
 import logging
 
+import sqlite3
+from datetime import datetime, timezone
+from pathlib import Path
 from app.config import settings
 
 logger = logging.getLogger("airobot.article_consumer")
@@ -25,15 +28,98 @@ SUPERVISOR_BACKOFF_SECONDS = 30.0
 class ArticleIngestConsumer:
     """RabbitMQ 文章发布事件 -> Go 内部 API 抓取正文 -> kb.ingest_article()。"""
 
-    def __init__(self, kb, client) -> None:
+    def __init__(self, kb, client, state_path: str | Path | None = None) -> None:
         self._kb = kb
         self._client = client
-        self._ingested_article_ids: set[int] = set()
+        self._state_path = self._resolve_state_path(state_path)
+        if self._state_path != ":memory:":
+            Path(self._state_path).parent.mkdir(parents=True, exist_ok=True)
+        self._db = sqlite3.connect(self._state_path, check_same_thread=False)
+        self._db.execute("PRAGMA journal_mode=WAL")
+        self._db.execute(
+            "CREATE TABLE IF NOT EXISTS ingested_articles ("
+            "article_id INTEGER PRIMARY KEY, title TEXT NOT NULL, content TEXT NOT NULL,"
+            "summary TEXT NOT NULL DEFAULT '', tags_json TEXT NOT NULL DEFAULT '[]',"
+            "status TEXT NOT NULL, ingested_at TEXT NOT NULL)")
+        self._db.commit()
+        self._ingested_article_ids: set[int] = self._load_ingested_ids()
         self._task: asyncio.Task | None = None
 
     @property
     def ingested_article_ids(self) -> set[int]:
-        return set(self._ingested_article_ids)
+        return {int(row[0]) for row in self._db.execute(
+            "SELECT article_id FROM ingested_articles WHERE status = 'ingested'").fetchall()}
+    @staticmethod
+    def _resolve_state_path(state_path: str | Path | None) -> str:
+        if state_path is not None:
+            return str(state_path)
+        path = Path(settings.ingest_state_db)
+        if not path.is_absolute():
+            path = Path(__file__).resolve().parents[2] / path
+        return str(path)
+
+    def _load_ingested_ids(self) -> set[int]:
+        rows = self._db.execute(
+            "SELECT article_id FROM ingested_articles WHERE status = 'ingested'").fetchall()
+        return {int(row[0]) for row in rows}
+
+    def _article_status(self, article_id: int) -> str | None:
+        row = self._db.execute(
+            "SELECT status FROM ingested_articles WHERE article_id = ?", (article_id,)
+        ).fetchone()
+        return row[0] if row else None
+
+    def _reserve_article(self, article_id: int, data: dict) -> bool:
+        now = datetime.now(timezone.utc).isoformat()
+        self._db.execute(
+            "INSERT OR IGNORE INTO ingested_articles "
+            "(article_id, title, content, summary, tags_json, status, ingested_at) "
+            "VALUES (?, ?, ?, ?, ?, 'pending', ?)",
+            (article_id, data.get("title", ""), data.get("content", ""),
+             data.get("summary", ""), json.dumps(data.get("tags") or [], ensure_ascii=False), now),
+        )
+        self._db.commit()
+        return self._article_status(article_id) == "pending"
+
+    def _mark_ingested(self, article_id: int) -> None:
+        self._db.execute(
+            "UPDATE ingested_articles SET status = 'ingested', ingested_at = ? "
+            "WHERE article_id = ?", (datetime.now(timezone.utc).isoformat(), article_id)
+        )
+        self._db.commit()
+        self._ingested_article_ids.add(article_id)
+
+    def _delete_pending(self, article_id: int) -> None:
+        self._db.execute(
+            "DELETE FROM ingested_articles WHERE article_id = ? AND status = 'pending'",
+            (article_id,),
+        )
+        self._db.commit()
+
+    async def restore(self) -> int:
+        """从 SQLite 重放文章正文，恢复进程内向量与 BM25 索引。"""
+        rows = self._db.execute(
+            "SELECT article_id, title, content, summary, tags_json "
+            "FROM ingested_articles WHERE status IN ('pending', 'ingested') "
+            "ORDER BY article_id"
+        ).fetchall()
+        restored = 0
+        for article_id, title, content, summary, tags_json in rows:
+            try:
+                tags = json.loads(tags_json or "[]")
+                if not isinstance(tags, list):
+                    tags = []
+                self._kb.ingest_article(article_id, title, content, summary=summary, tags=tags)
+                self._mark_ingested(article_id)
+                restored += 1
+            except Exception as exc:
+                logger.exception("恢复文章 %s 失败，将在下次启动或消息重投时重试: %s", article_id, exc)
+        if restored:
+            logger.info("从持久化状态恢复 %s 篇文章", restored)
+        return restored
+
+    def close(self) -> None:
+        self._db.close()
 
     async def start(self) -> asyncio.Task | None:
         """启动后台消费任务；未配置 AMQP 时返回 None（优雅降级）。"""
@@ -82,18 +168,21 @@ class ArticleIngestConsumer:
                         settings.amqp_routing_key)
             async with queue.iterator() as queue_iter:
                 async for message in queue_iter:
-                    async with message.process(ignore_processed=True):
+                    async with message.process(requeue=True, ignore_processed=True):
                         await self._process_delivery(message)
 
     async def _process_delivery(self, message) -> None:
-        """单条投递：解析失败/未预期异常都只记日志不抛出（保证 ack 跳过，不卡队列）。"""
+        """单条投递：坏 JSON 丢弃；可恢复失败抛出并让 RabbitMQ 重新入队。"""
         try:
             payload = json.loads(message.body)
-            result = await self.handle_event(payload)
-            event_id = payload.get("event_id", "unknown") if isinstance(payload, dict) else "unknown"
-            logger.info("文章事件处理完成: %s（event_id=%s）", result, event_id)
-        except Exception as exc:
-            logger.exception("文章事件处理出现未预期异常，跳过该消息: %s", exc)
+        except (TypeError, ValueError, json.JSONDecodeError) as exc:
+            logger.exception("文章事件消息无法解析，丢弃该消息: %s", exc)
+            return
+        result = await self.handle_event(payload)
+        event_id = payload.get("event_id", "unknown") if isinstance(payload, dict) else "unknown"
+        if result == "skipped":
+            raise RuntimeError(f"文章事件处理失败，重新入队（event_id={event_id}）")
+        logger.info("文章事件处理完成: %s（event_id=%s）", result, event_id)
 
     async def handle_event(self, payload: dict) -> str:
         """处理单条文章事件（纯逻辑，便于离线测试）。
@@ -106,7 +195,7 @@ class ArticleIngestConsumer:
         if not isinstance(article_id, int) or article_id <= 0:
             logger.error("文章事件缺少合法 article_id，跳过: %r", article_id)
             return "invalid"
-        if article_id in self._ingested_article_ids:
+        if self._article_status(article_id) in {"pending", "ingested"}:
             logger.info("文章 %s 重复投递，跳过入库", article_id)
             return "duplicate"
         try:
@@ -117,14 +206,18 @@ class ArticleIngestConsumer:
         if data is None:
             logger.warning("文章 %s 不存在（可能已删除），跳过", article_id)
             return "not_found"
+        if not self._reserve_article(article_id, data):
+            logger.info("文章 %s 已由其他投递处理中，跳过重复入库", article_id)
+            return "duplicate"
         try:
             chunks = self._kb.ingest_article(
                 article_id, data.get("title", ""), data.get("content", ""),
                 summary=data.get("summary", ""), tags=data.get("tags") or [])
         except Exception as exc:
+            self._delete_pending(article_id)
             logger.error("文章 %s 入库失败，跳过该消息: %s", article_id, exc)
             return "skipped"
-        self._ingested_article_ids.add(article_id)
+        self._mark_ingested(article_id)
         logger.info("文章入库成功: id=%s 分块=%s 总块数=%s",
                     article_id, chunks, self._kb.chunk_count)
         return "ingested"

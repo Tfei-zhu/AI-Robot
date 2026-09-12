@@ -5,6 +5,7 @@
 运行：python tests/test_integration.py（无第三方测试框架依赖，纯标准库断言）
 """
 import asyncio
+import tempfile
 import sys
 from pathlib import Path
 
@@ -165,7 +166,7 @@ def _run(consumer, payload):
 
 def test_consumer_ingest_and_dedupe():
     kb = _StubKB()
-    consumer = ArticleIngestConsumer(kb, _StubClient(dict(FAKE_ARTICLE)))
+    consumer = ArticleIngestConsumer(kb, _StubClient(dict(FAKE_ARTICLE)), state_path=":memory:")
     assert _run(consumer, {"event_id": "a", "article_id": 9}) == "ingested"
     assert kb.calls == [9] and kb.chunk_count == 2
     assert _run(consumer, {"event_id": "b", "article_id": 9}) == "duplicate"
@@ -173,13 +174,46 @@ def test_consumer_ingest_and_dedupe():
 
 
 def test_consumer_not_found_and_invalid_and_skipped():
-    consumer = ArticleIngestConsumer(_StubKB(), _StubClient(None))
+    consumer = ArticleIngestConsumer(_StubKB(), _StubClient(None), state_path=":memory:")
     assert _run(consumer, {"article_id": 404}) == "not_found"
     assert _run(consumer, {"article_id": 0}) == "invalid"
     assert _run(consumer, {"no_id": True}) == "invalid"
     assert _run(consumer, "not-a-dict") == "invalid"
-    consumer_err = ArticleIngestConsumer(_StubKB(), _StubClient(GoServiceError("down")))
+    consumer_err = ArticleIngestConsumer(_StubKB(), _StubClient(GoServiceError("down")), state_path=":memory:")
     assert _run(consumer_err, {"article_id": 7}) == "skipped"
+
+
+def test_consumer_persistent_dedupe_and_restore():
+    with tempfile.TemporaryDirectory() as tmp:
+        state_path = f"{tmp}/state.sqlite3"
+        kb1 = _StubKB()
+        consumer1 = ArticleIngestConsumer(kb1, _StubClient(dict(FAKE_ARTICLE)), state_path=state_path)
+        assert _run(consumer1, {"article_id": 9}) == "ingested"
+        consumer1.close()
+
+        kb2 = _StubKB()
+        consumer2 = ArticleIngestConsumer(kb2, _StubClient(dict(FAKE_ARTICLE)), state_path=state_path)
+        assert consumer2.ingested_article_ids == {9}
+        assert _run(consumer2, {"article_id": 9}) == "duplicate"
+        assert asyncio.run(consumer2.restore()) == 1
+        assert kb2.chunk_count == 2
+        consumer2.close()
+
+
+class _Message:
+    def __init__(self, body):
+        self.body = body
+
+
+def test_consumer_requeues_recoverable_failure():
+    consumer = ArticleIngestConsumer(_StubKB(), _StubClient(GoServiceError("down")), state_path=":memory:")
+    try:
+        asyncio.run(consumer._process_delivery(_Message(b'{"article_id": 7}')))
+        raise AssertionError("可恢复失败应抛出异常触发 RabbitMQ requeue")
+    except RuntimeError as exc:
+        assert "重新入队" in str(exc)
+    finally:
+        consumer.close()
 
 
 if __name__ == "__main__":

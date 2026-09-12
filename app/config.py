@@ -70,6 +70,10 @@ class Settings:
     amqp_queue: str = _env("AIROBOT_AMQP_QUEUE", "article.ai.ingest.queue")
     amqp_routing_key: str = _env("AIROBOT_AMQP_ROUTING_KEY", "article.timeline.publish")
     amqp_prefetch: int = int(_env("AIROBOT_AMQP_PREFETCH", "5"))
+    # 文章入库状态与正文持久化（相对路径以项目根目录为基准，随 data 卷保存）
+    ingest_state_db: str = _env("AIROBOT_INGEST_STATE_DB", "data/airobot_state.sqlite3")
+    # 单个上传文件大小上限，避免整文件读入内存导致 OOM
+    max_upload_bytes: int = max(1, int(_env("AIROBOT_MAX_UPLOAD_BYTES", str(10 * 1024 * 1024))))
 
 
 settings = Settings()

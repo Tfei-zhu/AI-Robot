@@ -378,3 +378,15 @@ python tests/test_tracing.py
 ## License
 
 MIT
+
+## 文章入库与知识库持久化
+
+文章发布事件由 RabbitMQ 投递到 AI-Robot：
+
+- 无法解析的坏消息会记录日志并确认（ack）丢弃，避免毒消息阻塞队列。
+- 抓取文章、调用 Embedding 或写入知识库失败时会抛出异常，消息通过 `requeue=true` 重新入队，等待后续重试。
+- 成功入库的文章正文、标题、标签和状态写入 `AIROBOT_INGEST_STATE_DB` 指定的 SQLite 文件；默认是 `data/airobot_state.sqlite3`。
+- 服务启动时会重放 SQLite 中的文章，重新建立向量和 BM25 索引，因此默认的 InMemoryVectorStore 也不会因进程重启丢失文章数据。
+- Docker Compose 已将 `./data` 挂载到容器 `/app/data`，请保留该目录或改用外部持久卷。
+
+SQLite 是当前默认的知识源持久化方案；Milvus 仍可作为独立的向量检索后端使用。若启用 Milvus，请将 `AIROBOT_MILVUS_RESET_ON_START=false`，避免启动时清空集合。

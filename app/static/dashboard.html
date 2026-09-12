@@ -204,7 +204,7 @@ feats.innerHTML = FEATS.map(f =>
 function fmt(t){ if(!t) return "-"; const d=new Date(t*1000); const p=n=>String(n).padStart(2,"0"); return `${p(d.getHours())}:${p(d.getMinutes())}:${p(d.getSeconds())}`; }
 function ms(v){ return v==null?"-":(v<1000?`${v}ms`:`${(v/1000).toFixed(1)}s`); }
 const INTENT_CHIP = {agent:"agent",ratelimited:"ratelimited"};
-function chip(k){ const c=INTENT_CHIP[k]||""; return `<span class="chip ${c}">${k||"-"}</span>`; }
+function chip(k){ const c=INTENT_CHIP[k]||""; return `<span class="chip ${c}">${escHtml(k||"-")}</span>`; }
 
 function stageBar(e){
   const cache=e.cache_lookup_ms||0, llm=e.llm_ms||0, intent=e.intent_ms||0, retr=e.retrieval_ms||0;
@@ -233,10 +233,10 @@ function renderRows(entries){
     const cache = e.cache_checked ? (e.cache_hit ? `<span style="color:var(--ok)">命中</span>` : `<span style="color:var(--muted)">未中</span>`) : "-";
     return `<tr>
       <td class="mono">${fmt(e.ts)}</td>
-      <td style="max-width:220px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap" title="${(e.message||"").replace(/"/g,"&quot;")}">${e.message||"-"}</td>
-      <td class="mono">${e.session_id||"-"}</td>
+      <td style="max-width:220px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap" title="${escAttr(e.message||"-")}">${escHtml(e.message||"-")}</td>
+      <td class="mono">${escHtml(e.session_id||"-")}</td>
       <td>${chip(e.intent)}</td>
-      <td>${e.engine||"-"}</td>
+      <td>${escHtml(e.engine||"-")}</td>
       <td>${cache}</td>
       <td>${stageBar(e)}</td>
       <td class="mono">${ms(e.total_ms)}</td>
@@ -272,6 +272,7 @@ const SUGS=["Go 文章如何添加标签？","查询文章 20260831 的状态","
 let sending=false;
 
 function escHtml(t){const d=document.createElement("div");d.textContent=t;return d.innerHTML;}
+function escAttr(t){return String(t??"").replace(/&/g,"&amp;").replace(/"/g,"&quot;").replace(/</g,"&lt;").replace(/>/g,"&gt;");}
 function scrollChat(){const b=document.getElementById("chatBody");b.scrollTop=b.scrollHeight;}
 function addMsg(role,text){
   const b=document.getElementById("chatBody");

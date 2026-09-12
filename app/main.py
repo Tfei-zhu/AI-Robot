@@ -35,10 +35,12 @@ async def lifespan(_: FastAPI):
         except Exception as exc:
             logger.warning("启动时导入示例知识库失败（请检查 AIROBOT_EMBEDDING_API_KEY）: %s", exc)
     consumer = ArticleIngestConsumer(kb, go_client)
+    await consumer.restore()
     consumer_task = await consumer.start()
     yield
     if consumer_task is not None:
         await consumer.stop()
+    consumer.close()
     await go_client.aclose()
 
 
@@ -129,13 +131,28 @@ def traces_api(limit: int = 50):
 
 
 @app.post("/api/v1/ingest", response_model=IngestResponse)
-async def ingest(file: UploadFile = File(...)):
+async def ingest(request: Request, file: UploadFile = File(...)):
     if not settings.embedding_api_key:
         raise HTTPException(status_code=400, detail="未配置 AIROBOT_EMBEDDING_API_KEY，无法向量化入库")
     suffix = Path(file.filename or "").suffix.lower()
     if suffix not in {".pdf", ".docx", ".md", ".markdown", ".txt"}:
         raise HTTPException(status_code=400, detail="仅支持 PDF、DOCX、Markdown 和 TXT 文件")
-    content = await file.read()
+    content_length = request.headers.get("content-length")
+    if content_length:
+        try:
+            declared_length = int(content_length)
+        except ValueError as exc:
+            raise HTTPException(status_code=400, detail="Content-Length 无效") from exc
+        if declared_length > settings.max_upload_bytes:
+            raise HTTPException(status_code=413, detail=f"文件过大，上传上限为 {settings.max_upload_bytes} 字节")
+    content = bytearray()
+    while True:
+        chunk = await file.read(min(1024 * 1024, settings.max_upload_bytes + 1 - len(content)))
+        if not chunk:
+            break
+        content.extend(chunk)
+        if len(content) > settings.max_upload_bytes:
+            raise HTTPException(status_code=413, detail=f"文件过大，上传上限为 {settings.max_upload_bytes} 字节")
     if not content:
         raise HTTPException(status_code=400, detail="上传文件为空")
     with tempfile.NamedTemporaryFile(delete=False, suffix=suffix) as tmp:
