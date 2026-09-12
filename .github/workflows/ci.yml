@@ -32,8 +32,12 @@ jobs:
           cache: pip
       - name: 安装核心依赖
         run: pip install -r requirements.txt
-      - name: 稳定性工程离线单测
-        run: python tests/test_stability.py
+      - name: 离线单测（全量）
+        run: |
+          python tests/test_stability.py
+          python tests/test_integration.py
+          python tests/test_agent.py
+          python tests/test_tracing.py
       - name: 服务可导入冒烟
         run: python -c "from app.main import app; print('import OK, routes:', len(app.routes))"
 
@@ -69,9 +73,12 @@ jobs:
         run: pip install -r requirements-eval.txt
       - name: RAGAS 冒烟评测（前 5 条）
         if: ${{ env.AIROBOT_LLM_API_KEY != '' && env.AIROBOT_EMBEDDING_API_KEY != '' }}
-        run: python eval/run_eval.py --limit 5 --top-k 3
+        run: >
+          python eval/run_eval.py --limit 5 --top-k 3
+          --min-baseline-hit-rate 0.85
+          --min-judge-score 3.5
       - name: 上传评测报告
-        if: ${{ env.AIROBOT_LLM_API_KEY != '' && env.AIROBOT_EMBEDDING_API_KEY != '' }}
+        if: ${{ always() && env.AIROBOT_LLM_API_KEY != '' && env.AIROBOT_EMBEDDING_API_KEY != '' }}
         uses: actions/upload-artifact@v4
         with:
           name: eval-report

@@ -198,6 +198,29 @@ def write_report(report: dict, out: Path) -> None:
     md.write_text("\n".join(lines) + "\n", encoding="utf-8")
 
 
+def quality_gate_failures(
+    avg: dict,
+    *,
+    min_baseline_hit_rate: float | None,
+    min_judge_score: float | None,
+) -> list[str]:
+    """Return human-readable quality-gate failures without hiding the report."""
+    failures = []
+    checks = (
+        ("关键词命中率", "baseline_hit_rate", min_baseline_hit_rate),
+        ("LLM-as-Judge 平均分", "judge_score", min_judge_score),
+    )
+    for label, key, minimum in checks:
+        if minimum is None:
+            continue
+        value = avg.get(key)
+        if value is None:
+            failures.append(f"{label}缺失，无法满足门禁阈值 {minimum}")
+        elif value < minimum:
+            failures.append(f"{label} {value} 低于门禁阈值 {minimum}")
+    return failures
+
+
 def main() -> None:
     parser = argparse.ArgumentParser(description="RAG 评测（RAGAS + LLM-as-Judge + 基线）")
     parser.add_argument("--dataset", default=str(BASE_DIR / "eval" / "dataset" / "qa.jsonl"))
@@ -206,7 +229,20 @@ def main() -> None:
     parser.add_argument("--limit", type=int, default=0, help="只评测前 N 条（0=全部）")
     parser.add_argument("--no-ragas", action="store_true", help="跳过 RAGAS 指标（只跑 Judge+基线）")
     parser.add_argument("--out", default=None, help="报告输出路径")
+    parser.add_argument(
+        "--min-baseline-hit-rate", type=float, default=None,
+        help="关键词命中率最低门禁（0-1；未设置则只生成报告）",
+    )
+    parser.add_argument(
+        "--min-judge-score", type=float, default=None,
+        help="LLM-as-Judge 平均分最低门禁（1-5；未设置则只生成报告）",
+    )
     args = parser.parse_args()
+
+    if args.min_baseline_hit_rate is not None and not 0 <= args.min_baseline_hit_rate <= 1:
+        parser.error("--min-baseline-hit-rate 必须在 0 到 1 之间")
+    if args.min_judge_score is not None and not 1 <= args.min_judge_score <= 5:
+        parser.error("--min-judge-score 必须在 1 到 5 之间")
 
     if not settings.llm_api_key or not settings.embedding_api_key:
         print("未配置 AIROBOT_LLM_API_KEY / AIROBOT_EMBEDDING_API_KEY，无法评测。请先复制 .env.example 为 .env 并填入密钥。")
@@ -302,6 +338,19 @@ def main() -> None:
             print(f"| {k} | {avg[k] if avg[k] is not None else '-'} |")
     print(f"\n分档: " + ", ".join(f"{b['bucket']}分×{b['count']}" for b in buckets))
     print(f"\n报告已保存: {out}（含 Markdown 版）")
+
+    failures = quality_gate_failures(
+        avg,
+        min_baseline_hit_rate=args.min_baseline_hit_rate,
+        min_judge_score=args.min_judge_score,
+    )
+    if failures:
+        print("\n===== 评测门禁失败 =====", file=sys.stderr)
+        for failure in failures:
+            print(f"- {failure}", file=sys.stderr)
+        sys.exit(1)
+    if args.min_baseline_hit_rate is not None or args.min_judge_score is not None:
+        print("\n评测门禁通过")
 
 
 if __name__ == "__main__":
