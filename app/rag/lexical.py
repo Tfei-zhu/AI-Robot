@@ -1,42 +1,64 @@
-# -*- coding: utf-8 -*-
-"""词面检索：jieba 中文分词 + BM25Okapi。
-与向量检索互补：Go 包名、文章编号、精确措辞等词面命中更可靠（替代 MySQL LIKE）。
-"""
+"""增量 BM25：仅为新文档分词，维护词频、文档频率与倒排表。"""
 import logging
-from typing import List
+import math
+from collections import Counter, defaultdict
+from threading import RLock
 
 import jieba
-from rank_bm25 import BM25Okapi
-
-logger = logging.getLogger("airobot.lexical")
 
 jieba.setLogLevel(logging.WARNING)
 
 
-def tokenize(text: str) -> List[str]:
+def tokenize(text: str) -> list[str]:
     return [t for t in jieba.lcut(text) if t.strip()]
 
 
 class BM25Index:
-    """进程内 BM25 索引：以文档顺序对应 KnowledgeBase._documents。"""
+    """使用正值 Robertson IDF，避免小语料负分导致零召回。"""
 
-    def __init__(self) -> None:
-        self._corpus: List[str] = []
-        self._bm25: BM25Okapi | None = None
+    def __init__(self):
+        self._corpus = []
+        self._lengths = []
+        self._postings = defaultdict(dict)
+        self._total_length = 0
+        self._lock = RLock()
+        self.k1, self.b = 1.5, 0.75
 
     @property
-    def ready(self) -> bool:
-        return self._bm25 is not None
+    def ready(self):
+        with self._lock:
+            return bool(self._postings)
 
-    def add_documents(self, texts: List[str]) -> None:
-        # 增量追加后全量重建：调用方只传新增分块，语料顺序必须与 KnowledgeBase._documents 保持对齐
-        self._corpus = [*self._corpus, *texts]
-        self._bm25 = BM25Okapi([tokenize(t) for t in self._corpus])
+    @staticmethod
+    def prepare(texts):
+        return [(text, Counter(tokenize(text))) for text in texts]
 
-    def search(self, query: str, top_k: int) -> List[int]:
-        """返回按 BM25 得分排序的文档索引列表（仅保留得分>0 的命中）。"""
-        if not self.ready or not self._corpus:
-            return []
-        scores = self._bm25.get_scores(tokenize(query))
-        order = sorted(range(len(scores)), key=lambda i: scores[i], reverse=True)
-        return [i for i in order if scores[i] > 0][:top_k]
+    def add_prepared(self, prepared):
+        with self._lock:
+            for text, counts in prepared:
+                index = len(self._corpus)
+                length = sum(counts.values())
+                self._corpus.append(text)
+                self._lengths.append(length)
+                self._total_length += length
+                for term, freq in counts.items():
+                    self._postings[term][index] = freq
+
+    def add_documents(self, texts):
+        self.add_prepared(self.prepare(texts))
+
+    def search(self, query, top_k):
+        with self._lock:
+            n = len(self._corpus)
+            if not n or not self._total_length or top_k <= 0:
+                return []
+            avg = self._total_length / n
+            scores = defaultdict(float)
+            for term in tokenize(query):
+                postings = self._postings.get(term, {})
+                df = len(postings)
+                idf = math.log1p((n - df + 0.5) / (df + 0.5))
+                for index, freq in postings.items():
+                    norm = self.k1 * (1 - self.b + self.b * self._lengths[index] / avg)
+                    scores[index] += idf * freq * (self.k1 + 1) / (freq + norm)
+            return sorted(scores, key=lambda i: (-scores[i], i))[:top_k]

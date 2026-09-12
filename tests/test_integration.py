@@ -194,8 +194,8 @@ def test_consumer_persistent_dedupe_and_restore():
         kb2 = _StubKB()
         consumer2 = ArticleIngestConsumer(kb2, _StubClient(dict(FAKE_ARTICLE)), state_path=state_path)
         assert consumer2.ingested_article_ids == {9}
-        assert _run(consumer2, {"article_id": 9}) == "duplicate"
         assert asyncio.run(consumer2.restore()) == 1
+        assert _run(consumer2, {"article_id": 9}) == "duplicate"
         assert kb2.chunk_count == 2
         consumer2.close()
 

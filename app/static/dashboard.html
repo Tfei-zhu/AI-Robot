@@ -110,6 +110,7 @@ tr:hover td{background:#1a2130}
     </div>
     <div>
       <span id="refreshAt">等待连接…</span>
+      <input id="adminToken" type="password" autocomplete="off" placeholder="管理员令牌（仅当前页面）">
       <button class="btn" onclick="refresh(true)">立即刷新</button>
     </div>
   </header>
@@ -130,7 +131,7 @@ tr:hover td{background:#1a2130}
     <div class="console-grid">
       <div class="chat-panel">
         <div class="chat-head">
-          <input id="sessionId" class="session-input" value="console" placeholder="会话 ID（模拟不同用户）" spellcheck="false">
+          <input id="sessionId" class="session-input" value="console" placeholder="当前账户内的会话编号" spellcheck="false">
           <button class="btn ghost" onclick="clearChat()">清空</button>
         </div>
         <div class="chat-body" id="chatBody"></div>
@@ -295,7 +296,7 @@ function renderPipe(){
   pipe.innerHTML=STAGES.map(s=>{
     const st=pipeState[s.key];
     const msHtml=st.ms!=null?`<span class="ms">${ms(st.ms)}</span>`:"";
-    const detailHtml=st.detail?`<div class="detail">${st.detail}</div>`:"";
+    const detailHtml=st.detail?`<div class="detail">${escHtml(st.detail)}</div>`:"";
     return `<div class="pstep ${st.status}">
       <div class="dot">${s.icon}</div>
       <div class="body">
@@ -355,7 +356,7 @@ async function sendChat(){
   sending=true;document.getElementById("sendBtn").disabled=true;
   const bubble=addMsg("ai","");bubble.classList.add("typing");
   try{
-    const resp=await fetch("/api/v1/chat/stream",{
+    const resp=await apiFetch("/api/v1/chat/stream",{
       method:"POST",headers:{"Content-Type":"application/json"},
       body:JSON.stringify({message:text,session_id:sessionId})
     });
@@ -392,6 +393,7 @@ async function sendChat(){
 }
 function clearChat(){
   document.getElementById("chatBody").innerHTML="";
+  document.getElementById("sessionId").value=crypto.randomUUID();
   resetPipe();
 }
 function useSug(el){
@@ -399,10 +401,11 @@ function useSug(el){
   sendChat();
 }
 async function refresh(manual){
+  if(!document.getElementById("adminToken").value) return;
   try{
     const [s,t]=await Promise.all([
-      fetch("/api/v1/stats").then(r=>r.json()),
-      fetch("/api/v1/traces?limit=30").then(r=>r.json())
+      apiFetch("/api/v1/stats").then(r=>r.json()),
+      apiFetch("/api/v1/traces?limit=30").then(r=>r.json())
     ]);
     renderStats(s,t.summary);
     renderRows(t.entries);
@@ -417,6 +420,13 @@ async function refresh(manual){
 }
 document.getElementById("chatSugs").innerHTML=SUGS.map(s=>`<span class="sug" onclick="useSug(this)">${escHtml(s)}</span>`).join("");
 document.getElementById("chatInput").addEventListener("keydown",e=>{if(e.key==="Enter")sendChat();});
+async function apiFetch(url,options={}){
+  const headers=new Headers(options.headers||{});
+  headers.set("Authorization","Bearer "+document.getElementById("adminToken").value);
+  const response=await fetch(url,{...options,headers});
+  if(!response.ok) throw new Error("请求失败（"+response.status+"），请检查令牌和权限");
+  return response;
+}
 resetPipe();
 refresh(true);
 setInterval(()=>refresh(false),3000);

@@ -8,6 +8,8 @@ __pycache__/
 eval/reports/
 data/*.csv
 data/*.sqlite3
+data/*.sqlite3-wal
+data/*.sqlite3-shm
 data/uploads/
 .idea/
 .vscode/

@@ -120,7 +120,7 @@ RAG 被收敛为 `search_knowledge` 工具；Agent 会根据目标自主选择�
 |---|---|---|
 | 重试 | tenacity 指数退避；仅重试 429、5xx、网络和超时等可恢复错误 | `AIROBOT_RETRY_ATTEMPTS`、`AIROBOT_RETRY_MAX_WAIT` |
 | 限流 | 按 IP 的进程内滑动窗口，监控接口豁免 | `AIROBOT_RATELIMIT_PER_MINUTE` |
-| 语义缓存 | 首轮无上下文问题通过余弦相似度和词面重叠双门限复用答案；动态文章数据不缓存 | `AIROBOT_CACHE_*` |
+| 答案缓存 | 同一认证身份、相同问题、相同知识版本的首轮纯知识回答可复用；动态文章与失败结果不缓存 | `AIROBOT_CACHE_*` |
 | 链路追踪 | 记录缓存、意图、检索、首 token、生成与总耗时，聚合 P95 与命中率 | `/api/v1/traces` |
 
 ## 快速开始
@@ -159,6 +159,7 @@ AIROBOT_LLM_MODEL=qwen2.5:1.5b
 AIROBOT_EMBEDDING_BASE_URL=http://localhost:11434/v1
 AIROBOT_EMBEDDING_API_KEY=ollama
 AIROBOT_EMBEDDING_MODEL=nomic-embed-text
+AIROBOT_ADMIN_TOKEN=请替换为独立随机长令牌
 ```
 
 ### 3. 启动
@@ -173,10 +174,11 @@ uvicorn app.main:app --reload --port 8000
 
 ```powershell
 Invoke-RestMethod http://localhost:8000/health
-Invoke-RestMethod http://localhost:8000/api/v1/stats
+$headers = @{ Authorization = "Bearer $env:AIROBOT_ADMIN_TOKEN" }
+Invoke-RestMethod http://localhost:8000/api/v1/stats -Headers $headers
 
 $body = @{ message = "Go 并发示例需要说明哪些内容？"; session_id = "go-reader-001" } | ConvertTo-Json
-Invoke-RestMethod -Uri http://localhost:8000/api/v1/chat -Method Post -Body $body -ContentType "application/json"
+Invoke-RestMethod -Uri http://localhost:8000/api/v1/chat -Headers $headers -Method Post -Body $body -ContentType "application/json"
 ```
 
 ## 接口说明
@@ -217,7 +219,7 @@ Invoke-RestMethod -Uri http://localhost:8000/api/v1/chat -Method Post -Body $bod
 | 字段 | 说明 |
 |---|---|
 | `message` | 用户的 Go 技术或社区问题 |
-| `session_id` | 可选；会话标识，默认 `default`，同一 ID 保留多轮上下文 |
+| `session_id` | 可选；省略时随机生成并返回，同一认证身份下的同一编号保留多轮上下文 |
 | `reply` | 社区助手回答 |
 | `intent` | 固定为 `agent`，表示由 LangGraph Agent 完成 |
 | `sources` | Agent 工具收集的来源列表 |
@@ -233,7 +235,7 @@ Invoke-RestMethod -Uri http://localhost:8000/api/v1/chat -Method Post -Body $bod
 {"message":"查询文章 20260831 的状态","session_id":"go-reader-001"}
 ```
 
-会返回 Mock 文章的发布状态、标签、阅读数和评论数。生产环境可将 `query_article` 改为调用真实 article-server。
+通过 Go 文章服务返回真实详情；服务未配置或查询失败时明确提示不可用。
 
 ### `POST /api/v1/chat/stream`
 
@@ -246,17 +248,17 @@ stage（限流 / 缓存 / 意图 / 检索或工具 / 生成 / 写入）
 → done
 ```
 
-`intent=article` 时会发送 `tool=query_article` 的 `stage` 事件和一个完整回答 token；`intent=knowledge` 时会发送检索来源和逐 token 的 RAG 回答。缓存只复用无上下文的首轮非动态问答。
+意图统一为 `agent`。工具执行后发送结构化步骤，知识检索另发 `stage=retrieval`（含来源和耗时）。最终生成节点实时转发模型 token，不转发规划文本或工具参数。缓存命中仍整段返回，并写入会话记忆。
 
 典型事件如下：
 
 ```text
 data: {"type":"stage","stage":"rate_limit","msg":"限流检查通过"}
 data: {"type":"stage","stage":"cache","msg":"语义缓存未命中"}
-data: {"type":"intent","intent":"knowledge"}
+data: {"type":"intent","intent":"agent"}
 data: {"type":"stage","stage":"retrieval","sources":["knowledge_base.md#7"]}
 data: {"type":"token","content":"并发示例需说明..."}
-data: {"type":"done","intent":"knowledge","sources":["knowledge_base.md#7"]}
+data: {"type":"done","intent":"agent","sources":["knowledge_base.md#7"]}
 ```
 
 ### `POST /api/v1/ingest`
@@ -264,7 +266,7 @@ data: {"type":"done","intent":"knowledge","sources":["knowledge_base.md#7"]}
 上传资料到知识库，使用 multipart 表单字段 `file`，支持 `.pdf`、`.docx`、`.md`、`.txt`、`.markdown`。
 
 ```bash
-curl -X POST http://localhost:8000/api/v1/ingest -F "file=@data/knowledge_base.md"
+curl -X POST http://localhost:8000/api/v1/ingest -H "Authorization: Bearer $AIROBOT_ADMIN_TOKEN" -F "file=@data/knowledge_base.md"
 ```
 
 ### `GET /api/v1/stats` 与 `GET /api/v1/traces`
@@ -389,4 +391,28 @@ MIT
 - 服务启动时会重放 SQLite 中的文章，重新建立向量和 BM25 索引，因此默认的 InMemoryVectorStore 也不会因进程重启丢失文章数据。
 - Docker Compose 已将 `./data` 挂载到容器 `/app/data`，请保留该目录或改用外部持久卷。
 
-SQLite 是当前默认的知识源持久化方案；Milvus 仍可作为独立的向量检索后端使用。若启用 Milvus，请将 `AIROBOT_MILVUS_RESET_ON_START=false`，避免启动时清空集合。
+SQLite 是当前默认的知识源持久化方案；Milvus 可作为向量检索后端。旧 `AIROBOT_MILVUS_RESET_ON_START` 已废弃，无论取值是什么都不会清库。
+
+## 安全与存储升级
+
+- API 默认拒绝匿名访问。控制台输入独立的 `AIROBOT_ADMIN_TOKEN`，仅保留在当前页面；脚本从同名环境变量读取，HTTP 使用 `Authorization: Bearer <令牌>`。令牌请使用随机长字符串，不要提交到 Git。
+- Go 网关继续使用 `X-Internal-Token` + `X-Account-Id`，对应 `AIROBOT_AI_INTERNAL_TOKEN`，只能调用两个聊天接口，不能读取全局轨迹或上传资料。两种令牌必须不同。生产跨主机访问需要 HTTPS。
+- `session_id` 只在认证身份内有效：不同用户即使传相同值也不会共享历史。省略时服务生成随机编号并在 JSON / SSE done 返回；后续请求须带回。仅支持字母、数字、下划线和连字符，最长 128 字符。同一会话同时发起第二个请求返回 409。
+- stats/traces 需要管理员身份，保留轮询限流豁免；健康检查与不含数据的控制台外壳公开。
+- `data/knowledge.sqlite3` 保存所有上传文件和文章的分块原文及元数据，`data/airobot_state.sqlite3` 保留 MQ 正文与状态。两者都应持久挂载和备份；启动从原文恢复向量和 BM25，失败会明确报错。相同内容以稳定主键幂等写入。上传文件以原文件名溯源。
+- 现阶段是单进程、单实例索引：请使用一个 Uvicorn worker。线程锁保护两路索引的一致读写，入库移至工作线程；BM25 仅对新增文档分词并更新倒排统计。此实现采用正值 IDF，与原 rank_bm25 的分数不完全相同，需要比较质量报告。文章更新/删除同步不属于发布事件协议，不能把发布去重当作更新支持。
+- 生产 Milvus 集合名来自配置；评测与基准分别使用随机 `airobot_eval_*` / `airobot_bench_*`，不共享生产集合。实例化、导入模块和服务启动均无清库副作用。旧自动主键集合会被拒绝写入：先备份旧集合和 SQLite，再配置全新集合名，重建验证后切换；不要直接删除旧集合。旧集合独有而 SQLite 没有的资料必须先导出或重新导入。
+- 评测结束会在报告中记录集合名。可用 `python scripts/reset_collection.py --collection <评测集合名> --confirm <同名>` 显式清理。此脚本拒绝生产集合，不会自动清除评测报告或数据库。
+- CLI 导入与运行服务不是同一进程。生产在线导入统一使用带管理员凭据的 HTTP 上传；离线维护前停服，导入后重启，以恢复两路索引。
+
+## Agent 回归验证
+
+```bash
+python eval/run_agent_eval.py
+python -m unittest discover -s tests -p "test_hardening.py" -v
+python eval/run_eval.py --agent --limit 5 --top-k 3 --no-ragas
+```
+
+离线门禁运行真实 LangGraph，但替换模型与外部服务，验证路径而非自然语言质量。真实模型评测通过 `--agent` 执行工具链，并记录工具实际召回的上下文；CI 配置模型密钥后执行质量门禁。知识工具本身不再生成答案，只返回原文。规划仍可多轮调用工具，JSON 和 SSE 共用独立最终生成节点；常规单工具路径包含首次规划、停止规划、最终生成三次模型调用，不能把“去除工具内生成”理解为所有请求固定只调用两次。SSE 的首字时间仍包含规划和检索耗时，但不再等待最终答案生成完毕。
+
+答案缓存保守地增加“问题完全一致”的限制，避免动态问题通过语义相似度命中静态答案。只有全部工具调用均为成功知识检索且存在来源的首轮回答可写缓存；缓存还按认证身份和索引版本隔离。若知识库在生成期间变化，本次结果不写缓存。

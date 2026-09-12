@@ -48,8 +48,8 @@ class Settings:
     milvus_uri: str = _env("AIROBOT_MILVUS_URI", "http://localhost:19530")
     milvus_token: str = _env("AIROBOT_MILVUS_TOKEN")
     milvus_collection: str = _env("AIROBOT_MILVUS_COLLECTION", "airobot_kb")
-    # 启动时清空 Milvus 集合再重建（与内存库"重启即初始"语义一致，避免重复导入；需要持久化时置 false）
-    milvus_reset_on_start: bool = _env("AIROBOT_MILVUS_RESET_ON_START", "true").lower() == "true"
+    # 旧清库开关不再读取：启动、导入、实例化均不能删除集合。
+    knowledge_state_db: str = _env("AIROBOT_KNOWLEDGE_STATE_DB", "data/knowledge.sqlite3")
     # 稳定性工程（重试 / 限流 / 语义缓存）
     retry_attempts: int = int(_env("AIROBOT_RETRY_ATTEMPTS", "3"))
     retry_max_wait: float = float(_env("AIROBOT_RETRY_MAX_WAIT", "8"))
@@ -63,6 +63,7 @@ class Settings:
     go_api_base_url: str = _env("AIROBOT_GO_API_BASE_URL")          # 例: http://localhost:8080；空 = 未启用
     go_api_internal_token: str = _env("AIROBOT_GO_INTERNAL_TOKEN")  # 调 Go /internal/ai 的内部令牌
     ai_internal_token: str = _env("AIROBOT_AI_INTERNAL_TOKEN")      # 校验 Go 网关身份头（X-Internal-Token）
+    admin_token: str = _env("AIROBOT_ADMIN_TOKEN")                 # 独立管理凭据，不能与网关令牌相同
     go_api_timeout: float = float(_env("AIROBOT_GO_API_TIMEOUT", "5"))
     # RabbitMQ 文章发布事件订阅（未配置 AIROBOT_AMQP_URL 时不启动消费者）
     amqp_url: str = _env("AIROBOT_AMQP_URL")
@@ -77,4 +78,3 @@ class Settings:
 
 
 settings = Settings()
-

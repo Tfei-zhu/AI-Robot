@@ -7,6 +7,7 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 
 from langchain_core.messages import AIMessage, HumanMessage, ToolMessage  # noqa: E402
+from langchain_core.messages import AIMessageChunk
 
 import app.agents.graph as graph_module  # noqa: E402
 from app.agents.graph import get_agent_graph  # noqa: E402
@@ -83,6 +84,9 @@ def test_sse_consumes_the_same_agent_tool_loop():
         return [event async for event in stream_chat("发文要注意什么？", "stream-agent-test")]
 
     original_llm = graph_module.get_llm
+    async def fake_stream(self, messages):
+        yield AIMessageChunk(content="请遵守社区规范。")
+    FakeModel.astream = fake_stream
     original_key, original_cache = settings.llm_api_key, settings.cache_enabled
     graph_module.get_llm = lambda: FakeModel()
     settings.llm_api_key, settings.cache_enabled = "test-key", False

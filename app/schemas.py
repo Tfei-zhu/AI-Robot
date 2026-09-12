@@ -2,12 +2,13 @@
 """接口出入参模型。"""
 from typing import Optional
 
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 
 
 class ChatRequest(BaseModel):
-    message: str
-    session_id: Optional[str] = "default"
+    message: str = Field(min_length=1, max_length=16000)
+    session_id: Optional[str] = Field(default=None, min_length=1, max_length=128,
+                                      pattern=r"^[A-Za-z0-9_-]+$")
 
 
 class ChatResponse(BaseModel):
@@ -18,6 +19,7 @@ class ChatResponse(BaseModel):
     run_id: str = ""
     steps: list = []
     cache_hit: bool = False
+    session_id: str = ""
 
 
 class IngestResponse(BaseModel):

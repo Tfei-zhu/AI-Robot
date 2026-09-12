@@ -2,14 +2,13 @@
 """FastAPI 入口：知识导入、LangGraph Agent 对话与运行观测。"""
 import json
 import logging
-import secrets
 import tempfile
 import time
 from contextlib import asynccontextmanager
 from pathlib import Path
 
-from fastapi import FastAPI, File, HTTPException, Request, UploadFile
-from fastapi.responses import HTMLResponse, JSONResponse, StreamingResponse
+from fastapi import FastAPI, File, HTTPException, Request, UploadFile, Query
+from fastapi.responses import HTMLResponse, JSONResponse
 
 from app.config import settings
 from app.rag.retriever import kb
@@ -20,6 +19,9 @@ from app.services.go_client import go_client
 from app.services.ratelimit import limiter
 from app.services.semantic_cache import semantic_cache
 from app.services.tracing import traces
+from app.services.concurrency import run_blocking
+from app.services.security import (SecurityMiddleware, SessionStreamResponse,
+                                   session_identity, claim_session, release_session)
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 logger = logging.getLogger("airobot.main")
@@ -28,20 +30,25 @@ logger = logging.getLogger("airobot.main")
 @asynccontextmanager
 async def lifespan(_: FastAPI):
     """启动时导入示例知识库并拉起文章入库消费者；关闭时释放资源。"""
+    if settings.admin_token and settings.admin_token == settings.ai_internal_token:
+        raise RuntimeError("管理员令牌与网关令牌必须不同")
+    await run_blocking(kb.restore)
     sample = BASE_DIR / "data" / "knowledge_base.md"
     if sample.exists() and kb.chunk_count == 0:
         try:
-            kb.ingest_file(sample)
+            await run_blocking(kb.ingest_file, sample)
         except Exception as exc:
             logger.warning("启动时导入示例知识库失败（请检查 AIROBOT_EMBEDDING_API_KEY）: %s", exc)
     consumer = ArticleIngestConsumer(kb, go_client)
-    await consumer.restore()
-    consumer_task = await consumer.start()
-    yield
-    if consumer_task is not None:
+    try:
+        await consumer.restore()
+        await consumer.start()
+        yield
+    finally:
         await consumer.stop()
-    consumer.close()
-    await go_client.aclose()
+        consumer.close()
+        await run_blocking(kb.close)
+        await go_client.aclose()
 
 
 app = FastAPI(
@@ -67,13 +74,7 @@ async def rate_limit_middleware(request: Request, call_next):
     """按账户（可信 Go 网关）或客户端 IP 实施滑动窗口限流。"""
     if (settings.ratelimit_enabled and request.url.path.startswith("/api/v1")
             and request.url.path not in ("/api/v1/stats", "/api/v1/traces")):
-        key = None
-        token = request.headers.get("X-Internal-Token", "")
-        if settings.ai_internal_token and secrets.compare_digest(
-                token.encode(), settings.ai_internal_token.encode()):
-            key = request.headers.get("X-Account-Id") or None
-        if key is None:
-            key = request.client.host if request.client else "unknown"
+        key = request.state.principal
         if not limiter.allow(key):
             logger.warning("限流拦截: %s %s from %s", request.method, request.url.path, key)
             traces.record({"message": f"{request.method} {request.url.path}",
@@ -126,7 +127,7 @@ def dashboard():
 
 
 @app.get("/api/v1/traces")
-def traces_api(limit: int = 50):
+def traces_api(limit: int = Query(default=50, ge=1, le=200)):
     return {"entries": traces.recent(limit), "summary": traces.summary()}
 
 
@@ -143,7 +144,7 @@ async def ingest(request: Request, file: UploadFile = File(...)):
             declared_length = int(content_length)
         except ValueError as exc:
             raise HTTPException(status_code=400, detail="Content-Length 无效") from exc
-        if declared_length > settings.max_upload_bytes:
+        if declared_length > settings.max_upload_bytes + 64 * 1024:
             raise HTTPException(status_code=413, detail=f"文件过大，上传上限为 {settings.max_upload_bytes} 字节")
     content = bytearray()
     while True:
@@ -159,9 +160,10 @@ async def ingest(request: Request, file: UploadFile = File(...)):
         tmp.write(content)
         tmp_path = Path(tmp.name)
     try:
-        chunks = kb.ingest_file(tmp_path)
+        chunks = await run_blocking(kb.ingest_file, tmp_path, Path(file.filename or "upload").name)
     except Exception as exc:
-        raise HTTPException(status_code=500, detail=f"解析失败: {exc}") from exc
+        logger.exception("文档入库失败")
+        raise HTTPException(status_code=500, detail="文档入库失败，请稍后重试") from exc
     finally:
         tmp_path.unlink(missing_ok=True)
     return IngestResponse(file_name=file.filename or "unknown", chunks=chunks,
@@ -169,9 +171,14 @@ async def ingest(request: Request, file: UploadFile = File(...)):
 
 
 @app.post("/api/v1/chat", response_model=ChatResponse)
-async def chat_ep(req: ChatRequest):
-    result = await chat(req.message, req.session_id or "default")
-    return ChatResponse(**result)
+async def chat_ep(req: ChatRequest, request: Request):
+    public, key = session_identity(request.state.principal, req.session_id)
+    claim_session(key)
+    try:
+        result = await chat(req.message, key)
+        return ChatResponse(**result, session_id=public)
+    finally:
+        release_session(key)
 
 
 def _sse(payload: dict) -> str:
@@ -179,10 +186,19 @@ def _sse(payload: dict) -> str:
 
 
 @app.post("/api/v1/chat/stream")
-async def chat_stream(req: ChatRequest):
+async def chat_stream(req: ChatRequest, request: Request):
     """SSE 版本消费与 ``/chat`` 相同的 LangGraph Agent Run。"""
+    public, key = session_identity(request.state.principal, req.session_id)
+    claim_session(key)
     async def generate():
-        async for event in stream_chat(req.message, req.session_id or "default"):
+        async for event in stream_chat(req.message, key):
+            if event.get("type") == "done":
+                event["session_id"] = public
             yield _sse(event)
 
-    return StreamingResponse(generate(), media_type="text/event-stream")
+    return SessionStreamResponse(generate(), session_key=key, media_type="text/event-stream",
+                                 headers={"Cache-Control": "no-cache", "X-Accel-Buffering": "no"})
+
+
+# 最外层：在限流、解析上传文件及业务路由之前验证身份。
+app.add_middleware(SecurityMiddleware)

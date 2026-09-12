@@ -46,7 +46,7 @@ def main() -> None:
     items = load_queries(args.limit)
     print(f"评测集: {len(items)} 条 | top_k={args.top_k}")
 
-    kb = KnowledgeBase()
+    kb = KnowledgeBase(purpose="bench")
     for f in Path("data").glob("knowledge_base.md"):
         n = kb.ingest_file(f)
         print(f"  导入 {f.name}: {n} 块")

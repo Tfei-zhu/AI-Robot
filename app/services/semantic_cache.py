@@ -5,8 +5,19 @@
 """
 import math
 import time
+from threading import RLock
+from functools import wraps
+
+
+def synchronized(fn):
+    @wraps(fn)
+    def wrapped(self, *args, **kwargs):
+        with self._lock:
+            return fn(self, *args, **kwargs)
+    return wrapped
 
 from app.rag.lexical import tokenize
+from app.config import settings
 
 
 class SemanticCache:
@@ -19,6 +30,7 @@ class SemanticCache:
         self.hits = 0
         self.misses = 0
         self.cleared = 0
+        self._lock = RLock()
 
     @staticmethod
     def _cosine(a: list[float], b: list[float]) -> float:
@@ -38,12 +50,18 @@ class SemanticCache:
             return 0.0
         return len(ta & tb) / min(len(ta), len(tb))
 
-    def get(self, query_vec: list[float], query_text: str = "") -> dict | None:
+    @synchronized
+    def get(self, query_vec: list[float], query_text: str = "", *,
+            namespace: str = "", revision: int = 0, exact: bool = False) -> dict | None:
         """双门限命中返回缓存的对话结果 dict；未命中返回 None。
         余弦最高的候选若词面不合格，继续检查其余候选，取双门限均通过的余弦最高者。"""
         best_item = None
         best_sim = -1.0
         for item in self._items:
+            if item.get("namespace", "") != namespace or item.get("revision", 0) != revision:
+                continue
+            if exact and item.get("query") != query_text:
+                continue
             sim = self._cosine(query_vec, item["vec"])
             if sim < self.threshold:
                 continue
@@ -60,18 +78,23 @@ class SemanticCache:
         self.misses += 1
         return None
 
-    def put(self, query_vec: list[float], result: dict, query_text: str = "") -> None:
+    @synchronized
+    def put(self, query_vec: list[float], result: dict, query_text: str = "", *,
+            namespace: str = "", revision: int = 0) -> None:
         self._items.append({
+            "namespace": namespace, "revision": revision,
             "vec": query_vec, "query": query_text,
             "result": dict(result), "ts": time.time(),
         })
         if len(self._items) > self.max_entries:
             self._items = sorted(self._items, key=lambda x: x["ts"])[len(self._items) // 2:]
 
+    @synchronized
     def clear(self) -> None:
         self.cleared += len(self._items)
         self._items = []
 
+    @synchronized
     def stats(self) -> dict:
         return {
             "enabled": True,
@@ -85,4 +108,5 @@ class SemanticCache:
         }
 
 
-semantic_cache = SemanticCache()
+semantic_cache = SemanticCache(settings.cache_threshold, settings.cache_lexical_threshold,
+                               settings.cache_max_entries)

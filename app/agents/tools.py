@@ -4,6 +4,7 @@
 RAG 是 ``search_knowledge`` 工具，而不是对话服务的固定分支。工具返回 JSON
 字符串，既便于模型理解，也让编排层能够提取来源并把执行轨迹返回给客户端。
 """
+import asyncio
 import json
 import logging
 import re
@@ -11,7 +12,7 @@ import re
 import httpx
 from langchain_core.tools import tool
 
-from app.rag.retriever import aanswer_with_rag, answer_with_rag, build_llm
+from app.rag.retriever import kb
 from app.services.go_client import GoServiceError, go_client
 
 logger = logging.getLogger("airobot.tools")
@@ -21,9 +22,14 @@ _ARTICLE_ID_RE = re.compile(r"(?:文章|article)\s*#?\s*(\d{1,10})", re.IGNORECA
 
 
 def search_knowledge(query: str) -> str:
-    """检索 Go 文章社区知识库并基于资料回答问题（RAG）。"""
-    answer, _ = answer_with_rag(query, build_llm())
-    return answer
+    """只返回可引用原文，不在工具内部调用生成模型。"""
+    docs, detail = kb.search_detailed(query)
+    chunks = [{"text": d.page_content,
+               "source": str(d.metadata.get("doc_id") or
+                             f"{d.metadata.get('title', '')}#{d.metadata.get('chunk', 0)}")}
+              for d in docs]
+    return json.dumps({"chunks": chunks, "sources": [c["source"] for c in chunks],
+                       "retrieval": detail}, ensure_ascii=False)
 
 
 def _extract_article_id(message: str) -> int | None:
@@ -88,9 +94,8 @@ def community_guideline(_message: str) -> str:
 
 @tool("search_knowledge")
 async def search_knowledge_tool(query: str) -> str:
-    """检索 Go 技术与社区知识库，并返回带可引用来源的事实材料。"""
-    answer, sources = await aanswer_with_rag(query, build_llm())
-    return json.dumps({"answer": answer, "sources": sources}, ensure_ascii=False)
+    """检索 Go 技术与社区知识库，返回资料原文片段和来源；没有资料时返回空列表。"""
+    return await asyncio.to_thread(search_knowledge, query)
 
 
 @tool("query_article")

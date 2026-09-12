@@ -16,6 +16,7 @@
 6) 输出控制台表格 + JSON/Markdown 报告到 eval/reports/。
 """
 import argparse
+import asyncio
 import json
 import re
 import sys
@@ -45,7 +46,7 @@ def build_kb(files: list[Path], top_k: int):
     """独立知识库实例：评测不污染运行中的服务。"""
     from app.rag.retriever import KnowledgeBase
 
-    kb = KnowledgeBase()
+    kb = KnowledgeBase(purpose="eval")
     for f in files:
         n = kb.ingest_file(f)
         print(f"  导入 {f.name}: {n} 块")
@@ -62,6 +63,26 @@ def run_rag(kb, question: str, top_k: int) -> tuple[str, list[str]]:
     chain = RAG_PROMPT | build_llm() | StrOutputParser()
     answer = chain.invoke({"context": "\n\n".join(contexts), "question": question, "history": []})
     return answer, contexts
+
+
+def run_agent(kb, question: str, top_k: int) -> tuple[str, list[str]]:
+    """实际执行 Agent，记录工具真正召回的上下文；不用事后重新检索代替证据。"""
+    from unittest.mock import patch
+    from langchain_core.messages import HumanMessage
+    from app.agents import tools
+    from app.agents.graph import get_agent_graph
+    contexts = []
+    original = kb.search_detailed
+
+    def capture(query, *args, **kwargs):
+        docs, detail = original(query, top_k=top_k)
+        contexts.extend(d.page_content for d in docs)
+        return docs, detail
+
+    with patch.object(tools, "kb", kb), patch.object(kb, "search_detailed", side_effect=capture):
+        state = asyncio.run(get_agent_graph().ainvoke({
+            "messages": [HumanMessage(content=question)], "sources": [], "steps": [], "tool_rounds": 0}))
+    return state["final"], contexts
 
 
 JUDGE_PROMPT = ChatPromptTemplate.from_messages([
@@ -229,6 +250,7 @@ def main() -> None:
     parser.add_argument("--limit", type=int, default=0, help="只评测前 N 条（0=全部）")
     parser.add_argument("--no-ragas", action="store_true", help="跳过 RAGAS 指标（只跑 Judge+基线）")
     parser.add_argument("--out", default=None, help="报告输出路径")
+    parser.add_argument("--agent", action="store_true", help="评测真实 LangGraph 路径")
     parser.add_argument(
         "--min-baseline-hit-rate", type=float, default=None,
         help="关键词命中率最低门禁（0-1；未设置则只生成报告）",
@@ -267,7 +289,7 @@ def main() -> None:
     t0 = time.perf_counter()
     for i, item in enumerate(items, 1):
         question = item["question"]
-        answer, contexts = run_rag(kb, question, args.top_k)
+        answer, contexts = (run_agent if args.agent else run_rag)(kb, question, args.top_k)
         score, reason = judge_answer(question, item["reference"], answer, llm)
         hit = keyword_hit(contexts, item.get("keywords", []))
         rows.append({**item, "answer": answer, "contexts": contexts,
@@ -303,6 +325,8 @@ def main() -> None:
 
     report = {
         "meta": {
+            "path": "agent" if args.agent else "rag",
+            "collection": kb.collection_name,
             "timestamp": time.strftime("%Y-%m-%d %H:%M:%S"),
             "dataset": str(Path(args.dataset)),
             "total": len(rows),

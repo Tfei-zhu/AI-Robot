@@ -12,6 +12,7 @@ session_id 每次随机：缓存只对「无会话历史」的首轮问题生效
 """
 import argparse
 import json
+import os
 import random
 import sys
 import time
@@ -30,7 +31,8 @@ def post(base: str, path: str, payload: dict, timeout: float) -> dict:
     req = urllib.request.Request(
         f"{base}{path}",
         data=json.dumps(payload).encode("utf-8"),
-        headers={"Content-Type": "application/json"},
+        headers={"Content-Type": "application/json",
+                 "Authorization": "Bearer " + os.environ.get("AIROBOT_ADMIN_TOKEN", "")},
         method="POST",
     )
     with urllib.request.urlopen(req, timeout=timeout) as resp:
@@ -38,7 +40,9 @@ def post(base: str, path: str, payload: dict, timeout: float) -> dict:
 
 
 def get(base: str, path: str, timeout: float) -> dict:
-    with urllib.request.urlopen(f"{base}{path}", timeout=timeout) as resp:
+    req = urllib.request.Request(f"{base}{path}", headers={
+        "Authorization": "Bearer " + os.environ.get("AIROBOT_ADMIN_TOKEN", "")})
+    with urllib.request.urlopen(req, timeout=timeout) as resp:
         return json.loads(resp.read().decode("utf-8"))
 
 
@@ -67,7 +71,7 @@ def main() -> None:
         print(f"  [{done}/{total}] {q[:30]}")
     print(f"压测完成，耗时 {time.perf_counter() - t0:.0f}s\n")
 
-    summary = get(args.base, "/api/v1/traces?limit=100000", args.timeout)["summary"]
+    summary = get(args.base, "/api/v1/traces?limit=200", args.timeout)["summary"]
     print("==== traces summary ====")
     print(json.dumps(summary, ensure_ascii=False, indent=2))
     print("\n提示：对比 AIROBOT_CACHE_ENABLED=false 轮次的 p95_ms / avg_ms，差值即语义缓存收益。")

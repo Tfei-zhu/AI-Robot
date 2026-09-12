@@ -5,6 +5,12 @@
 """
 import asyncio
 import time
+import hashlib
+import json
+import sqlite3
+import uuid
+from functools import wraps
+from threading import RLock
 from pathlib import Path
 from typing import List, Tuple
 
@@ -57,9 +63,9 @@ def build_markdown_splitter() -> MarkdownHeaderTextSplitter:
     )
 
 
-def build_vector_store():
+def build_vector_store(collection_name: str | None = None, backend: str | None = None):
     """按配置构建向量库后端：inmemory（默认）| milvus（需 pip install langchain-milvus）。"""
-    if settings.vector_store == "milvus":
+    if (backend or settings.vector_store) == "milvus":
         try:
             from langchain_milvus import Milvus
         except ImportError as exc:
@@ -72,24 +78,37 @@ def build_vector_store():
             connection_args["token"] = settings.milvus_token
         return Milvus(
             embedding_function=build_embeddings(),
-            collection_name=settings.milvus_collection,
+            collection_name=collection_name or settings.milvus_collection,
             connection_args=connection_args,
-            auto_id=True,
+            auto_id=False,
+            enable_dynamic_field=True,
         )
     return InMemoryVectorStore(embedding=build_embeddings())
+
+
+def locked(fn):
+    @wraps(fn)
+    def wrapped(self, *args, **kwargs):
+        with self._lock:
+            return fn(self, *args, **kwargs)
+    return wrapped
 
 
 class KnowledgeBase:
     """进程内知识库：向量 + BM25 双路索引，RRF 融合，可选 bge-reranker 重排。"""
 
-    def __init__(self) -> None:
-        self._store = build_vector_store()
-        if settings.vector_store == "milvus" and settings.milvus_reset_on_start:
-            # 与内存库"重启即初始"语义一致：先清空集合，启动导入 data/ 时不会重复入库
-            try:
-                self._store.drop_collection()
-            except Exception:
-                pass
+    def __init__(self, *, purpose: str = "eval", manifest_path: str | Path | None = None) -> None:
+        if purpose not in {"production", "eval", "bench"}:
+            raise ValueError("未知知识库用途")
+        self.collection_name = (settings.milvus_collection if purpose == "production"
+                                else f"airobot_{purpose}_{uuid.uuid4().hex}")
+        self.backend = settings.vector_store
+        self._lock = RLock()
+        self._store = None
+        self._manifest_path = manifest_path
+        self._db = None
+        self._indexed_ids: set[str] = set()
+        self.revision = 0
         self._splitter = build_splitter()
         self._markdown_splitter = build_markdown_splitter()
         self._bm25 = BM25Index()
@@ -97,10 +116,87 @@ class KnowledgeBase:
         self._documents: List[Document] = []
         self.chunk_count = 0
 
+    def _ensure_store(self):
+        if self._store is None:
+            store = build_vector_store(self.collection_name, self.backend)
+            if self.backend == "milvus" and getattr(store, "col", None) is not None:
+                if store.col.schema.auto_id:
+                    raise RuntimeError("旧 Milvus 集合使用自动主键；请备份后配置新的集合名并重建，禁止原地清库")
+            self._store = store
+        return self._store
+
+    def _manifest(self):
+        if self._manifest_path is None:
+            return None
+        if self._db is None:
+            path = Path(self._manifest_path)
+            if not path.is_absolute():
+                path = Path(__file__).resolve().parents[2] / path
+            path.parent.mkdir(parents=True, exist_ok=True)
+            self._db = sqlite3.connect(path, check_same_thread=False)
+            self._db.execute("PRAGMA journal_mode=WAL")
+            self._db.execute("CREATE TABLE IF NOT EXISTS knowledge_chunks "
+                             "(id TEXT PRIMARY KEY, body TEXT NOT NULL, metadata TEXT NOT NULL)")
+            self._db.commit()
+        return self._db
+
+    @staticmethod
+    def _document_key(doc: Document) -> str:
+        value = json.dumps([doc.page_content, doc.metadata], ensure_ascii=False, sort_keys=True)
+        return hashlib.sha256(value.encode()).hexdigest()
+
+    @locked
+    def _ingest_docs(self, docs: List[Document], persist: bool = True) -> int:
+        unique = {self._document_key(d): d for d in docs}
+        pending = {k: d for k, d in unique.items() if k not in self._indexed_ids}
+        if not pending:
+            return 0
+        db = self._manifest() if persist else None
+        if db is not None:
+            with db:
+                db.executemany("INSERT OR IGNORE INTO knowledge_chunks VALUES (?, ?, ?)",
+                               [(k, d.page_content, json.dumps(d.metadata, ensure_ascii=False))
+                                for k, d in pending.items()])
+        store = self._ensure_store()
+        batch, ids = list(pending.values()), list(pending)
+        prepared = self._bm25.prepare([d.page_content for d in batch])
+        if self.backend == "milvus":
+            def write_vectors():
+                # Milvus 的 upsert 不保证创建集合；首次写入先建立 schema。
+                # 重试时重新检查集合，覆盖“创建成功、插入只完成一部分”的情况。
+                if store.col is None:
+                    return store.add_documents(batch, ids=ids)
+                return store.upsert(ids=ids, documents=batch)
+            invoke_with_retry(write_vectors)
+        else:
+            invoke_with_retry(store.add_documents, batch, ids=ids)
+        self._bm25.add_prepared(prepared)
+        self._documents.extend(batch)
+        self._indexed_ids.update(ids)
+        self.chunk_count = len(self._documents)
+        self.revision += 1
+        return len(batch)
+
+    @locked
+    def restore(self) -> int:
+        db = self._manifest()
+        if db is None:
+            return 0
+        rows = db.execute("SELECT body, metadata FROM knowledge_chunks ORDER BY rowid").fetchall()
+        docs = [Document(page_content=body, metadata=json.loads(metadata)) for body, metadata in rows]
+        return self._ingest_docs(docs, persist=False)
+
+    @locked
+    def close(self):
+        if self._db is not None:
+            self._db.close()
+            self._db = None
+
     @property
     def bm25_ready(self) -> bool:
         return self._bm25.ready
 
+    @locked
     def ingest_text(self, title: str, text: str) -> int:
         chunks = self._split_text(title, text)
         docs = [
@@ -111,12 +207,7 @@ class KnowledgeBase:
             )
             for i, c in enumerate(chunks)
         ]
-        if docs:
-            invoke_with_retry(self._store.add_documents, docs)
-            self._documents.extend(docs)
-            self._bm25.add_documents([d.page_content for d in docs])
-            self.chunk_count += len(docs)
-        return len(docs)
+        return self._ingest_docs(docs)
 
     def build_article_docs(self, article_id: int, title: str, content: str,
                            summary: str = "", tags: List[str] | None = None) -> List[Document]:
@@ -136,24 +227,19 @@ class KnowledgeBase:
             for i, c in enumerate(chunks)
         ]
 
+    @locked
     def ingest_article(self, article_id: int, title: str, content: str,
                        summary: str = "", tags: List[str] | None = None) -> int:
         """社区文章入库：按 Markdown 标题分块，metadata 带 article_id 便于溯源。
 
-        注意：本方法不做去重/更新，同一 article_id 重复调用会产生重复分块；
-        去重由调用方（article_consumer）负责。
+        相同正文与元数据幂等追加；文章更新/删除不是发布事件协议的一部分。
         """
         docs = self.build_article_docs(article_id, title, content, summary, tags)
-        if docs:
-            invoke_with_retry(self._store.add_documents, docs)
-            self._documents.extend(docs)
-            self._bm25.add_documents([d.page_content for d in docs])
-            self.chunk_count += len(docs)
-        return len(docs)
+        return self._ingest_docs(docs)
 
     def embed_query(self, query: str) -> list[float]:
         """查询向量化（语义缓存用），带重试。"""
-        return invoke_with_retry(self._store.embedding.embed_query, query)
+        return invoke_with_retry(build_embeddings().embed_query, query)
 
     def _split_text(self, title: str, text: str, markdown: bool = False) -> List[Document]:
         """按文件类型选择分块策略：Markdown 先按标题层级，再对超长章节二次切分。"""
@@ -172,14 +258,15 @@ class KnowledgeBase:
                 docs.extend(self._splitter.split_documents([section]))
         return docs
 
-    def ingest_file(self, path: Path) -> int:
-        return self.ingest_text(path.name, parse_file(path))
+    def ingest_file(self, path: Path, title: str | None = None) -> int:
+        return self.ingest_text(title or path.name, parse_file(path))
 
     def search(self, query: str, top_k: int | None = None) -> List[Document]:
         """混合检索：向量 + BM25 -> RRF 融合 -> bge-reranker 重排。"""
         docs, _ = self.search_detailed(query, top_k)
         return docs
 
+    @locked
     def search_detailed(self, query: str, top_k: int | None = None) -> Tuple[List[Document], dict]:
         """混合检索并返回各阶段耗时明细，供控制台全链路可视化使用。
 
@@ -229,24 +316,24 @@ class KnowledgeBase:
             detail["rerank_enabled"] = True
         return docs[:top_k]
 
+    @locked
     def search_vector(self, query: str, top_k: int | None = None) -> List[Document]:
         """纯向量检索（对照用）。"""
-        if isinstance(self._store, InMemoryVectorStore) and self.chunk_count == 0:
+        if self.chunk_count == 0 and self.backend != "milvus":
             return []
-        try:
-            return invoke_with_retry(
-                self._store.similarity_search, query, k=top_k or settings.hybrid_vector_top_k)
-        except Exception:
-            # Milvus 集合尚未创建（未导入数据）等场景兜底为空，避免打断混合检索
-            if settings.vector_store == "milvus":
-                return []
-            raise
+        store = self._ensure_store()
+        if self.backend == "milvus" and getattr(store, "col", None) is None:
+            return []
+        return invoke_with_retry(
+            store.similarity_search, query, k=top_k or settings.hybrid_vector_top_k)
 
+    @locked
     def search_bm25(self, query: str, top_k: int | None = None) -> List[Document]:
         """纯 BM25 词面检索（对照用）。"""
         indices = self._bm25.search(query, top_k or settings.hybrid_bm25_top_k)
         return [self._documents[i] for i in indices]
 
+    @locked
     def search_hybrid(self, query: str, top_k: int | None = None) -> List[Document]:
         """RRF 融合（不含重排），供评测脚本与对照实验使用。"""
         top_k = top_k or settings.top_k
@@ -263,7 +350,7 @@ class KnowledgeBase:
         return [doc_map[did] for did in fused_ids if did in doc_map]
 
 
-kb = KnowledgeBase()
+kb = KnowledgeBase(purpose="production", manifest_path=settings.knowledge_state_db)
 
 
 RAG_PROMPT = ChatPromptTemplate.from_messages([

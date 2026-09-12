@@ -7,8 +7,7 @@
 - declare 标志必须与 Go DeclareTopic 完全一致（durable topic 交换机 + durable 队列），
   否则会 PRECONDITION_FAILED；
 - 未配置 AIROBOT_AMQP_URL 时优雅降级（不启动消费者，对话服务照常可用）；
-- 投毒消息策略：解析失败或重试后仍失败 -> 大声日志 + ack 跳过（开发规模不建 DLX，
-  卡死队列比跳过一篇文章更糟）；去重由本类的内存集合负责（入库成功后记录）；
+- 非法消息记录后丢弃；临时失败重新入队；SQLite 保存正文和处理状态，pending 可重试；
 - 消费者必须运行在 API 进程内：inmemory 向量库不跨进程共享，独立进程入库对服务不可见。
 """
 import asyncio
@@ -19,6 +18,7 @@ import sqlite3
 from datetime import datetime, timezone
 from pathlib import Path
 from app.config import settings
+from app.services.concurrency import run_blocking
 
 logger = logging.getLogger("airobot.article_consumer")
 
@@ -42,7 +42,8 @@ class ArticleIngestConsumer:
             "summary TEXT NOT NULL DEFAULT '', tags_json TEXT NOT NULL DEFAULT '[]',"
             "status TEXT NOT NULL, ingested_at TEXT NOT NULL)")
         self._db.commit()
-        self._ingested_article_ids: set[int] = self._load_ingested_ids()
+        self._ingested_article_ids: set[int] = set()
+        self._event_lock = asyncio.Lock()
         self._task: asyncio.Task | None = None
 
     @property
@@ -97,6 +98,10 @@ class ArticleIngestConsumer:
         self._db.commit()
 
     async def restore(self) -> int:
+        async with self._event_lock:
+            return await run_blocking(self._restore_sync)
+
+    def _restore_sync(self) -> int:
         """从 SQLite 重放文章正文，恢复进程内向量与 BM25 索引。"""
         rows = self._db.execute(
             "SELECT article_id, title, content, summary, tags_json "
@@ -105,6 +110,8 @@ class ArticleIngestConsumer:
         ).fetchall()
         restored = 0
         for article_id, title, content, summary, tags_json in rows:
+            if article_id in self._ingested_article_ids:
+                continue
             try:
                 tags = json.loads(tags_json or "[]")
                 if not isinstance(tags, list):
@@ -185,6 +192,10 @@ class ArticleIngestConsumer:
         logger.info("文章事件处理完成: %s（event_id=%s）", result, event_id)
 
     async def handle_event(self, payload: dict) -> str:
+        async with self._event_lock:
+            return await self._handle_event(payload)
+
+    async def _handle_event(self, payload: dict) -> str:
         """处理单条文章事件（纯逻辑，便于离线测试）。
 
         返回 ingested | duplicate | not_found | invalid | skipped。
@@ -192,32 +203,37 @@ class ArticleIngestConsumer:
         if not isinstance(payload, dict):
             return "invalid"
         article_id = payload.get("article_id")
-        if not isinstance(article_id, int) or article_id <= 0:
+        if type(article_id) is not int or article_id <= 0:
             logger.error("文章事件缺少合法 article_id，跳过: %r", article_id)
             return "invalid"
-        if self._article_status(article_id) in {"pending", "ingested"}:
+        if article_id in self._ingested_article_ids:
             logger.info("文章 %s 重复投递，跳过入库", article_id)
             return "duplicate"
         try:
-            data = await self._client.get_article_detail(article_id)
+            row = self._db.execute(
+                "SELECT title, content, summary, tags_json FROM ingested_articles WHERE article_id = ?",
+                (article_id,)).fetchone()
+            data = ({"title": row[0], "content": row[1], "summary": row[2], "tags": json.loads(row[3])}
+                    if row else await self._client.get_article_detail(article_id))
         except Exception as exc:
             logger.error("抓取文章 %s 失败，跳过该消息: %s", article_id, exc)
             return "skipped"
         if data is None:
             logger.warning("文章 %s 不存在（可能已删除），跳过", article_id)
             return "not_found"
-        if not self._reserve_article(article_id, data):
-            logger.info("文章 %s 已由其他投递处理中，跳过重复入库", article_id)
-            return "duplicate"
         try:
-            chunks = self._kb.ingest_article(
-                article_id, data.get("title", ""), data.get("content", ""),
-                summary=data.get("summary", ""), tags=data.get("tags") or [])
+            chunks = await run_blocking(self._persist_and_ingest, article_id, data)
         except Exception as exc:
-            self._delete_pending(article_id)
-            logger.error("文章 %s 入库失败，跳过该消息: %s", article_id, exc)
+            logger.error("文章 %s 入库失败，保留正文并等待重试: %s", article_id, exc)
             return "skipped"
-        self._mark_ingested(article_id)
         logger.info("文章入库成功: id=%s 分块=%s 总块数=%s",
                     article_id, chunks, self._kb.chunk_count)
         return "ingested"
+
+    def _persist_and_ingest(self, article_id, data):
+        self._reserve_article(article_id, data)
+        chunks = self._kb.ingest_article(
+            article_id, data.get("title", ""), data.get("content", ""),
+            summary=data.get("summary", ""), tags=data.get("tags") or [])
+        self._mark_ingested(article_id)
+        return chunks
