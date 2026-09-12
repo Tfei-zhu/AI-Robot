@@ -32,7 +32,9 @@ def test_extract_article_id():
     assert _extract_article_id("文章 12 的数据") == 12          # 真实自增 ID 是小数字
     assert _extract_article_id("查一下article #3") == 3
     assert _extract_article_id("帮我看下文章45的状态") == 45
-    assert _extract_article_id("随便聊聊 2026 年的 Go 大事") == 2026  # 兜底：任意 1~10 位数字
+    # 普通数字（例如 Go 版本或年份）不能触发实时文章查询。
+    assert _extract_article_id("随便聊聊 2026 年的 Go 大事") is None
+    assert _extract_article_id("Go 1.22 有什么新特性") is None
     assert _extract_article_id("你好呀") is None
 
 

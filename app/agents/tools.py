@@ -16,9 +16,8 @@ from app.services.go_client import GoServiceError, go_client
 
 logger = logging.getLogger("airobot.tools")
 
-# 文章 ID 提取：优先「文章 12 / article #12」句式，兜底任意 1~10 位数字（真实自增 ID 通常较小）
+# 文章 ID 提取：只接受明确的「文章 12 / article #12」句式，避免把版本号等普通数字误认为文章 ID。
 _ARTICLE_ID_RE = re.compile(r"(?:文章|article)\s*#?\s*(\d{1,10})", re.IGNORECASE)
-_FALLBACK_ID_RE = re.compile(r"\b(\d{1,10})\b")
 
 
 def search_knowledge(query: str) -> str:
@@ -28,7 +27,7 @@ def search_knowledge(query: str) -> str:
 
 
 def _extract_article_id(message: str) -> int | None:
-    match = _ARTICLE_ID_RE.search(message) or _FALLBACK_ID_RE.search(message)
+    match = _ARTICLE_ID_RE.search(message)
     return int(match.group(1)) if match else None
 
 

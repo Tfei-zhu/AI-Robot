@@ -112,8 +112,8 @@ class KnowledgeBase:
             for i, c in enumerate(chunks)
         ]
         if docs:
-            self._documents.extend(docs)
             invoke_with_retry(self._store.add_documents, docs)
+            self._documents.extend(docs)
             self._bm25.add_documents([d.page_content for d in docs])
             self.chunk_count += len(docs)
         return len(docs)
@@ -145,8 +145,8 @@ class KnowledgeBase:
         """
         docs = self.build_article_docs(article_id, title, content, summary, tags)
         if docs:
-            self._documents.extend(docs)
             invoke_with_retry(self._store.add_documents, docs)
+            self._documents.extend(docs)
             self._bm25.add_documents([d.page_content for d in docs])
             self.chunk_count += len(docs)
         return len(docs)
