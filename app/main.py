@@ -40,6 +40,7 @@ async def lifespan(_: FastAPI):
         except Exception as exc:
             logger.warning("启动时导入示例知识库失败（请检查 AIROBOT_EMBEDDING_API_KEY）: %s", exc)
     consumer = ArticleIngestConsumer(kb, go_client)
+    app.state.consumer = consumer  # 供 /health 上报放弃重投的文章数
     try:
         await consumer.restore()
         await consumer.start()
@@ -92,8 +93,11 @@ async def unhandled_exception_handler(request: Request, exc: Exception):
 
 @app.get("/health")
 def health():
+    # ingest_failed_events > 0 表示有文章连续重投失败已停止重试，需人工或重启重放
     return {"status": "ok", "llm_model": settings.llm_model,
-            "embedding_model": settings.embedding_model, "engine": "langgraph"}
+            "embedding_model": settings.embedding_model, "engine": "langgraph",
+            "ingest_failed_events": getattr(getattr(app.state, "consumer", None),
+                                            "failed_event_count", 0)}
 
 
 @app.get("/api/v1/stats", response_model=StatsResponse)

@@ -52,9 +52,12 @@ async def _cache_lookup(message: str, session_id: str) -> tuple[list[float] | No
     started = time.perf_counter()
     try:
         vector = await asyncio.to_thread(kb.embed_query, message)
+        # 三层防护已足够：namespace 按账户哈希隔离（跨账户不可能命中）、revision 锁定
+        # 知识库版本、get() 内再要求余弦与词面重叠双门限通过。因此这里不做 exact 精确
+        # 匹配，否则改写提问（语义缓存的主要收益）永远不命中，等于关掉该特性。
         cached = await asyncio.to_thread(
             semantic_cache.get, vector, message, namespace=session_id.split(":", 1)[0],
-            revision=getattr(kb, "revision", 0), exact=True)
+            revision=getattr(kb, "revision", 0))
         elapsed = round((time.perf_counter() - started) * 1000, 1)
         return vector, cached, elapsed, True
     except Exception as exc:

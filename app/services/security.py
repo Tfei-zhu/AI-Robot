@@ -35,36 +35,44 @@ class SecurityMiddleware:
         # 内部令牌不等同于管理员；客户端自填账户只有网关令牌匹配后才可信。
         principal = "admin" if admin else "account/" + account
         scope.setdefault("state", {})["principal"] = principal
-        if path == "/api/v1/ingest":
-            # 在 FastAPI multipart 解析前限制请求体；允许少量 multipart 元数据开销。
-            limit = settings.max_upload_bytes + 64 * 1024
-            try:
-                length = int(headers.get("content-length", "0"))
-                if length < 0:
-                    raise ValueError
-            except ValueError:
-                return await JSONResponse({"detail": "Content-Length 无效"}, status_code=400)(scope, receive, send)
-            body, size = [], 0
-            if length > limit:
-                return await JSONResponse({"detail": "上传请求过大"}, status_code=413)(scope, receive, send)
-            while True:
-                event = await receive()
-                if event["type"] == "http.disconnect":
-                    return
-                size += len(event.get("body", b""))
-                if size > limit:
-                    return await JSONResponse({"detail": "上传请求过大"}, status_code=413)(scope, receive, send)
-                body.append(event)
-                if not event.get("more_body", False):
-                    break
-            iterator = iter(body)
-
-            async def replay():
-                event = next(iterator, None)
-                return event if event is not None else await receive()
-
-            return await self.app(scope, replay, send)
+        if scope.get("method") in {"POST", "PUT", "PATCH"}:
+            # 上传接口允许文件内容 + 少量 multipart 元数据；其余 JSON 接口按请求体上限。
+            limit = (settings.max_upload_bytes + 64 * 1024 if path == "/api/v1/ingest"
+                     else settings.max_request_bytes)
+            return await self._forward_with_limited_body(scope, receive, send, headers, limit)
         return await self.app(scope, receive, send)
+
+    async def _forward_with_limited_body(self, scope, receive, send, headers, limit: int):
+        """先在解析前把请求体读入内存（带上限）再回放给应用，超大请求直接拒绝。"""
+        length = None
+        if "content-length" in headers:
+            try:
+                length = int(headers["content-length"])
+            except ValueError:
+                length = -1
+            if length < 0:
+                return await JSONResponse({"detail": "Content-Length 无效"}, status_code=400)(scope, receive, send)
+            if length > limit:
+                return await JSONResponse({"detail": "请求体过大"}, status_code=413)(scope, receive, send)
+        # 无 Content-Length（分块传输）时按实际字节数累计拦截。
+        body, size = [], 0
+        while True:
+            event = await receive()
+            if event["type"] == "http.disconnect":
+                return
+            size += len(event.get("body", b""))
+            if size > limit:
+                return await JSONResponse({"detail": "请求体过大"}, status_code=413)(scope, receive, send)
+            body.append(event)
+            if not event.get("more_body", False):
+                break
+        iterator = iter(body)
+
+        async def replay():
+            event = next(iterator, None)
+            return event if event is not None else await receive()
+
+        return await self.app(scope, replay, send)
 
 
 def session_identity(principal, requested):

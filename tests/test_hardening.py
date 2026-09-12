@@ -17,8 +17,8 @@ from langchain_core.messages import AIMessage, AIMessageChunk, ToolMessage
 from app.config import settings
 from app.rag.retriever import KnowledgeBase
 from app.rag.lexical import BM25Index
-from app.services.article_consumer import ArticleIngestConsumer
-from app.services.semantic_cache import SemanticCache
+from app.services.article_consumer import ArticleIngestConsumer, RetryLater
+from app.services.semantic_cache import SemanticCache, semantic_cache
 from app.services.memory import memory
 from app.services.concurrency import run_blocking
 from app.services.security import session_identity
@@ -189,6 +189,27 @@ class CacheTests(unittest.IsolatedAsyncioTestCase):
                 self.assertEqual(memory.get_messages(sid)[-1].content, "缓存答案")
                 memory.clear(sid)
 
+    async def test_cache_lookup_hits_rephrased_question_inside_account(self):
+        """改写提问应在同一账户内命中缓存；exact 精确匹配会让语义缓存彻底失去收益。"""
+        vector, namespace = [1.0, 0.0], "acct-cache"
+        revision = getattr(chat_module.kb, "revision", 0)
+        session = f"{namespace}:session-1"
+        semantic_cache.clear()
+        memory.clear(session)
+        semantic_cache.put(vector, {"reply": "语义答案", "sources": ["s#0"]},
+                           "Go 的 context 如何取消", namespace=namespace, revision=revision)
+        try:
+            with patch.object(settings, "cache_enabled", True), \
+                 patch.object(settings, "embedding_api_key", "fake"), \
+                 patch.object(chat_module.kb, "embed_query", lambda _m: vector):
+                _, hit, _, checked = await chat_module._cache_lookup(
+                    "Go 并发代码里 context 怎么取消任务", session)
+        finally:
+            semantic_cache.clear()
+        self.assertTrue(checked)
+        self.assertIsNotNone(hit, "改写提问未命中，语义缓存退化为精确匹配")
+        self.assertEqual(hit["reply"], "语义答案")
+
     async def test_knowledge_tool_returns_raw_evidence_without_llm(self):
         docs = [Document(page_content="原文资料", metadata={"doc_id": "doc#0"})]
         with patch.object(tools.kb, "search_detailed", return_value=(docs, {"vector_hits": 1})):
@@ -243,6 +264,43 @@ class AsyncTests(unittest.IsolatedAsyncioTestCase):
         self.assertEqual(results.count("duplicate"), 4)
         self.assertEqual(kb.attempts, 2)
         consumer.close()
+
+    async def test_consumer_retries_are_bounded_and_back_off(self):
+        """回归：下游宕机时可恢复失败必须有限重投并退避，不能形成高速重投风暴。"""
+        class KB:
+            chunk_count = 0
+            def ingest_article(self, *args, **kwargs):
+                self.chunk_count += 1
+                return 1
+        class FlakyClient:
+            down = True
+            async def get_article_detail(self, _n):
+                if FlakyClient.down:
+                    raise RuntimeError("Go 文章服务不可用")
+                return {"title": "a", "content": "b", "summary": "", "tags": []}
+        consumer = ArticleIngestConsumer(KB(), FlakyClient(), state_path=":memory:")
+        message = SimpleNamespace(body=b'{"article_id": 7, "event_id": "e-7"}')
+        self.assertEqual(RetryLater("x", 2.5).delay, 2.5)
+        self.assertIsInstance(RetryLater("x"), RuntimeError)  # 兼容按 RuntimeError 捕获的调用方
+        try:
+            with patch.object(settings, "amqp_max_retries", 3), \
+                 patch.object(settings, "amqp_retry_backoff_seconds", 1.0), \
+                 patch.object(settings, "amqp_retry_max_backoff_seconds", 8.0):
+                delays = []
+                for _ in range(2):
+                    with self.assertRaises(RetryLater) as ctx:
+                        await consumer._process_delivery(message)
+                    delays.append(ctx.exception.delay)
+                # 第 3 次达到上限：改为登记待重放并放行（消息被 ack，不再无限重投）
+                await consumer._process_delivery(message)
+                self.assertEqual(delays, [1.0, 2.0])
+                self.assertEqual(consumer.failed_event_count, 1)
+                FlakyClient.down = False
+                await consumer._process_delivery(message)   # 下游恢复后重放成功
+                self.assertEqual(consumer.failed_event_count, 0)
+                self.assertEqual(consumer._attempts, {})   # 重投计数随成功归零
+        finally:
+            consumer.close()
 
     async def test_stream_tokens_arrive_before_final_generation_completes(self):
         release = asyncio.Event()
@@ -393,6 +451,27 @@ class SecurityTests(unittest.IsolatedAsyncioTestCase):
                 yield b"x" * 40000
             response = await self.client.post("/api/v1/ingest", headers=self.admin, content=chunks())
             self.assertEqual(response.status_code, 413)
+
+    async def test_json_body_limit_before_parser(self):
+        """回归：非上传类接口的请求体也必须在 Pydantic 解析前限量。"""
+        seen = []
+        async def fake_chat(message, sid):
+            seen.append(message)
+            return {"reply": "ok"}
+        oversized = "x" * (settings.max_request_bytes + 1024)
+        with patch.object(main, "chat", fake_chat):
+            response = await self.client.post("/api/v1/chat", headers=self.admin,
+                                              json={"message": "hi"})
+            self.assertEqual(response.status_code, 200, response.text)
+            response = await self.client.post("/api/v1/chat", headers=self.admin,
+                                              json={"message": oversized})
+            self.assertEqual(response.status_code, 413)   # 不是 422：解析前就被拦截
+            async def chunks():
+                for _ in range(5):
+                    yield b"x" * 100000
+            response = await self.client.post("/api/v1/chat", headers=self.admin, content=chunks())
+            self.assertEqual(response.status_code, 413)   # 无 Content-Length 的分块请求
+        self.assertEqual(seen, ["hi"])
 
     async def test_stream_session_lock_released_on_completion(self):
         entered, release = asyncio.Event(), asyncio.Event()

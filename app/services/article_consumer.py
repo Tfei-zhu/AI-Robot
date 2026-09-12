@@ -7,7 +7,8 @@
 - declare 标志必须与 Go DeclareTopic 完全一致（durable topic 交换机 + durable 队列），
   否则会 PRECONDITION_FAILED；
 - 未配置 AIROBOT_AMQP_URL 时优雅降级（不启动消费者，对话服务照常可用）；
-- 非法消息记录后丢弃；临时失败重新入队；SQLite 保存正文和处理状态，pending 可重试；
+- 非法消息记录后丢弃；可恢复失败有限次退避重投，超限记录后放弃（避免重投风暴）；
+- SQLite 保存正文和处理状态，pending 可重试；
 - 消费者必须运行在 API 进程内：inmemory 向量库不跨进程共享，独立进程入库对服务不可见。
 """
 import asyncio
@@ -23,6 +24,18 @@ from app.services.concurrency import run_blocking
 logger = logging.getLogger("airobot.article_consumer")
 
 SUPERVISOR_BACKOFF_SECONDS = 30.0
+
+
+class RetryLater(RuntimeError):
+    """本次投递可恢复失败，需要重新入队；delay 为让 Broker 重投前的退避秒数。
+
+    RabbitMQ 对 requeue 没有内建延迟，若失败后立即重投，下游故障期间会形成
+    "重投 -> 立刻再失败" 的高速循环并把压力打到已宕机的对端，因此这里显式退避。
+    """
+
+    def __init__(self, message: str, delay: float = 0.0) -> None:
+        super().__init__(message)
+        self.delay = delay
 
 
 class ArticleIngestConsumer:
@@ -41,8 +54,16 @@ class ArticleIngestConsumer:
             "article_id INTEGER PRIMARY KEY, title TEXT NOT NULL, content TEXT NOT NULL,"
             "summary TEXT NOT NULL DEFAULT '', tags_json TEXT NOT NULL DEFAULT '[]',"
             "status TEXT NOT NULL, ingested_at TEXT NOT NULL)")
+        self._db.execute(
+            "CREATE TABLE IF NOT EXISTS ingest_failures ("
+            "article_id INTEGER PRIMARY KEY, event_id TEXT NOT NULL,"
+            "attempts INTEGER NOT NULL, last_failed_at TEXT NOT NULL)")
         self._db.commit()
+        # 必须从空集开始：restore() 用它判断"本进程内已重建过索引的文章"，
+        # 若构造时就用数据库里的 ingested 状态预填充，重启后会跳过全部文章，
+        # 进程内向量与 BM25 索引将无法重建。跨进程去重的权威来源是数据库状态。
         self._ingested_article_ids: set[int] = set()
+        self._attempts: dict[int, int] = {}
         self._event_lock = asyncio.Lock()
         self._task: asyncio.Task | None = None
 
@@ -50,6 +71,12 @@ class ArticleIngestConsumer:
     def ingested_article_ids(self) -> set[int]:
         return {int(row[0]) for row in self._db.execute(
             "SELECT article_id FROM ingested_articles WHERE status = 'ingested'").fetchall()}
+
+    @property
+    def failed_event_count(self) -> int:
+        """已放弃重投、等待人工或下次启动重放的文章数。"""
+        return int(self._db.execute("SELECT COUNT(*) FROM ingest_failures").fetchone()[0])
+
     @staticmethod
     def _resolve_state_path(state_path: str | Path | None) -> str:
         if state_path is not None:
@@ -58,11 +85,6 @@ class ArticleIngestConsumer:
         if not path.is_absolute():
             path = Path(__file__).resolve().parents[2] / path
         return str(path)
-
-    def _load_ingested_ids(self) -> set[int]:
-        rows = self._db.execute(
-            "SELECT article_id FROM ingested_articles WHERE status = 'ingested'").fetchall()
-        return {int(row[0]) for row in rows}
 
     def _article_status(self, article_id: int) -> str | None:
         row = self._db.execute(
@@ -83,12 +105,32 @@ class ArticleIngestConsumer:
         return self._article_status(article_id) == "pending"
 
     def _mark_ingested(self, article_id: int) -> None:
+        now = datetime.now(timezone.utc).isoformat()
         self._db.execute(
             "UPDATE ingested_articles SET status = 'ingested', ingested_at = ? "
-            "WHERE article_id = ?", (datetime.now(timezone.utc).isoformat(), article_id)
+            "WHERE article_id = ?", (now, article_id)
         )
+        self._db.execute("DELETE FROM ingest_failures WHERE article_id = ?", (article_id,))
         self._db.commit()
         self._ingested_article_ids.add(article_id)
+        self._attempts.pop(article_id, None)
+
+    def _record_failure(self, article_id: int, event_id: str, attempts: int) -> None:
+        """登记放弃重投的文章：进程内是"已放弃"，对外仍有可查询的记录，便于人工重放。"""
+        self._db.execute(
+            "INSERT INTO ingest_failures (article_id, event_id, attempts, last_failed_at) "
+            "VALUES (?, ?, ?, ?) ON CONFLICT(article_id) DO UPDATE SET "
+            "event_id = excluded.event_id, attempts = excluded.attempts, "
+            "last_failed_at = excluded.last_failed_at",
+            (article_id, str(event_id), attempts, datetime.now(timezone.utc).isoformat()))
+        self._db.commit()
+
+    def _retry_delay(self, attempt: int) -> float:
+        """指数退避：base * 2^(attempt-1)，并封顶等待下游恢复。"""
+        base = settings.amqp_retry_backoff_seconds
+        if base <= 0:
+            return 0.0
+        return min(base * (2 ** (attempt - 1)), settings.amqp_retry_max_backoff_seconds)
 
     def _delete_pending(self, article_id: int) -> None:
         self._db.execute(
@@ -175,11 +217,16 @@ class ArticleIngestConsumer:
                         settings.amqp_routing_key)
             async with queue.iterator() as queue_iter:
                 async for message in queue_iter:
-                    async with message.process(requeue=True, ignore_processed=True):
-                        await self._process_delivery(message)
+                    try:
+                        async with message.process(requeue=True, ignore_processed=True):
+                            await self._process_delivery(message)
+                    except RetryLater as exc:
+                        # 消息已重新入队；先退避再取下一轮，避免下游故障期间的高速重投
+                        if exc.delay > 0:
+                            await asyncio.sleep(exc.delay)
 
     async def _process_delivery(self, message) -> None:
-        """单条投递：坏 JSON 丢弃；可恢复失败抛出并让 RabbitMQ 重新入队。"""
+        """单条投递：坏 JSON 丢弃；可恢复失败有限次退避重投，超限记录后放弃。"""
         try:
             payload = json.loads(message.body)
         except (TypeError, ValueError, json.JSONDecodeError) as exc:
@@ -187,9 +234,23 @@ class ArticleIngestConsumer:
             return
         result = await self.handle_event(payload)
         event_id = payload.get("event_id", "unknown") if isinstance(payload, dict) else "unknown"
-        if result == "skipped":
-            raise RuntimeError(f"文章事件处理失败，重新入队（event_id={event_id}）")
-        logger.info("文章事件处理完成: %s（event_id=%s）", result, event_id)
+        if result != "skipped":
+            if isinstance(payload, dict) and isinstance(payload.get("article_id"), int):
+                self._attempts.pop(payload["article_id"], None)  # 已恢复，重投计数归零
+            logger.info("文章事件处理完成: %s（event_id=%s）", result, event_id)
+            return
+        # handle_event 只在 article_id 合法时才可能返回 skipped
+        article_id = payload["article_id"]
+        attempt = self._attempts.get(article_id, 0) + 1
+        self._attempts[article_id] = attempt
+        if attempt >= settings.amqp_max_retries:
+            self._record_failure(article_id, event_id, attempt)
+            logger.error("文章 %s 连续 %s 次处理失败，已停止重投并登记待重放（event_id=%s）",
+                         article_id, attempt, event_id)
+            return
+        raise RetryLater(
+            f"文章事件处理失败，重新入队（event_id={event_id}，第 {attempt}/"
+            f"{settings.amqp_max_retries} 次）", self._retry_delay(attempt))
 
     async def handle_event(self, payload: dict) -> str:
         async with self._event_lock:

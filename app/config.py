@@ -71,10 +71,17 @@ class Settings:
     amqp_queue: str = _env("AIROBOT_AMQP_QUEUE", "article.ai.ingest.queue")
     amqp_routing_key: str = _env("AIROBOT_AMQP_ROUTING_KEY", "article.timeline.publish")
     amqp_prefetch: int = int(_env("AIROBOT_AMQP_PREFETCH", "5"))
+    # 可恢复失败的重投上限与指数退避：超限后记录并放弃，避免下游宕机时无限高速重投
+    amqp_max_retries: int = max(1, int(_env("AIROBOT_AMQP_MAX_RETRIES", "5")))
+    amqp_retry_backoff_seconds: float = max(0.0, float(_env("AIROBOT_AMQP_RETRY_BACKOFF_SECONDS", "2")))
+    amqp_retry_max_backoff_seconds: float = max(
+        0.0, float(_env("AIROBOT_AMQP_RETRY_MAX_BACKOFF_SECONDS", "30")))
     # 文章入库状态与正文持久化（相对路径以项目根目录为基准，随 data 卷保存）
     ingest_state_db: str = _env("AIROBOT_INGEST_STATE_DB", "data/airobot_state.sqlite3")
     # 单个上传文件大小上限，避免整文件读入内存导致 OOM
     max_upload_bytes: int = max(1, int(_env("AIROBOT_MAX_UPLOAD_BYTES", str(10 * 1024 * 1024))))
+    # 非上传类 JSON 接口的请求体上限，在 Pydantic 解析前拦截超大请求
+    max_request_bytes: int = max(1024, int(_env("AIROBOT_MAX_REQUEST_BYTES", str(256 * 1024))))
 
 
 settings = Settings()
