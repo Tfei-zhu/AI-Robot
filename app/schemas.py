@@ -14,8 +14,9 @@ class ChatResponse(BaseModel):
     reply: str
     intent: Optional[str] = None
     sources: list = []
-    engine: str = "langchain"   # langchain | crew
-    used_crew: bool = False
+    engine: str = "langgraph"
+    run_id: str = ""
+    steps: list = []
     cache_hit: bool = False
 
 
@@ -29,8 +30,8 @@ class StatsResponse(BaseModel):
     total_chunks: int
     llm_model: str
     embedding_model: str
-    use_crew: bool
-    crew_available: bool
+    agent_engine: str = "langgraph"
+    agent_max_tool_rounds: int = 0
     hybrid_enabled: bool = True
     bm25_ready: bool = False
     rerank_enabled: bool = False

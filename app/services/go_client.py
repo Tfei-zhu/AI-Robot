@@ -38,7 +38,7 @@ def _normalize(payload: dict) -> dict:
 
 
 class GoArticleClient:
-    """异步 + 同步双通道：异步供内置路由 / SSE 与消费者，同步供 CrewAI 工具线程。"""
+    """异步 + 同步双通道：异步供 Agent 与消费者，同步入口保留给离线脚本。"""
 
     def __init__(self, base_url: str, token: str, timeout: float,
                  transport: httpx.AsyncBaseTransport | None = None) -> None:
@@ -86,7 +86,7 @@ class GoArticleClient:
         return self._parse(resp, article_id)
 
     def get_article_detail_sync(self, article_id: int) -> dict | None:
-        """同步查询（CrewAI 工具在独立线程运行，不能复用事件循环）。"""
+        """同步查询（供离线脚本和兼容调用使用）。"""
         if not self.enabled:
             raise GoServiceError("Go 文章服务未启用（未配置 AIROBOT_GO_API_BASE_URL）")
         if self._sync_client is None:

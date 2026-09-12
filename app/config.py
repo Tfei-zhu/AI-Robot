@@ -27,8 +27,8 @@ class Settings:
     embedding_base_url: str = _env("AIROBOT_EMBEDDING_BASE_URL", "https://dashscope.aliyuncs.com/compatible-mode/v1")
     embedding_api_key: str = _env("AIROBOT_EMBEDDING_API_KEY")
     embedding_model: str = _env("AIROBOT_EMBEDDING_MODEL", "text-embedding-v4")
-    # 智能体
-    use_crew: bool = _env("AIROBOT_USE_CREW", "true").lower() == "true"
+    # Agent：每个请求最多允许的工具调用轮次，防止模型进入无限循环
+    agent_max_tool_rounds: int = int(_env("AIROBOT_AGENT_MAX_TOOL_ROUNDS", "4"))
     # RAG
     top_k: int = int(_env("AIROBOT_TOP_K", "5"))
     chunk_size: int = int(_env("AIROBOT_CHUNK_SIZE", "400"))

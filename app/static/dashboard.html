@@ -42,7 +42,7 @@ tr:hover td{background:#1a2130}
 .chip.knowledge{color:#93c5fd;background:#1e3a5f}
 .chip.article{color:#fcd34d;background:#5f4a1e}
 .chip.chat{color:#a7f3d0;background:#14532d}
-.chip.crew{color:#c4b5fd;background:#3b2f6e}
+.chip.agent{color:#c4b5fd;background:#3b2f6e}
 .chip.ratelimited{color:#fca5a5;background:#5f1e1e}
 .bar{display:flex;height:8px;border-radius:4px;overflow:hidden;background:#232c40;min-width:90px}
 .bar .s1{background:var(--accent)} .bar .s2{background:var(--ok)} .bar .s3{background:var(--warn)} .bar .s4{background:#a78bfa}
@@ -106,7 +106,7 @@ tr:hover td{background:#1a2130}
   <header>
     <div>
       <h1>🐹 Go 文章社区助手 <span class="dot">控制台</span></h1>
-      <div class="sub">FastAPI + LangChain RAG + CrewAI 多智能体 · Go 技术文章问答与实时执行监控</div>
+      <div class="sub">FastAPI + LangGraph Agent + RAG · Go 技术文章任务执行与实时监控</div>
     </div>
     <div>
       <span id="refreshAt">等待连接…</span>
@@ -178,7 +178,7 @@ tr:hover td{background:#1a2130}
 
 <script>
 const FEATS = [
-  ["🧠","多智能体编排","CrewAI 意图识别官 → 社区助手，多工具协作，失败自动降级内置路由"],
+  ["🧠","Agent 编排","LangGraph 规划 → 工具调用循环 → 结果整合，完整展示执行轨迹"],
   ["📚","Go 知识库问答","RAG 检索增强生成，启动自动导入 Go 社区示例知识库，支持上传文档"],
   ["🔍","混合检索","向量 + jieba/BM25 词面双路 → RRF 融合，命中率 85%→98%"],
   ["⚖️","语义重排","bge-reranker 对候选打分重排，懒加载 + 异常自动降级"],
@@ -203,7 +203,7 @@ feats.innerHTML = FEATS.map(f =>
 
 function fmt(t){ if(!t) return "-"; const d=new Date(t*1000); const p=n=>String(n).padStart(2,"0"); return `${p(d.getHours())}:${p(d.getMinutes())}:${p(d.getSeconds())}`; }
 function ms(v){ return v==null?"-":(v<1000?`${v}ms`:`${(v/1000).toFixed(1)}s`); }
-const INTENT_CHIP = {knowledge:"knowledge",article:"article",chat:"chat",crew:"crew",ratelimited:"ratelimited"};
+const INTENT_CHIP = {agent:"agent",ratelimited:"ratelimited"};
 function chip(k){ const c=INTENT_CHIP[k]||""; return `<span class="chip ${c}">${k||"-"}</span>`; }
 
 function stageBar(e){
@@ -258,6 +258,7 @@ function renderHist(entries){
 const STAGES=[
   {key:"rate_limit",icon:"🛡️",name:"限流检查"},
   {key:"cache",icon:"💾",name:"语义缓存"},
+  {key:"agent",icon:"🤖",name:"Agent 规划"},
   {key:"intent",icon:"🎯",name:"意图识别"},
   {key:"retrieval",icon:"🔍",name:"混合检索"},
   {key:"tool",icon:"📦",name:"工具调用"},

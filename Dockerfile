@@ -1,6 +1,6 @@
 # 第 5 批：容器化部署。
-# 基础镜像只装核心依赖（requirements.txt），不含 crewai/ragas/torch——
-# 多 Agent 与重排为可选能力，需要时在 compose 中预装或挂载体积缓存。
+# 基础镜像只装核心依赖（requirements.txt），不含 ragas/torch——
+# LangGraph Agent 是核心能力；重排与评测为可选能力。
 #
 # 构建加速说明：
 #   - pip 默认走清华镜像源（国内快），可用 --build-arg PIP_INDEX_URL=... 覆盖

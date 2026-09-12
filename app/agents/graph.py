@@ -1,0 +1,182 @@
+# -*- coding: utf-8 -*-
+"""LangGraph 编排：规划 -> 工具调用循环 -> 结果整合。
+
+这是服务唯一的 Agent 运行时。RAG、文章查询和社区规范都是受限的只读工具；
+工具轮次有硬上限，避免模型陷入循环。运行状态中的 ``steps`` 可直接映射到
+SSE 事件与前端执行面板。
+"""
+import json
+import operator
+from typing import Annotated, Any
+
+from langchain_core.messages import AIMessage, BaseMessage, SystemMessage, ToolMessage
+from langchain_openai import ChatOpenAI
+from langgraph.graph import END, START, StateGraph
+from langgraph.graph.message import add_messages
+from typing_extensions import TypedDict
+
+from app.agents.tools import AGENT_TOOLS
+from app.config import settings
+from app.services.resilience import ainvoke_with_retry
+
+SYSTEM_PROMPT = """你是 Go 文章社区的任务型 Agent。
+你的职责是先判断完成用户目标所需的事实，再按需调用只读工具并基于工具结果回答。
+
+规则：
+1. 涉及 Go 技术、社区文章内容、发文或评论规范时，优先调用合适工具；不要假装已查询。
+2. 可组合多次工具调用，但工具调用次数有限，应避免重复查询。
+3. 文章 ID 或实时互动数据使用 query_article；知识性问题使用 search_knowledge。
+4. 工具结果之外的信息要明确其不确定性。暂不具备发布、评论、修改等写入权限。
+5. 最终用简洁、友好的中文回答；引用由系统自动附带，不要伪造来源。
+"""
+
+FINALIZE_PROMPT = """请根据已完成的工具调用结果，直接给出最终中文答复。
+不得再调用任何工具；不得声称执行了未发生的操作；内容简洁、可行动。"""
+
+
+class AgentState(TypedDict, total=False):
+    messages: Annotated[list[BaseMessage], add_messages]
+    session_id: str
+    run_id: str
+    sources: Annotated[list[str], operator.add]
+    steps: Annotated[list[dict[str, Any]], operator.add]
+    tool_rounds: int
+    final: str
+
+
+_llm_cache: dict[tuple[str, str, str], ChatOpenAI] = {}
+_tools_by_name = {item.name: item for item in AGENT_TOOLS}
+_graph = None
+
+
+def get_llm() -> ChatOpenAI:
+    """复用 OpenAI 兼容 LLM 客户端，避免每个 Agent Run 新建连接。"""
+    key = (settings.llm_model, settings.llm_base_url, settings.llm_api_key)
+    if key not in _llm_cache:
+        _llm_cache[key] = ChatOpenAI(
+            model=settings.llm_model,
+            api_key=settings.llm_api_key or "sk-placeholder-not-configured",
+            base_url=settings.llm_base_url,
+            temperature=0.2,
+        )
+    return _llm_cache[key]
+
+
+def _text(content: Any) -> str:
+    if isinstance(content, str):
+        return content
+    if isinstance(content, list):
+        return "".join(
+            item.get("text", "") if isinstance(item, dict) else str(item)
+            for item in content
+        )
+    return str(content or "")
+
+
+def _tool_preview(call: dict[str, Any]) -> dict[str, Any]:
+    return {"type": "tool_call", "tool": call.get("name", "unknown"),
+            "args": call.get("args", {})}
+
+
+def _tool_payload(content: str) -> dict[str, Any]:
+    try:
+        payload = json.loads(content)
+        return payload if isinstance(payload, dict) else {}
+    except (TypeError, json.JSONDecodeError):
+        return {}
+
+
+async def _agent_node(state: AgentState) -> dict[str, Any]:
+    """让模型规划下一步，或在工具预算耗尽时强制汇总。"""
+    messages = state["messages"]
+    if state.get("tool_rounds", 0) >= settings.agent_max_tool_rounds:
+        response = await ainvoke_with_retry(
+            get_llm().ainvoke,
+            [SystemMessage(content=f"{SYSTEM_PROMPT}\n\n{FINALIZE_PROMPT}"), *messages],
+        )
+        return {"messages": [response], "steps": [{"type": "plan", "status": "finalize",
+                                                        "msg": "达到工具调用上限，正在整合已获得的信息"}]}
+
+    model = get_llm().bind_tools(AGENT_TOOLS)
+    response = await ainvoke_with_retry(
+        model.ainvoke, [SystemMessage(content=SYSTEM_PROMPT), *messages]
+    )
+    tool_calls = list(getattr(response, "tool_calls", []) or [])
+    if tool_calls:
+        return {"messages": [response], "steps": [
+            {"type": "plan", "status": "tool", "msg": "已规划下一步，准备调用工具"},
+            *[_tool_preview(call) for call in tool_calls],
+        ]}
+    return {"messages": [response], "steps": [{"type": "plan", "status": "answer",
+                                                    "msg": "已完成分析，正在生成答复"}]}
+
+
+async def _tools_node(state: AgentState) -> dict[str, Any]:
+    """执行本轮模型请求的工具，并把结构化结果回填到图状态。"""
+    last = state["messages"][-1]
+    calls = list(getattr(last, "tool_calls", []) or [])
+    messages: list[ToolMessage] = []
+    steps: list[dict[str, Any]] = []
+    sources: list[str] = []
+
+    for call in calls:
+        name = call.get("name", "")
+        tool = _tools_by_name.get(name)
+        try:
+            if tool is None:
+                raise ValueError(f"不允许调用工具：{name}")
+            content = str(await tool.ainvoke(call.get("args", {})))
+            payload = _tool_payload(content)
+            tool_sources = [str(item) for item in payload.get("sources", [])]
+            sources.extend(tool_sources)
+            summary = str(payload.get("answer", content))[:240]
+            steps.append({"type": "tool_result", "tool": name, "ok": True,
+                          "msg": f"{name} 执行完成", "summary": summary,
+                          "sources": tool_sources})
+        except Exception as exc:
+            content = json.dumps({"error": f"工具 {name} 调用失败：{exc}"}, ensure_ascii=False)
+            steps.append({"type": "tool_result", "tool": name, "ok": False,
+                          "msg": f"{name} 调用失败", "summary": str(exc)[:240]})
+        messages.append(ToolMessage(content=content, tool_call_id=call.get("id", name), name=name))
+
+    return {"messages": messages, "sources": sources, "steps": steps,
+            "tool_rounds": state.get("tool_rounds", 0) + 1}
+
+
+def _route_after_agent(state: AgentState) -> str:
+    last = state["messages"][-1]
+    if isinstance(last, AIMessage) and getattr(last, "tool_calls", None):
+        return "tools"
+    return "finalize"
+
+
+async def _finalize_node(state: AgentState) -> dict[str, Any]:
+    """把最终自然语言答复和收集到的来源写入可消费状态。"""
+    last = state["messages"][-1]
+    if isinstance(last, AIMessage) and not getattr(last, "tool_calls", None):
+        final = _text(last.content)
+        return {"final": final, "steps": [{"type": "final", "msg": "Agent 运行完成"}]}
+
+    response = await ainvoke_with_retry(
+        get_llm().ainvoke,
+        [SystemMessage(content=f"{SYSTEM_PROMPT}\n\n{FINALIZE_PROMPT}"), *state["messages"]],
+    )
+    return {"messages": [response], "final": _text(response.content),
+            "steps": [{"type": "final", "msg": "Agent 运行完成"}]}
+
+
+def get_agent_graph():
+    """惰性构建并缓存编译后的 LangGraph。"""
+    global _graph
+    if _graph is None:
+        builder = StateGraph(AgentState)
+        builder.add_node("agent", _agent_node)
+        builder.add_node("tools", _tools_node)
+        builder.add_node("finalize", _finalize_node)
+        builder.add_edge(START, "agent")
+        builder.add_conditional_edges("agent", _route_after_agent,
+                                      {"tools": "tools", "finalize": "finalize"})
+        builder.add_edge("tools", "agent")
+        builder.add_edge("finalize", END)
+        _graph = builder.compile()
+    return _graph

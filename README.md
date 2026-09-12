@@ -1,8 +1,8 @@
-# Go 文章社区助手（FastAPI + LangChain RAG + CrewAI 多 Agent）
+# Go 文章社区 Agent（FastAPI + LangGraph + RAG）
 
 这是一个面向 **Go 技术文章社区** 的 AI 助手服务。它帮助用户理解 Go 技术文章、发布规范、代码示例与社区讨论规则，并提供文章状态查询、多轮对话与 SSE 流式回答。
 
-服务由 FastAPI、LangChain RAG 和可选的 CrewAI 多智能体构建，内置混合检索、重试、限流、语义缓存、链路追踪和评测集。
+服务由 FastAPI、LangGraph Agent 和 LangChain RAG 构建。Agent 能规划并调用受限的只读工具；RAG 是其中的知识检索工具，而不是固定问答主流程。
 
 ![Python](https://img.shields.io/badge/Python-3.10%2B-blue)
 ![FastAPI](https://img.shields.io/badge/FastAPI-0.110%2B-009688)
@@ -28,9 +28,9 @@
 
 | 能力模块 | 说明 | 对应接口 |
 |---|---|---|
-| 社区对话 | 意图路由（`knowledge/article/chat`）、RAG 问答、文章查询与多轮记忆 | `POST /api/v1/chat` |
-| 流式对话 | SSE 逐 token 推送；缓存或文章查询会整段快速返回 | `POST /api/v1/chat/stream` |
-| 多智能体 | CrewAI：意图识别官 → 社区助手；不可用时自动降级 | `app/agents/crew.py` |
+| 社区 Agent | LangGraph 规划、工具调用循环、事实整合与多轮记忆 | `POST /api/v1/chat` |
+| 流式 Agent | SSE 推送规划、工具调用、工具结果与最终答复 | `POST /api/v1/chat/stream` |
+| 运行状态 | 每次请求拥有 `run_id`、工具步骤、来源与可观测轨迹 | `app/agents/graph.py` |
 | Go 知识库 | 社区文章经 RabbitMQ 事件**自动入库**；也支持 PDF、DOCX、Markdown、TXT 手动上传 | `POST /api/v1/ingest` |
 | 文章工具 | 查询文章**真实数据**（标题/作者/标签/点赞/评论，来自 Go 文章服务） | `app/agents/tools.py` |
 | 可观测性 | 实时控制台、请求追踪、缓存与限流指标 | `/dashboard`、`/api/v1/traces`、`/api/v1/stats` |
@@ -70,8 +70,8 @@
 | 层 | 组件 | 作用 |
 |---|---|---|
 | 服务框架 | FastAPI + Uvicorn + Pydantic | 异步 API、OpenAPI 文档、SSE |
-| LLM 编排 | LangChain LCEL | 意图路由、提示词、流式生成 |
-| 多智能体 | CrewAI | 可选的 Agent、Task、Crew 顺序编排 |
+| LLM 编排 | LangGraph + LangChain | 状态图、工具调用循环、提示词与流式状态更新 |
+| Agent 工具 | LangChain Tools | 知识检索、文章查询、社区规范（全部只读） |
 | 检索 | InMemoryVectorStore / Milvus、jieba、BM25、RRF | 向量、词面召回与融合 |
 | 重排 | sentence-transformers `bge-reranker-base` | 候选内容相关性重排 |
 | 稳定性 | tenacity | 可恢复错误的指数退避重试 |
@@ -86,29 +86,26 @@
   ▼
 FastAPI（限流、日志、异常处理）
   │
-  ├─ CrewAI：意图识别官 → 社区助手
-  │      ├─ search_knowledge：Go 社区知识库 RAG
-  │      ├─ query_article：文章状态查询（Mock）
-  │      └─ community_guideline：发布与讨论规范
   │
-  └─ 降级：LangChain 意图路由
-         knowledge → 混合检索（向量 + BM25 → RRF → 重排）→ RAG 回答
-         article   → 文章查询工具
-         chat      → 社区助手闲聊
+  └─ LangGraph Agent Run（run_id）
+         规划 → 受限工具调用循环（最多 N 轮）→ 事实整合 → 最终答复
+              ├─ search_knowledge → 混合检索（向量 + BM25 → RRF → 重排）→ RAG
+              ├─ query_article → Go 文章服务实时数据
+              └─ community_guideline → 发布与讨论规范
 ```
 
-`knowledge` 用于 Go 技术、发文、Markdown、版权、评论与示例质量等问题；`article` 用于查询指定文章的状态或互动数据；`chat` 用于普通交流。
+RAG 被收敛为 `search_knowledge` 工具；Agent 会根据目标自主选择一个或多个只读工具。写入型操作暂不开放，后续必须增加用户确认节点。
 
-**非流式时序**：客户端请求依次经过限流、首轮缓存检查、意图识别和对应的 RAG/文章工具/闲聊分支；完成后写入会话记忆、必要时写入语义缓存，并记录链路追踪数据。响应统一包含 `reply`、`intent`、`sources`、`engine` 与 `cache_hit`。
+**接口时序**：JSON 与 SSE 共用同一张 LangGraph 图。请求经过限流、首轮缓存检查、Agent 规划、工具循环、结果整合与记忆写入；响应包含 `run_id`、`steps`、`sources`、`engine` 与 `cache_hit`。
 
 ## 功能详解
 
-### 对话与多智能体
+### 对话与 Agent
 
-- **意图路由**：LLM 将消息归类为 `knowledge`（Go 技术与社区知识）、`article`（指定文章查询）或 `chat`（普通交流）。解析异常会兜底到 `chat`，避免中断服务。
-- **双 Agent 协作**：CrewAI 使用“意图识别官 → 社区助手”的顺序编排。社区助手可调用 `search_knowledge`、`query_article`、`community_guideline` 三个工具；未安装或调用 CrewAI 失败时，自动降级到等价的 LangChain 路由。
+- **状态图编排**：LangGraph 按“规划 → 工具调用 → 重新规划 / 最终答复”运行，且用 `AIROBOT_AGENT_MAX_TOOL_ROUNDS` 限制工具调用轮次。
+- **受限工具**：`search_knowledge`、`query_article` 与 `community_guideline` 均为只读工具，结果会连同来源回填到状态图和客户端。
 - **多轮会话**：按 `session_id` 隔离会话，保留最近 `AIROBOT_MEMORY_MAX_TURNS` 轮，并在生成时带入最近 `AIROBOT_MEMORY_RETRIEVE_TURNS` 轮。
-- **双通道输出**：同步 JSON 与 SSE 流式接口共用路由逻辑。SSE 会依次发送限流、缓存、意图、检索或工具、生成、写入等阶段事件。
+- **双通道输出**：同步 JSON 与 SSE 流式接口共用 Agent 图。SSE 会发送 `plan`、`tool_call`、`tool_result`、`token` 与 `done` 事件。
 
 ### Go 知识库与检索
 
@@ -144,7 +141,7 @@ python -m venv .venv
 # macOS/Linux: source .venv/bin/activate
 pip install -r requirements.txt
 
-# 可选：CrewAI 多智能体和 bge-reranker
+# 可选：bge-reranker
 pip install -r requirements-extra.txt
 
 # 可选：RAGAS 评测
@@ -208,10 +205,11 @@ Invoke-RestMethod -Uri http://localhost:8000/api/v1/chat -Method Post -Body $bod
 ```json
 {
   "reply": "并发示例需说明 goroutine 的退出方式、context 的传播和错误处理。",
-  "intent": "knowledge",
+  "intent": "agent",
   "sources": ["knowledge_base.md#7"],
-  "engine": "langchain",
-  "used_crew": false,
+  "engine": "langgraph",
+  "run_id": "c61f1c3e...",
+  "steps": [{"type": "tool_call", "tool": "search_knowledge"}],
   "cache_hit": false
 }
 ```
@@ -221,10 +219,11 @@ Invoke-RestMethod -Uri http://localhost:8000/api/v1/chat -Method Post -Body $bod
 | `message` | 用户的 Go 技术或社区问题 |
 | `session_id` | 可选；会话标识，默认 `default`，同一 ID 保留多轮上下文 |
 | `reply` | 社区助手回答 |
-| `intent` | `knowledge`（知识库问答）、`article`（文章查询）、`chat`（普通交流）或 `crew`（多智能体） |
-| `sources` | RAG 来源列表（`文件#分块号`）；非知识库问答为空 |
-| `engine` | `langchain`（内置路由）或 `crew`（多智能体） |
-| `used_crew` / `cache_hit` | 是否走 CrewAI / 是否命中语义缓存 |
+| `intent` | 固定为 `agent`，表示由 LangGraph Agent 完成 |
+| `sources` | Agent 工具收集的来源列表 |
+| `engine` | 固定为 `langgraph` |
+| `run_id` / `steps` | 本次运行标识和规划、工具调用轨迹 |
+| `cache_hit` | 是否命中语义缓存 |
 
 错误响应：`429` 表示请求过于频繁；未处理异常统一返回 `500`，避免向调用端暴露内部堆栈。
 
@@ -328,7 +327,7 @@ python scripts/ingest.py data/knowledge_base.md
 
 ## 设计决策
 
-- **为什么保留 CrewAI 与内置路由两条路径？** 多智能体提升工具编排表现，但框架缺失或运行出错时仍需以等价路由保障服务可用。
+- **为什么使用 LangGraph 而非 CrewAI？** 本项目需要把规划、工具调用、来源和流式事件统一到同一状态图；LangGraph 直接提供该编排模型，避免 JSON 与 SSE 使用两条不同的执行路径。
 - **为什么使用混合检索？** Go 模块路径、包名、版本和 API 名称需要精确词面命中；语义检索则更适合概念性问题，两者融合更稳健。
 - **为什么只缓存首轮非动态问题？** 这样既避免会话上下文错配，也不会将文章阅读、评论等会变化的数据长期复用。
 - **如何接入真实文章服务？** 将 `query_article` 替换为对 article-server 的 HTTP 调用，增加超时、重试、鉴权与降级；现有 API 和对话编排无需改变。
@@ -339,7 +338,7 @@ python scripts/ingest.py data/knowledge_base.md
 |---|---|
 | `AIROBOT_LLM_BASE_URL` / `API_KEY` / `MODEL` | OpenAI 兼容 LLM 配置 |
 | `AIROBOT_EMBEDDING_BASE_URL` / `API_KEY` / `MODEL` | Embedding 服务配置 |
-| `AIROBOT_USE_CREW` | 是否优先使用 CrewAI，多智能体不可用时自动降级 |
+| `AIROBOT_AGENT_MAX_TOOL_ROUNDS` | 单次 Agent Run 的最大工具调用轮次 |
 | `AIROBOT_TOP_K` / `CHUNK_SIZE` / `CHUNK_OVERLAP` | 召回与分块参数 |
 | `AIROBOT_HYBRID_*` / `AIROBOT_RERANK_*` | 混合检索和重排开关、参数 |
 | `AIROBOT_RATELIMIT_*` / `AIROBOT_CACHE_*` | 限流和语义缓存配置 |
@@ -350,7 +349,7 @@ python scripts/ingest.py data/knowledge_base.md
 
 **未配置 API Key 能启动吗？** 可以。健康检查、文档解析和检索相关能力可启动；对话接口会提示缺少 `AIROBOT_LLM_API_KEY`。本地可用 Ollama 跑通完整链路。
 
-**未安装 CrewAI、RAGAS 或重排模型怎么办？** 服务会分别降级到内置路由、跳过评测或保留 RRF 排序；核心问答不受影响。
+**未安装 RAGAS 或重排模型怎么办？** 服务会跳过评测或保留 RRF 排序；LangGraph Agent 是核心依赖，会随 `requirements.txt` 一起安装。
 
 **重排模型下载慢怎么办？** 可设置 `AIROBOT_RERANK_ENABLED=false` 关闭重排；系统会自动保留混合检索结果。
 
@@ -358,7 +357,7 @@ python scripts/ingest.py data/knowledge_base.md
 
 ```text
 app/
-  agents/       多智能体角色与 Go 社区工具
+  agents/       LangGraph 状态图与 Go 社区工具
   rag/          文档解析、向量/BM25 检索、RRF、重排与 RAG
   services/     对话、记忆、缓存、限流、重试与追踪
   static/       Go 文章社区助手 Dashboard

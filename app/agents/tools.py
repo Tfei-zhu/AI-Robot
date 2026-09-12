@@ -1,17 +1,17 @@
 # -*- coding: utf-8 -*-
-"""Agent 工具集：RAG 检索问答 / 文章查询（Go 文章服务真实数据）/ 社区规范。
+"""LangGraph Agent 的只读工具集。
 
-命名约定：
-- search_knowledge / query_article / community_guideline：原始函数，内置路由与 SSE 流式直接调用；
-- *_tool 变体：CrewAI Tool 包装（仅安装 crewai 后存在），供多 Agent 编排使用。
-  CrewAI 在独立线程同步调用工具，故 query_article_tool 绑定同步版 query_article_sync。
+RAG 是 ``search_knowledge`` 工具，而不是对话服务的固定分支。工具返回 JSON
+字符串，既便于模型理解，也让编排层能够提取来源并把执行轨迹返回给客户端。
 """
+import json
 import logging
 import re
 
 import httpx
+from langchain_core.tools import tool
 
-from app.rag.retriever import answer_with_rag, build_llm
+from app.rag.retriever import aanswer_with_rag, answer_with_rag, build_llm
 from app.services.go_client import GoServiceError, go_client
 
 logger = logging.getLogger("airobot.tools")
@@ -69,7 +69,7 @@ async def query_article(message: str) -> str:
 
 
 def query_article_sync(message: str) -> str:
-    """查询文章真实数据（同步版，供 CrewAI 工具线程调用）。"""
+    """查询文章真实数据的同步兼容入口。"""
     article_id = _extract_article_id(message)
     if article_id is None:
         return _no_id_reply()
@@ -87,16 +87,27 @@ def community_guideline(_message: str) -> str:
             "评论请围绕技术问题友善讨论，禁止人身攻击、广告引流和泄露密钥等敏感信息。")
 
 
-# CrewAI 工具版（供 Agent 编排；未安装 crewai 时为 None，系统自动降级）
-search_knowledge_tool = None
-query_article_tool = None
-community_guideline_tool = None
-CREW_TOOLS_READY = False
-try:
-    from crewai.tools import tool
-    search_knowledge_tool = tool("search_knowledge")(search_knowledge)
-    query_article_tool = tool("query_article")(query_article_sync)
-    community_guideline_tool = tool("community_guideline")(community_guideline)
-    CREW_TOOLS_READY = True
-except Exception:  # pragma: no cover - crewai 未安装
-    CREW_TOOLS_READY = False
+@tool("search_knowledge")
+async def search_knowledge_tool(query: str) -> str:
+    """检索 Go 技术与社区知识库，并返回带可引用来源的事实材料。"""
+    answer, sources = await aanswer_with_rag(query, build_llm())
+    return json.dumps({"answer": answer, "sources": sources}, ensure_ascii=False)
+
+
+@tool("query_article")
+async def query_article_tool(message: str) -> str:
+    """按用户消息中的文章 ID 查询社区文章的实时详情。"""
+    article_id = _extract_article_id(message)
+    answer = await query_article(message)
+    sources = [f"article:{article_id}"] if article_id is not None else []
+    return json.dumps({"answer": answer, "sources": sources}, ensure_ascii=False)
+
+
+@tool("community_guideline")
+def community_guideline_tool(question: str) -> str:
+    """获取社区发文、引用与讨论规范。"""
+    return json.dumps({"answer": community_guideline(question),
+                       "sources": ["community_guideline"]}, ensure_ascii=False)
+
+
+AGENT_TOOLS = [search_knowledge_tool, query_article_tool, community_guideline_tool]

@@ -45,7 +45,7 @@ memory = MemoryStore()
 
 
 def format_history(messages: list[BaseMessage], max_len: int = 600) -> str:
-    """把消息列表格式化为给 Agent 的上下文文本（如 CrewAI Task 描述）。"""
+    """把消息列表格式化为可读的 Agent 上下文文本。"""
     parts = []
     for msg in messages:
         if isinstance(msg, HumanMessage):

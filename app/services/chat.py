@@ -1,137 +1,203 @@
 # -*- coding: utf-8 -*-
-"""对话编排服务（异步版）：
-1) 优先 CrewAI 多智能体（未安装/异常时自动降级，多 Agent 在独立线程运行）；
-2) 降级路径：LangChain 意图分类路由 + RAG/工具；
-3) 所有路径带会话记忆（session_id），支持多轮上下文。
+"""LangGraph Agent 的 HTTP 无关运行服务。
+
+普通请求和 SSE 请求都通过同一张图执行，区别只在于调用方是否消费每个状态更新。
+这样不会再出现流式接口绕过 Agent 编排的问题。
 """
 import asyncio
-import json
 import logging
 import time
+import uuid
+from collections.abc import AsyncIterator
+from typing import Any
 
-from langchain_core.output_parsers import StrOutputParser
-from langchain_core.prompts import ChatPromptTemplate, MessagesPlaceholder
-from langchain_openai import ChatOpenAI
+from langchain_core.messages import HumanMessage
 
-from app.agents.tools import CREW_TOOLS_READY, query_article
+from app.agents.graph import get_agent_graph
 from app.config import settings
-from app.rag.retriever import aanswer_with_rag, kb
-from app.services.resilience import ainvoke_with_retry
+from app.rag.retriever import kb
+from app.services.memory import memory
 from app.services.semantic_cache import semantic_cache
-from app.services.memory import format_history, memory
 from app.services.tracing import traces
 
-logger = logging.getLogger("airobot.chat")
-
-INTENT_PROMPT = ChatPromptTemplate.from_messages([
-    ("system",
-     "你是 Go 文章社区助手的意图分类器，只输出 JSON：{{\"intent\": \"knowledge|article|chat\", \"reason\": \"简短理由\"}}。"
-     "article 用于查询指定文章的状态或数据；knowledge 用于 Go 技术、发文与社区规则问题。"),
-    ("human", "{message}"),
-])
-
-CHAT_PROMPT = ChatPromptTemplate.from_messages([
-    ("system", "你是 Go 文章社区助手，语气友好、准确、简洁。帮助用户阅读和发布 Go 技术文章、理解社区规范；不确定时如实说明。"),
-    MessagesPlaceholder("history"),
-    ("human", "{message}"),
-])
-
-_llm_cache: dict = {}
+logger = logging.getLogger("airobot.agent")
 
 
-def get_llm() -> ChatOpenAI:
-    key = (settings.llm_model, settings.llm_base_url, settings.llm_api_key)
-    if key not in _llm_cache:
-        _llm_cache[key] = ChatOpenAI(
-            model=settings.llm_model,
-            api_key=settings.llm_api_key or "sk-placeholder-not-configured",
-            base_url=settings.llm_base_url,
-            temperature=0.3,
-        )
-    return _llm_cache[key]
-
-
-async def classify_intent(message: str) -> str:
-    chain = INTENT_PROMPT | get_llm() | StrOutputParser()
-    raw = await ainvoke_with_retry(chain.ainvoke, {"message": message})
-    try:
-        data = json.loads(raw.strip().strip("`"))
-        return data.get("intent", "chat")
-    except Exception:
-        logger.warning("意图 JSON 解析失败，默认 chat: %s", raw[:80])
-        return "chat"
-
-
-async def fallback_chat(message: str, session_id: str) -> dict:
-    """内置路由：不依赖 CrewAI，逻辑与 Crew 中 Task 一致；带会话记忆。"""
-    history = memory.get_messages(session_id)
-    intent = await classify_intent(message)
-    if intent == "article":
-        reply = await query_article(message)
-        return {"reply": reply, "intent": intent, "sources": [], "engine": "langchain"}
-    if intent == "knowledge":
-        answer, sources = await aanswer_with_rag(message, get_llm(), history)
-        return {"reply": answer, "intent": intent, "sources": sources, "engine": "langchain"}
-    chain = CHAT_PROMPT | get_llm() | StrOutputParser()
-    reply = await ainvoke_with_retry(chain.ainvoke, {"message": message, "history": history})
-    return {"reply": reply, "intent": "chat", "sources": [], "engine": "langchain"}
-
-
-def _maybe_cache(query_vec: list | None, result: dict, message: str = "") -> None:
-    """动态文章数据不缓存；无上下文问题才写入语义缓存。"""
-    if query_vec is not None and result.get("intent") != "article":
-        semantic_cache.put(query_vec, result, message)
-
-
-async def chat(message: str, session_id: str = "default") -> dict:
-    """对话入口：CrewAI 优先（线程池执行），失败自动降级内置路由；成功后写入会话记忆。"""
-    entry = {"message": message[:80], "session_id": session_id, "status": 200}
-    t_start = time.perf_counter()
-    if not settings.llm_api_key:
-        traces.record({**entry, "intent": "no-key", "total_ms": 0.0})
-        return {"reply": "未配置 AIROBOT_LLM_API_KEY，请复制 .env.example 为 .env 并填入密钥。",
-                "intent": None, "sources": [], "engine": "langchain"}
-
-    # 语义缓存：仅无上下文的首轮问题参与命中/写入（避免与会话记忆耦合）
-    query_vec = None
-    if settings.cache_enabled and settings.embedding_api_key and not memory.get_messages(session_id):
-        t_cache = time.perf_counter()
-        query_vec = await asyncio.to_thread(kb.embed_query, message)
-        cached = semantic_cache.get(query_vec, message)
-        entry["cache_lookup_ms"] = round((time.perf_counter() - t_cache) * 1000, 1)
-        entry["cache_checked"] = True
-        if cached is not None:
-            entry.update(cache_hit=True, intent=cached.get("intent"),
-                         total_ms=round((time.perf_counter() - t_start) * 1000, 1))
-            traces.record(entry)
-            return {**cached, "cache_hit": True}
-    else:
-        entry["cache_lookup_ms"] = 0.0
-
-    t_llm = time.perf_counter()
-    if settings.use_crew and CREW_TOOLS_READY:
-        try:
-            history_text = format_history(memory.get_messages(session_id))
-            from app.agents.crew import run_crew
-            reply = await asyncio.to_thread(run_crew, message, history_text)
-            result = {"reply": reply, "intent": "crew", "sources": [],
-                      "engine": "crew", "used_crew": True}
-            entry.update(intent="crew", engine="crew",
-                         llm_ms=round((time.perf_counter() - t_llm) * 1000, 1),
-                         sources=0, total_ms=round((time.perf_counter() - t_start) * 1000, 1))
-            _maybe_cache(query_vec, result, message)
-            memory.add(session_id, message, reply)
-            traces.record(entry)
-            return result
-        except Exception as exc:  # CrewAI 调用失败 -> 降级
-            logger.warning("CrewAI 调用失败，降级到内置路由: %s", exc)
-
-    result = await fallback_chat(message, session_id)
-    entry.update(intent=result.get("intent"), engine=result.get("engine"),
-                 llm_ms=round((time.perf_counter() - t_llm) * 1000, 1),
-                 sources=len(result.get("sources", [])),
-                 total_ms=round((time.perf_counter() - t_start) * 1000, 1))
-    _maybe_cache(query_vec, result, message)
-    memory.add(session_id, message, result["reply"])
-    traces.record(entry)
+def _sources(items: list[Any] | None) -> list[str]:
+    """保留来源首次出现的顺序，避免多次工具调用产生重复引用。"""
+    result: list[str] = []
+    for item in items or []:
+        source = str(item)
+        if source and source not in result:
+            result.append(source)
     return result
+
+
+def _initial_state(message: str, session_id: str, run_id: str) -> dict[str, Any]:
+    return {
+        "messages": [*memory.get_messages(session_id), HumanMessage(content=message)],
+        "session_id": session_id,
+        "run_id": run_id,
+        "sources": [],
+        "steps": [],
+        "tool_rounds": 0,
+    }
+
+
+async def _cache_lookup(message: str, session_id: str) -> tuple[list[float] | None, dict | None, float, bool]:
+    """只为无历史会话的首轮请求使用语义缓存，失败时不影响 Agent 本身。"""
+    if not (settings.cache_enabled and settings.embedding_api_key and not memory.get_messages(session_id)):
+        return None, None, 0.0, False
+    started = time.perf_counter()
+    try:
+        vector = await asyncio.to_thread(kb.embed_query, message)
+        cached = semantic_cache.get(vector, message)
+        elapsed = round((time.perf_counter() - started) * 1000, 1)
+        return vector, cached, elapsed, True
+    except Exception as exc:
+        logger.warning("语义缓存不可用，本次继续执行 Agent：%s", exc)
+        return None, None, round((time.perf_counter() - started) * 1000, 1), False
+
+
+def _result(state: dict[str, Any], run_id: str, cache_hit: bool = False) -> dict[str, Any]:
+    return {
+        "reply": str(state.get("final") or "抱歉，我没有生成有效答复。"),
+        "intent": "agent",
+        "sources": _sources(state.get("sources")),
+        "engine": "langgraph",
+        "run_id": run_id,
+        "steps": state.get("steps", []),
+        "cache_hit": cache_hit,
+    }
+
+
+def _trace(entry: dict[str, Any], result: dict[str, Any], started: float) -> None:
+    entry.update(
+        intent="agent",
+        engine="langgraph",
+        sources=len(result.get("sources", [])),
+        tool_calls=sum(1 for step in result.get("steps", []) if step.get("type") == "tool_call"),
+        total_ms=round((time.perf_counter() - started) * 1000, 1),
+    )
+    traces.record(entry)
+
+
+async def chat(message: str, session_id: str = "default") -> dict[str, Any]:
+    """运行一次完整 LangGraph Agent，供普通 JSON 接口使用。"""
+    run_id = uuid.uuid4().hex
+    started = time.perf_counter()
+    entry = {"message": message[:80], "session_id": session_id, "run_id": run_id, "status": 200}
+    if not settings.llm_api_key:
+        entry.update(intent="no-key", total_ms=0.0)
+        traces.record(entry)
+        return {"reply": "未配置 AIROBOT_LLM_API_KEY，请复制 .env.example 为 .env 并填入密钥。",
+                "intent": None, "sources": [], "engine": "langgraph", "run_id": run_id,
+                "steps": [], "cache_hit": False}
+
+    vector, cached, cache_ms, cache_checked = await _cache_lookup(message, session_id)
+    entry.update(cache_lookup_ms=cache_ms, cache_checked=cache_checked)
+    if cached is not None:
+        result = {**cached, "engine": "langgraph", "intent": "agent", "run_id": run_id,
+                  "steps": [{"type": "cache", "msg": "语义缓存命中"}], "cache_hit": True}
+        _trace(entry, result, started)
+        entry["cache_hit"] = True
+        return result
+
+    try:
+        state = await get_agent_graph().ainvoke(_initial_state(message, session_id, run_id))
+        result = _result(state, run_id)
+        memory.add(session_id, message, result["reply"])
+        if vector is not None:
+            semantic_cache.put(vector, {k: result[k] for k in ("reply", "intent", "sources", "engine")}, message)
+        _trace(entry, result, started)
+        return result
+    except Exception:
+        entry.update(status=500, intent="agent_error", total_ms=round((time.perf_counter() - started) * 1000, 1))
+        traces.record(entry)
+        logger.exception("Agent 运行失败：run_id=%s", run_id)
+        raise
+
+
+def _step_events(step: dict[str, Any]) -> list[dict[str, Any]]:
+    """将内部步骤映射为兼容现有 UI 的 stage 事件，并保留结构化 Agent 事件。"""
+    kind = step.get("type")
+    if kind == "plan":
+        return [{"type": "stage", "stage": "agent", "msg": step.get("msg", "Agent 正在规划"),
+                 "ok": True}, {"type": "plan", **step}]
+    if kind == "tool_call":
+        tool = step.get("tool", "tool")
+        return [{"type": "stage", "stage": "tool", "tool": tool,
+                 "msg": f"Agent 调用工具 {tool}", "ok": True}, {"type": "tool_call", **step}]
+    if kind == "tool_result":
+        return [{"type": "stage", "stage": "tool", "tool": step.get("tool"),
+                 "msg": step.get("msg", "工具调用完成"), "ok": step.get("ok", False)},
+                {"type": "tool_result", **step}]
+    if kind == "final":
+        return [{"type": "stage", "stage": "generate", "msg": step.get("msg", "生成最终答复"),
+                 "ok": True}]
+    return []
+
+
+async def stream_chat(message: str, session_id: str = "default") -> AsyncIterator[dict[str, Any]]:
+    """流式消费同一张 LangGraph 图，逐步输出计划、工具与最终答复。"""
+    run_id = uuid.uuid4().hex
+    started = time.perf_counter()
+    entry = {"message": message[:80], "session_id": session_id, "run_id": run_id, "status": 200}
+    yield {"type": "stage", "stage": "rate_limit", "msg": "限流检查通过，请求进入 Agent", "ok": True}
+
+    if not settings.llm_api_key:
+        entry.update(intent="no-key", total_ms=0.0)
+        traces.record(entry)
+        yield {"type": "token", "content": "未配置 AIROBOT_LLM_API_KEY，请复制 .env.example 为 .env。"}
+        yield {"type": "done", "run_id": run_id}
+        return
+
+    vector, cached, cache_ms, cache_checked = await _cache_lookup(message, session_id)
+    entry.update(cache_lookup_ms=cache_ms, cache_checked=cache_checked)
+    if cached is not None:
+        result = {**cached, "engine": "langgraph", "intent": "agent", "run_id": run_id,
+                  "steps": [{"type": "cache", "msg": "语义缓存命中"}], "cache_hit": True}
+        _trace(entry, result, started)
+        entry["cache_hit"] = True
+        yield {"type": "stage", "stage": "cache", "msg": "语义缓存命中，直接返回", "ms": cache_ms,
+               "hit": True, "ok": True}
+        yield {"type": "token", "content": result["reply"]}
+        yield {"type": "done", "run_id": run_id, "intent": "agent", "sources": result.get("sources", []),
+               "cache_hit": True, "total_ms": entry["total_ms"]}
+        return
+
+    cache_reason = "未开启或不可用" if not cache_checked else "未命中"
+    yield {"type": "stage", "stage": "cache", "msg": f"语义缓存{cache_reason}", "ms": cache_ms,
+           "ok": True, "skipped": not cache_checked}
+
+    final_state: dict[str, Any] = {}
+    collected_sources: list[Any] = []
+    collected_steps: list[dict[str, Any]] = []
+    try:
+        async for update in get_agent_graph().astream(
+            _initial_state(message, session_id, run_id), stream_mode="updates"
+        ):
+            for node_update in update.values():
+                for step in node_update.get("steps", []):
+                    collected_steps.append(step)
+                    for event in _step_events(step):
+                        yield event
+                collected_sources.extend(node_update.get("sources", []))
+                if node_update.get("final"):
+                    final_state = node_update
+
+        result = _result({**final_state, "sources": collected_sources, "steps": collected_steps}, run_id)
+        memory.add(session_id, message, result["reply"])
+        if vector is not None:
+            semantic_cache.put(vector, {k: result[k] for k in ("reply", "intent", "sources", "engine")}, message)
+        _trace(entry, result, started)
+        yield {"type": "stage", "stage": "write", "msg": "写入会话记忆与执行轨迹", "ok": True}
+        yield {"type": "token", "content": result["reply"]}
+        yield {"type": "done", "run_id": run_id, "intent": "agent", "sources": result["sources"],
+               "total_ms": entry["total_ms"]}
+    except Exception:
+        entry.update(status=500, intent="agent_error", total_ms=round((time.perf_counter() - started) * 1000, 1))
+        traces.record(entry)
+        logger.exception("Agent 流式运行失败：run_id=%s", run_id)
+        yield {"type": "error", "msg": "Agent 执行失败，请稍后重试。", "run_id": run_id}
+        yield {"type": "done", "run_id": run_id}
