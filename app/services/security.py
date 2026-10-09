@@ -30,7 +30,10 @@ class SecurityMiddleware:
             status = 401 if (settings.admin_token or settings.ai_internal_token) else 503
             return await JSONResponse({"detail": "需要有效身份凭据" if status == 401 else "服务尚未配置访问凭据"},
                                       status_code=status)(scope, receive, send)
-        if not admin and path not in {"/api/v1/chat", "/api/v1/chat/stream"}:
+        user_route = (path in {"/api/v1/chat", "/api/v1/chat/stream",
+                              "/api/v1/go/tasks", "/api/v1/go/tasks/stream"}
+                      or (scope.get("method") == "GET" and re.fullmatch(r"/api/v1/go/tasks/[0-9a-f]{32}", path)))
+        if not admin and not user_route:
             return await JSONResponse({"detail": "需要管理员权限"}, status_code=403)(scope, receive, send)
         # 内部令牌不等同于管理员；客户端自填账户只有网关令牌匹配后才可信。
         principal = "admin" if admin else "account/" + account

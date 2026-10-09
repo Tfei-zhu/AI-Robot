@@ -22,6 +22,10 @@ from app.services.tracing import traces
 from app.services.concurrency import run_blocking
 from app.services.security import (SecurityMiddleware, SessionStreamResponse,
                                    session_identity, claim_session, release_session)
+from app.go_validation.contracts import GoTaskRequest, GoTaskResult
+from app.go_validation.service import service as go_service, store as go_store
+from contextlib import aclosing
+import hashlib
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 logger = logging.getLogger("airobot.main")
@@ -50,6 +54,7 @@ async def lifespan(_: FastAPI):
         consumer.close()
         await run_blocking(kb.close)
         await go_client.aclose()
+        await run_blocking(go_store.close)
 
 
 app = FastAPI(
@@ -202,6 +207,39 @@ async def chat_stream(req: ChatRequest, request: Request):
 
     return SessionStreamResponse(generate(), session_key=key, media_type="text/event-stream",
                                  headers={"Cache-Control": "no-cache", "X-Accel-Buffering": "no"})
+
+
+@app.post("/api/v1/go/tasks", response_model=GoTaskResult)
+async def go_task(req: GoTaskRequest, request: Request):
+    principal = request.state.principal
+    _, key = session_identity(principal, req.session_id)
+    claim_session(key)
+    try:
+        return await go_service.run(req, principal, key)
+    finally:
+        release_session(key)
+
+
+@app.post("/api/v1/go/tasks/stream")
+async def go_task_stream(req: GoTaskRequest, request: Request):
+    principal = request.state.principal
+    _, key = session_identity(principal, req.session_id)
+    claim_session(key)
+    async def generate():
+        async with aclosing(go_service.stream(req, principal, key)) as events:
+            async for event in events:
+                yield _sse(event)
+    return SessionStreamResponse(generate(), session_key=key, media_type="text/event-stream",
+                                  headers={"Cache-Control": "no-cache", "X-Accel-Buffering": "no"})
+
+
+@app.get("/api/v1/go/tasks/{run_id}", response_model=GoTaskResult)
+async def get_go_task(run_id: str, request: Request):
+    owner = hashlib.sha256(request.state.principal.encode()).hexdigest()
+    result = await run_blocking(go_store.get, run_id, owner)
+    if result is None:
+        raise HTTPException(status_code=404, detail="任务不存在")
+    return result
 
 
 # 最外层：在限流、解析上传文件及业务路由之前验证身份。

@@ -48,22 +48,39 @@ class AgentState(TypedDict, total=False):
     tool_rounds: int
     final: str
     streaming: bool
+    # Go 验证路径的状态；与普通聊天共用一张图，避免改变原有会话输出。
+    go_request: dict
+    go_status: str
+    go_error: str
+    go_context: str
+    go_sources: list[str]
+    go_bundle: dict
+    go_change: str
+    go_attempts: list[dict]
+    go_model_calls: int
+    go_tools: int
+    go_validations: int
+    go_model: Any
+    go_runner: Any
+    go_retrieve: Any
+    go_usage: dict
 
 
-_llm_cache: dict[tuple[str, str, str], ChatOpenAI] = {}
+_llm_cache: dict[tuple, ChatOpenAI] = {}
 _tools_by_name = {item.name: item for item in AGENT_TOOLS}
 _graph = None
 
 
-def get_llm() -> ChatOpenAI:
+def get_llm(*, max_retries: int | None = None) -> ChatOpenAI:
     """复用 OpenAI 兼容 LLM 客户端，避免每个 Agent Run 新建连接。"""
-    key = (settings.llm_model, settings.llm_base_url, settings.llm_api_key)
+    key = (settings.llm_model, settings.llm_base_url, settings.llm_api_key, max_retries)
     if key not in _llm_cache:
         _llm_cache[key] = ChatOpenAI(
             model=settings.llm_model,
             api_key=settings.llm_api_key or "sk-placeholder-not-configured",
             base_url=settings.llm_base_url,
             temperature=0.2,
+            **({"max_retries": max_retries} if max_retries is not None else {}),
         )
     return _llm_cache[key]
 
@@ -202,7 +219,17 @@ def get_agent_graph():
         builder.add_node("agent", _agent_node)
         builder.add_node("tools", _tools_node)
         builder.add_node("finalize", _finalize_node)
-        builder.add_edge(START, "agent")
+        from app.go_validation import nodes as go_nodes
+        builder.add_node("go_retrieve", go_nodes.retrieve)
+        builder.add_node("go_generate", go_nodes.generate)
+        builder.add_node("go_validate", go_nodes.validate)
+        builder.add_node("go_finish", go_nodes.finish)
+        builder.add_conditional_edges(START, lambda state: "go_retrieve" if state.get("go_request") else "agent",
+                                      {"go_retrieve": "go_retrieve", "agent": "agent"})
+        builder.add_conditional_edges("go_retrieve", go_nodes.after_retrieve)
+        builder.add_conditional_edges("go_generate", go_nodes.after_generate)
+        builder.add_conditional_edges("go_validate", go_nodes.after_validate)
+        builder.add_edge("go_finish", END)
         builder.add_conditional_edges("agent", _route_after_agent,
                                       {"tools": "tools", "finalize": "finalize"})
         builder.add_edge("tools", "agent")

@@ -97,6 +97,13 @@ tr:hover td{background:#1a2130}
 .pstep.skip{opacity:.5}
 .pstep.wait{opacity:.35}
 .pstep.run .title{color:var(--accent)}
+.go-form{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:10px}
+.go-form select,.go-form textarea{background:#0f1522;color:var(--fg);border:1px solid var(--line);border-radius:8px;padding:10px;font:inherit}
+.go-form textarea{width:100%;min-height:90px;resize:vertical}
+.go-report pre{white-space:pre-wrap;overflow-wrap:anywhere;background:#0f1522;padding:12px;border-radius:8px;font:12px/1.6 Consolas,monospace;max-height:380px;overflow:auto}
+.go-report details{margin:10px 0}.go-report summary{cursor:pointer;color:var(--muted);padding:7px}
+#goProgress{font-size:13px;color:var(--muted);white-space:pre-wrap;margin:12px 0}
+#goStatus{font-weight:600;margin:10px 0}
 @media(max-width:900px){.console-grid{grid-template-columns:1fr}}
 @media(max-width:720px){.cards{grid-template-columns:repeat(2,1fr)}}
 </style>
@@ -148,6 +155,26 @@ tr:hover td{background:#1a2130}
     </div>
   </section>
 
+<section id="goValidation">
+    <h2>🧪 Go 示例生成与验证 <span class="tag">固定接口 · 标准库 · 首次生成后最多修复两轮</span></h2>
+    <div class="go-form">
+      <select id="goScenario" aria-label="代码场景">
+        <option value="context_cancel">context 取消</option>
+        <option value="worker_pool">并发任务池</option>
+        <option value="channel">channel 求和</option>
+      </select>
+      <textarea id="goRequirement" maxlength="8000" aria-label="代码需求" placeholder="描述需求及边界条件…">等待 context 取消，返回取消或超时错误，取消前不能提前返回。</textarea>
+      <button class="btn" id="goStart" onclick="startGoTask()">生成并验证</button>
+      <button class="btn ghost" id="goCancel" onclick="cancelGoTask()" disabled>取消任务</button>
+      <input class="session-input" id="goRunId" aria-label="运行编号" placeholder="run_id，可查询已有报告">
+      <button class="btn ghost" id="goLoad" onclick="loadGoTask()">查询报告</button>
+    </div>
+    <div id="goStatus" role="status">就绪</div>
+    <div id="goProgress"></div>
+    <div class="go-report" id="goReport"></div>
+    <div class="mono">通过表示当前编译、静态检查与测试通过；报告会保留失败代码、错误和每次修复记录。</div>
+  </section>
+
 <section>
     <h2>🧩 这个项目能做什么 <span class="tag">点击卡片查看一句话说明</span></h2>
     <div class="grid" id="feats"></div>
@@ -181,12 +208,13 @@ tr:hover td{background:#1a2130}
 const FEATS = [
   ["🧠","Agent 编排","LangGraph 规划 → 工具调用循环 → 结果整合，完整展示执行轨迹"],
   ["📚","Go 知识库问答","RAG 检索增强生成，启动自动导入 Go 社区示例知识库，支持上传文档"],
-  ["🔍","混合检索","向量 + jieba/BM25 词面双路 → RRF 融合，命中率 85%→98%"],
+  ["🔍","混合检索","向量 + jieba/BM25 词面双路 → RRF 融合，效果以评测报告为准"],
   ["⚖️","语义重排","bge-reranker 对候选打分重排，懒加载 + 异常自动降级"],
   ["💬","会话记忆","session_id 多轮上下文，保留最近 N 轮"],
   ["⚡","SSE 流式","逐 token 流式输出，缓存命中时整段秒回"],
   ["📄","文档解析分块","PDF / Word / Markdown / TXT 解析，标题分块 + 递归分块"],
-  ["📄","文章工具","Mock 文章状态与数据查询，真实项目可对接 article-server"],
+  ["📄","文章工具","查询已配置 Go 文章服务的真实数据，缺少配置时返回降级提示"],
+  ["🧪","代码验证与修复","Go 标准库三个场景：生成 → Docker 编译/检查/测试 → 最多修复两轮"],
   ["🔁","重试机制","tenacity 指数退避，429 / 5xx / 网络错误自动重试"],
   ["🛡️","限流","按 IP 滑动窗口（60 秒），超限返回 JSON 429"],
   ["💾","语义缓存","余弦 + 词面双门限命中复用答案，动态文章数据不缓存"],
@@ -241,7 +269,7 @@ function renderRows(entries){
       <td>${cache}</td>
       <td>${stageBar(e)}</td>
       <td class="mono">${ms(e.total_ms)}</td>
-      <td>${e.status===429?'<span style="color:var(--err)">429</span>':e.status===500?'<span style="color:var(--err)">500</span>':'<span style="color:var(--ok)">200</span>'}</td>
+      <td><span style="color:${e.status>=400?'var(--err)':'var(--ok)'}">${escHtml(String(e.status??'-'))}</span></td>
     </tr>`;
   }).join("") : `<tr><td colspan="9" class="empty">暂无请求——去调用 /api/v1/chat 或 /api/v1/chat/stream 试试，3 秒内这里会出现执行明细</td></tr>`;
 }
@@ -321,6 +349,90 @@ function parseSSE(part){
   const line=part.split("\n").find(l=>l.startsWith("data:"));
   if(!line) return null;
   try{return JSON.parse(line.slice(5).trim());}catch(e){return null;}
+}
+let goController=null;
+const GO_LABELS={passed:"验证通过",failed:"验证失败",timeout:"超时",unavailable:"环境或模型不可用",cancelled:"已取消",generation_error:"代码生成失败",budget_exceeded:"达到预算",running:"运行中"};
+function goText(parent,tag,text){
+  // 所有代码与日志均按文本展示，禁止把模型输出作为 HTML 执行。
+  const el=document.createElement(tag);el.textContent=text;parent.appendChild(el);return el;
+}
+function renderGoAttempt(attempt){
+  const report=document.getElementById("goReport");
+  const details=document.createElement("details");details.open=true;report.appendChild(details);
+  goText(details,"summary",`第 ${attempt.number+1} 次验证 · ${GO_LABELS[attempt.validation.status]||attempt.validation.status} · ${ms(attempt.validation.elapsed_ms)}`);
+  goText(details,"p",attempt.change_summary||"首次生成");
+  for(const stage of attempt.validation.stages){
+    goText(details,"p",`${stage.stage} · 退出码 ${stage.exit_code} · ${ms(stage.elapsed_ms)}${stage.truncated?' · 日志已截断':''}`);
+    if(stage.output){
+      const log=document.createElement("details");log.open=stage.exit_code!==0;details.appendChild(log);
+      goText(log,"summary","查看 "+stage.stage+" 日志");
+      if(stage.stage==="test"){
+        // Go JSON 事件中的 Output 是实际测试文本，优先展示便于阅读的错误。
+        const text=stage.output.split("\n").map(line=>{try{return JSON.parse(line).Output||"";}catch{return line+"\n";}}).join("");
+        goText(log,"pre",text||stage.output);
+        const raw=document.createElement("details");log.appendChild(raw);goText(raw,"summary","原始验证事件");goText(raw,"pre",stage.output);
+      }else{goText(log,"pre",stage.output);}
+    }
+  }
+  for(const file of attempt.bundle.files){
+    const source=document.createElement("details");details.appendChild(source);
+    source.open=attempt.validation.status==="passed"&&!file.name.endsWith("_test.go");
+    goText(source,"summary",file.name);goText(source,"pre",file.content);
+  }
+}
+function renderGoResult(result){
+  document.getElementById("goRunId").value=result.run_id;
+  const status=document.getElementById("goStatus");
+  status.textContent=`${GO_LABELS[result.status]||result.status} · ${ms(result.elapsed_ms)} · 模型调用 ${result.model_calls} · 验证 ${result.validation_calls}`;
+  status.style.color=result.status==="passed"?"var(--ok)":"var(--err)";
+  const report=document.getElementById("goReport");report.replaceChildren();
+  goText(report,"p",result.model_source==="fixture"?"人工固定模型输出，仅用于流程验收":"使用配置的模型");
+  if(result.error)goText(report,"pre",result.error);
+  goText(report,"p",result.validation_scope);
+  goText(report,"p","参考来源："+(result.sources.length?result.sources.join("、"):"无"));
+  if(Object.keys(result.token_usage||{}).length)goText(report,"p","Token 用量："+JSON.stringify(result.token_usage));
+  for(const attempt of result.attempts)renderGoAttempt(attempt);
+}
+async function startGoTask(){
+  if(goController)return;
+  const requirement=document.getElementById("goRequirement").value.trim();
+  if(requirement.length<5){document.getElementById("goStatus").textContent="请输入至少 5 字的需求";return;}
+  goController=new AbortController();
+  document.getElementById("goStart").disabled=true;document.getElementById("goCancel").disabled=false;document.getElementById("goLoad").disabled=true;
+  document.getElementById("goRunId").value="";document.getElementById("goReport").replaceChildren();
+  document.getElementById("goProgress").textContent="";
+  document.getElementById("goStatus").textContent="正在生成与验证…";document.getElementById("goStatus").style.color="var(--accent)";
+  let completed=false;
+  function consume(part){
+    const ev=parseSSE(part);if(!ev)return;
+    if(ev.type==="go_start")document.getElementById("goRunId").value=ev.run_id;
+    if(ev.type==="go_stage")document.getElementById("goProgress").textContent+=ev.message+"\n";
+    if(ev.type==="go_attempt")renderGoAttempt(ev.attempt);
+    if(ev.type==="go_done"){completed=true;renderGoResult(ev.result);}
+  }
+  try{
+    const response=await apiFetch("/api/v1/go/tasks/stream",{method:"POST",headers:{"Content-Type":"application/json"},
+      body:JSON.stringify({scenario:document.getElementById("goScenario").value,requirement}),signal:goController.signal});
+    const reader=response.body.getReader(),decoder=new TextDecoder();let buffer="";
+    while(true){const {done,value}=await reader.read();if(done)break;
+      buffer+=decoder.decode(value,{stream:true});const parts=buffer.split("\n\n");buffer=parts.pop();parts.forEach(consume);}
+    buffer+=decoder.decode();if(buffer)consume(buffer);
+    // 只有服务端最终报告能决定通过；连接结束不能视为任务成功。
+    if(!completed)throw new Error("流提前结束，请按 run_id 查询最终报告");
+  }catch(error){
+    document.getElementById("goStatus").textContent=error.name==="AbortError"?"已请求取消，请按 run_id 查询最终报告":"任务失败："+error.message;
+    document.getElementById("goStatus").style.color="var(--err)";
+  }finally{
+    goController=null;document.getElementById("goStart").disabled=false;document.getElementById("goCancel").disabled=true;document.getElementById("goLoad").disabled=false;
+    refresh(true);
+  }
+}
+function cancelGoTask(){if(goController)goController.abort();}
+async function loadGoTask(){
+  const runId=document.getElementById("goRunId").value.trim();
+  if(!/^[a-f0-9]{32}$/.test(runId)){document.getElementById("goStatus").textContent="请输入有效 run_id";return;}
+  try{renderGoResult(await(await apiFetch("/api/v1/go/tasks/"+runId)).json());}
+  catch(error){document.getElementById("goStatus").textContent=error.message;}
 }
 function handleEvent(ev,bubble){
   if(ev.type==="stage"){

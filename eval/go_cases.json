@@ -1,0 +1,11 @@
+[
+  {"id":"context-normal","scenario":"context_cancel","variant":"correct","requirement":"等待 context 取消，正确返回取消和超时错误，取消前不要提前返回。"},
+  {"id":"context-behavior-error","scenario":"context_cancel","variant":"behavior_error","requirement":"等待 context 取消，覆盖已取消和 deadline 场景。"},
+  {"id":"context-compile-error","scenario":"context_cancel","variant":"compile_error","requirement":"生成等待取消的函数以及边界测试。"},
+  {"id":"pool-normal","scenario":"worker_pool","variant":"correct","requirement":"实现有并发上限的任务池，把输入乘二并按输入顺序返回，不修改输入。"},
+  {"id":"pool-behavior-error","scenario":"worker_pool","variant":"behavior_error","requirement":"任务池必须处理空输入、非法 workers、取消和负数输入。"},
+  {"id":"pool-compile-error","scenario":"worker_pool","variant":"compile_error","requirement":"实现标准库任务池，保持顺序并支持取消。"},
+  {"id":"channel-normal","scenario":"channel","variant":"correct","requirement":"累加 channel 数值直到关闭，支持取消及 nil channel。"},
+  {"id":"channel-behavior-error","scenario":"channel","variant":"behavior_error","requirement":"测试空 channel、负数、关闭及 context deadline。"},
+  {"id":"channel-compile-error","scenario":"channel","variant":"compile_error","requirement":"实现 channel 求和函数，关闭后返回结果，取消时返回错误。"}
+]

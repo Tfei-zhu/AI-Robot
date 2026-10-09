@@ -1,0 +1,2 @@
+# 沙箱入口在 Linux 容器运行，Windows 检出后也保留 LF 换行。
+sandbox/go/entrypoint.sh text eol=lf

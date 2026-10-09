@@ -9,3 +9,5 @@ __pycache__/
 eval/reports/
 data/*.csv
 data/*.json
+data/*.sqlite3*
+data/uploads/

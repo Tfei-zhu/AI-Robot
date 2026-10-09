@@ -35,12 +35,15 @@
 |---|---|---|
 | 社区 Agent | LangGraph 规划、工具调用循环、事实整合与多轮记忆 | `POST /api/v1/chat` |
 | 流式 Agent | SSE 推送规划、工具调用、工具结果与最终答复 | `POST /api/v1/chat/stream` |
+| Go 示例验证与修复 | context 取消、并发任务池、channel 三场景；隔离编译、静态检查、行为测试；最多两轮修复 | `POST /api/v1/go/tasks`、`POST /api/v1/go/tasks/stream` |
 | 运行状态 | JSON 聊天响应包含 `run_id`、工具步骤和来源；SSE 逐事件输出；轨迹接口提供近期运行摘要 | 聊天接口、`GET /api/v1/traces` |
 | Go 知识库 | 社区文章经 RabbitMQ 事件**自动入库**；也支持 PDF、DOCX、Markdown、TXT 手动上传 | `POST /api/v1/ingest` |
 | 文章工具 | 查询文章**真实数据**（标题/作者/标签/点赞/评论，来自 Go 文章服务） | `app/agents/tools.py` |
 | 可观测性 | 实时控制台、请求追踪、缓存与限流指标 | `/dashboard`、`/api/v1/traces`、`/api/v1/stats` |
 
 ## 与 Go 文章社区集成
+
+新增的 Go 代码验证需要先构建独立验证镜像，并让本地 Python 服务能够调用 Docker。启动方法、固定接口、逐项验收和对比结果见 [Go 验证使用文档](docs/go-validation.md) 与 [完成清单](GO_VALIDATION_CHECKLIST.md)。固定输出评测验证了执行链路；真实模型质量需要本地配置密钥后运行 `--live` 评测。
 
 本服务提供与 Go 文章社区后端（仓库 `Tfei-zhu/csdn_article_go`）的集成。配置 Go 服务与 RabbitMQ 后，新发布的文章可自动进入知识库，文章查询工具可读取实时详情；知识库也可以使用示例资料与手动上传文件。链路如下：
 

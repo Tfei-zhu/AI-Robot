@@ -16,7 +16,7 @@ jobs:
           python-version: "3.11"
           cache: pip
       - name: 安装核心依赖
-        run: pip install -r requirements.txt
+        run: pip install -r requirements-dev.txt
       - name: 语法检查
         run: python -m compileall -q app eval scripts tests
 
@@ -40,8 +40,40 @@ jobs:
           python tests/test_tracing.py
           python -m unittest discover -s tests -p "test_hardening.py" -v
           python eval/run_agent_eval.py
+      - name: Go 契约及工作流离线验收
+        run: |
+          pip install -r requirements-dev.txt
+          python -m pytest tests/test_go_contracts.py tests/test_go_workflow.py tests/test_go_runner.py tests/test_go_acceptance.py -q
       - name: 服务可导入冒烟
         run: python -c "from app.main import app; print('import OK, routes:', len(app.routes))"
+
+  go-validation:
+    name: Go 实际沙箱与修复流程
+    needs: test
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    env:
+      AIROBOT_TEST_DOCKER: "1"
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: pip
+      - name: 安装依赖
+        run: pip install -r requirements-dev.txt
+      - name: 构建固定 Go 验证镜像
+        run: docker build -t airobot-go-validator:1.26.2 sandbox/go
+      - name: 真实沙箱与工作流验收
+        run: python -m pytest tests/test_go_contracts.py tests/test_go_runner.py tests/test_go_workflow.py tests/test_go_acceptance.py -q
+      - name: 固定输出对比评测（实际编译器）
+        run: python eval/run_go_eval.py --fixtures
+      - name: 上传对比报告
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: go-validation-fixture-report
+          path: eval/reports/go/
 
   eval:
     name: eval（RAGAS 冒烟，前 5 条）

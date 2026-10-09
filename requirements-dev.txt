@@ -1,0 +1,3 @@
+# 离线单测与真实 Docker 验收所需；浏览器验收单独使用 Playwright。
+-r requirements.txt
+pytest>=8.0,<10

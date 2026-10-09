@@ -1,0 +1,1078 @@
+{
+  "generated_at": "2026-10-08T14:37:30.689018+00:00",
+  "model_source": "fixture",
+  "model": "人工固定输出，无模型请求",
+  "verification": "Docker Go 1.26.2，真实 build/vet/test，服务端固定行为测试",
+  "scope": "固定输出结果用于验证流程与缺陷拦截，不代表真实模型生成或修复质量。",
+  "baseline": {
+    "cases": 9,
+    "compile_pass_rate": 0.6666666666666666,
+    "test_pass_rate": 0.3333333333333333,
+    "mean_elapsed_ms": 1655.4,
+    "mean_model_calls": 1.0
+  },
+  "with_repair": {
+    "cases": 9,
+    "compile_pass_rate": 1.0,
+    "test_pass_rate": 1.0,
+    "mean_elapsed_ms": 3143.6,
+    "mean_model_calls": 1.67
+  },
+  "repair_success_rate": 1.0,
+  "token_note": "固定输出无 token；真实模型只记录服务商返回的用量，未返回时为空。",
+  "latency_note": "固定输出 baseline 耗时仅验证器；修复耗时含整个流程。真实模型逐次延迟未单独测量。",
+  "rows": [
+    {
+      "id": "context-normal",
+      "initial_pass": true,
+      "final_pass": true,
+      "initial_compile": true,
+      "final_compile": true,
+      "final_status": "passed",
+      "initial_elapsed_ms": 2211.0,
+      "elapsed_ms": 2234.4,
+      "model_calls": 1,
+      "validation_calls": 1,
+      "token_usage": null
+    },
+    {
+      "id": "context-behavior-error",
+      "initial_pass": false,
+      "final_pass": true,
+      "initial_compile": true,
+      "final_compile": true,
+      "final_status": "passed",
+      "initial_elapsed_ms": 2148.2,
+      "elapsed_ms": 4333.3,
+      "model_calls": 2,
+      "validation_calls": 2,
+      "token_usage": null
+    },
+    {
+      "id": "context-compile-error",
+      "initial_pass": false,
+      "final_pass": true,
+      "initial_compile": false,
+      "final_compile": true,
+      "final_status": "passed",
+      "initial_elapsed_ms": 560.8,
+      "elapsed_ms": 2824.3,
+      "model_calls": 2,
+      "validation_calls": 2,
+      "token_usage": null
+    },
+    {
+      "id": "pool-normal",
+      "initial_pass": true,
+      "final_pass": true,
+      "initial_compile": true,
+      "final_compile": true,
+      "final_status": "passed",
+      "initial_elapsed_ms": 2236.2,
+      "elapsed_ms": 2243.2,
+      "model_calls": 1,
+      "validation_calls": 1,
+      "token_usage": null
+    },
+    {
+      "id": "pool-behavior-error",
+      "initial_pass": false,
+      "final_pass": true,
+      "initial_compile": true,
+      "final_compile": true,
+      "final_status": "passed",
+      "initial_elapsed_ms": 2180.9,
+      "elapsed_ms": 4365.1,
+      "model_calls": 2,
+      "validation_calls": 2,
+      "token_usage": null
+    },
+    {
+      "id": "pool-compile-error",
+      "initial_pass": false,
+      "final_pass": true,
+      "initial_compile": false,
+      "final_compile": true,
+      "final_status": "passed",
+      "initial_elapsed_ms": 614.7,
+      "elapsed_ms": 2799.7,
+      "model_calls": 2,
+      "validation_calls": 2,
+      "token_usage": null
+    },
+    {
+      "id": "channel-normal",
+      "initial_pass": true,
+      "final_pass": true,
+      "initial_compile": true,
+      "final_compile": true,
+      "final_status": "passed",
+      "initial_elapsed_ms": 2227.7,
+      "elapsed_ms": 2233.5,
+      "model_calls": 1,
+      "validation_calls": 1,
+      "token_usage": null
+    },
+    {
+      "id": "channel-behavior-error",
+      "initial_pass": false,
+      "final_pass": true,
+      "initial_compile": true,
+      "final_compile": true,
+      "final_status": "passed",
+      "initial_elapsed_ms": 2145.1,
+      "elapsed_ms": 4414.9,
+      "model_calls": 2,
+      "validation_calls": 2,
+      "token_usage": null
+    },
+    {
+      "id": "channel-compile-error",
+      "initial_pass": false,
+      "final_pass": true,
+      "initial_compile": false,
+      "final_compile": true,
+      "final_status": "passed",
+      "initial_elapsed_ms": 574.0,
+      "elapsed_ms": 2843.8,
+      "model_calls": 2,
+      "validation_calls": 2,
+      "token_usage": null
+    }
+  ],
+  "results": [
+    {
+      "run_id": "2a60287e9f2a4fbbaf9827fc89560ba5",
+      "status": "passed",
+      "scenario": "context_cancel",
+      "attempts": [
+        {
+          "number": 0,
+          "bundle": {
+            "files": [
+              {
+                "name": "solution.go",
+                "content": "package example\nimport \"context\"\n// 等待取消或 deadline 到期，保留具体错误。\nfunc WaitForCancel(ctx context.Context) error { <-ctx.Done(); return ctx.Err() }\n"
+              },
+              {
+                "name": "solution_test.go",
+                "content": "package example\nimport (\"context\";\"errors\";\"testing\")\nfunc TestGeneratedCancelled(t *testing.T){ctx,cancel:=context.WithCancel(context.Background());cancel()\n    if !errors.Is(WaitForCancel(ctx),context.Canceled){t.Fatal(\"取消错误\")}}\n"
+              },
+              {
+                "name": "server_acceptance_test.go",
+                "content": "package example\nimport (\"context\"; \"errors\"; \"testing\"; \"time\")\nfunc TestServerAlreadyCancelled(t *testing.T) {\n    ctx,cancel:=context.WithCancel(context.Background());cancel()\n    if !errors.Is(WaitForCancel(ctx),context.Canceled) {t.Fatal(\"必须返回取消错误\")}\n}\nfunc TestServerWaitsThenCancels(t *testing.T) {\n    ctx,cancel:=context.WithCancel(context.Background());defer cancel()\n    done:=make(chan error,1);go func(){done<-WaitForCancel(ctx)}()\n    select {case <-done:t.Fatal(\"取消前不能提前返回\");case <-time.After(20*time.Millisecond):}\n    cancel()\n    select {case err:=<-done:if !errors.Is(err,context.Canceled){t.Fatal(err)};case <-time.After(time.Second):t.Fatal(\"未响应取消\")}\n}\nfunc TestServerDeadline(t *testing.T) {\n    ctx,cancel:=context.WithTimeout(context.Background(),20*time.Millisecond);defer cancel()\n    if !errors.Is(WaitForCancel(ctx),context.DeadlineExceeded){t.Fatal(\"必须传播超时\")}\n}\n"
+              }
+            ]
+          },
+          "validation": {
+            "status": "passed",
+            "go_version": "1.26.2",
+            "stages": [
+              {
+                "stage": "policy",
+                "exit_code": 0,
+                "output": "单包、源码及标准库依赖校验通过",
+                "elapsed_ms": 0.0,
+                "truncated": false
+              },
+              {
+                "stage": "compile",
+                "exit_code": 0,
+                "output": "",
+                "elapsed_ms": 36.0,
+                "truncated": false
+              },
+              {
+                "stage": "vet",
+                "exit_code": 0,
+                "output": "",
+                "elapsed_ms": 1403.0,
+                "truncated": false
+              },
+              {
+                "stage": "test",
+                "exit_code": 0,
+                "output": "{\"Time\":\"2026-10-08T14:37:04.271777016Z\",\"Action\":\"start\",\"Package\":\"airobot.example\"}\n{\"Time\":\"2026-10-08T14:37:04.272798881Z\",\"Action\":\"run\",\"Package\":\"airobot.example\",\"Test\":\"TestServerAlreadyCancelled\"}\n{\"Time\":\"2026-10-08T14:37:04.272815282Z\",\"Action\":\"output\",\"Package\":\"airobot.example\",\"Test\":\"TestServerAlreadyCancelled\",\"Output\":\"=== RUN   TestServerAlreadyCancelled\\n\"}\n{\"Time\":\"2026-10-08T14:37:04.272831008Z\",\"Action\":\"output\",\"Package\":\"airobot.example\",\"Test\":\"TestServerAlreadyCancelled\",\"Output\":\"--- PASS: TestServerAlreadyCancelled (0.00s)\\n\"}\n{\"Time\":\"2026-10-08T14:37:04.272833314Z\",\"Action\":\"pass\",\"Package\":\"airobot.example\",\"Test\":\"TestServerAlreadyCancelled\",\"Elapsed\":0}\n{\"Time\":\"2026-10-08T14:37:04.272836297Z\",\"Action\":\"run\",\"Package\":\"airobot.example\",\"Test\":\"TestServerWaitsThenCancels\"}\n{\"Time\":\"2026-10-08T14:37:04.272837288Z\",\"Action\":\"output\",\"Package\":\"airobot.example\",\"Test\":\"TestServerWaitsThenCancels\",\"Output\":\"=== RUN   TestServerWaitsThenCancels\\n\"}\n{\"Time\":\"2026-10-08T14:37:04.293053723Z\",\"Action\":\"output\",\"Package\":\"airobot.example\",\"Test\":\"TestServerWaitsThenCancels\",\"Output\":\"--- PASS: TestServerWaitsThenCancels (0.02s)\\n\"}\n{\"Time\":\"2026-10-08T14:37:04.293068524Z\",\"Action\":\"pass\",\"Package\":\"airobot.example\",\"Test\":\"TestServerWaitsThenCancels\",\"Elapsed\":0.02}\n{\"Time\":\"2026-10-08T14:37:04.293074677Z\",\"Action\":\"run\",\"Package\":\"airobot.example\",\"Test\":\"TestServerDeadline\"}\n{\"Time\":\"2026-10-08T14:37:04.293076934Z\",\"Action\":\"output\",\"Package\":\"airobot.example\",\"Test\":\"TestServerDeadline\",\"Output\":\"=== RUN   TestServerDeadline\\n\"}\n{\"Time\":\"2026-10-08T14:37:04.31333406Z\",\"Action\":\"output\",\"Package\":\"airobot.example\",\"Test\":\"TestServerDeadline\",\"Output\":\"--- PASS: TestServerDeadline (0.02s)\\n\"}\n{\"Time\":\"2026-10-08T14:37:04.313348388Z\",\"Action\":\"pass\",\"Package\":\"airobot.example\",\"Test\":\"TestServerDeadline\",\"Elapsed\":0.02}\n{\"Time\":\"2026-10-08T14:37:04.313351814Z\",\"Action\":\"run\",\"Package\":\"airobot.example\",\"Test\":\"TestGeneratedCancelled\"}\n{\"Time\":\"2026-10-08T14:37:04.313352918Z\",\"Action\":\"output\",\"Package\":\"airobot.example\",\"Test\":\"TestGeneratedCancelled\",\"Output\":\"=== RUN   TestGeneratedCancelled\\n\"}\n{\"Time\":\"2026-10-08T14:37:04.313356949Z\",\"Action\":\"output\",\"Package\":\"airobot.example\",\"Test\":\"TestGeneratedCancelled\",\"Output\":\"--- PASS: TestGeneratedCancelled (0.00s)\\n\"}\n{\"Time\":\"2026-10-08T14:37:04.313358205Z\",\"Action\":\"pass\",\"Package\":\"airobot.example\",\"Test\":\"TestGeneratedCancelled\",\"Elapsed\":0}\n{\"Time\":\"2026-10-08T14:37:04.313359417Z\",\"Action\":\"output\",\"Package\":\"airobot.example\",\"Output\":\"PASS\\n\"}\n{\"Time\":\"2026-10-08T14:37:04.313584664Z\",\"Action\":\"output\",\"Package\":\"airobot.example\",\"Output\":\"ok  \\tairobot.example\\t0.042s\\n\"}\n{\"Time\":\"2026-10-08T14:37:04.313600159Z\",\"Action\":\"pass\",\"Package\":\"airobot.example\",\"Elapsed\":0.042}\n",
+                "elapsed_ms": 204.0,
+                "truncated": false
+              }
+            ],
+            "elapsed_ms": 2211.0,
+            "container_removed": true
+          },
+          "change_summary": "人工固定样例：correct"
+        }
+      ],
+      "sources": [],
+      "model_calls": 1,
+      "validation_calls": 1,
+      "elapsed_ms": 2234.4,
+      "error": null,
+      "model_source": "fixture",
+      "token_usage": {},
+      "validation_scope": "仅验证当前代码、当前测试和固定 Go 工具链；不保证全部行为正确"
+    },
+    {
+      "run_id": "cab9b187ebb84680822f1377ded98a84",
+      "status": "passed",
+      "scenario": "context_cancel",
+      "attempts": [
+        {
+          "number": 0,
+          "bundle": {
+            "files": [
+              {
+                "name": "solution.go",
+                "content": "package example\nimport \"context\"\nfunc WaitForCancel(ctx context.Context) error { return nil }\n"
+              },
+              {
+                "name": "solution_test.go",
+                "content": "package example\nimport (\"context\";\"errors\";\"testing\")\nfunc TestGeneratedCancelled(t *testing.T){ctx,cancel:=context.WithCancel(context.Background());cancel()\n    if !errors.Is(WaitForCancel(ctx),context.Canceled){t.Fatal(\"取消错误\")}}\n"
+              },
+              {
+                "name": "server_acceptance_test.go",
+                "content": "package example\nimport (\"context\"; \"errors\"; \"testing\"; \"time\")\nfunc TestServerAlreadyCancelled(t *testing.T) {\n    ctx,cancel:=context.WithCancel(context.Background());cancel()\n    if !errors.Is(WaitForCancel(ctx),context.Canceled) {t.Fatal(\"必须返回取消错误\")}\n}\nfunc TestServerWaitsThenCancels(t *testing.T) {\n    ctx,cancel:=context.WithCancel(context.Background());defer cancel()\n    done:=make(chan error,1);go func(){done<-WaitForCancel(ctx)}()\n    select {case <-done:t.Fatal(\"取消前不能提前返回\");case <-time.After(20*time.Millisecond):}\n    cancel()\n    select {case err:=<-done:if !errors.Is(err,context.Canceled){t.Fatal(err)};case <-time.After(time.Second):t.Fatal(\"未响应取消\")}\n}\nfunc TestServerDeadline(t *testing.T) {\n    ctx,cancel:=context.WithTimeout(context.Background(),20*time.Millisecond);defer cancel()\n    if !errors.Is(WaitForCancel(ctx),context.DeadlineExceeded){t.Fatal(\"必须传播超时\")}\n}\n"
+              }
+            ]
+          },
+          "validation": {
+            "status": "failed",
+            "go_version": "1.26.2",
+            "stages": [
+              {
+                "stage": "policy",
+                "exit_code": 0,
+                "output": "单包、源码及标准库依赖校验通过",
+                "elapsed_ms": 0.0,
+                "truncated": false
+              },
+              {
+                "stage": "compile",
+                "exit_code": 0,
+                "output": "",
+                "elapsed_ms": 22.0,
+                "truncated": false
+              },
+              {
+                "stage": "vet",
+                "exit_code": 0,
+                "output": "",
+                "elapsed_ms": 1373.0,
+                "truncated": false
+              },
+              {
+                "stage": "test",
+                "exit_code": 1,
+                "output": "{\"Time\":\"2026-10-08T14:37:06.468126337Z\",\"Action\":\"start\",\"Package\":\"airobot.example\"}\n{\"Time\":\"2026-10-08T14:37:06.469220376Z\",\"Action\":\"run\",\"Package\":\"airobot.example\",\"Test\":\"TestServerAlreadyCancelled\"}\n{\"Time\":\"2026-10-08T14:37:06.469237515Z\",\"Action\":\"output\",\"Package\":\"airobot.example\",\"Test\":\"TestServerAlreadyCancelled\",\"Output\":\"=== RUN   TestServerAlreadyCancelled\\n\"}\n{\"Time\":\"2026-10-08T14:37:06.469250832Z\",\"Action\":\"output\",\"Package\":\"airobot.example\",\"Test\":\"TestServerAlreadyCancelled\",\"Output\":\"    server_acceptance_test.go:5: 必须返回取消错误\\n\"}\n{\"Time\":\"2026-10-08T14:37:06.469254365Z\",\"Action\":\"output\",\"Package\":\"airobot.example\",\"Test\":\"TestServerAlreadyCancelled\",\"Output\":\"--- FAIL: TestServerAlreadyCancelled (0.00s)\\n\"}\n{\"Time\":\"2026-10-08T14:37:06.469255957Z\",\"Action\":\"fail\",\"Package\":\"airobot.example\",\"Test\":\"TestServerAlreadyCancelled\",\"Elapsed\":0}\n{\"Time\":\"2026-10-08T14:37:06.469258439Z\",\"Action\":\"run\",\"Package\":\"airobot.example\",\"Test\":\"TestServerWaitsThenCancels\"}\n{\"Time\":\"2026-10-08T14:37:06.469259401Z\",\"Action\":\"output\",\"Package\":\"airobot.example\",\"Test\":\"TestServerWaitsThenCancels\",\"Output\":\"=== RUN   TestServerWaitsThenCancels\\n\"}\n{\"Time\":\"2026-10-08T14:37:06.469261585Z\",\"Action\":\"output\",\"Package\":\"airobot.example\",\"Test\":\"TestServerWaitsThenCancels\",\"Output\":\"    server_acceptance_test.go:10: 取消前不能提前返回\\n\"}\n{\"Time\":\"2026-10-08T14:37:06.469264338Z\",\"Action\":\"output\",\"Package\":\"airobot.example\",\"Test\":\"TestServerWaitsThenCancels\",\"Output\":\"--- FAIL: TestServerWaitsThenCancels (0.00s)\\n\"}\n{\"Time\":\"2026-10-08T14:37:06.469266052Z\",\"Action\":\"fail\",\"Package\":\"airobot.example\",\"Test\":\"TestServerWaitsThenCancels\",\"Elapsed\":0}\n{\"Time\":\"2026-10-08T14:37:06.469267294Z\",\"Action\":\"run\",\"Package\":\"airobot.example\",\"Test\":\"TestServerDeadline\"}\n{\"Time\":\"2026-10-08T14:37:06.469372871Z\",\"Action\":\"output\",\"Package\":\"airobot.example\",\"Test\":\"TestServerDeadline\",\"Output\":\"=== RUN   TestServerDeadline\\n\"}\n{\"Time\":\"2026-10-08T14:37:06.469377146Z\",\"Action\":\"output\",\"Package\":\"airobot.example\",\"Test\":\"TestServerDeadline\",\"Output\":\"    server_acceptance_test.go:16: 必须传播超时\\n\"}\n{\"Time\":\"2026-10-08T14:37:06.469379284Z\",\"Action\":\"output\",\"Package\":\"airobot.example\",\"Test\":\"TestServerDeadline\",\"Output\":\"--- FAIL: TestServerDeadline (0.00s)\\n\"}\n{\"Time\":\"2026-10-08T14:37:06.469381133Z\",\"Action\":\"fail\",\"Package\":\"airobot.example\",\"Test\":\"TestServerDeadline\",\"Elapsed\":0}\n{\"Time\":\"2026-10-08T14:37:06.469382846Z\",\"Action\":\"run\",\"Package\":\"airobot.example\",\"Test\":\"TestGeneratedCancelled\"}\n{\"Time\":\"2026-10-08T14:37:06.469383994Z\",\"Action\":\"output\",\"Package\":\"airobot.example\",\"Test\":\"TestGeneratedCancelled\",\"Output\":\"=== RUN   TestGeneratedCancelled\\n\"}\n{\"Time\":\"2026-10-08T14:37:06.469385306Z\",\"Action\":\"output\",\"Package\":\"airobot.example\",\"Test\":\"TestGeneratedCancelled\",\"Output\":\"    solution_test.go:4: 取消错误\\n\"}\n{\"Time\":\"2026-10-08T14:37:06.469386828Z\",\"Action\":\"output\",\"Package\":\"airobot.example\",\"Test\":\"TestGeneratedCancelled\",\"Output\":\"--- FAIL: TestGeneratedCancelled (0.00s)\\n\"}\n{\"Time\":\"2026-10-08T14:37:06.469388091Z\",\"Action\":\"fail\",\"Package\":\"airobot.example\",\"Test\":\"TestGeneratedCancelled\",\"Elapsed\":0}\n{\"Time\":\"2026-10-08T14:37:06.46938946Z\",\"Action\":\"output\",\"Package\":\"airobot.example\",\"Output\":\"FAIL\\n\"}\n{\"Time\":\"2026-10-08T14:37:06.469489037Z\",\"Action\":\"output\",\"Package\":\"airobot.example\",\"Output\":\"FAIL\\tairobot.example\\t0.001s\\n\"}\n{\"Time\":\"2026-10-08T14:37:06.469502955Z\",\"Action\":\"fail\",\"Package\":\"airobot.example\",\"Elapsed\":0.001}\n",
+                "elapsed_ms": 161.0,
+                "truncated": false
+              }
+            ],
+            "elapsed_ms": 2148.2,
+            "container_removed": true
+          },
+          "change_summary": "人工固定样例：behavior_error"
+        },
+        {
+          "number": 1,
+          "bundle": {
+            "files": [
+              {
+                "name": "solution.go",
+                "content": "package example\nimport \"context\"\n// 等待取消或 deadline 到期，保留具体错误。\nfunc WaitForCancel(ctx context.Context) error { <-ctx.Done(); return ctx.Err() }\n"
+              },
+              {
+                "name": "solution_test.go",
+                "content": "package example\nimport (\"context\";\"errors\";\"testing\")\nfunc TestGeneratedCancelled(t *testing.T){ctx,cancel:=context.WithCancel(context.Background());cancel()\n    if !errors.Is(WaitForCancel(ctx),context.Canceled){t.Fatal(\"取消错误\")}}\n"
+              },
+              {
+                "name": "server_acceptance_test.go",
+                "content": "package example\nimport (\"context\"; \"errors\"; \"testing\"; \"time\")\nfunc TestServerAlreadyCancelled(t *testing.T) {\n    ctx,cancel:=context.WithCancel(context.Background());cancel()\n    if !errors.Is(WaitForCancel(ctx),context.Canceled) {t.Fatal(\"必须返回取消错误\")}\n}\nfunc TestServerWaitsThenCancels(t *testing.T) {\n    ctx,cancel:=context.WithCancel(context.Background());defer cancel()\n    done:=make(chan error,1);go func(){done<-WaitForCancel(ctx)}()\n    select {case <-done:t.Fatal(\"取消前不能提前返回\");case <-time.After(20*time.Millisecond):}\n    cancel()\n    select {case err:=<-done:if !errors.Is(err,context.Canceled){t.Fatal(err)};case <-time.After(time.Second):t.Fatal(\"未响应取消\")}\n}\nfunc TestServerDeadline(t *testing.T) {\n    ctx,cancel:=context.WithTimeout(context.Background(),20*time.Millisecond);defer cancel()\n    if !errors.Is(WaitForCancel(ctx),context.DeadlineExceeded){t.Fatal(\"必须传播超时\")}\n}\n"
+              }
+            ]
+          },
+          "validation": {
+            "status": "passed",
+            "go_version": "1.26.2",
+            "stages": [
+              {
+                "stage": "policy",
+                "exit_code": 0,
+                "output": "单包、源码及标准库依赖校验通过",
+                "elapsed_ms": 0.0,
+                "truncated": false
+              },
+              {
+                "stage": "compile",
+                "exit_code": 0,
+                "output": "",
+                "elapsed_ms": 23.0,
+                "truncated": false
+              },
+              {
+                "stage": "vet",
+                "exit_code": 0,
+                "output": "",
+                "elapsed_ms": 1359.0,
+                "truncated": false
+              },
+              {
+                "stage": "test",
+                "exit_code": 0,
+                "output": "{\"Time\":\"2026-10-08T14:37:08.597528168Z\",\"Action\":\"start\",\"Package\":\"airobot.example\"}\n{\"Time\":\"2026-10-08T14:37:08.598621637Z\",\"Action\":\"run\",\"Package\":\"airobot.example\",\"Test\":\"TestServerAlreadyCancelled\"}\n{\"Time\":\"2026-10-08T14:37:08.59863699Z\",\"Action\":\"output\",\"Package\":\"airobot.example\",\"Test\":\"TestServerAlreadyCancelled\",\"Output\":\"=== RUN   TestServerAlreadyCancelled\\n\"}\n{\"Time\":\"2026-10-08T14:37:08.5986514Z\",\"Action\":\"output\",\"Package\":\"airobot.example\",\"Test\":\"TestServerAlreadyCancelled\",\"Output\":\"--- PASS: TestServerAlreadyCancelled (0.00s)\\n\"}\n{\"Time\":\"2026-10-08T14:37:08.598653126Z\",\"Action\":\"pass\",\"Package\":\"airobot.example\",\"Test\":\"TestServerAlreadyCancelled\",\"Elapsed\":0}\n{\"Time\":\"2026-10-08T14:37:08.598655384Z\",\"Action\":\"run\",\"Package\":\"airobot.example\",\"Test\":\"TestServerWaitsThenCancels\"}\n{\"Time\":\"2026-10-08T14:37:08.598656349Z\",\"Action\":\"output\",\"Package\":\"airobot.example\",\"Test\":\"TestServerWaitsThenCancels\",\"Output\":\"=== RUN   TestServerWaitsThenCancels\\n\"}\n{\"Time\":\"2026-10-08T14:37:08.618958613Z\",\"Action\":\"output\",\"Package\":\"airobot.example\",\"Test\":\"TestServerWaitsThenCancels\",\"Output\":\"--- PASS: TestServerWaitsThenCancels (0.02s)\\n\"}\n{\"Time\":\"2026-10-08T14:37:08.618991239Z\",\"Action\":\"pass\",\"Package\":\"airobot.example\",\"Test\":\"TestServerWaitsThenCancels\",\"Elapsed\":0.02}\n{\"Time\":\"2026-10-08T14:37:08.618997441Z\",\"Action\":\"run\",\"Package\":\"airobot.example\",\"Test\":\"TestServerDeadline\"}\n{\"Time\":\"2026-10-08T14:37:08.618999009Z\",\"Action\":\"output\",\"Package\":\"airobot.example\",\"Test\":\"TestServerDeadline\",\"Output\":\"=== RUN   TestServerDeadline\\n\"}\n{\"Time\":\"2026-10-08T14:37:08.639222975Z\",\"Action\":\"output\",\"Package\":\"airobot.example\",\"Test\":\"TestServerDeadline\",\"Output\":\"--- PASS: TestServerDeadline (0.02s)\\n\"}\n{\"Time\":\"2026-10-08T14:37:08.639246651Z\",\"Action\":\"pass\",\"Package\":\"airobot.example\",\"Test\":\"TestServerDeadline\",\"Elapsed\":0.02}\n{\"Time\":\"2026-10-08T14:37:08.639251503Z\",\"Action\":\"run\",\"Package\":\"airobot.example\",\"Test\":\"TestGeneratedCancelled\"}\n{\"Time\":\"2026-10-08T14:37:08.639253121Z\",\"Action\":\"output\",\"Package\":\"airobot.example\",\"Test\":\"TestGeneratedCancelled\",\"Output\":\"=== RUN   TestGeneratedCancelled\\n\"}\n{\"Time\":\"2026-10-08T14:37:08.63925597Z\",\"Action\":\"output\",\"Package\":\"airobot.example\",\"Test\":\"TestGeneratedCancelled\",\"Output\":\"--- PASS: TestGeneratedCancelled (0.00s)\\n\"}\n{\"Time\":\"2026-10-08T14:37:08.63926074Z\",\"Action\":\"pass\",\"Package\":\"airobot.example\",\"Test\":\"TestGeneratedCancelled\",\"Elapsed\":0}\n{\"Time\":\"2026-10-08T14:37:08.639262583Z\",\"Action\":\"output\",\"Package\":\"airobot.example\",\"Output\":\"PASS\\n\"}\n{\"Time\":\"2026-10-08T14:37:08.63966167Z\",\"Action\":\"output\",\"Package\":\"airobot.example\",\"Output\":\"ok  \\tairobot.example\\t0.042s\\n\"}\n{\"Time\":\"2026-10-08T14:37:08.639682669Z\",\"Action\":\"pass\",\"Package\":\"airobot.example\",\"Elapsed\":0.042}\n",
+                "elapsed_ms": 206.0,
+                "truncated": false
+              }
+            ],
+            "elapsed_ms": 2161.3,
+            "container_removed": true
+          },
+          "change_summary": "人工固定样例：correct"
+        }
+      ],
+      "sources": [],
+      "model_calls": 2,
+      "validation_calls": 2,
+      "elapsed_ms": 4333.3,
+      "error": null,
+      "model_source": "fixture",
+      "token_usage": {},
+      "validation_scope": "仅验证当前代码、当前测试和固定 Go 工具链；不保证全部行为正确"
+    },
+    {
+      "run_id": "6ac217f2f68a487ca5b3a7e956f05de9",
+      "status": "passed",
+      "scenario": "context_cancel",
+      "attempts": [
+        {
+          "number": 0,
+          "bundle": {
+            "files": [
+              {
+                "name": "solution.go",
+                "content": "package example\nimport \"context\"\n// 等待取消或 deadline 到期，保留具体错误。\nfunc WaitForCancel(ctx context.Context) error { <-ctx.Done(); return ctx.Err() }\n\nvar broken = missingIdentifier\n"
+              },
+              {
+                "name": "solution_test.go",
+                "content": "package example\nimport (\"context\";\"errors\";\"testing\")\nfunc TestGeneratedCancelled(t *testing.T){ctx,cancel:=context.WithCancel(context.Background());cancel()\n    if !errors.Is(WaitForCancel(ctx),context.Canceled){t.Fatal(\"取消错误\")}}\n"
+              },
+              {
+                "name": "server_acceptance_test.go",
+                "content": "package example\nimport (\"context\"; \"errors\"; \"testing\"; \"time\")\nfunc TestServerAlreadyCancelled(t *testing.T) {\n    ctx,cancel:=context.WithCancel(context.Background());cancel()\n    if !errors.Is(WaitForCancel(ctx),context.Canceled) {t.Fatal(\"必须返回取消错误\")}\n}\nfunc TestServerWaitsThenCancels(t *testing.T) {\n    ctx,cancel:=context.WithCancel(context.Background());defer cancel()\n    done:=make(chan error,1);go func(){done<-WaitForCancel(ctx)}()\n    select {case <-done:t.Fatal(\"取消前不能提前返回\");case <-time.After(20*time.Millisecond):}\n    cancel()\n    select {case err:=<-done:if !errors.Is(err,context.Canceled){t.Fatal(err)};case <-time.After(time.Second):t.Fatal(\"未响应取消\")}\n}\nfunc TestServerDeadline(t *testing.T) {\n    ctx,cancel:=context.WithTimeout(context.Background(),20*time.Millisecond);defer cancel()\n    if !errors.Is(WaitForCancel(ctx),context.DeadlineExceeded){t.Fatal(\"必须传播超时\")}\n}\n"
+              }
+            ]
+          },
+          "validation": {
+            "status": "failed",
+            "go_version": "1.26.2",
+            "stages": [
+              {
+                "stage": "policy",
+                "exit_code": 0,
+                "output": "单包、源码及标准库依赖校验通过",
+                "elapsed_ms": 0.0,
+                "truncated": false
+              },
+              {
+                "stage": "compile",
+                "exit_code": 1,
+                "output": "# airobot.example\n./solution.go:6:14: undefined: missingIdentifier\n",
+                "elapsed_ms": 21.0,
+                "truncated": false
+              }
+            ],
+            "elapsed_ms": 560.8,
+            "container_removed": true
+          },
+          "change_summary": "人工固定样例：compile_error"
+        },
+        {
+          "number": 1,
+          "bundle": {
+            "files": [
+              {
+                "name": "solution.go",
+                "content": "package example\nimport \"context\"\n// 等待取消或 deadline 到期，保留具体错误。\nfunc WaitForCancel(ctx context.Context) error { <-ctx.Done(); return ctx.Err() }\n"
+              },
+              {
+                "name": "solution_test.go",
+                "content": "package example\nimport (\"context\";\"errors\";\"testing\")\nfunc TestGeneratedCancelled(t *testing.T){ctx,cancel:=context.WithCancel(context.Background());cancel()\n    if !errors.Is(WaitForCancel(ctx),context.Canceled){t.Fatal(\"取消错误\")}}\n"
+              },
+              {
+                "name": "server_acceptance_test.go",
+                "content": "package example\nimport (\"context\"; \"errors\"; \"testing\"; \"time\")\nfunc TestServerAlreadyCancelled(t *testing.T) {\n    ctx,cancel:=context.WithCancel(context.Background());cancel()\n    if !errors.Is(WaitForCancel(ctx),context.Canceled) {t.Fatal(\"必须返回取消错误\")}\n}\nfunc TestServerWaitsThenCancels(t *testing.T) {\n    ctx,cancel:=context.WithCancel(context.Background());defer cancel()\n    done:=make(chan error,1);go func(){done<-WaitForCancel(ctx)}()\n    select {case <-done:t.Fatal(\"取消前不能提前返回\");case <-time.After(20*time.Millisecond):}\n    cancel()\n    select {case err:=<-done:if !errors.Is(err,context.Canceled){t.Fatal(err)};case <-time.After(time.Second):t.Fatal(\"未响应取消\")}\n}\nfunc TestServerDeadline(t *testing.T) {\n    ctx,cancel:=context.WithTimeout(context.Background(),20*time.Millisecond);defer cancel()\n    if !errors.Is(WaitForCancel(ctx),context.DeadlineExceeded){t.Fatal(\"必须传播超时\")}\n}\n"
+              }
+            ]
+          },
+          "validation": {
+            "status": "passed",
+            "go_version": "1.26.2",
+            "stages": [
+              {
+                "stage": "policy",
+                "exit_code": 0,
+                "output": "单包、源码及标准库依赖校验通过",
+                "elapsed_ms": 0.0,
+                "truncated": false
+              },
+              {
+                "stage": "compile",
+                "exit_code": 0,
+                "output": "",
+                "elapsed_ms": 23.0,
+                "truncated": false
+              },
+              {
+                "stage": "vet",
+                "exit_code": 0,
+                "output": "",
+                "elapsed_ms": 1448.0,
+                "truncated": false
+              },
+              {
+                "stage": "test",
+                "exit_code": 0,
+                "output": "{\"Time\":\"2026-10-08T14:37:11.428282944Z\",\"Action\":\"start\",\"Package\":\"airobot.example\"}\n{\"Time\":\"2026-10-08T14:37:11.429336776Z\",\"Action\":\"run\",\"Package\":\"airobot.example\",\"Test\":\"TestServerAlreadyCancelled\"}\n{\"Time\":\"2026-10-08T14:37:11.429350278Z\",\"Action\":\"output\",\"Package\":\"airobot.example\",\"Test\":\"TestServerAlreadyCancelled\",\"Output\":\"=== RUN   TestServerAlreadyCancelled\\n\"}\n{\"Time\":\"2026-10-08T14:37:11.429364289Z\",\"Action\":\"output\",\"Package\":\"airobot.example\",\"Test\":\"TestServerAlreadyCancelled\",\"Output\":\"--- PASS: TestServerAlreadyCancelled (0.00s)\\n\"}\n{\"Time\":\"2026-10-08T14:37:11.429365915Z\",\"Action\":\"pass\",\"Package\":\"airobot.example\",\"Test\":\"TestServerAlreadyCancelled\",\"Elapsed\":0}\n{\"Time\":\"2026-10-08T14:37:11.429368332Z\",\"Action\":\"run\",\"Package\":\"airobot.example\",\"Test\":\"TestServerWaitsThenCancels\"}\n{\"Time\":\"2026-10-08T14:37:11.429369381Z\",\"Action\":\"output\",\"Package\":\"airobot.example\",\"Test\":\"TestServerWaitsThenCancels\",\"Output\":\"=== RUN   TestServerWaitsThenCancels\\n\"}\n{\"Time\":\"2026-10-08T14:37:11.449742507Z\",\"Action\":\"output\",\"Package\":\"airobot.example\",\"Test\":\"TestServerWaitsThenCancels\",\"Output\":\"--- PASS: TestServerWaitsThenCancels (0.02s)\\n\"}\n{\"Time\":\"2026-10-08T14:37:11.449865186Z\",\"Action\":\"pass\",\"Package\":\"airobot.example\",\"Test\":\"TestServerWaitsThenCancels\",\"Elapsed\":0.02}\n{\"Time\":\"2026-10-08T14:37:11.449893382Z\",\"Action\":\"run\",\"Package\":\"airobot.example\",\"Test\":\"TestServerDeadline\"}\n{\"Time\":\"2026-10-08T14:37:11.449899368Z\",\"Action\":\"output\",\"Package\":\"airobot.example\",\"Test\":\"TestServerDeadline\",\"Output\":\"=== RUN   TestServerDeadline\\n\"}\n{\"Time\":\"2026-10-08T14:37:11.46999163Z\",\"Action\":\"output\",\"Package\":\"airobot.example\",\"Test\":\"TestServerDeadline\",\"Output\":\"--- PASS: TestServerDeadline (0.02s)\\n\"}\n{\"Time\":\"2026-10-08T14:37:11.470010696Z\",\"Action\":\"pass\",\"Package\":\"airobot.example\",\"Test\":\"TestServerDeadline\",\"Elapsed\":0.02}\n{\"Time\":\"2026-10-08T14:37:11.470014653Z\",\"Action\":\"run\",\"Package\":\"airobot.example\",\"Test\":\"TestGeneratedCancelled\"}\n{\"Time\":\"2026-10-08T14:37:11.470015821Z\",\"Action\":\"output\",\"Package\":\"airobot.example\",\"Test\":\"TestGeneratedCancelled\",\"Output\":\"=== RUN   TestGeneratedCancelled\\n\"}\n{\"Time\":\"2026-10-08T14:37:11.470017727Z\",\"Action\":\"output\",\"Package\":\"airobot.example\",\"Test\":\"TestGeneratedCancelled\",\"Output\":\"--- PASS: TestGeneratedCancelled (0.00s)\\n\"}\n{\"Time\":\"2026-10-08T14:37:11.470019052Z\",\"Action\":\"pass\",\"Package\":\"airobot.example\",\"Test\":\"TestGeneratedCancelled\",\"Elapsed\":0}\n{\"Time\":\"2026-10-08T14:37:11.470022548Z\",\"Action\":\"output\",\"Package\":\"airobot.example\",\"Output\":\"PASS\\n\"}\n{\"Time\":\"2026-10-08T14:37:11.470679709Z\",\"Action\":\"output\",\"Package\":\"airobot.example\",\"Output\":\"ok  \\tairobot.example\\t0.042s\\n\"}\n{\"Time\":\"2026-10-08T14:37:11.470698108Z\",\"Action\":\"pass\",\"Package\":\"airobot.example\",\"Elapsed\":0.042}\n",
+                "elapsed_ms": 221.0,
+                "truncated": false
+              }
+            ],
+            "elapsed_ms": 2254.7,
+            "container_removed": true
+          },
+          "change_summary": "人工固定样例：correct"
+        }
+      ],
+      "sources": [],
+      "model_calls": 2,
+      "validation_calls": 2,
+      "elapsed_ms": 2824.3,
+      "error": null,
+      "model_source": "fixture",
+      "token_usage": {},
+      "validation_scope": "仅验证当前代码、当前测试和固定 Go 工具链；不保证全部行为正确"
+    },
+    {
+      "run_id": "16f5dc085f6c48d8955aaf6d16db7db3",
+      "status": "passed",
+      "scenario": "worker_pool",
+      "attempts": [
+        {
+          "number": 0,
+          "bundle": {
+            "files": [
+              {
+                "name": "solution.go",
+                "content": "package example\nimport (\"context\"; \"fmt\"; \"sync\")\n// 固定 worker 数量，索引对应输出位置；不修改输入。\nfunc WorkerPool(ctx context.Context, jobs []int, workers int) ([]int,error) {\n    if workers<=0 { return nil,fmt.Errorf(\"workers 必须大于零\") }\n    if err:=ctx.Err();err!=nil {return nil,err}\n    out:=make([]int,len(jobs));if len(jobs)==0{return out,nil}\n    if workers>len(jobs){workers=len(jobs)}\n    queue:=make(chan int);var wg sync.WaitGroup\n    for n:=0;n<workers;n++ {wg.Add(1);go func(){defer wg.Done()\n        for {select {case <-ctx.Done():return;case i,ok:=<-queue:if !ok{return};out[i]=jobs[i]*2}}\n    }()}\n    send: for i:=range jobs {select {case <-ctx.Done():break send;case queue<-i:}}\n    close(queue);wg.Wait();if err:=ctx.Err();err!=nil{return nil,err};return out,nil\n}\n"
+              },
+              {
+                "name": "solution_test.go",
+                "content": "package example\nimport (\"context\";\"testing\")\nfunc TestGeneratedPool(t *testing.T){out,err:=WorkerPool(context.Background(),[]int{2},1)\n    if err!=nil||len(out)!=1||out[0]!=4{t.Fatal(out,err)}}\n"
+              },
+              {
+                "name": "server_acceptance_test.go",
+                "content": "package example\nimport (\"context\"; \"reflect\"; \"testing\")\nfunc TestServerPoolValuesOrderAndInput(t *testing.T) {\n    jobs:=[]int{4,-3,0,8,2}; original:=append([]int{},jobs...)\n    out,err:=WorkerPool(context.Background(),jobs,2)\n    if err!=nil||!reflect.DeepEqual(out,[]int{8,-6,0,16,4}){t.Fatalf(\"输出或顺序错误: %v %v\",out,err)}\n    if !reflect.DeepEqual(jobs,original){t.Fatal(\"修改了输入\")}\n}\nfunc TestServerPoolInvalidWorkers(t *testing.T) {\n    for _,n:=range []int{0,-1}{if _,err:=WorkerPool(context.Background(),[]int{1},n);err==nil{t.Fatal(\"非法 workers 必须报错\")}}\n}\nfunc TestServerPoolCancelled(t *testing.T) {\n    ctx,cancel:=context.WithCancel(context.Background());cancel()\n    if _,err:=WorkerPool(ctx,[]int{1,2},2);err==nil{t.Fatal(\"取消必须报错\")}\n}\nfunc TestServerPoolEmpty(t *testing.T) {\n    out,err:=WorkerPool(context.Background(),nil,2)\n    if err!=nil||len(out)!=0{t.Fatal(\"空任务处理错误\")}\n}\n"
+              }
+            ]
+          },
+          "validation": {
+            "status": "passed",
+            "go_version": "1.26.2",
+            "stages": [
+              {
+                "stage": "policy",
+                "exit_code": 0,
+                "output": "单包、源码及标准库依赖校验通过",
+                "elapsed_ms": 0.0,
+                "truncated": false
+              },
+              {
+                "stage": "compile",
+                "exit_code": 0,
+                "output": "",
+                "elapsed_ms": 50.0,
+                "truncated": false
+              },
+              {
+                "stage": "vet",
+                "exit_code": 0,
+                "output": "",
+                "elapsed_ms": 1429.0,
+                "truncated": false
+              },
+              {
+                "stage": "test",
+                "exit_code": 0,
+                "output": "{\"Time\":\"2026-10-08T14:37:13.69764962Z\",\"Action\":\"start\",\"Package\":\"airobot.example\"}\n{\"Time\":\"2026-10-08T14:37:13.698755951Z\",\"Action\":\"run\",\"Package\":\"airobot.example\",\"Test\":\"TestServerPoolValuesOrderAndInput\"}\n{\"Time\":\"2026-10-08T14:37:13.698775512Z\",\"Action\":\"output\",\"Package\":\"airobot.example\",\"Test\":\"TestServerPoolValuesOrderAndInput\",\"Output\":\"=== RUN   TestServerPoolValuesOrderAndInput\\n\"}\n{\"Time\":\"2026-10-08T14:37:13.698795082Z\",\"Action\":\"output\",\"Package\":\"airobot.example\",\"Test\":\"TestServerPoolValuesOrderAndInput\",\"Output\":\"--- PASS: TestServerPoolValuesOrderAndInput (0.00s)\\n\"}\n{\"Time\":\"2026-10-08T14:37:13.698796871Z\",\"Action\":\"pass\",\"Package\":\"airobot.example\",\"Test\":\"TestServerPoolValuesOrderAndInput\",\"Elapsed\":0}\n{\"Time\":\"2026-10-08T14:37:13.698799914Z\",\"Action\":\"run\",\"Package\":\"airobot.example\",\"Test\":\"TestServerPoolInvalidWorkers\"}\n{\"Time\":\"2026-10-08T14:37:13.698800929Z\",\"Action\":\"output\",\"Package\":\"airobot.example\",\"Test\":\"TestServerPoolInvalidWorkers\",\"Output\":\"=== RUN   TestServerPoolInvalidWorkers\\n\"}\n{\"Time\":\"2026-10-08T14:37:13.698802325Z\",\"Action\":\"output\",\"Package\":\"airobot.example\",\"Test\":\"TestServerPoolInvalidWorkers\",\"Output\":\"--- PASS: TestServerPoolInvalidWorkers (0.00s)\\n\"}\n{\"Time\":\"2026-10-08T14:37:13.698803435Z\",\"Action\":\"pass\",\"Package\":\"airobot.example\",\"Test\":\"TestServerPoolInvalidWorkers\",\"Elapsed\":0}\n{\"Time\":\"2026-10-08T14:37:13.698805143Z\",\"Action\":\"run\",\"Package\":\"airobot.example\",\"Test\":\"TestServerPoolCancelled\"}\n{\"Time\":\"2026-10-08T14:37:13.698806067Z\",\"Action\":\"output\",\"Package\":\"airobot.example\",\"Test\":\"TestServerPoolCancelled\",\"Output\":\"=== RUN   TestServerPoolCancelled\\n\"}\n{\"Time\":\"2026-10-08T14:37:13.69880808Z\",\"Action\":\"output\",\"Package\":\"airobot.example\",\"Test\":\"TestServerPoolCancelled\",\"Output\":\"--- PASS: TestServerPoolCancelled (0.00s)\\n\"}\n{\"Time\":\"2026-10-08T14:37:13.698809237Z\",\"Action\":\"pass\",\"Package\":\"airobot.example\",\"Test\":\"TestServerPoolCancelled\",\"Elapsed\":0}\n{\"Time\":\"2026-10-08T14:37:13.698810296Z\",\"Action\":\"run\",\"Package\":\"airobot.example\",\"Test\":\"TestServerPoolEmpty\"}\n{\"Time\":\"2026-10-08T14:37:13.698811269Z\",\"Action\":\"output\",\"Package\":\"airobot.example\",\"Test\":\"TestServerPoolEmpty\",\"Output\":\"=== RUN   TestServerPoolEmpty\\n\"}\n{\"Time\":\"2026-10-08T14:37:13.698813299Z\",\"Action\":\"output\",\"Package\":\"airobot.example\",\"Test\":\"TestServerPoolEmpty\",\"Output\":\"--- PASS: TestServerPoolEmpty (0.00s)\\n\"}\n{\"Time\":\"2026-10-08T14:37:13.698814466Z\",\"Action\":\"pass\",\"Package\":\"airobot.example\",\"Test\":\"TestServerPoolEmpty\",\"Elapsed\":0}\n{\"Time\":\"2026-10-08T14:37:13.698816149Z\",\"Action\":\"run\",\"Package\":\"airobot.example\",\"Test\":\"TestGeneratedPool\"}\n{\"Time\":\"2026-10-08T14:37:13.698818936Z\",\"Action\":\"output\",\"Package\":\"airobot.example\",\"Test\":\"TestGeneratedPool\",\"Output\":\"=== RUN   TestGeneratedPool\\n\"}\n{\"Time\":\"2026-10-08T14:37:13.698820397Z\",\"Action\":\"output\",\"Package\":\"airobot.example\",\"Test\":\"TestGeneratedPool\",\"Output\":\"--- PASS: TestGeneratedPool (0.00s)\\n\"}\n{\"Time\":\"2026-10-08T14:37:13.698821421Z\",\"Action\":\"pass\",\"Package\":\"airobot.example\",\"Test\":\"TestGeneratedPool\",\"Elapsed\":0}\n{\"Time\":\"2026-10-08T14:37:13.698822425Z\",\"Action\":\"output\",\"Package\":\"airobot.example\",\"Output\":\"PASS\\n\"}\n{\"Time\":\"2026-10-08T14:37:13.698936443Z\",\"Action\":\"output\",\"Package\":\"airobot.example\",\"Output\":\"ok  \\tairobot.example\\t0.001s\\n\"}\n{\"Time\":\"2026-10-08T14:37:13.698951687Z\",\"Action\":\"pass\",\"Package\":\"airobot.example\",\"Elapsed\":0.001}\n",
+                "elapsed_ms": 193.0,
+                "truncated": false
+              }
+            ],
+            "elapsed_ms": 2236.2,
+            "container_removed": true
+          },
+          "change_summary": "人工固定样例：correct"
+        }
+      ],
+      "sources": [],
+      "model_calls": 1,
+      "validation_calls": 1,
+      "elapsed_ms": 2243.2,
+      "error": null,
+      "model_source": "fixture",
+      "token_usage": {},
+      "validation_scope": "仅验证当前代码、当前测试和固定 Go 工具链；不保证全部行为正确"
+    },
+    {
+      "run_id": "a374b06139894006b0fdaaf791584f6a",
+      "status": "passed",
+      "scenario": "worker_pool",
+      "attempts": [
+        {
+          "number": 0,
+          "bundle": {
+            "files": [
+              {
+                "name": "solution.go",
+                "content": "package example\nimport \"context\"\nfunc WorkerPool(ctx context.Context,jobs []int,workers int)([]int,error){return jobs,nil}\n"
+              },
+              {
+                "name": "solution_test.go",
+                "content": "package example\nimport (\"context\";\"testing\")\nfunc TestGeneratedPool(t *testing.T){out,err:=WorkerPool(context.Background(),[]int{2},1)\n    if err!=nil||len(out)!=1||out[0]!=4{t.Fatal(out,err)}}\n"
+              },
+              {
+                "name": "server_acceptance_test.go",
+                "content": "package example\nimport (\"context\"; \"reflect\"; \"testing\")\nfunc TestServerPoolValuesOrderAndInput(t *testing.T) {\n    jobs:=[]int{4,-3,0,8,2}; original:=append([]int{},jobs...)\n    out,err:=WorkerPool(context.Background(),jobs,2)\n    if err!=nil||!reflect.DeepEqual(out,[]int{8,-6,0,16,4}){t.Fatalf(\"输出或顺序错误: %v %v\",out,err)}\n    if !reflect.DeepEqual(jobs,original){t.Fatal(\"修改了输入\")}\n}\nfunc TestServerPoolInvalidWorkers(t *testing.T) {\n    for _,n:=range []int{0,-1}{if _,err:=WorkerPool(context.Background(),[]int{1},n);err==nil{t.Fatal(\"非法 workers 必须报错\")}}\n}\nfunc TestServerPoolCancelled(t *testing.T) {\n    ctx,cancel:=context.WithCancel(context.Background());cancel()\n    if _,err:=WorkerPool(ctx,[]int{1,2},2);err==nil{t.Fatal(\"取消必须报错\")}\n}\nfunc TestServerPoolEmpty(t *testing.T) {\n    out,err:=WorkerPool(context.Background(),nil,2)\n    if err!=nil||len(out)!=0{t.Fatal(\"空任务处理错误\")}\n}\n"
+              }
+            ]
+          },
+          "validation": {
+            "status": "failed",
+            "go_version": "1.26.2",
+            "stages": [
+              {
+                "stage": "policy",
+                "exit_code": 0,
+                "output": "单包、源码及标准库依赖校验通过",
+                "elapsed_ms": 0.0,
+                "truncated": false
+              },
+              {
+                "stage": "compile",
+                "exit_code": 0,
+                "output": "",
+                "elapsed_ms": 23.0,
+                "truncated": false
+              },
+              {
+                "stage": "vet",
+                "exit_code": 0,
+                "output": "",
+                "elapsed_ms": 1424.0,
+                "truncated": false
+              },
+              {
+                "stage": "test",
+                "exit_code": 1,
+                "output": "{\"Time\":\"2026-10-08T14:37:15.895556848Z\",\"Action\":\"start\",\"Package\":\"airobot.example\"}\n{\"Time\":\"2026-10-08T14:37:15.896643481Z\",\"Action\":\"run\",\"Package\":\"airobot.example\",\"Test\":\"TestServerPoolValuesOrderAndInput\"}\n{\"Time\":\"2026-10-08T14:37:15.896667865Z\",\"Action\":\"output\",\"Package\":\"airobot.example\",\"Test\":\"TestServerPoolValuesOrderAndInput\",\"Output\":\"=== RUN   TestServerPoolValuesOrderAndInput\\n\"}\n{\"Time\":\"2026-10-08T14:37:15.896681017Z\",\"Action\":\"output\",\"Package\":\"airobot.example\",\"Test\":\"TestServerPoolValuesOrderAndInput\",\"Output\":\"    server_acceptance_test.go:6: 输出或顺序错误: [4 -3 0 8 2] \\u003cnil\\u003e\\n\"}\n{\"Time\":\"2026-10-08T14:37:15.896684789Z\",\"Action\":\"output\",\"Package\":\"airobot.example\",\"Test\":\"TestServerPoolValuesOrderAndInput\",\"Output\":\"--- FAIL: TestServerPoolValuesOrderAndInput (0.00s)\\n\"}\n{\"Time\":\"2026-10-08T14:37:15.896687665Z\",\"Action\":\"fail\",\"Package\":\"airobot.example\",\"Test\":\"TestServerPoolValuesOrderAndInput\",\"Elapsed\":0}\n{\"Time\":\"2026-10-08T14:37:15.89668988Z\",\"Action\":\"run\",\"Package\":\"airobot.example\",\"Test\":\"TestServerPoolInvalidWorkers\"}\n{\"Time\":\"2026-10-08T14:37:15.896690831Z\",\"Action\":\"output\",\"Package\":\"airobot.example\",\"Test\":\"TestServerPoolInvalidWorkers\",\"Output\":\"=== RUN   TestServerPoolInvalidWorkers\\n\"}\n{\"Time\":\"2026-10-08T14:37:15.896691938Z\",\"Action\":\"output\",\"Package\":\"airobot.example\",\"Test\":\"TestServerPoolInvalidWorkers\",\"Output\":\"    server_acceptance_test.go:10: 非法 workers 必须报错\\n\"}\n{\"Time\":\"2026-10-08T14:37:15.896694641Z\",\"Action\":\"output\",\"Package\":\"airobot.example\",\"Test\":\"TestServerPoolInvalidWorkers\",\"Output\":\"--- FAIL: TestServerPoolInvalidWorkers (0.00s)\\n\"}\n{\"Time\":\"2026-10-08T14:37:15.896695779Z\",\"Action\":\"fail\",\"Package\":\"airobot.example\",\"Test\":\"TestServerPoolInvalidWorkers\",\"Elapsed\":0}\n{\"Time\":\"2026-10-08T14:37:15.896698375Z\",\"Action\":\"run\",\"Package\":\"airobot.example\",\"Test\":\"TestServerPoolCancelled\"}\n{\"Time\":\"2026-10-08T14:37:15.896699299Z\",\"Action\":\"output\",\"Package\":\"airobot.example\",\"Test\":\"TestServerPoolCancelled\",\"Output\":\"=== RUN   TestServerPoolCancelled\\n\"}\n{\"Time\":\"2026-10-08T14:37:15.896700448Z\",\"Action\":\"output\",\"Package\":\"airobot.example\",\"Test\":\"TestServerPoolCancelled\",\"Output\":\"    server_acceptance_test.go:14: 取消必须报错\\n\"}\n{\"Time\":\"2026-10-08T14:37:15.896701804Z\",\"Action\":\"output\",\"Package\":\"airobot.example\",\"Test\":\"TestServerPoolCancelled\",\"Output\":\"--- FAIL: TestServerPoolCancelled (0.00s)\\n\"}\n{\"Time\":\"2026-10-08T14:37:15.896703082Z\",\"Action\":\"fail\",\"Package\":\"airobot.example\",\"Test\":\"TestServerPoolCancelled\",\"Elapsed\":0}\n{\"Time\":\"2026-10-08T14:37:15.896704131Z\",\"Action\":\"run\",\"Package\":\"airobot.example\",\"Test\":\"TestServerPoolEmpty\"}\n{\"Time\":\"2026-10-08T14:37:15.896705077Z\",\"Action\":\"output\",\"Package\":\"airobot.example\",\"Test\":\"TestServerPoolEmpty\",\"Output\":\"=== RUN   TestServerPoolEmpty\\n\"}\n{\"Time\":\"2026-10-08T14:37:15.896707743Z\",\"Action\":\"output\",\"Package\":\"airobot.example\",\"Test\":\"TestServerPoolEmpty\",\"Output\":\"--- PASS: TestServerPoolEmpty (0.00s)\\n\"}\n{\"Time\":\"2026-10-08T14:37:15.896710948Z\",\"Action\":\"pass\",\"Package\":\"airobot.example\",\"Test\":\"TestServerPoolEmpty\",\"Elapsed\":0}\n{\"Time\":\"2026-10-08T14:37:15.896713075Z\",\"Action\":\"run\",\"Package\":\"airobot.example\",\"Test\":\"TestGeneratedPool\"}\n{\"Time\":\"2026-10-08T14:37:15.896714002Z\",\"Action\":\"output\",\"Package\":\"airobot.example\",\"Test\":\"TestGeneratedPool\",\"Output\":\"=== RUN   TestGeneratedPool\\n\"}\n{\"Time\":\"2026-10-08T14:37:15.896721721Z\",\"Action\":\"output\",\"Package\":\"airobot.example\",\"Test\":\"TestGeneratedPool\",\"Output\":\"    solution_test.go:4: [2] \\u003cnil\\u003e\\n\"}\n{\"Time\":\"2026-10-08T14:37:15.89673031Z\",\"Action\":\"output\",\"Package\":\"airobot.example\",\"Test\":\"TestGeneratedPool\",\"Output\":\"--- FAIL: TestGeneratedPool (0.00s)\\n\"}\n{\"Time\":\"2026-10-08T14:37:15.896732428Z\",\"Action\":\"fail\",\"Package\":\"airobot.example\",\"Test\":\"TestGeneratedPool\",\"Elapsed\":0}\n{\"Time\":\"2026-10-08T14:37:15.89673907Z\",\"Action\":\"output\",\"Package\":\"airobot.example\",\"Output\":\"FAIL\\n\"}\n{\"Time\":\"2026-10-08T14:37:15.896917332Z\",\"Action\":\"output\",\"Package\":\"airobot.example\",\"Output\":\"FAIL\\tairobot.example\\t0.001s\\n\"}\n{\"Time\":\"2026-10-08T14:37:15.896931344Z\",\"Action\":\"fail\",\"Package\":\"airobot.example\",\"Elapsed\":0.001}\n",
+                "elapsed_ms": 188.0,
+                "truncated": false
+              }
+            ],
+            "elapsed_ms": 2180.9,
+            "container_removed": true
+          },
+          "change_summary": "人工固定样例：behavior_error"
+        },
+        {
+          "number": 1,
+          "bundle": {
+            "files": [
+              {
+                "name": "solution.go",
+                "content": "package example\nimport (\"context\"; \"fmt\"; \"sync\")\n// 固定 worker 数量，索引对应输出位置；不修改输入。\nfunc WorkerPool(ctx context.Context, jobs []int, workers int) ([]int,error) {\n    if workers<=0 { return nil,fmt.Errorf(\"workers 必须大于零\") }\n    if err:=ctx.Err();err!=nil {return nil,err}\n    out:=make([]int,len(jobs));if len(jobs)==0{return out,nil}\n    if workers>len(jobs){workers=len(jobs)}\n    queue:=make(chan int);var wg sync.WaitGroup\n    for n:=0;n<workers;n++ {wg.Add(1);go func(){defer wg.Done()\n        for {select {case <-ctx.Done():return;case i,ok:=<-queue:if !ok{return};out[i]=jobs[i]*2}}\n    }()}\n    send: for i:=range jobs {select {case <-ctx.Done():break send;case queue<-i:}}\n    close(queue);wg.Wait();if err:=ctx.Err();err!=nil{return nil,err};return out,nil\n}\n"
+              },
+              {
+                "name": "solution_test.go",
+                "content": "package example\nimport (\"context\";\"testing\")\nfunc TestGeneratedPool(t *testing.T){out,err:=WorkerPool(context.Background(),[]int{2},1)\n    if err!=nil||len(out)!=1||out[0]!=4{t.Fatal(out,err)}}\n"
+              },
+              {
+                "name": "server_acceptance_test.go",
+                "content": "package example\nimport (\"context\"; \"reflect\"; \"testing\")\nfunc TestServerPoolValuesOrderAndInput(t *testing.T) {\n    jobs:=[]int{4,-3,0,8,2}; original:=append([]int{},jobs...)\n    out,err:=WorkerPool(context.Background(),jobs,2)\n    if err!=nil||!reflect.DeepEqual(out,[]int{8,-6,0,16,4}){t.Fatalf(\"输出或顺序错误: %v %v\",out,err)}\n    if !reflect.DeepEqual(jobs,original){t.Fatal(\"修改了输入\")}\n}\nfunc TestServerPoolInvalidWorkers(t *testing.T) {\n    for _,n:=range []int{0,-1}{if _,err:=WorkerPool(context.Background(),[]int{1},n);err==nil{t.Fatal(\"非法 workers 必须报错\")}}\n}\nfunc TestServerPoolCancelled(t *testing.T) {\n    ctx,cancel:=context.WithCancel(context.Background());cancel()\n    if _,err:=WorkerPool(ctx,[]int{1,2},2);err==nil{t.Fatal(\"取消必须报错\")}\n}\nfunc TestServerPoolEmpty(t *testing.T) {\n    out,err:=WorkerPool(context.Background(),nil,2)\n    if err!=nil||len(out)!=0{t.Fatal(\"空任务处理错误\")}\n}\n"
+              }
+            ]
+          },
+          "validation": {
+            "status": "passed",
+            "go_version": "1.26.2",
+            "stages": [
+              {
+                "stage": "policy",
+                "exit_code": 0,
+                "output": "单包、源码及标准库依赖校验通过",
+                "elapsed_ms": 0.0,
+                "truncated": false
+              },
+              {
+                "stage": "compile",
+                "exit_code": 0,
+                "output": "",
+                "elapsed_ms": 48.0,
+                "truncated": false
+              },
+              {
+                "stage": "vet",
+                "exit_code": 0,
+                "output": "",
+                "elapsed_ms": 1373.0,
+                "truncated": false
+              },
+              {
+                "stage": "test",
+                "exit_code": 0,
+                "output": "{\"Time\":\"2026-10-08T14:37:18.078014535Z\",\"Action\":\"start\",\"Package\":\"airobot.example\"}\n{\"Time\":\"2026-10-08T14:37:18.07919045Z\",\"Action\":\"run\",\"Package\":\"airobot.example\",\"Test\":\"TestServerPoolValuesOrderAndInput\"}\n{\"Time\":\"2026-10-08T14:37:18.079206615Z\",\"Action\":\"output\",\"Package\":\"airobot.example\",\"Test\":\"TestServerPoolValuesOrderAndInput\",\"Output\":\"=== RUN   TestServerPoolValuesOrderAndInput\\n\"}\n{\"Time\":\"2026-10-08T14:37:18.079226596Z\",\"Action\":\"output\",\"Package\":\"airobot.example\",\"Test\":\"TestServerPoolValuesOrderAndInput\",\"Output\":\"--- PASS: TestServerPoolValuesOrderAndInput (0.00s)\\n\"}\n{\"Time\":\"2026-10-08T14:37:18.079228809Z\",\"Action\":\"pass\",\"Package\":\"airobot.example\",\"Test\":\"TestServerPoolValuesOrderAndInput\",\"Elapsed\":0}\n{\"Time\":\"2026-10-08T14:37:18.079231783Z\",\"Action\":\"run\",\"Package\":\"airobot.example\",\"Test\":\"TestServerPoolInvalidWorkers\"}\n{\"Time\":\"2026-10-08T14:37:18.079232721Z\",\"Action\":\"output\",\"Package\":\"airobot.example\",\"Test\":\"TestServerPoolInvalidWorkers\",\"Output\":\"=== RUN   TestServerPoolInvalidWorkers\\n\"}\n{\"Time\":\"2026-10-08T14:37:18.079234231Z\",\"Action\":\"output\",\"Package\":\"airobot.example\",\"Test\":\"TestServerPoolInvalidWorkers\",\"Output\":\"--- PASS: TestServerPoolInvalidWorkers (0.00s)\\n\"}\n{\"Time\":\"2026-10-08T14:37:18.079236092Z\",\"Action\":\"pass\",\"Package\":\"airobot.example\",\"Test\":\"TestServerPoolInvalidWorkers\",\"Elapsed\":0}\n{\"Time\":\"2026-10-08T14:37:18.079237444Z\",\"Action\":\"run\",\"Package\":\"airobot.example\",\"Test\":\"TestServerPoolCancelled\"}\n{\"Time\":\"2026-10-08T14:37:18.07923872Z\",\"Action\":\"output\",\"Package\":\"airobot.example\",\"Test\":\"TestServerPoolCancelled\",\"Output\":\"=== RUN   TestServerPoolCancelled\\n\"}\n{\"Time\":\"2026-10-08T14:37:18.079240314Z\",\"Action\":\"output\",\"Package\":\"airobot.example\",\"Test\":\"TestServerPoolCancelled\",\"Output\":\"--- PASS: TestServerPoolCancelled (0.00s)\\n\"}\n{\"Time\":\"2026-10-08T14:37:18.079241516Z\",\"Action\":\"pass\",\"Package\":\"airobot.example\",\"Test\":\"TestServerPoolCancelled\",\"Elapsed\":0}\n{\"Time\":\"2026-10-08T14:37:18.079242596Z\",\"Action\":\"run\",\"Package\":\"airobot.example\",\"Test\":\"TestServerPoolEmpty\"}\n{\"Time\":\"2026-10-08T14:37:18.079243536Z\",\"Action\":\"output\",\"Package\":\"airobot.example\",\"Test\":\"TestServerPoolEmpty\",\"Output\":\"=== RUN   TestServerPoolEmpty\\n\"}\n{\"Time\":\"2026-10-08T14:37:18.079250765Z\",\"Action\":\"output\",\"Package\":\"airobot.example\",\"Test\":\"TestServerPoolEmpty\",\"Output\":\"--- PASS: TestServerPoolEmpty (0.00s)\\n\"}\n{\"Time\":\"2026-10-08T14:37:18.079260206Z\",\"Action\":\"pass\",\"Package\":\"airobot.example\",\"Test\":\"TestServerPoolEmpty\",\"Elapsed\":0}\n{\"Time\":\"2026-10-08T14:37:18.079262109Z\",\"Action\":\"run\",\"Package\":\"airobot.example\",\"Test\":\"TestGeneratedPool\"}\n{\"Time\":\"2026-10-08T14:37:18.079263224Z\",\"Action\":\"output\",\"Package\":\"airobot.example\",\"Test\":\"TestGeneratedPool\",\"Output\":\"=== RUN   TestGeneratedPool\\n\"}\n{\"Time\":\"2026-10-08T14:37:18.079264638Z\",\"Action\":\"output\",\"Package\":\"airobot.example\",\"Test\":\"TestGeneratedPool\",\"Output\":\"--- PASS: TestGeneratedPool (0.00s)\\n\"}\n{\"Time\":\"2026-10-08T14:37:18.07927216Z\",\"Action\":\"pass\",\"Package\":\"airobot.example\",\"Test\":\"TestGeneratedPool\",\"Elapsed\":0}\n{\"Time\":\"2026-10-08T14:37:18.07928661Z\",\"Action\":\"output\",\"Package\":\"airobot.example\",\"Output\":\"PASS\\n\"}\n{\"Time\":\"2026-10-08T14:37:18.07941827Z\",\"Action\":\"output\",\"Package\":\"airobot.example\",\"Output\":\"ok  \\tairobot.example\\t0.001s\\n\"}\n{\"Time\":\"2026-10-08T14:37:18.079429897Z\",\"Action\":\"pass\",\"Package\":\"airobot.example\",\"Elapsed\":0.001}\n",
+                "elapsed_ms": 199.0,
+                "truncated": false
+              }
+            ],
+            "elapsed_ms": 2172.4,
+            "container_removed": true
+          },
+          "change_summary": "人工固定样例：correct"
+        }
+      ],
+      "sources": [],
+      "model_calls": 2,
+      "validation_calls": 2,
+      "elapsed_ms": 4365.1,
+      "error": null,
+      "model_source": "fixture",
+      "token_usage": {},
+      "validation_scope": "仅验证当前代码、当前测试和固定 Go 工具链；不保证全部行为正确"
+    },
+    {
+      "run_id": "f325b0ca2459480cb4fcbd70a0876123",
+      "status": "passed",
+      "scenario": "worker_pool",
+      "attempts": [
+        {
+          "number": 0,
+          "bundle": {
+            "files": [
+              {
+                "name": "solution.go",
+                "content": "package example\nimport (\"context\"; \"fmt\"; \"sync\")\n// 固定 worker 数量，索引对应输出位置；不修改输入。\nfunc WorkerPool(ctx context.Context, jobs []int, workers int) ([]int,error) {\n    if workers<=0 { return nil,fmt.Errorf(\"workers 必须大于零\") }\n    if err:=ctx.Err();err!=nil {return nil,err}\n    out:=make([]int,len(jobs));if len(jobs)==0{return out,nil}\n    if workers>len(jobs){workers=len(jobs)}\n    queue:=make(chan int);var wg sync.WaitGroup\n    for n:=0;n<workers;n++ {wg.Add(1);go func(){defer wg.Done()\n        for {select {case <-ctx.Done():return;case i,ok:=<-queue:if !ok{return};out[i]=jobs[i]*2}}\n    }()}\n    send: for i:=range jobs {select {case <-ctx.Done():break send;case queue<-i:}}\n    close(queue);wg.Wait();if err:=ctx.Err();err!=nil{return nil,err};return out,nil\n}\n\nvar broken = missingIdentifier\n"
+              },
+              {
+                "name": "solution_test.go",
+                "content": "package example\nimport (\"context\";\"testing\")\nfunc TestGeneratedPool(t *testing.T){out,err:=WorkerPool(context.Background(),[]int{2},1)\n    if err!=nil||len(out)!=1||out[0]!=4{t.Fatal(out,err)}}\n"
+              },
+              {
+                "name": "server_acceptance_test.go",
+                "content": "package example\nimport (\"context\"; \"reflect\"; \"testing\")\nfunc TestServerPoolValuesOrderAndInput(t *testing.T) {\n    jobs:=[]int{4,-3,0,8,2}; original:=append([]int{},jobs...)\n    out,err:=WorkerPool(context.Background(),jobs,2)\n    if err!=nil||!reflect.DeepEqual(out,[]int{8,-6,0,16,4}){t.Fatalf(\"输出或顺序错误: %v %v\",out,err)}\n    if !reflect.DeepEqual(jobs,original){t.Fatal(\"修改了输入\")}\n}\nfunc TestServerPoolInvalidWorkers(t *testing.T) {\n    for _,n:=range []int{0,-1}{if _,err:=WorkerPool(context.Background(),[]int{1},n);err==nil{t.Fatal(\"非法 workers 必须报错\")}}\n}\nfunc TestServerPoolCancelled(t *testing.T) {\n    ctx,cancel:=context.WithCancel(context.Background());cancel()\n    if _,err:=WorkerPool(ctx,[]int{1,2},2);err==nil{t.Fatal(\"取消必须报错\")}\n}\nfunc TestServerPoolEmpty(t *testing.T) {\n    out,err:=WorkerPool(context.Background(),nil,2)\n    if err!=nil||len(out)!=0{t.Fatal(\"空任务处理错误\")}\n}\n"
+              }
+            ]
+          },
+          "validation": {
+            "status": "failed",
+            "go_version": "1.26.2",
+            "stages": [
+              {
+                "stage": "policy",
+                "exit_code": 0,
+                "output": "单包、源码及标准库依赖校验通过",
+                "elapsed_ms": 0.0,
+                "truncated": false
+              },
+              {
+                "stage": "compile",
+                "exit_code": 1,
+                "output": "# airobot.example\n./solution.go:17:14: undefined: missingIdentifier\n",
+                "elapsed_ms": 27.0,
+                "truncated": false
+              }
+            ],
+            "elapsed_ms": 614.7,
+            "container_removed": true
+          },
+          "change_summary": "人工固定样例：compile_error"
+        },
+        {
+          "number": 1,
+          "bundle": {
+            "files": [
+              {
+                "name": "solution.go",
+                "content": "package example\nimport (\"context\"; \"fmt\"; \"sync\")\n// 固定 worker 数量，索引对应输出位置；不修改输入。\nfunc WorkerPool(ctx context.Context, jobs []int, workers int) ([]int,error) {\n    if workers<=0 { return nil,fmt.Errorf(\"workers 必须大于零\") }\n    if err:=ctx.Err();err!=nil {return nil,err}\n    out:=make([]int,len(jobs));if len(jobs)==0{return out,nil}\n    if workers>len(jobs){workers=len(jobs)}\n    queue:=make(chan int);var wg sync.WaitGroup\n    for n:=0;n<workers;n++ {wg.Add(1);go func(){defer wg.Done()\n        for {select {case <-ctx.Done():return;case i,ok:=<-queue:if !ok{return};out[i]=jobs[i]*2}}\n    }()}\n    send: for i:=range jobs {select {case <-ctx.Done():break send;case queue<-i:}}\n    close(queue);wg.Wait();if err:=ctx.Err();err!=nil{return nil,err};return out,nil\n}\n"
+              },
+              {
+                "name": "solution_test.go",
+                "content": "package example\nimport (\"context\";\"testing\")\nfunc TestGeneratedPool(t *testing.T){out,err:=WorkerPool(context.Background(),[]int{2},1)\n    if err!=nil||len(out)!=1||out[0]!=4{t.Fatal(out,err)}}\n"
+              },
+              {
+                "name": "server_acceptance_test.go",
+                "content": "package example\nimport (\"context\"; \"reflect\"; \"testing\")\nfunc TestServerPoolValuesOrderAndInput(t *testing.T) {\n    jobs:=[]int{4,-3,0,8,2}; original:=append([]int{},jobs...)\n    out,err:=WorkerPool(context.Background(),jobs,2)\n    if err!=nil||!reflect.DeepEqual(out,[]int{8,-6,0,16,4}){t.Fatalf(\"输出或顺序错误: %v %v\",out,err)}\n    if !reflect.DeepEqual(jobs,original){t.Fatal(\"修改了输入\")}\n}\nfunc TestServerPoolInvalidWorkers(t *testing.T) {\n    for _,n:=range []int{0,-1}{if _,err:=WorkerPool(context.Background(),[]int{1},n);err==nil{t.Fatal(\"非法 workers 必须报错\")}}\n}\nfunc TestServerPoolCancelled(t *testing.T) {\n    ctx,cancel:=context.WithCancel(context.Background());cancel()\n    if _,err:=WorkerPool(ctx,[]int{1,2},2);err==nil{t.Fatal(\"取消必须报错\")}\n}\nfunc TestServerPoolEmpty(t *testing.T) {\n    out,err:=WorkerPool(context.Background(),nil,2)\n    if err!=nil||len(out)!=0{t.Fatal(\"空任务处理错误\")}\n}\n"
+              }
+            ]
+          },
+          "validation": {
+            "status": "passed",
+            "go_version": "1.26.2",
+            "stages": [
+              {
+                "stage": "policy",
+                "exit_code": 0,
+                "output": "单包、源码及标准库依赖校验通过",
+                "elapsed_ms": 0.0,
+                "truncated": false
+              },
+              {
+                "stage": "compile",
+                "exit_code": 0,
+                "output": "",
+                "elapsed_ms": 31.0,
+                "truncated": false
+              },
+              {
+                "stage": "vet",
+                "exit_code": 0,
+                "output": "",
+                "elapsed_ms": 1341.0,
+                "truncated": false
+              },
+              {
+                "stage": "test",
+                "exit_code": 0,
+                "output": "{\"Time\":\"2026-10-08T14:37:20.84419081Z\",\"Action\":\"start\",\"Package\":\"airobot.example\"}\n{\"Time\":\"2026-10-08T14:37:20.86751787Z\",\"Action\":\"run\",\"Package\":\"airobot.example\",\"Test\":\"TestServerPoolValuesOrderAndInput\"}\n{\"Time\":\"2026-10-08T14:37:20.867541551Z\",\"Action\":\"output\",\"Package\":\"airobot.example\",\"Test\":\"TestServerPoolValuesOrderAndInput\",\"Output\":\"=== RUN   TestServerPoolValuesOrderAndInput\\n\"}\n{\"Time\":\"2026-10-08T14:37:20.867615679Z\",\"Action\":\"output\",\"Package\":\"airobot.example\",\"Test\":\"TestServerPoolValuesOrderAndInput\",\"Output\":\"--- PASS: TestServerPoolValuesOrderAndInput (0.00s)\\n\"}\n{\"Time\":\"2026-10-08T14:37:20.867625748Z\",\"Action\":\"pass\",\"Package\":\"airobot.example\",\"Test\":\"TestServerPoolValuesOrderAndInput\",\"Elapsed\":0}\n{\"Time\":\"2026-10-08T14:37:20.867629786Z\",\"Action\":\"run\",\"Package\":\"airobot.example\",\"Test\":\"TestServerPoolInvalidWorkers\"}\n{\"Time\":\"2026-10-08T14:37:20.867631141Z\",\"Action\":\"output\",\"Package\":\"airobot.example\",\"Test\":\"TestServerPoolInvalidWorkers\",\"Output\":\"=== RUN   TestServerPoolInvalidWorkers\\n\"}\n{\"Time\":\"2026-10-08T14:37:20.867632823Z\",\"Action\":\"output\",\"Package\":\"airobot.example\",\"Test\":\"TestServerPoolInvalidWorkers\",\"Output\":\"--- PASS: TestServerPoolInvalidWorkers (0.00s)\\n\"}\n{\"Time\":\"2026-10-08T14:37:20.867634039Z\",\"Action\":\"pass\",\"Package\":\"airobot.example\",\"Test\":\"TestServerPoolInvalidWorkers\",\"Elapsed\":0}\n{\"Time\":\"2026-10-08T14:37:20.86763556Z\",\"Action\":\"run\",\"Package\":\"airobot.example\",\"Test\":\"TestServerPoolCancelled\"}\n{\"Time\":\"2026-10-08T14:37:20.867636614Z\",\"Action\":\"output\",\"Package\":\"airobot.example\",\"Test\":\"TestServerPoolCancelled\",\"Output\":\"=== RUN   TestServerPoolCancelled\\n\"}\n{\"Time\":\"2026-10-08T14:37:20.867638934Z\",\"Action\":\"output\",\"Package\":\"airobot.example\",\"Test\":\"TestServerPoolCancelled\",\"Output\":\"--- PASS: TestServerPoolCancelled (0.00s)\\n\"}\n{\"Time\":\"2026-10-08T14:37:20.867640448Z\",\"Action\":\"pass\",\"Package\":\"airobot.example\",\"Test\":\"TestServerPoolCancelled\",\"Elapsed\":0}\n{\"Time\":\"2026-10-08T14:37:20.867641545Z\",\"Action\":\"run\",\"Package\":\"airobot.example\",\"Test\":\"TestServerPoolEmpty\"}\n{\"Time\":\"2026-10-08T14:37:20.867642454Z\",\"Action\":\"output\",\"Package\":\"airobot.example\",\"Test\":\"TestServerPoolEmpty\",\"Output\":\"=== RUN   TestServerPoolEmpty\\n\"}\n{\"Time\":\"2026-10-08T14:37:20.867644287Z\",\"Action\":\"output\",\"Package\":\"airobot.example\",\"Test\":\"TestServerPoolEmpty\",\"Output\":\"--- PASS: TestServerPoolEmpty (0.00s)\\n\"}\n{\"Time\":\"2026-10-08T14:37:20.867645924Z\",\"Action\":\"pass\",\"Package\":\"airobot.example\",\"Test\":\"TestServerPoolEmpty\",\"Elapsed\":0}\n{\"Time\":\"2026-10-08T14:37:20.867648233Z\",\"Action\":\"run\",\"Package\":\"airobot.example\",\"Test\":\"TestGeneratedPool\"}\n{\"Time\":\"2026-10-08T14:37:20.867649747Z\",\"Action\":\"output\",\"Package\":\"airobot.example\",\"Test\":\"TestGeneratedPool\",\"Output\":\"=== RUN   TestGeneratedPool\\n\"}\n{\"Time\":\"2026-10-08T14:37:20.867651097Z\",\"Action\":\"output\",\"Package\":\"airobot.example\",\"Test\":\"TestGeneratedPool\",\"Output\":\"--- PASS: TestGeneratedPool (0.00s)\\n\"}\n{\"Time\":\"2026-10-08T14:37:20.867652339Z\",\"Action\":\"pass\",\"Package\":\"airobot.example\",\"Test\":\"TestGeneratedPool\",\"Elapsed\":0}\n{\"Time\":\"2026-10-08T14:37:20.8676534Z\",\"Action\":\"output\",\"Package\":\"airobot.example\",\"Output\":\"PASS\\n\"}\n{\"Time\":\"2026-10-08T14:37:20.867808066Z\",\"Action\":\"output\",\"Package\":\"airobot.example\",\"Output\":\"ok  \\tairobot.example\\t0.001s\\n\"}\n{\"Time\":\"2026-10-08T14:37:20.867825764Z\",\"Action\":\"pass\",\"Package\":\"airobot.example\",\"Elapsed\":0.024}\n",
+                "elapsed_ms": 227.0,
+                "truncated": false
+              }
+            ],
+            "elapsed_ms": 2177.7,
+            "container_removed": true
+          },
+          "change_summary": "人工固定样例：correct"
+        }
+      ],
+      "sources": [],
+      "model_calls": 2,
+      "validation_calls": 2,
+      "elapsed_ms": 2799.7,
+      "error": null,
+      "model_source": "fixture",
+      "token_usage": {},
+      "validation_scope": "仅验证当前代码、当前测试和固定 Go 工具链；不保证全部行为正确"
+    },
+    {
+      "run_id": "23891106bd2b4d9698327e47ffcf34b5",
+      "status": "passed",
+      "scenario": "channel",
+      "attempts": [
+        {
+          "number": 0,
+          "bundle": {
+            "files": [
+              {
+                "name": "solution.go",
+                "content": "package example\nimport \"context\"\n// nil channel 禁用读分支，取消仍可唤醒 select。\nfunc SumChannel(ctx context.Context,input <-chan int)(int,error){\n    sum:=0\n    for {if err:=ctx.Err();err!=nil{return sum,err}\n        select {case <-ctx.Done():return sum,ctx.Err()\n        case v,ok:=<-input:if !ok{return sum,nil};sum+=v}\n    }\n}\n"
+              },
+              {
+                "name": "solution_test.go",
+                "content": "package example\nimport (\"context\";\"testing\")\nfunc TestGeneratedChannel(t *testing.T){ch:=make(chan int,1);ch<-4;close(ch)\n    sum,err:=SumChannel(context.Background(),ch);if err!=nil||sum!=4{t.Fatal(sum,err)}}\n"
+              },
+              {
+                "name": "server_acceptance_test.go",
+                "content": "package example\nimport (\"context\"; \"errors\"; \"testing\"; \"time\")\nfunc TestServerChannelSumAndClose(t *testing.T) {\n    ch:=make(chan int,4);for _,v:=range []int{3,-1,0,8}{ch<-v};close(ch)\n    sum,err:=SumChannel(context.Background(),ch)\n    if err!=nil||sum!=10{t.Fatalf(\"求和错误: %v %v\",sum,err)}\n    empty:=make(chan int);close(empty)\n    sum,err=SumChannel(context.Background(),empty)\n    if err!=nil||sum!=0{t.Fatal(\"空 channel 错误\")}\n}\nfunc TestServerNilChannelCancellation(t *testing.T) {\n    ctx,cancel:=context.WithTimeout(context.Background(),30*time.Millisecond);defer cancel()\n    if _,err:=SumChannel(ctx,nil);!errors.Is(err,context.DeadlineExceeded){t.Fatal(\"nil channel 必须响应取消\")}\n}\nfunc TestServerChannelCancellation(t *testing.T) {\n    ctx,cancel:=context.WithCancel(context.Background());cancel()\n    if _,err:=SumChannel(ctx,make(chan int));!errors.Is(err,context.Canceled){t.Fatal(\"必须传播取消错误\")}\n}\n"
+              }
+            ]
+          },
+          "validation": {
+            "status": "passed",
+            "go_version": "1.26.2",
+            "stages": [
+              {
+                "stage": "policy",
+                "exit_code": 0,
+                "output": "单包、源码及标准库依赖校验通过",
+                "elapsed_ms": 0.0,
+                "truncated": false
+              },
+              {
+                "stage": "compile",
+                "exit_code": 0,
+                "output": "",
+                "elapsed_ms": 24.0,
+                "truncated": false
+              },
+              {
+                "stage": "vet",
+                "exit_code": 0,
+                "output": "",
+                "elapsed_ms": 1391.0,
+                "truncated": false
+              },
+              {
+                "stage": "test",
+                "exit_code": 0,
+                "output": "{\"Time\":\"2026-10-08T14:37:23.06682695Z\",\"Action\":\"start\",\"Package\":\"airobot.example\"}\n{\"Time\":\"2026-10-08T14:37:23.067837126Z\",\"Action\":\"run\",\"Package\":\"airobot.example\",\"Test\":\"TestServerChannelSumAndClose\"}\n{\"Time\":\"2026-10-08T14:37:23.067853757Z\",\"Action\":\"output\",\"Package\":\"airobot.example\",\"Test\":\"TestServerChannelSumAndClose\",\"Output\":\"=== RUN   TestServerChannelSumAndClose\\n\"}\n{\"Time\":\"2026-10-08T14:37:23.067869746Z\",\"Action\":\"output\",\"Package\":\"airobot.example\",\"Test\":\"TestServerChannelSumAndClose\",\"Output\":\"--- PASS: TestServerChannelSumAndClose (0.00s)\\n\"}\n{\"Time\":\"2026-10-08T14:37:23.067871348Z\",\"Action\":\"pass\",\"Package\":\"airobot.example\",\"Test\":\"TestServerChannelSumAndClose\",\"Elapsed\":0}\n{\"Time\":\"2026-10-08T14:37:23.067874495Z\",\"Action\":\"run\",\"Package\":\"airobot.example\",\"Test\":\"TestServerNilChannelCancellation\"}\n{\"Time\":\"2026-10-08T14:37:23.06787551Z\",\"Action\":\"output\",\"Package\":\"airobot.example\",\"Test\":\"TestServerNilChannelCancellation\",\"Output\":\"=== RUN   TestServerNilChannelCancellation\\n\"}\n{\"Time\":\"2026-10-08T14:37:23.098155398Z\",\"Action\":\"output\",\"Package\":\"airobot.example\",\"Test\":\"TestServerNilChannelCancellation\",\"Output\":\"--- PASS: TestServerNilChannelCancellation (0.03s)\\n\"}\n{\"Time\":\"2026-10-08T14:37:23.098186213Z\",\"Action\":\"pass\",\"Package\":\"airobot.example\",\"Test\":\"TestServerNilChannelCancellation\",\"Elapsed\":0.03}\n{\"Time\":\"2026-10-08T14:37:23.098191816Z\",\"Action\":\"run\",\"Package\":\"airobot.example\",\"Test\":\"TestServerChannelCancellation\"}\n{\"Time\":\"2026-10-08T14:37:23.098194074Z\",\"Action\":\"output\",\"Package\":\"airobot.example\",\"Test\":\"TestServerChannelCancellation\",\"Output\":\"=== RUN   TestServerChannelCancellation\\n\"}\n{\"Time\":\"2026-10-08T14:37:23.098200607Z\",\"Action\":\"output\",\"Package\":\"airobot.example\",\"Test\":\"TestServerChannelCancellation\",\"Output\":\"--- PASS: TestServerChannelCancellation (0.00s)\\n\"}\n{\"Time\":\"2026-10-08T14:37:23.098202849Z\",\"Action\":\"pass\",\"Package\":\"airobot.example\",\"Test\":\"TestServerChannelCancellation\",\"Elapsed\":0}\n{\"Time\":\"2026-10-08T14:37:23.098205178Z\",\"Action\":\"run\",\"Package\":\"airobot.example\",\"Test\":\"TestGeneratedChannel\"}\n{\"Time\":\"2026-10-08T14:37:23.098206834Z\",\"Action\":\"output\",\"Package\":\"airobot.example\",\"Test\":\"TestGeneratedChannel\",\"Output\":\"=== RUN   TestGeneratedChannel\\n\"}\n{\"Time\":\"2026-10-08T14:37:23.098209176Z\",\"Action\":\"output\",\"Package\":\"airobot.example\",\"Test\":\"TestGeneratedChannel\",\"Output\":\"--- PASS: TestGeneratedChannel (0.00s)\\n\"}\n{\"Time\":\"2026-10-08T14:37:23.098210996Z\",\"Action\":\"pass\",\"Package\":\"airobot.example\",\"Test\":\"TestGeneratedChannel\",\"Elapsed\":0}\n{\"Time\":\"2026-10-08T14:37:23.098214486Z\",\"Action\":\"output\",\"Package\":\"airobot.example\",\"Output\":\"PASS\\n\"}\n{\"Time\":\"2026-10-08T14:37:23.098477449Z\",\"Action\":\"output\",\"Package\":\"airobot.example\",\"Output\":\"ok  \\tairobot.example\\t0.031s\\n\"}\n{\"Time\":\"2026-10-08T14:37:23.098505274Z\",\"Action\":\"pass\",\"Package\":\"airobot.example\",\"Elapsed\":0.032}\n",
+                "elapsed_ms": 211.0,
+                "truncated": false
+              }
+            ],
+            "elapsed_ms": 2227.7,
+            "container_removed": true
+          },
+          "change_summary": "人工固定样例：correct"
+        }
+      ],
+      "sources": [],
+      "model_calls": 1,
+      "validation_calls": 1,
+      "elapsed_ms": 2233.5,
+      "error": null,
+      "model_source": "fixture",
+      "token_usage": {},
+      "validation_scope": "仅验证当前代码、当前测试和固定 Go 工具链；不保证全部行为正确"
+    },
+    {
+      "run_id": "3e6e0fc49a23456b83daaafd8f872436",
+      "status": "passed",
+      "scenario": "channel",
+      "attempts": [
+        {
+          "number": 0,
+          "bundle": {
+            "files": [
+              {
+                "name": "solution.go",
+                "content": "package example\nimport \"context\"\nfunc SumChannel(ctx context.Context,input <-chan int)(int,error){return 0,nil}\n"
+              },
+              {
+                "name": "solution_test.go",
+                "content": "package example\nimport (\"context\";\"testing\")\nfunc TestGeneratedChannel(t *testing.T){ch:=make(chan int,1);ch<-4;close(ch)\n    sum,err:=SumChannel(context.Background(),ch);if err!=nil||sum!=4{t.Fatal(sum,err)}}\n"
+              },
+              {
+                "name": "server_acceptance_test.go",
+                "content": "package example\nimport (\"context\"; \"errors\"; \"testing\"; \"time\")\nfunc TestServerChannelSumAndClose(t *testing.T) {\n    ch:=make(chan int,4);for _,v:=range []int{3,-1,0,8}{ch<-v};close(ch)\n    sum,err:=SumChannel(context.Background(),ch)\n    if err!=nil||sum!=10{t.Fatalf(\"求和错误: %v %v\",sum,err)}\n    empty:=make(chan int);close(empty)\n    sum,err=SumChannel(context.Background(),empty)\n    if err!=nil||sum!=0{t.Fatal(\"空 channel 错误\")}\n}\nfunc TestServerNilChannelCancellation(t *testing.T) {\n    ctx,cancel:=context.WithTimeout(context.Background(),30*time.Millisecond);defer cancel()\n    if _,err:=SumChannel(ctx,nil);!errors.Is(err,context.DeadlineExceeded){t.Fatal(\"nil channel 必须响应取消\")}\n}\nfunc TestServerChannelCancellation(t *testing.T) {\n    ctx,cancel:=context.WithCancel(context.Background());cancel()\n    if _,err:=SumChannel(ctx,make(chan int));!errors.Is(err,context.Canceled){t.Fatal(\"必须传播取消错误\")}\n}\n"
+              }
+            ]
+          },
+          "validation": {
+            "status": "failed",
+            "go_version": "1.26.2",
+            "stages": [
+              {
+                "stage": "policy",
+                "exit_code": 0,
+                "output": "单包、源码及标准库依赖校验通过",
+                "elapsed_ms": 0.0,
+                "truncated": false
+              },
+              {
+                "stage": "compile",
+                "exit_code": 0,
+                "output": "",
+                "elapsed_ms": 23.0,
+                "truncated": false
+              },
+              {
+                "stage": "vet",
+                "exit_code": 0,
+                "output": "",
+                "elapsed_ms": 1382.0,
+                "truncated": false
+              },
+              {
+                "stage": "test",
+                "exit_code": 1,
+                "output": "{\"Time\":\"2026-10-08T14:37:25.265870575Z\",\"Action\":\"start\",\"Package\":\"airobot.example\"}\n{\"Time\":\"2026-10-08T14:37:25.266982685Z\",\"Action\":\"run\",\"Package\":\"airobot.example\",\"Test\":\"TestServerChannelSumAndClose\"}\n{\"Time\":\"2026-10-08T14:37:25.266996323Z\",\"Action\":\"output\",\"Package\":\"airobot.example\",\"Test\":\"TestServerChannelSumAndClose\",\"Output\":\"=== RUN   TestServerChannelSumAndClose\\n\"}\n{\"Time\":\"2026-10-08T14:37:25.267011234Z\",\"Action\":\"output\",\"Package\":\"airobot.example\",\"Test\":\"TestServerChannelSumAndClose\",\"Output\":\"    server_acceptance_test.go:6: 求和错误: 0 \\u003cnil\\u003e\\n\"}\n{\"Time\":\"2026-10-08T14:37:25.26701554Z\",\"Action\":\"output\",\"Package\":\"airobot.example\",\"Test\":\"TestServerChannelSumAndClose\",\"Output\":\"--- FAIL: TestServerChannelSumAndClose (0.00s)\\n\"}\n{\"Time\":\"2026-10-08T14:37:25.267016975Z\",\"Action\":\"fail\",\"Package\":\"airobot.example\",\"Test\":\"TestServerChannelSumAndClose\",\"Elapsed\":0}\n{\"Time\":\"2026-10-08T14:37:25.267024128Z\",\"Action\":\"run\",\"Package\":\"airobot.example\",\"Test\":\"TestServerNilChannelCancellation\"}\n{\"Time\":\"2026-10-08T14:37:25.267033781Z\",\"Action\":\"output\",\"Package\":\"airobot.example\",\"Test\":\"TestServerNilChannelCancellation\",\"Output\":\"=== RUN   TestServerNilChannelCancellation\\n\"}\n{\"Time\":\"2026-10-08T14:37:25.26703625Z\",\"Action\":\"output\",\"Package\":\"airobot.example\",\"Test\":\"TestServerNilChannelCancellation\",\"Output\":\"    server_acceptance_test.go:13: nil channel 必须响应取消\\n\"}\n{\"Time\":\"2026-10-08T14:37:25.267038156Z\",\"Action\":\"output\",\"Package\":\"airobot.example\",\"Test\":\"TestServerNilChannelCancellation\",\"Output\":\"--- FAIL: TestServerNilChannelCancellation (0.00s)\\n\"}\n{\"Time\":\"2026-10-08T14:37:25.267039395Z\",\"Action\":\"fail\",\"Package\":\"airobot.example\",\"Test\":\"TestServerNilChannelCancellation\",\"Elapsed\":0}\n{\"Time\":\"2026-10-08T14:37:25.267040594Z\",\"Action\":\"run\",\"Package\":\"airobot.example\",\"Test\":\"TestServerChannelCancellation\"}\n{\"Time\":\"2026-10-08T14:37:25.267041602Z\",\"Action\":\"output\",\"Package\":\"airobot.example\",\"Test\":\"TestServerChannelCancellation\",\"Output\":\"=== RUN   TestServerChannelCancellation\\n\"}\n{\"Time\":\"2026-10-08T14:37:25.267042744Z\",\"Action\":\"output\",\"Package\":\"airobot.example\",\"Test\":\"TestServerChannelCancellation\",\"Output\":\"    server_acceptance_test.go:17: 必须传播取消错误\\n\"}\n{\"Time\":\"2026-10-08T14:37:25.267044077Z\",\"Action\":\"output\",\"Package\":\"airobot.example\",\"Test\":\"TestServerChannelCancellation\",\"Output\":\"--- FAIL: TestServerChannelCancellation (0.00s)\\n\"}\n{\"Time\":\"2026-10-08T14:37:25.267046294Z\",\"Action\":\"fail\",\"Package\":\"airobot.example\",\"Test\":\"TestServerChannelCancellation\",\"Elapsed\":0}\n{\"Time\":\"2026-10-08T14:37:25.267048764Z\",\"Action\":\"run\",\"Package\":\"airobot.example\",\"Test\":\"TestGeneratedChannel\"}\n{\"Time\":\"2026-10-08T14:37:25.267049753Z\",\"Action\":\"output\",\"Package\":\"airobot.example\",\"Test\":\"TestGeneratedChannel\",\"Output\":\"=== RUN   TestGeneratedChannel\\n\"}\n{\"Time\":\"2026-10-08T14:37:25.267074119Z\",\"Action\":\"output\",\"Package\":\"airobot.example\",\"Test\":\"TestGeneratedChannel\",\"Output\":\"    solution_test.go:4: 0 \\u003cnil\\u003e\\n\"}\n{\"Time\":\"2026-10-08T14:37:25.267093016Z\",\"Action\":\"output\",\"Package\":\"airobot.example\",\"Test\":\"TestGeneratedChannel\",\"Output\":\"--- FAIL: TestGeneratedChannel (0.00s)\\n\"}\n{\"Time\":\"2026-10-08T14:37:25.267096092Z\",\"Action\":\"fail\",\"Package\":\"airobot.example\",\"Test\":\"TestGeneratedChannel\",\"Elapsed\":0}\n{\"Time\":\"2026-10-08T14:37:25.26709809Z\",\"Action\":\"output\",\"Package\":\"airobot.example\",\"Output\":\"FAIL\\n\"}\n{\"Time\":\"2026-10-08T14:37:25.267260072Z\",\"Action\":\"output\",\"Package\":\"airobot.example\",\"Output\":\"FAIL\\tairobot.example\\t0.001s\\n\"}\n{\"Time\":\"2026-10-08T14:37:25.267272453Z\",\"Action\":\"fail\",\"Package\":\"airobot.example\",\"Elapsed\":0.001}\n",
+                "elapsed_ms": 184.0,
+                "truncated": false
+              }
+            ],
+            "elapsed_ms": 2145.1,
+            "container_removed": true
+          },
+          "change_summary": "人工固定样例：behavior_error"
+        },
+        {
+          "number": 1,
+          "bundle": {
+            "files": [
+              {
+                "name": "solution.go",
+                "content": "package example\nimport \"context\"\n// nil channel 禁用读分支，取消仍可唤醒 select。\nfunc SumChannel(ctx context.Context,input <-chan int)(int,error){\n    sum:=0\n    for {if err:=ctx.Err();err!=nil{return sum,err}\n        select {case <-ctx.Done():return sum,ctx.Err()\n        case v,ok:=<-input:if !ok{return sum,nil};sum+=v}\n    }\n}\n"
+              },
+              {
+                "name": "solution_test.go",
+                "content": "package example\nimport (\"context\";\"testing\")\nfunc TestGeneratedChannel(t *testing.T){ch:=make(chan int,1);ch<-4;close(ch)\n    sum,err:=SumChannel(context.Background(),ch);if err!=nil||sum!=4{t.Fatal(sum,err)}}\n"
+              },
+              {
+                "name": "server_acceptance_test.go",
+                "content": "package example\nimport (\"context\"; \"errors\"; \"testing\"; \"time\")\nfunc TestServerChannelSumAndClose(t *testing.T) {\n    ch:=make(chan int,4);for _,v:=range []int{3,-1,0,8}{ch<-v};close(ch)\n    sum,err:=SumChannel(context.Background(),ch)\n    if err!=nil||sum!=10{t.Fatalf(\"求和错误: %v %v\",sum,err)}\n    empty:=make(chan int);close(empty)\n    sum,err=SumChannel(context.Background(),empty)\n    if err!=nil||sum!=0{t.Fatal(\"空 channel 错误\")}\n}\nfunc TestServerNilChannelCancellation(t *testing.T) {\n    ctx,cancel:=context.WithTimeout(context.Background(),30*time.Millisecond);defer cancel()\n    if _,err:=SumChannel(ctx,nil);!errors.Is(err,context.DeadlineExceeded){t.Fatal(\"nil channel 必须响应取消\")}\n}\nfunc TestServerChannelCancellation(t *testing.T) {\n    ctx,cancel:=context.WithCancel(context.Background());cancel()\n    if _,err:=SumChannel(ctx,make(chan int));!errors.Is(err,context.Canceled){t.Fatal(\"必须传播取消错误\")}\n}\n"
+              }
+            ]
+          },
+          "validation": {
+            "status": "passed",
+            "go_version": "1.26.2",
+            "stages": [
+              {
+                "stage": "policy",
+                "exit_code": 0,
+                "output": "单包、源码及标准库依赖校验通过",
+                "elapsed_ms": 0.0,
+                "truncated": false
+              },
+              {
+                "stage": "compile",
+                "exit_code": 0,
+                "output": "",
+                "elapsed_ms": 26.0,
+                "truncated": false
+              },
+              {
+                "stage": "vet",
+                "exit_code": 0,
+                "output": "",
+                "elapsed_ms": 1442.0,
+                "truncated": false
+              },
+              {
+                "stage": "test",
+                "exit_code": 0,
+                "output": "{\"Time\":\"2026-10-08T14:37:27.500967327Z\",\"Action\":\"start\",\"Package\":\"airobot.example\"}\n{\"Time\":\"2026-10-08T14:37:27.502153434Z\",\"Action\":\"run\",\"Package\":\"airobot.example\",\"Test\":\"TestServerChannelSumAndClose\"}\n{\"Time\":\"2026-10-08T14:37:27.502169235Z\",\"Action\":\"output\",\"Package\":\"airobot.example\",\"Test\":\"TestServerChannelSumAndClose\",\"Output\":\"=== RUN   TestServerChannelSumAndClose\\n\"}\n{\"Time\":\"2026-10-08T14:37:27.502187748Z\",\"Action\":\"output\",\"Package\":\"airobot.example\",\"Test\":\"TestServerChannelSumAndClose\",\"Output\":\"--- PASS: TestServerChannelSumAndClose (0.00s)\\n\"}\n{\"Time\":\"2026-10-08T14:37:27.502189241Z\",\"Action\":\"pass\",\"Package\":\"airobot.example\",\"Test\":\"TestServerChannelSumAndClose\",\"Elapsed\":0}\n{\"Time\":\"2026-10-08T14:37:27.502191757Z\",\"Action\":\"run\",\"Package\":\"airobot.example\",\"Test\":\"TestServerNilChannelCancellation\"}\n{\"Time\":\"2026-10-08T14:37:27.502192719Z\",\"Action\":\"output\",\"Package\":\"airobot.example\",\"Test\":\"TestServerNilChannelCancellation\",\"Output\":\"=== RUN   TestServerNilChannelCancellation\\n\"}\n{\"Time\":\"2026-10-08T14:37:27.532444432Z\",\"Action\":\"output\",\"Package\":\"airobot.example\",\"Test\":\"TestServerNilChannelCancellation\",\"Output\":\"--- PASS: TestServerNilChannelCancellation (0.03s)\\n\"}\n{\"Time\":\"2026-10-08T14:37:27.532474337Z\",\"Action\":\"pass\",\"Package\":\"airobot.example\",\"Test\":\"TestServerNilChannelCancellation\",\"Elapsed\":0.03}\n{\"Time\":\"2026-10-08T14:37:27.532478326Z\",\"Action\":\"run\",\"Package\":\"airobot.example\",\"Test\":\"TestServerChannelCancellation\"}\n{\"Time\":\"2026-10-08T14:37:27.532479898Z\",\"Action\":\"output\",\"Package\":\"airobot.example\",\"Test\":\"TestServerChannelCancellation\",\"Output\":\"=== RUN   TestServerChannelCancellation\\n\"}\n{\"Time\":\"2026-10-08T14:37:27.532481941Z\",\"Action\":\"output\",\"Package\":\"airobot.example\",\"Test\":\"TestServerChannelCancellation\",\"Output\":\"--- PASS: TestServerChannelCancellation (0.00s)\\n\"}\n{\"Time\":\"2026-10-08T14:37:27.532483155Z\",\"Action\":\"pass\",\"Package\":\"airobot.example\",\"Test\":\"TestServerChannelCancellation\",\"Elapsed\":0}\n{\"Time\":\"2026-10-08T14:37:27.532484841Z\",\"Action\":\"run\",\"Package\":\"airobot.example\",\"Test\":\"TestGeneratedChannel\"}\n{\"Time\":\"2026-10-08T14:37:27.532485721Z\",\"Action\":\"output\",\"Package\":\"airobot.example\",\"Test\":\"TestGeneratedChannel\",\"Output\":\"=== RUN   TestGeneratedChannel\\n\"}\n{\"Time\":\"2026-10-08T14:37:27.532490575Z\",\"Action\":\"output\",\"Package\":\"airobot.example\",\"Test\":\"TestGeneratedChannel\",\"Output\":\"--- PASS: TestGeneratedChannel (0.00s)\\n\"}\n{\"Time\":\"2026-10-08T14:37:27.532491693Z\",\"Action\":\"pass\",\"Package\":\"airobot.example\",\"Test\":\"TestGeneratedChannel\",\"Elapsed\":0}\n{\"Time\":\"2026-10-08T14:37:27.532492736Z\",\"Action\":\"output\",\"Package\":\"airobot.example\",\"Output\":\"PASS\\n\"}\n{\"Time\":\"2026-10-08T14:37:27.532708675Z\",\"Action\":\"output\",\"Package\":\"airobot.example\",\"Output\":\"ok  \\tairobot.example\\t0.031s\\n\"}\n{\"Time\":\"2026-10-08T14:37:27.532722992Z\",\"Action\":\"pass\",\"Package\":\"airobot.example\",\"Elapsed\":0.032}\n",
+                "elapsed_ms": 217.0,
+                "truncated": false
+              }
+            ],
+            "elapsed_ms": 2257.6,
+            "container_removed": true
+          },
+          "change_summary": "人工固定样例：correct"
+        }
+      ],
+      "sources": [],
+      "model_calls": 2,
+      "validation_calls": 2,
+      "elapsed_ms": 4414.9,
+      "error": null,
+      "model_source": "fixture",
+      "token_usage": {},
+      "validation_scope": "仅验证当前代码、当前测试和固定 Go 工具链；不保证全部行为正确"
+    },
+    {
+      "run_id": "5fb5821900fa4756a8259aa69f88d462",
+      "status": "passed",
+      "scenario": "channel",
+      "attempts": [
+        {
+          "number": 0,
+          "bundle": {
+            "files": [
+              {
+                "name": "solution.go",
+                "content": "package example\nimport \"context\"\n// nil channel 禁用读分支，取消仍可唤醒 select。\nfunc SumChannel(ctx context.Context,input <-chan int)(int,error){\n    sum:=0\n    for {if err:=ctx.Err();err!=nil{return sum,err}\n        select {case <-ctx.Done():return sum,ctx.Err()\n        case v,ok:=<-input:if !ok{return sum,nil};sum+=v}\n    }\n}\n\nvar broken = missingIdentifier\n"
+              },
+              {
+                "name": "solution_test.go",
+                "content": "package example\nimport (\"context\";\"testing\")\nfunc TestGeneratedChannel(t *testing.T){ch:=make(chan int,1);ch<-4;close(ch)\n    sum,err:=SumChannel(context.Background(),ch);if err!=nil||sum!=4{t.Fatal(sum,err)}}\n"
+              },
+              {
+                "name": "server_acceptance_test.go",
+                "content": "package example\nimport (\"context\"; \"errors\"; \"testing\"; \"time\")\nfunc TestServerChannelSumAndClose(t *testing.T) {\n    ch:=make(chan int,4);for _,v:=range []int{3,-1,0,8}{ch<-v};close(ch)\n    sum,err:=SumChannel(context.Background(),ch)\n    if err!=nil||sum!=10{t.Fatalf(\"求和错误: %v %v\",sum,err)}\n    empty:=make(chan int);close(empty)\n    sum,err=SumChannel(context.Background(),empty)\n    if err!=nil||sum!=0{t.Fatal(\"空 channel 错误\")}\n}\nfunc TestServerNilChannelCancellation(t *testing.T) {\n    ctx,cancel:=context.WithTimeout(context.Background(),30*time.Millisecond);defer cancel()\n    if _,err:=SumChannel(ctx,nil);!errors.Is(err,context.DeadlineExceeded){t.Fatal(\"nil channel 必须响应取消\")}\n}\nfunc TestServerChannelCancellation(t *testing.T) {\n    ctx,cancel:=context.WithCancel(context.Background());cancel()\n    if _,err:=SumChannel(ctx,make(chan int));!errors.Is(err,context.Canceled){t.Fatal(\"必须传播取消错误\")}\n}\n"
+              }
+            ]
+          },
+          "validation": {
+            "status": "failed",
+            "go_version": "1.26.2",
+            "stages": [
+              {
+                "stage": "policy",
+                "exit_code": 0,
+                "output": "单包、源码及标准库依赖校验通过",
+                "elapsed_ms": 0.0,
+                "truncated": false
+              },
+              {
+                "stage": "compile",
+                "exit_code": 1,
+                "output": "# airobot.example\n./solution.go:12:14: undefined: missingIdentifier\n",
+                "elapsed_ms": 21.0,
+                "truncated": false
+              }
+            ],
+            "elapsed_ms": 574.0,
+            "container_removed": true
+          },
+          "change_summary": "人工固定样例：compile_error"
+        },
+        {
+          "number": 1,
+          "bundle": {
+            "files": [
+              {
+                "name": "solution.go",
+                "content": "package example\nimport \"context\"\n// nil channel 禁用读分支，取消仍可唤醒 select。\nfunc SumChannel(ctx context.Context,input <-chan int)(int,error){\n    sum:=0\n    for {if err:=ctx.Err();err!=nil{return sum,err}\n        select {case <-ctx.Done():return sum,ctx.Err()\n        case v,ok:=<-input:if !ok{return sum,nil};sum+=v}\n    }\n}\n"
+              },
+              {
+                "name": "solution_test.go",
+                "content": "package example\nimport (\"context\";\"testing\")\nfunc TestGeneratedChannel(t *testing.T){ch:=make(chan int,1);ch<-4;close(ch)\n    sum,err:=SumChannel(context.Background(),ch);if err!=nil||sum!=4{t.Fatal(sum,err)}}\n"
+              },
+              {
+                "name": "server_acceptance_test.go",
+                "content": "package example\nimport (\"context\"; \"errors\"; \"testing\"; \"time\")\nfunc TestServerChannelSumAndClose(t *testing.T) {\n    ch:=make(chan int,4);for _,v:=range []int{3,-1,0,8}{ch<-v};close(ch)\n    sum,err:=SumChannel(context.Background(),ch)\n    if err!=nil||sum!=10{t.Fatalf(\"求和错误: %v %v\",sum,err)}\n    empty:=make(chan int);close(empty)\n    sum,err=SumChannel(context.Background(),empty)\n    if err!=nil||sum!=0{t.Fatal(\"空 channel 错误\")}\n}\nfunc TestServerNilChannelCancellation(t *testing.T) {\n    ctx,cancel:=context.WithTimeout(context.Background(),30*time.Millisecond);defer cancel()\n    if _,err:=SumChannel(ctx,nil);!errors.Is(err,context.DeadlineExceeded){t.Fatal(\"nil channel 必须响应取消\")}\n}\nfunc TestServerChannelCancellation(t *testing.T) {\n    ctx,cancel:=context.WithCancel(context.Background());cancel()\n    if _,err:=SumChannel(ctx,make(chan int));!errors.Is(err,context.Canceled){t.Fatal(\"必须传播取消错误\")}\n}\n"
+              }
+            ]
+          },
+          "validation": {
+            "status": "passed",
+            "go_version": "1.26.2",
+            "stages": [
+              {
+                "stage": "policy",
+                "exit_code": 0,
+                "output": "单包、源码及标准库依赖校验通过",
+                "elapsed_ms": 0.0,
+                "truncated": false
+              },
+              {
+                "stage": "compile",
+                "exit_code": 0,
+                "output": "",
+                "elapsed_ms": 24.0,
+                "truncated": false
+              },
+              {
+                "stage": "vet",
+                "exit_code": 0,
+                "output": "",
+                "elapsed_ms": 1428.0,
+                "truncated": false
+              },
+              {
+                "stage": "test",
+                "exit_code": 0,
+                "output": "{\"Time\":\"2026-10-08T14:37:30.336138234Z\",\"Action\":\"start\",\"Package\":\"airobot.example\"}\n{\"Time\":\"2026-10-08T14:37:30.33727451Z\",\"Action\":\"run\",\"Package\":\"airobot.example\",\"Test\":\"TestServerChannelSumAndClose\"}\n{\"Time\":\"2026-10-08T14:37:30.337294966Z\",\"Action\":\"output\",\"Package\":\"airobot.example\",\"Test\":\"TestServerChannelSumAndClose\",\"Output\":\"=== RUN   TestServerChannelSumAndClose\\n\"}\n{\"Time\":\"2026-10-08T14:37:30.337309934Z\",\"Action\":\"output\",\"Package\":\"airobot.example\",\"Test\":\"TestServerChannelSumAndClose\",\"Output\":\"--- PASS: TestServerChannelSumAndClose (0.00s)\\n\"}\n{\"Time\":\"2026-10-08T14:37:30.337311577Z\",\"Action\":\"pass\",\"Package\":\"airobot.example\",\"Test\":\"TestServerChannelSumAndClose\",\"Elapsed\":0}\n{\"Time\":\"2026-10-08T14:37:30.337314047Z\",\"Action\":\"run\",\"Package\":\"airobot.example\",\"Test\":\"TestServerNilChannelCancellation\"}\n{\"Time\":\"2026-10-08T14:37:30.33731503Z\",\"Action\":\"output\",\"Package\":\"airobot.example\",\"Test\":\"TestServerNilChannelCancellation\",\"Output\":\"=== RUN   TestServerNilChannelCancellation\\n\"}\n{\"Time\":\"2026-10-08T14:37:30.367657155Z\",\"Action\":\"output\",\"Package\":\"airobot.example\",\"Test\":\"TestServerNilChannelCancellation\",\"Output\":\"--- PASS: TestServerNilChannelCancellation (0.03s)\\n\"}\n{\"Time\":\"2026-10-08T14:37:30.367683931Z\",\"Action\":\"pass\",\"Package\":\"airobot.example\",\"Test\":\"TestServerNilChannelCancellation\",\"Elapsed\":0.03}\n{\"Time\":\"2026-10-08T14:37:30.367688265Z\",\"Action\":\"run\",\"Package\":\"airobot.example\",\"Test\":\"TestServerChannelCancellation\"}\n{\"Time\":\"2026-10-08T14:37:30.367689905Z\",\"Action\":\"output\",\"Package\":\"airobot.example\",\"Test\":\"TestServerChannelCancellation\",\"Output\":\"=== RUN   TestServerChannelCancellation\\n\"}\n{\"Time\":\"2026-10-08T14:37:30.367694866Z\",\"Action\":\"output\",\"Package\":\"airobot.example\",\"Test\":\"TestServerChannelCancellation\",\"Output\":\"--- PASS: TestServerChannelCancellation (0.00s)\\n\"}\n{\"Time\":\"2026-10-08T14:37:30.367696105Z\",\"Action\":\"pass\",\"Package\":\"airobot.example\",\"Test\":\"TestServerChannelCancellation\",\"Elapsed\":0}\n{\"Time\":\"2026-10-08T14:37:30.367697839Z\",\"Action\":\"run\",\"Package\":\"airobot.example\",\"Test\":\"TestGeneratedChannel\"}\n{\"Time\":\"2026-10-08T14:37:30.367698732Z\",\"Action\":\"output\",\"Package\":\"airobot.example\",\"Test\":\"TestGeneratedChannel\",\"Output\":\"=== RUN   TestGeneratedChannel\\n\"}\n{\"Time\":\"2026-10-08T14:37:30.367700501Z\",\"Action\":\"output\",\"Package\":\"airobot.example\",\"Test\":\"TestGeneratedChannel\",\"Output\":\"--- PASS: TestGeneratedChannel (0.00s)\\n\"}\n{\"Time\":\"2026-10-08T14:37:30.367701596Z\",\"Action\":\"pass\",\"Package\":\"airobot.example\",\"Test\":\"TestGeneratedChannel\",\"Elapsed\":0}\n{\"Time\":\"2026-10-08T14:37:30.367702616Z\",\"Action\":\"output\",\"Package\":\"airobot.example\",\"Output\":\"PASS\\n\"}\n{\"Time\":\"2026-10-08T14:37:30.367954541Z\",\"Action\":\"output\",\"Package\":\"airobot.example\",\"Output\":\"ok  \\tairobot.example\\t0.032s\\n\"}\n{\"Time\":\"2026-10-08T14:37:30.367974649Z\",\"Action\":\"pass\",\"Package\":\"airobot.example\",\"Elapsed\":0.032}\n",
+                "elapsed_ms": 232.0,
+                "truncated": false
+              }
+            ],
+            "elapsed_ms": 2255.1,
+            "container_removed": true
+          },
+          "change_summary": "人工固定样例：correct"
+        }
+      ],
+      "sources": [],
+      "model_calls": 2,
+      "validation_calls": 2,
+      "elapsed_ms": 2843.8,
+      "error": null,
+      "model_source": "fixture",
+      "token_usage": {},
+      "validation_scope": "仅验证当前代码、当前测试和固定 Go 工具链；不保证全部行为正确"
+    }
+  ]
+}
