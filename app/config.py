@@ -36,6 +36,28 @@ class Settings:
     # 会话记忆
     memory_max_turns: int = int(_env("AIROBOT_MEMORY_MAX_TURNS", "20"))
     memory_retrieve_turns: int = int(_env("AIROBOT_MEMORY_RETRIEVE_TURNS", "6"))
+    # 上下文策略默认关闭；强制模式必须配置窗口和经校准的计数器。
+    context_mode: str = _env("AIROBOT_CONTEXT_MODE", "off")
+    context_model_window: int = int(_env("AIROBOT_CONTEXT_MODEL_WINDOW", "0"))
+    context_input_limit: int = int(_env("AIROBOT_CONTEXT_INPUT_LIMIT", "16000"))
+    context_output_tokens: int = int(_env("AIROBOT_CONTEXT_OUTPUT_TOKENS", "4096"))
+    context_safety_tokens: int = int(_env("AIROBOT_CONTEXT_SAFETY_TOKENS", "2048"))
+    context_history_tokens: int = int(_env("AIROBOT_CONTEXT_HISTORY_TOKENS", "6000"))
+    context_summary_tokens: int = int(_env("AIROBOT_CONTEXT_SUMMARY_TOKENS", "1000"))
+    context_evidence_tokens: int = int(_env("AIROBOT_CONTEXT_EVIDENCE_TOKENS", "4000"))
+    context_tool_tokens: int = int(_env("AIROBOT_CONTEXT_TOOL_TOKENS", "1500"))
+    context_read_tokens: int = int(_env("AIROBOT_CONTEXT_READ_TOKENS", "1000"))
+    context_store_path: str = _env("AIROBOT_CONTEXT_STORE_PATH", "data/context.sqlite3")
+    context_encoding: str = _env("AIROBOT_CONTEXT_ENCODING", "cl100k_base")
+    context_calibration_path: str = _env("AIROBOT_CONTEXT_CALIBRATION_PATH")
+    context_history_enabled: bool = _env("AIROBOT_CONTEXT_HISTORY_ENABLED", "true").lower()=="true"
+    context_summary_enabled: bool = _env("AIROBOT_CONTEXT_SUMMARY_ENABLED", "true").lower()=="true"
+    context_evidence_ttl: float = float(_env("AIROBOT_CONTEXT_EVIDENCE_TTL", "600"))
+    context_summary_timeout: float = float(_env("AIROBOT_CONTEXT_SUMMARY_TIMEOUT", "30"))
+    context_summary_trigger_ratio: float = float(_env("AIROBOT_CONTEXT_SUMMARY_TRIGGER_RATIO", "0.9"))
+    context_summary_target_ratio: float = float(_env("AIROBOT_CONTEXT_SUMMARY_TARGET_RATIO", "0.7"))
+    context_strategy_version: str = _env("AIROBOT_CONTEXT_STRATEGY_VERSION", "context-v1")
+    context_price_book: str = _env("AIROBOT_CONTEXT_PRICE_BOOK")
     # 检索工程（混合检索 + 重排）
     hybrid_enabled: bool = _env("AIROBOT_HYBRID_ENABLED", "true").lower() == "true"
     hybrid_vector_top_k: int = int(_env("AIROBOT_HYBRID_VECTOR_TOP_K", "15"))

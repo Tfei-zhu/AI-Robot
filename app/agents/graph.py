@@ -6,10 +6,11 @@
 SSE 事件与前端执行面板。
 """
 import json
+import re
 import operator
 from typing import Annotated, Any
 
-from langchain_core.messages import AIMessage, BaseMessage, SystemMessage, ToolMessage
+from langchain_core.messages import AIMessage, BaseMessage, SystemMessage, ToolMessage, HumanMessage
 from langchain_openai import ChatOpenAI
 from langgraph.graph import END, START, StateGraph
 from langgraph.graph.message import add_messages
@@ -19,6 +20,10 @@ from typing_extensions import TypedDict
 from app.agents.tools import AGENT_TOOLS
 from app.config import settings
 from app.services.resilience import ainvoke_with_retry
+from app.context import usage
+from app.context.tool_projection import project,read_tool_result,tool_session
+from app.context.builder import build
+from app.context.contracts import ContextBudgetExceeded
 
 SYSTEM_PROMPT = """你是 Go 文章社区的任务型 Agent。
 你的职责是先判断完成用户目标所需的事实，再按需调用只读工具并基于工具结果回答。
@@ -48,6 +53,9 @@ class AgentState(TypedDict, total=False):
     tool_rounds: int
     final: str
     streaming: bool
+    context_history_count: int
+    context_history_start: int
+    context_summary: dict
     # Go 验证路径的状态；与普通聊天共用一张图，避免改变原有会话输出。
     go_request: dict
     go_status: str
@@ -80,7 +88,9 @@ def get_llm(*, max_retries: int | None = None) -> ChatOpenAI:
             api_key=settings.llm_api_key or "sk-placeholder-not-configured",
             base_url=settings.llm_base_url,
             temperature=0.2,
-            **({"max_retries": max_retries} if max_retries is not None else {}),
+            # 重试统一由应用层执行，每次请求可计量，避免 SDK 隐式重试。
+            max_retries=0 if max_retries is None else max_retries,
+            stream_usage=True,
         )
     return _llm_cache[key]
 
@@ -117,9 +127,18 @@ async def _agent_node(state: AgentState) -> dict[str, Any]:
         return {"messages": [response], "steps": [{"type": "plan", "status": "finalize",
                                                         "msg": "达到工具调用上限，正在整合已获得的信息"}]}
 
-    model = get_llm().bind_tools(AGENT_TOOLS)
-    response = await ainvoke_with_retry(
-        model.ainvoke, [SystemMessage(content=f"{SYSTEM_PROMPT}\n{PLANNING_PROMPT}"), *messages]
+    need_read=bool(state.get("context_summary",{}).get("evidence_refs"))
+    for message in messages:
+        if isinstance(message,ToolMessage):need_read|=bool(_tool_payload(str(message.content)).get("truncated"))
+        elif isinstance(message,HumanMessage):need_read|=bool(re.search(r"补读|原文|result_id|ev_[0-9a-f]+",str(message.content)))
+    # 只在有可补读资料时加入定义，减少每次规划重复发送的工具 schema。
+    active_tools=[*AGENT_TOOLS,read_tool_result] if settings.context_mode=="enforce" and need_read else AGENT_TOOLS
+    model = get_llm().bind_tools(active_tools)
+    if settings.context_mode=="enforce" and hasattr(model,"bind"):model=model.bind(max_tokens=settings.context_output_tokens)
+    prepared=build(state,SystemMessage(content=f"{SYSTEM_PROMPT}\n{PLANNING_PROMPT}"),messages,active_tools)
+    response = await usage.invoke(
+        model, prepared,
+        run_id=state.get("run_id", "offline"), stage="planning", model_name=settings.llm_model,
     )
     tool_calls = list(getattr(response, "tool_calls", []) or [])
     if tool_calls:
@@ -141,15 +160,37 @@ async def _tools_node(state: AgentState) -> dict[str, Any]:
 
     for call in calls:
         name = call.get("name", "")
+        metrics=usage.ledger(state.get("run_id","offline")).context
+        metrics["tool_requested"]=metrics.get("tool_requested",0)+1
+        if name=="search_knowledge" and settings.context_mode!="enforce":
+            metrics["retrieval_requested"]=metrics.get("retrieval_requested",0)+1
+            metrics["retrieval_executed"]=metrics.get("retrieval_executed",0)+1
         tool = _tools_by_name.get(name)
+        if name=="read_tool_result" and settings.context_mode=="enforce":tool=read_tool_result
         try:
             if tool is None:
                 raise ValueError(f"不允许调用工具：{name}")
-            content = str(await tool.ainvoke(call.get("args", {})))
+            token=tool_session.set(state.get("session_id","offline"))
+            usage_token=usage.current_run.set(state.get("run_id","offline"))
+            try:
+                if settings.context_mode=="enforce" and name=="search_knowledge":
+                    from app.context.evidence import retrieve
+                    from app.rag.retriever import kb
+                    content=str(await retrieve(tool,call.get("args",{}),session=state.get("session_id","offline"),
+                                               run_id=state.get("run_id","offline"),revision=kb.revision))
+                else:
+                    content = str(await tool.ainvoke(call.get("args", {})))
+            finally:
+                tool_session.reset(token)
+                usage.current_run.reset(usage_token)
             payload = _tool_payload(content)
             if payload.get("error"):
                 raise ValueError("工具返回错误")
             tool_sources = [str(item) for item in payload.get("sources", [])]
+            if settings.context_mode=="enforce" and name!="read_tool_result":
+                payload=project(name,payload,session=state.get("session_id","offline"),
+                                run_id=state.get("run_id","offline"),args=call.get("args",{}),messages=[*state["messages"],*messages])
+                content=json.dumps(payload,ensure_ascii=False)
             sources.extend(tool_sources)
             summary = str(payload.get("answer", content))[:240]
             steps.append({"type": "tool_result", "tool": name, "ok": True,
@@ -158,6 +199,8 @@ async def _tools_node(state: AgentState) -> dict[str, Any]:
             if name == "search_knowledge":
                 steps.append({"type": "retrieval", "sources": tool_sources,
                               "detail": payload.get("retrieval", {}), "ok": True})
+        except ContextBudgetExceeded:
+            raise
         except Exception as exc:
             content = json.dumps({"error": f"工具 {name} 调用失败，请说明资料暂不可用"}, ensure_ascii=False)
             steps.append({"type": "tool_result", "tool": name, "ok": False,
@@ -181,6 +224,9 @@ async def _finalize_node(state: AgentState) -> dict[str, Any]:
     messages = list(state["messages"])
     if isinstance(last, AIMessage) and not getattr(last, "tool_calls", None):
         messages = messages[:-1]  # 不把规划阶段的停止标记当作用户答案
+    prepared=build(state,SystemMessage(content=f"{SYSTEM_PROMPT}\n\n{FINALIZE_PROMPT}"),messages)
+    model=get_llm()
+    if settings.context_mode=="enforce" and hasattr(model,"bind"):model=model.bind(max_tokens=settings.context_output_tokens)
 
     if state.get("streaming"):
         writer = get_stream_writer()
@@ -188,8 +234,9 @@ async def _finalize_node(state: AgentState) -> dict[str, Any]:
         # 不转发规划阶段或工具调用参数，只转发无工具权限的最终生成节点。
         # 流开始后不重试，避免输出重复前缀；断流由调用方报告失败。
         parts = []
-        async for chunk in get_llm().astream(
-            [SystemMessage(content=f"{SYSTEM_PROMPT}\n\n{FINALIZE_PROMPT}"), *messages]
+        async for chunk in usage.stream(
+            model, prepared,
+            run_id=state.get("run_id", "offline"), stage="final", model_name=settings.llm_model,
         ):
             text = _text(chunk.content)
             if text:
@@ -201,9 +248,10 @@ async def _finalize_node(state: AgentState) -> dict[str, Any]:
         return {"messages": [AIMessage(content=final)], "final": final,
                 "steps": [{"type": "final", "msg": "Agent 运行完成"}]}
 
-    response = await ainvoke_with_retry(
-        get_llm().ainvoke,
-        [SystemMessage(content=f"{SYSTEM_PROMPT}\n\n{FINALIZE_PROMPT}"), *messages],
+    response = await usage.invoke(
+        model,
+        prepared,
+        run_id=state.get("run_id", "offline"), stage="final", model_name=settings.llm_model,
     )
     if not _text(response.content):
         raise RuntimeError("模型未返回最终内容")

@@ -20,6 +20,9 @@ from app.rag.retriever import kb
 from app.services.memory import memory
 from app.services.semantic_cache import semantic_cache
 from app.services.tracing import traces
+from app.context import usage
+from app.context import session as context_session
+from app.services.concurrency import run_blocking
 
 logger = logging.getLogger("airobot.agent")
 
@@ -34,9 +37,17 @@ def _sources(items: list[Any] | None) -> list[str]:
     return result
 
 
+def _cache_namespace(session_id):
+    base=session_id.split(":",1)[0]
+    return base if settings.context_mode=="off" else base+":"+settings.context_mode+":"+settings.context_strategy_version
+
+
 def _initial_state(message: str, session_id: str, run_id: str) -> dict[str, Any]:
+    context_session.prepare(session_id, memory.get_messages(session_id,limit=memory.max_turns))
+    history,start=context_session.history(session_id,memory.get_messages(session_id))
     return {
-        "messages": [*memory.get_messages(session_id), HumanMessage(content=message)],
+        "messages": [*history, HumanMessage(content=message)],
+        "context_history_count":len(history),"context_history_start":start,
         "session_id": session_id,
         "run_id": run_id,
         "sources": [],
@@ -45,18 +56,25 @@ def _initial_state(message: str, session_id: str, run_id: str) -> dict[str, Any]
     }
 
 
-async def _cache_lookup(message: str, session_id: str) -> tuple[list[float] | None, dict | None, float, bool]:
+async def _prepared_state(message,session_id,run_id):
+    from app.context.summary import prepare
+    return await prepare(_initial_state(message,session_id,run_id))
+
+
+async def _cache_lookup(message: str, session_id: str, run_id: str | None = None) -> tuple[list[float] | None, dict | None, float, bool]:
     """只为无历史会话的首轮请求使用语义缓存，失败时不影响 Agent 本身。"""
-    if not (settings.cache_enabled and settings.embedding_api_key and not memory.get_messages(session_id)):
+    if not (settings.cache_enabled and settings.embedding_api_key and not context_session.has_history(session_id,memory.get_messages(session_id))):
         return None, None, 0.0, False
     started = time.perf_counter()
     try:
-        vector = await asyncio.to_thread(kb.embed_query, message)
+        token=usage.current_run.set(run_id)
+        try:vector = await run_blocking(kb.embed_query, message)
+        finally:usage.current_run.reset(token)
         # 三层防护已足够：namespace 按账户哈希隔离（跨账户不可能命中）、revision 锁定
         # 知识库版本、get() 内再要求余弦与词面重叠双门限通过。因此这里不做 exact 精确
         # 匹配，否则改写提问（语义缓存的主要收益）永远不命中，等于关掉该特性。
         cached = await asyncio.to_thread(
-            semantic_cache.get, vector, message, namespace=session_id.split(":", 1)[0],
+            semantic_cache.get, vector, message, namespace=_cache_namespace(session_id),
             revision=getattr(kb, "revision", 0))
         elapsed = round((time.perf_counter() - started) * 1000, 1)
         return vector, cached, elapsed, True
@@ -89,10 +107,15 @@ def _cacheable(result: dict) -> bool:
 def _cache_store(vector, result, message, session_id, revision):
     if vector is not None and _cacheable(result) and revision == getattr(kb, "revision", 0):
         semantic_cache.put(vector, {k: result[k] for k in ("reply", "intent", "sources", "engine")},
-                           message, namespace=session_id.split(":", 1)[0], revision=revision)
+                           message, namespace=_cache_namespace(session_id), revision=revision)
 
 
 def _trace(entry: dict[str, Any], result: dict[str, Any], started: float) -> None:
+    measured = usage.ledger(entry["run_id"]).report()
+    entry["context_usage"] = measured
+    result["context_stats"] = measured
+    result["token_usage"] = measured["token_usage"]
+    context_session.persist_run(entry["session_id"],entry["run_id"],measured)
     entry.update(
         intent="agent",
         engine="langgraph",
@@ -101,6 +124,14 @@ def _trace(entry: dict[str, Any], result: dict[str, Any], started: float) -> Non
         total_ms=round((time.perf_counter() - started) * 1000, 1),
     )
     traces.record(entry)
+    usage.discard(entry["run_id"])
+
+
+def _failure_trace(entry,started,status):
+    entry.update(status=status,total_ms=round((time.perf_counter()-started)*1000,1),
+                 context_usage=usage.ledger(entry["run_id"]).report())
+    traces.record(entry)
+    context_session.persist_run(entry["session_id"],entry["run_id"],entry)
 
 
 async def chat(message: str, session_id: str = "default") -> dict[str, Any]:
@@ -115,29 +146,50 @@ async def chat(message: str, session_id: str = "default") -> dict[str, Any]:
                 "intent": None, "sources": [], "engine": "langgraph", "run_id": run_id,
                 "steps": [], "cache_hit": False}
 
-    revision = getattr(kb, "revision", 0)
-    vector, cached, cache_ms, cache_checked = await _cache_lookup(message, session_id)
-    entry.update(cache_lookup_ms=cache_ms, cache_checked=cache_checked)
-    if cached is not None:
-        result = {**cached, "engine": "langgraph", "intent": "agent", "run_id": run_id,
-                  "steps": [{"type": "cache", "msg": "语义缓存命中"}], "cache_hit": True}
-        entry["cache_hit"] = True
-        memory.add(session_id, message, result["reply"])
-        _trace(entry, result, started)
-        return result
-
     try:
-        state = await get_agent_graph().ainvoke(_initial_state(message, session_id, run_id))
-        result = _result(state, run_id)
-        memory.add(session_id, message, result["reply"])
-        _cache_store(vector, result, message, session_id, revision)
-        _trace(entry, result, started)
-        return result
-    except Exception:
-        entry.update(status=500, intent="agent_error", total_ms=round((time.perf_counter() - started) * 1000, 1))
-        traces.record(entry)
-        logger.exception("Agent 运行失败：run_id=%s", run_id)
+        revision = getattr(kb, "revision", 0)
+        vector, cached, cache_ms, cache_checked = await _cache_lookup(message, session_id,run_id)
+        entry.update(cache_lookup_ms=cache_ms, cache_checked=cache_checked)
+        if cached is not None:
+            result = {**cached, "engine": "langgraph", "intent": "agent", "run_id": run_id,
+                      "steps": [{"type": "cache", "msg": "语义缓存命中"}], "cache_hit": True}
+            entry["cache_hit"] = True
+            context_session.commit(session_id,run_id,message,result["reply"])
+            memory.add(session_id, message, result["reply"])
+            _trace(entry, result, started)
+            return result
+
+        try:
+            state = await get_agent_graph().ainvoke(await _prepared_state(message, session_id, run_id))
+            result = _result(state, run_id)
+            context_session.commit(session_id,run_id,message,result["reply"])
+            memory.add(session_id, message, result["reply"])
+            _cache_store(vector, result, message, session_id, revision)
+            _trace(entry, result, started)
+            return result
+        except asyncio.CancelledError:
+            _failure_trace(entry,started,499)
+            raise
+        except Exception:
+            entry.update(status=500, intent="agent_error", total_ms=round((time.perf_counter() - started) * 1000, 1))
+            entry["context_usage"] = usage.ledger(run_id).report()
+            traces.record(entry)
+            context_session.persist_run(session_id,run_id,entry)
+            usage.discard(run_id)
+            logger.exception("Agent 运行失败：run_id=%s", run_id)
+            raise
+        finally:
+            from app.context.summary import discard
+            discard(run_id)
+            usage.discard(run_id)
+    except (asyncio.CancelledError,GeneratorExit):
+        # 首轮缓存与模型执行使用同一取消清理边界，避免在缓存阶段遗留计量。
+        if "context_usage" not in entry:_failure_trace(entry,started,499)
         raise
+    finally:
+        usage.discard(run_id)
+        from app.context.summary import discard
+        discard(run_id)
 
 
 def _step_events(step: dict[str, Any]) -> list[dict[str, Any]]:
@@ -178,62 +230,89 @@ async def stream_chat(message: str, session_id: str = "default") -> AsyncIterato
         yield {"type": "done", "run_id": run_id}
         return
 
-    revision = getattr(kb, "revision", 0)
-    vector, cached, cache_ms, cache_checked = await _cache_lookup(message, session_id)
-    entry.update(cache_lookup_ms=cache_ms, cache_checked=cache_checked)
-    if cached is not None:
-        result = {**cached, "engine": "langgraph", "intent": "agent", "run_id": run_id,
-                  "steps": [{"type": "cache", "msg": "语义缓存命中"}], "cache_hit": True}
-        entry["cache_hit"] = True
-        memory.add(session_id, message, result["reply"])
-        _trace(entry, result, started)
-        yield {"type": "stage", "stage": "cache", "msg": "语义缓存命中，直接返回", "ms": cache_ms,
-               "hit": True, "ok": True}
-        yield {"type": "token", "content": result["reply"]}
-        yield {"type": "done", "run_id": run_id, "intent": "agent", "sources": result.get("sources", []),
-               "cache_hit": True, "total_ms": entry["total_ms"]}
-        return
-
-    cache_reason = "未开启或不可用" if not cache_checked else "未命中"
-    yield {"type": "stage", "stage": "cache", "msg": f"语义缓存{cache_reason}", "ms": cache_ms,
-           "ok": True, "skipped": not cache_checked}
-    yield {"type": "intent", "intent": "agent"}
-
-    final_state: dict[str, Any] = {}
-    collected_sources: list[Any] = []
-    collected_steps: list[dict[str, Any]] = []
     try:
-        async with aclosing(get_agent_graph().astream(
-            {**_initial_state(message, session_id, run_id), "streaming": True},
-            stream_mode=["updates", "custom"]
-        )) as updates:
-            async for mode, update in updates:
-                if mode == "custom":
-                    if update.get("type") == "token":
-                        entry.setdefault("first_token_ms", round((time.perf_counter() - started) * 1000, 1))
-                        entry["tokens"] = entry.get("tokens", 0) + 1
-                    yield update
-                    continue
-                for node_update in update.values():
-                    for step in node_update.get("steps", []):
-                        collected_steps.append(step)
-                        for event in _step_events(step):
-                            yield event
-                    collected_sources.extend(node_update.get("sources", []))
-                    if node_update.get("final"):
-                        final_state = node_update
+        revision = getattr(kb, "revision", 0)
+        vector, cached, cache_ms, cache_checked = await _cache_lookup(message, session_id,run_id)
+        entry.update(cache_lookup_ms=cache_ms, cache_checked=cache_checked)
+        if cached is not None:
+            result = {**cached, "engine": "langgraph", "intent": "agent", "run_id": run_id,
+                      "steps": [{"type": "cache", "msg": "语义缓存命中"}], "cache_hit": True}
+            entry["cache_hit"] = True
+            context_session.commit(session_id,run_id,message,result["reply"])
+            memory.add(session_id, message, result["reply"])
+            _trace(entry, result, started)
+            yield {"type": "stage", "stage": "cache", "msg": "语义缓存命中，直接返回", "ms": cache_ms,
+                   "hit": True, "ok": True}
+            yield {"type": "token", "content": result["reply"]}
+            yield {"type": "done", "run_id": run_id, "intent": "agent", "sources": result.get("sources", []),
+                   "cache_hit": True, "total_ms": entry["total_ms"],
+                   "context_stats": result["context_stats"], "token_usage": result["token_usage"]}
+            return
 
-        result = _result({**final_state, "sources": collected_sources, "steps": collected_steps}, run_id)
-        memory.add(session_id, message, result["reply"])
-        _cache_store(vector, result, message, session_id, revision)
-        _trace(entry, result, started)
-        yield {"type": "stage", "stage": "write", "msg": "写入会话记忆与执行轨迹", "ok": True}
-        yield {"type": "done", "run_id": run_id, "intent": "agent", "sources": result["sources"],
-               "total_ms": entry["total_ms"], "first_token_ms": entry.get("first_token_ms"),
-               "cache_hit": False}
-    except Exception:
-        entry.update(status=500, intent="agent_error", total_ms=round((time.perf_counter() - started) * 1000, 1))
-        traces.record(entry)
-        logger.exception("Agent 流式运行失败：run_id=%s", run_id)
-        yield {"type": "error", "msg": "Agent 执行失败，请稍后重试。", "run_id": run_id}
-        yield {"type": "done", "run_id": run_id}
+        cache_reason = "未开启或不可用" if not cache_checked else "未命中"
+        yield {"type": "stage", "stage": "cache", "msg": f"语义缓存{cache_reason}", "ms": cache_ms,
+               "ok": True, "skipped": not cache_checked}
+        yield {"type": "intent", "intent": "agent"}
+
+        final_state: dict[str, Any] = {}
+        collected_sources: list[Any] = []
+        collected_steps: list[dict[str, Any]] = []
+        try:
+            async with aclosing(get_agent_graph().astream(
+                {**await _prepared_state(message, session_id, run_id), "streaming": True},
+                stream_mode=["updates", "custom"]
+            )) as updates:
+                async for mode, update in updates:
+                    if mode == "custom":
+                        if update.get("type") == "token":
+                            entry.setdefault("first_token_ms", round((time.perf_counter() - started) * 1000, 1))
+                            entry["stream_chunks"] = entry.get("stream_chunks", 0) + 1
+                        yield update
+                        continue
+                    for node_update in update.values():
+                        for step in node_update.get("steps", []):
+                            collected_steps.append(step)
+                            for event in _step_events(step):
+                                yield event
+                        collected_sources.extend(node_update.get("sources", []))
+                        if node_update.get("final"):
+                            final_state = node_update
+
+            result = _result({**final_state, "sources": collected_sources, "steps": collected_steps}, run_id)
+            context_session.commit(session_id,run_id,message,result["reply"])
+            memory.add(session_id, message, result["reply"])
+            _cache_store(vector, result, message, session_id, revision)
+            _trace(entry, result, started)
+            yield {"type": "stage", "stage": "write", "msg": "写入会话记忆与执行轨迹", "ok": True}
+            yield {"type": "done", "run_id": run_id, "intent": "agent", "sources": result["sources"],
+                   "total_ms": entry["total_ms"], "first_token_ms": entry.get("first_token_ms"),
+                   "cache_hit": False, "context_stats": result["context_stats"], "token_usage": result["token_usage"]}
+        except (asyncio.CancelledError,GeneratorExit):
+            _failure_trace(entry,started,499)
+            raise
+        except Exception:
+            entry.update(status=500, intent="agent_error", total_ms=round((time.perf_counter() - started) * 1000, 1))
+            entry["context_usage"] = usage.ledger(run_id).report()
+            traces.record(entry)
+            context_session.persist_run(session_id,run_id,entry)
+            usage.discard(run_id)
+            logger.exception("Agent 流式运行失败：run_id=%s", run_id)
+            import sys
+            from app.context.contracts import ContextBudgetExceeded
+            exc=sys.exception()
+            yield {"type": "error", "msg": str(exc) if isinstance(exc,ContextBudgetExceeded) else "Agent 执行失败，请稍后重试。",
+                   "code":exc.code if isinstance(exc,ContextBudgetExceeded) else "agent_error", "run_id": run_id}
+            yield {"type": "done", "run_id": run_id}
+        finally:
+            # 断流也释放本次计量记录，完整报告由正常结束路径保存。
+            usage.discard(run_id)
+            from app.context.summary import discard
+            discard(run_id)
+    except (asyncio.CancelledError,GeneratorExit):
+        # 首轮缓存与模型执行使用同一取消清理边界，避免在缓存阶段遗留计量。
+        if "context_usage" not in entry:_failure_trace(entry,started,499)
+        raise
+    finally:
+        usage.discard(run_id)
+        from app.context.summary import discard
+        discard(run_id)

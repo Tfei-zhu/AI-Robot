@@ -1,0 +1,13 @@
+{
+  "currency": "CNY",
+  "checked_at": "2026-10-14",
+  "assumptions": "阿里云百炼华北2北京在线调用，输入不超过128k；不含免费额度、活动优惠、Batch和显式缓存创建费用。估算金额不等于账单。",
+  "sources": [
+    "https://help.aliyun.com/zh/model-studio/qwen-plus",
+    "https://help.aliyun.com/zh/model-studio/text-embedding-v4"
+  ],
+  "models": {
+    "qwen-plus": {"endpoint":"https://dashscope.aliyuncs.com/compatible-mode/v1","max_input_tokens":128000,"input":0.8,"output":2,"thinking_output":8,"cache_read":0.16},
+    "text-embedding-v4": {"endpoint":"https://dashscope.aliyuncs.com/compatible-mode/v1","max_input_tokens":128000,"input":0.5,"output":0}
+  }
+}

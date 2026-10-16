@@ -8,12 +8,15 @@ import asyncio
 import json
 import logging
 import re
+import time
 
 import httpx
 from langchain_core.tools import tool
 
 from app.rag.retriever import kb
 from app.services.go_client import GoServiceError, go_client
+from app.config import settings
+from app.services.concurrency import run_blocking
 
 logger = logging.getLogger("airobot.tools")
 
@@ -28,6 +31,11 @@ def search_knowledge(query: str) -> str:
                "source": str(d.metadata.get("doc_id") or
                              f"{d.metadata.get('title', '')}#{d.metadata.get('chunk', 0)}")}
               for d in docs]
+    if settings.context_mode=="enforce":
+        for chunk,doc in zip(chunks,docs):
+            chunk.update(title=doc.metadata.get("title",""),doc_id=doc.metadata.get("doc_id"),
+                         heading_path=[doc.metadata[k] for k in ("H1","H2","H3","H4") if k in doc.metadata],
+                         knowledge_revision=kb.revision,score=doc.metadata.get("score"))
     return json.dumps({"chunks": chunks, "sources": [c["source"] for c in chunks],
                        "retrieval": detail}, ensure_ascii=False)
 
@@ -95,13 +103,22 @@ def community_guideline(_message: str) -> str:
 @tool("search_knowledge")
 async def search_knowledge_tool(query: str) -> str:
     """检索 Go 技术与社区知识库，返回资料原文片段和来源；没有资料时返回空列表。"""
-    return await asyncio.to_thread(search_knowledge, query)
+    return await run_blocking(search_knowledge, query)
 
 
 @tool("query_article")
 async def query_article_tool(message: str) -> str:
     """按用户消息中的文章 ID 查询社区文章的实时详情。"""
     article_id = _extract_article_id(message)
+    if settings.context_mode=="enforce":
+        # 保留实际结构化字段，模型投影不从自然语言回答里猜测数据。
+        if article_id is None:return json.dumps({"status":"needs_id","answer":_no_id_reply(),"sources":[]},ensure_ascii=False)
+        try:
+            data=await go_client.get_article_detail(article_id)
+            return json.dumps({"status":"ok" if data is not None else "not_found","article":data,
+                               "queried_at":time.time(),"sources":[f"article:{article_id}"]},ensure_ascii=False)
+        except (GoServiceError,httpx.TransportError):
+            return json.dumps({"status":"error","error":"文章服务暂不可用","sources":[]},ensure_ascii=False)
     answer = await query_article(message)
     sources = [f"article:{article_id}"] if article_id is not None else []
     return json.dumps({"answer": answer, "sources": sources}, ensure_ascii=False)

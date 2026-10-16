@@ -225,7 +225,10 @@ func main() {
 		}
 		r.Stages = append(r.Stages, s)
 		if s.ExitCode != 0 {
-			if s.ExitCode == 124 || strings.Contains(s.Output, "test timed out") {
+			// exit 124 是阶段 35s 上限（沙箱/工具链级异常），保持终态 timeout；
+			// go test 内部 8s 超时（输出含 "test timed out"，即模型代码死锁/死循环）
+			// 属于可修复失败，保持默认 failed 交给修复循环处理。
+			if s.ExitCode == 124 {
 				r.Status = "timeout"
 			}
 			return

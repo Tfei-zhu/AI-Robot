@@ -30,12 +30,17 @@ from app.services.resilience import invoke_with_retry
 
 
 def build_embeddings() -> OpenAIEmbeddings:
-    return OpenAIEmbeddings(
+    result=OpenAIEmbeddings(
         model=settings.embedding_model,
         api_key=settings.embedding_api_key or "sk-placeholder-not-configured",
         base_url=settings.embedding_base_url,
         check_embedding_ctx_length=False,  # 非 OpenAI 模型（Ollama 等）不做 tiktoken 预检，直接发送原文
+        max_retries=0,
     )
+    from app.context.usage import EmbeddingClient
+    result.client=EmbeddingClient(result.client,settings.embedding_model)
+    result.async_client=EmbeddingClient(result.async_client,settings.embedding_model,asynchronous=True)
+    return result
 
 
 def build_llm() -> ChatOpenAI:

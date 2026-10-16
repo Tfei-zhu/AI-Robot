@@ -37,7 +37,9 @@ def test_server_tests_detect_bad_behavior_even_with_weak_model_tests(scenario):
 @pytest.mark.parametrize("body,status", [
     ('panic("异常测试")', "failed"),
     ('os.Exit(7)', "failed"),
-    ('for {}', "timeout"),
+    # go test 内部超时（模型代码死循环）按可修复失败处理，交给修复循环；
+    # 只有沙箱/工具链级超时（阶段 35s 上限、外层总预算）才是终态 timeout。
+    ('for {}', "failed"),
 ])
 def test_real_panics_exit_and_infinite_loop(body, status):
     imports = 'import "os"\n' if "os.Exit" in body else ""

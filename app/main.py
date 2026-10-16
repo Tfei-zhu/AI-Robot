@@ -25,6 +25,7 @@ from app.services.security import (SecurityMiddleware, SessionStreamResponse,
 from app.go_validation.contracts import GoTaskRequest, GoTaskResult
 from app.go_validation.service import service as go_service, store as go_store
 from contextlib import aclosing
+from app.context.contracts import ContextBudgetExceeded
 import hashlib
 
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -36,6 +37,8 @@ async def lifespan(_: FastAPI):
     """启动时导入示例知识库并拉起文章入库消费者；关闭时释放资源。"""
     if settings.admin_token and settings.admin_token == settings.ai_internal_token:
         raise RuntimeError("管理员令牌与网关令牌必须不同")
+    from app.context.token_counter import validate_config
+    validate_config()
     await run_blocking(kb.restore)
     sample = BASE_DIR / "data" / "knowledge_base.md"
     if sample.exists() and kb.chunk_count == 0:
@@ -55,6 +58,8 @@ async def lifespan(_: FastAPI):
         await run_blocking(kb.close)
         await go_client.aclose()
         await run_blocking(go_store.close)
+        from app.context.store import close_stores
+        await run_blocking(close_stores)
 
 
 app = FastAPI(
@@ -94,6 +99,11 @@ async def rate_limit_middleware(request: Request, call_next):
 async def unhandled_exception_handler(request: Request, exc: Exception):
     logger.exception("未处理异常: %s %s", request.method, request.url.path)
     return JSONResponse(status_code=500, content={"detail": "服务内部错误，请稍后重试。"})
+
+
+@app.exception_handler(ContextBudgetExceeded)
+async def context_budget_error(request:Request,exc:ContextBudgetExceeded):
+    return JSONResponse(status_code=422,content={"detail":{"code":exc.code,"message":str(exc)}})
 
 
 @app.get("/health")

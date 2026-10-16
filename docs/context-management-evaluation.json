@@ -1,0 +1,3671 @@
+{
+  "status": "full_matrix_complete_acceptance_failed",
+  "date": "2026-10-15",
+  "context_mode_default": "off",
+  "release_allowed": false,
+  "implementation": "P0-P6 complete; P7 full comparison complete; final acceptance failed; mode remains off",
+  "notes": [
+    "四组各90条完整执行，原中断/未知用量记录保留。",
+    "本次续跑已停止，无新增请求。",
+    "机器评分和助手语义复核分列；不改写冻结评分。",
+    "硬约束、尾部证据、独立留出、输入、重复请求、延迟及完整成本门禁存在未通过项。",
+    "默认off，未扩大启用。"
+  ],
+  "verification": {
+    "pytest": {
+      "passed": 155,
+      "skipped": 0,
+      "real_docker": true
+    },
+    "dashboard_suites_passed": 2,
+    "remote_ci_run": false,
+    "git_diff_check_passed": true,
+    "resume_and_eval_offline_tests": {
+      "passed": 21,
+      "evidence": "eval/reports/context/resume-offline-tests.txt",
+      "paid_requests": 0
+    }
+  },
+  "latest_connectivity_retry": {
+    "model_ok": true,
+    "embedding_ok": true,
+    "dimensions": 1024,
+    "evidence": "eval/reports/context/connectivity-confirmed-20261015T025905Z.json"
+  },
+  "external_blockers_historical": [
+    {
+      "service": "llm",
+      "provider_code": "Arrearage",
+      "evidence": "eval/reports/context/final-v7/D.log",
+      "documentation": "https://help.aliyun.com/zh/model-studio/error-code",
+      "currently_observed": false
+    },
+    {
+      "service": "embedding",
+      "http_status": 401,
+      "reason": "invalid credential",
+      "currently_observed": false
+    },
+    {
+      "service": "llm",
+      "provider_code": "Arrearage",
+      "http_status": 400,
+      "evidence": "eval/reports/context/final-restored-v3",
+      "documentation": "https://help.aliyun.com/zh/model-studio/error-code",
+      "currently_observed": false
+    }
+  ],
+  "external_blockers": [],
+  "embedding_supplement": {
+    "checked_at_utc": "2026-10-15T02:59:47.973492+00:00",
+    "isolated_in_memory": true,
+    "checks": {
+      "retrieved_expected_source": true,
+      "tail_value_preserved": true
+    },
+    "usage": {
+      "model_calls": 0,
+      "embedding_calls": 2,
+      "usage_complete": true,
+      "token_usage": {
+        "input_tokens": 62,
+        "output_tokens": 0,
+        "total_tokens": 62
+      },
+      "known_token_usage": {
+        "input_tokens": 62,
+        "output_tokens": 0,
+        "total_tokens": 62
+      },
+      "unknown_usage_calls": 0,
+      "calls": [
+        {
+          "stage": "embedding",
+          "model": "text-embedding-v4",
+          "attempt": 1,
+          "status": "passed",
+          "usage": {
+            "input_tokens": 52,
+            "output_tokens": 0,
+            "total_tokens": 52
+          },
+          "elapsed_ms": 389.04
+        },
+        {
+          "stage": "embedding",
+          "model": "text-embedding-v4",
+          "attempt": 2,
+          "status": "passed",
+          "usage": {
+            "input_tokens": 10,
+            "output_tokens": 0,
+            "total_tokens": 10
+          },
+          "elapsed_ms": 161.31
+        }
+      ],
+      "cost_estimate": 3.1e-05,
+      "uncached_cost_estimate": 3.1e-05,
+      "currency": "CNY",
+      "cost_note": "按配置单价和服务商用量估算，不等于账单；未覆盖的用量保持未知"
+    }
+  },
+  "current_matrix_directory": "eval/reports/context/final-resumed-v3",
+  "prior_matrix": {
+    "A": {
+      "attempted": 90,
+      "finished": 76,
+      "passed": 0,
+      "failed_or_interrupted": 14,
+      "holdout_finished": 16,
+      "unknown_usage_calls": 14,
+      "known_total_tokens": 4832904,
+      "ordinary_constraint_retention_rate": 0.06413502109704641
+    },
+    "B": {
+      "attempted": 90,
+      "finished": 67,
+      "passed": 0,
+      "failed_or_interrupted": 23,
+      "holdout_finished": 7,
+      "unknown_usage_calls": 23,
+      "known_total_tokens": 4041121,
+      "ordinary_constraint_retention_rate": 0.06409001956947162
+    },
+    "C": {
+      "attempted": 90,
+      "finished": 64,
+      "passed": 11,
+      "failed_or_interrupted": 26,
+      "holdout_finished": 4,
+      "unknown_usage_calls": 26,
+      "known_total_tokens": 4182267,
+      "ordinary_constraint_retention_rate": 0.05707070707070707
+    },
+    "D": {
+      "attempted": 90,
+      "finished": 15,
+      "passed": 15,
+      "failed_or_interrupted": 75,
+      "holdout_finished": 0,
+      "unknown_usage_calls": 75,
+      "known_total_tokens": 1145909,
+      "ordinary_constraint_retention_rate": 0.25328330206378985
+    }
+  },
+  "prior_comparison": {
+    "scope": "固定工具数据下的真实长对话约束任务；金额为公开单价估算，不等于账单",
+    "gates": {
+      "same_inputs_and_samples": true,
+      "complete_30_scripts_times_3": false,
+      "task_noninferiority": false,
+      "hard_constraints": false,
+      "tail_evidence": false,
+      "ordinary_constraints_98_percent": false,
+      "holdout_quality": false,
+      "actual_usage_complete": false,
+      "counter_conservative": true,
+      "long_input_saving_20_percent": false,
+      "duplicate_requests_not_increased": false,
+      "p95_not_increased_over_10_percent": false,
+      "cost_not_increased": false
+    },
+    "release_allowed": false,
+    "paired_task_difference_95_ci": null,
+    "comparisons_valid": false,
+    "summary_source_equivalence": {
+      "file": "app/context/summary.py",
+      "baseline_sha256": "70d4df5944436410b029655f6e26556a2a744d14bcbfa5aca3bec112a2ba38b4",
+      "candidate_sha256": "5c68f9d0e8b54ca839ef6e207bb6d8dc0e15b6347bb8726897e908c64b653497",
+      "shared_paths_unchanged": true,
+      "scope": "A/B/C摘要关闭，首个分支直接返回；仅D组执行修改后的摘要专用代码。"
+    },
+    "long_input_saving": null,
+    "results": {
+      "A": {
+        "model_source": "configured",
+        "model": "qwen-plus",
+        "group": "A",
+        "grading_version": "semantic-aliases-v2",
+        "history_tokens": 1200,
+        "summary_target_ratio": 0.1,
+        "parameters": {
+          "temperature": 0.2,
+          "max_output_tokens": 384,
+          "summary_temperature": 0,
+          "repeats": 3,
+          "workers": 6,
+          "seed": null
+        },
+        "dataset_sha256": "a98033824963c73885b36a28ede59696202dc9b89a7273098f5750272cac4eeb",
+        "scope": "真实模型独立生成长对话；固定工具语料v2按主题返回证据；终局结构化约束回忆任务，不代表任意工程任务完成率",
+        "stop_reason": null,
+        "model_calls": 5339,
+        "known_total_tokens": 4832904,
+        "evaluation_budget": {
+          "requests": 5339,
+          "tokens_charged_for_limit": 4858113,
+          "cost_charged_for_limit": 3.243324239999993,
+          "unknown_calls": 14,
+          "unknown_token_upper_reserve": 25209,
+          "unknown_cost_upper_reserve": 0.026618400000000004
+        },
+        "task_errors": [
+          {
+            "id": "context-25",
+            "repeat": 0,
+            "turn": 39,
+            "error_type": "OpenAIInvalidRequestError"
+          },
+          {
+            "id": "context-25",
+            "repeat": 1,
+            "turn": 32,
+            "error_type": "OpenAIInvalidRequestError"
+          },
+          {
+            "id": "context-25",
+            "repeat": 2,
+            "turn": 19,
+            "error_type": "OpenAIInvalidRequestError"
+          },
+          {
+            "id": "context-26",
+            "repeat": 1,
+            "turn": 7,
+            "error_type": "OpenAIInvalidRequestError"
+          },
+          {
+            "id": "context-26",
+            "repeat": 2,
+            "turn": 7,
+            "error_type": "OpenAIInvalidRequestError"
+          },
+          {
+            "id": "context-27",
+            "repeat": 0,
+            "turn": 1,
+            "error_type": "OpenAIInvalidRequestError"
+          },
+          {
+            "id": "context-27",
+            "repeat": 1,
+            "turn": 4,
+            "error_type": "OpenAIInvalidRequestError"
+          },
+          {
+            "id": "context-27",
+            "repeat": 2,
+            "turn": 8,
+            "error_type": "OpenAIInvalidRequestError"
+          },
+          {
+            "id": "context-28",
+            "repeat": 0,
+            "turn": 4,
+            "error_type": "OpenAIInvalidRequestError"
+          },
+          {
+            "id": "context-28",
+            "repeat": 1,
+            "turn": 2,
+            "error_type": "OpenAIInvalidRequestError"
+          },
+          {
+            "id": "context-28",
+            "repeat": 2,
+            "turn": 3,
+            "error_type": "OpenAIInvalidRequestError"
+          },
+          {
+            "id": "context-29",
+            "repeat": 0,
+            "turn": 2,
+            "error_type": "OpenAIInvalidRequestError"
+          },
+          {
+            "id": "context-29",
+            "repeat": 1,
+            "turn": 2,
+            "error_type": "OpenAIInvalidRequestError"
+          },
+          {
+            "id": "context-29",
+            "repeat": 2,
+            "turn": 2,
+            "error_type": "OpenAIInvalidRequestError"
+          }
+        ],
+        "scheduled_tasks": 90,
+        "started_tasks": 90,
+        "finished_tasks": 76,
+        "task_completion_rate": 0.0,
+        "constraint_retention_rate": 0.21388888888888888,
+        "evidence_retention_rate": 0.9629629629629629,
+        "ordinary_constraint_retention_rate": 0.06413502109704641,
+        "input_tokens": 4720735,
+        "output_tokens": 112169,
+        "unknown_usage_calls": 14,
+        "retrieval_requested": 85,
+        "retrieval_executed": 85,
+        "retrieval_reused": 0,
+        "duplicate_retrieval_requests": 26,
+        "summary_calls": 0,
+        "counter_underestimates": 0,
+        "turn_p50_ms": 1527.77,
+        "turn_p95_ms": 2468.31,
+        "elapsed_ms": 718168.62,
+        "cost_estimate": null,
+        "uncached_cost_estimate": null,
+        "currency": "CNY",
+        "summary_triggered_turn_p95_ms": null,
+        "summary_model_time_total_ms": 0,
+        "summary_input_tokens": 0,
+        "summary_output_tokens": 0,
+        "cost_per_finished_task": null,
+        "cost_per_successful_task": null
+      },
+      "B": {
+        "model_source": "configured",
+        "model": "qwen-plus",
+        "group": "B",
+        "grading_version": "semantic-aliases-v2",
+        "history_tokens": 1200,
+        "summary_target_ratio": 0.1,
+        "parameters": {
+          "temperature": 0.2,
+          "max_output_tokens": 384,
+          "summary_temperature": 0,
+          "repeats": 3,
+          "workers": 6,
+          "seed": null
+        },
+        "dataset_sha256": "a98033824963c73885b36a28ede59696202dc9b89a7273098f5750272cac4eeb",
+        "scope": "真实模型独立生成长对话；固定工具语料v2按主题返回证据；终局结构化约束回忆任务，不代表任意工程任务完成率",
+        "stop_reason": null,
+        "model_calls": 4637,
+        "known_total_tokens": 4041121,
+        "evaluation_budget": {
+          "requests": 4637,
+          "tokens_charged_for_limit": 4076324,
+          "cost_charged_for_limit": 2.6981823199999937,
+          "unknown_calls": 23,
+          "unknown_token_upper_reserve": 35203,
+          "unknown_cost_upper_reserve": 0.038760800000000005
+        },
+        "task_errors": [
+          {
+            "id": "context-22",
+            "repeat": 0,
+            "turn": 30,
+            "error_type": "OpenAIInvalidRequestError"
+          },
+          {
+            "id": "context-22",
+            "repeat": 2,
+            "turn": 26,
+            "error_type": "OpenAIInvalidRequestError"
+          },
+          {
+            "id": "context-23",
+            "repeat": 0,
+            "turn": 16,
+            "error_type": "OpenAIInvalidRequestError"
+          },
+          {
+            "id": "context-23",
+            "repeat": 1,
+            "turn": 4,
+            "error_type": "OpenAIInvalidRequestError"
+          },
+          {
+            "id": "context-23",
+            "repeat": 2,
+            "turn": 5,
+            "error_type": "OpenAIInvalidRequestError"
+          },
+          {
+            "id": "context-24",
+            "repeat": 0,
+            "turn": 2,
+            "error_type": "OpenAIInvalidRequestError"
+          },
+          {
+            "id": "context-24",
+            "repeat": 1,
+            "turn": 2,
+            "error_type": "OpenAIInvalidRequestError"
+          },
+          {
+            "id": "context-24",
+            "repeat": 2,
+            "turn": 3,
+            "error_type": "OpenAIInvalidRequestError"
+          },
+          {
+            "id": "context-25",
+            "repeat": 0,
+            "turn": 1,
+            "error_type": "OpenAIInvalidRequestError"
+          },
+          {
+            "id": "context-25",
+            "repeat": 1,
+            "turn": 6,
+            "error_type": "OpenAIInvalidRequestError"
+          },
+          {
+            "id": "context-25",
+            "repeat": 2,
+            "turn": 4,
+            "error_type": "OpenAIInvalidRequestError"
+          },
+          {
+            "id": "context-26",
+            "repeat": 0,
+            "turn": 2,
+            "error_type": "OpenAIInvalidRequestError"
+          },
+          {
+            "id": "context-26",
+            "repeat": 1,
+            "turn": 4,
+            "error_type": "OpenAIInvalidRequestError"
+          },
+          {
+            "id": "context-26",
+            "repeat": 2,
+            "turn": 2,
+            "error_type": "OpenAIInvalidRequestError"
+          },
+          {
+            "id": "context-27",
+            "repeat": 0,
+            "turn": 2,
+            "error_type": "OpenAIInvalidRequestError"
+          },
+          {
+            "id": "context-27",
+            "repeat": 1,
+            "turn": 5,
+            "error_type": "OpenAIInvalidRequestError"
+          },
+          {
+            "id": "context-27",
+            "repeat": 2,
+            "turn": 2,
+            "error_type": "OpenAIInvalidRequestError"
+          },
+          {
+            "id": "context-28",
+            "repeat": 0,
+            "turn": 2,
+            "error_type": "OpenAIInvalidRequestError"
+          },
+          {
+            "id": "context-28",
+            "repeat": 1,
+            "turn": 2,
+            "error_type": "OpenAIInvalidRequestError"
+          },
+          {
+            "id": "context-28",
+            "repeat": 2,
+            "turn": 2,
+            "error_type": "OpenAIInvalidRequestError"
+          },
+          {
+            "id": "context-29",
+            "repeat": 0,
+            "turn": 1,
+            "error_type": "OpenAIInvalidRequestError"
+          },
+          {
+            "id": "context-29",
+            "repeat": 1,
+            "turn": 2,
+            "error_type": "OpenAIInvalidRequestError"
+          },
+          {
+            "id": "context-29",
+            "repeat": 2,
+            "turn": 4,
+            "error_type": "OpenAIInvalidRequestError"
+          }
+        ],
+        "scheduled_tasks": 90,
+        "started_tasks": 90,
+        "finished_tasks": 67,
+        "task_completion_rate": 0.0,
+        "constraint_retention_rate": 0.18611111111111112,
+        "evidence_retention_rate": 0.958904109589041,
+        "ordinary_constraint_retention_rate": 0.06409001956947162,
+        "input_tokens": 3941720,
+        "output_tokens": 99401,
+        "unknown_usage_calls": 23,
+        "retrieval_requested": 74,
+        "retrieval_executed": 50,
+        "retrieval_reused": 24,
+        "duplicate_retrieval_requests": 24,
+        "summary_calls": 0,
+        "counter_underestimates": 0,
+        "turn_p50_ms": 1778.47,
+        "turn_p95_ms": 2787.85,
+        "elapsed_ms": 719801.82,
+        "cost_estimate": null,
+        "uncached_cost_estimate": null,
+        "currency": "CNY",
+        "summary_triggered_turn_p95_ms": null,
+        "summary_model_time_total_ms": 0,
+        "summary_input_tokens": 0,
+        "summary_output_tokens": 0,
+        "cost_per_finished_task": null,
+        "cost_per_successful_task": null
+      },
+      "C": {
+        "model_source": "configured",
+        "model": "qwen-plus",
+        "group": "C",
+        "grading_version": "semantic-aliases-v2",
+        "history_tokens": 1200,
+        "summary_target_ratio": 0.1,
+        "parameters": {
+          "temperature": 0.2,
+          "max_output_tokens": 384,
+          "summary_temperature": 0,
+          "repeats": 3,
+          "workers": 6,
+          "seed": null
+        },
+        "dataset_sha256": "a98033824963c73885b36a28ede59696202dc9b89a7273098f5750272cac4eeb",
+        "scope": "真实模型独立生成长对话；固定工具语料v2按主题返回证据；终局结构化约束回忆任务，不代表任意工程任务完成率",
+        "stop_reason": null,
+        "model_calls": 4492,
+        "known_total_tokens": 4182267,
+        "evaluation_budget": {
+          "requests": 4492,
+          "tokens_charged_for_limit": 4222696,
+          "cost_charged_for_limit": 2.813421600000001,
+          "unknown_calls": 26,
+          "unknown_token_upper_reserve": 40429,
+          "unknown_cost_upper_reserve": 0.04432400000000001
+        },
+        "task_errors": [
+          {
+            "id": "context-20",
+            "repeat": 1,
+            "turn": 55,
+            "error_type": "OpenAIInvalidRequestError"
+          },
+          {
+            "id": "context-20",
+            "repeat": 2,
+            "turn": 42,
+            "error_type": "OpenAIInvalidRequestError"
+          },
+          {
+            "id": "context-22",
+            "repeat": 0,
+            "turn": 27,
+            "error_type": "OpenAIInvalidRequestError"
+          },
+          {
+            "id": "context-22",
+            "repeat": 1,
+            "turn": 17,
+            "error_type": "OpenAIInvalidRequestError"
+          },
+          {
+            "id": "context-22",
+            "repeat": 2,
+            "turn": 18,
+            "error_type": "OpenAIInvalidRequestError"
+          },
+          {
+            "id": "context-23",
+            "repeat": 0,
+            "turn": 2,
+            "error_type": "OpenAIInvalidRequestError"
+          },
+          {
+            "id": "context-23",
+            "repeat": 1,
+            "turn": 4,
+            "error_type": "OpenAIInvalidRequestError"
+          },
+          {
+            "id": "context-23",
+            "repeat": 2,
+            "turn": 1,
+            "error_type": "OpenAIInvalidRequestError"
+          },
+          {
+            "id": "context-24",
+            "repeat": 0,
+            "turn": 4,
+            "error_type": "OpenAIInvalidRequestError"
+          },
+          {
+            "id": "context-24",
+            "repeat": 1,
+            "turn": 2,
+            "error_type": "OpenAIInvalidRequestError"
+          },
+          {
+            "id": "context-24",
+            "repeat": 2,
+            "turn": 2,
+            "error_type": "OpenAIInvalidRequestError"
+          },
+          {
+            "id": "context-25",
+            "repeat": 0,
+            "turn": 4,
+            "error_type": "OpenAIInvalidRequestError"
+          },
+          {
+            "id": "context-25",
+            "repeat": 1,
+            "turn": 1,
+            "error_type": "OpenAIInvalidRequestError"
+          },
+          {
+            "id": "context-25",
+            "repeat": 2,
+            "turn": 5,
+            "error_type": "OpenAIInvalidRequestError"
+          },
+          {
+            "id": "context-26",
+            "repeat": 0,
+            "turn": 1,
+            "error_type": "OpenAIInvalidRequestError"
+          },
+          {
+            "id": "context-26",
+            "repeat": 1,
+            "turn": 2,
+            "error_type": "OpenAIInvalidRequestError"
+          },
+          {
+            "id": "context-26",
+            "repeat": 2,
+            "turn": 3,
+            "error_type": "OpenAIInvalidRequestError"
+          },
+          {
+            "id": "context-27",
+            "repeat": 0,
+            "turn": 4,
+            "error_type": "OpenAIInvalidRequestError"
+          },
+          {
+            "id": "context-27",
+            "repeat": 1,
+            "turn": 4,
+            "error_type": "OpenAIInvalidRequestError"
+          },
+          {
+            "id": "context-27",
+            "repeat": 2,
+            "turn": 1,
+            "error_type": "OpenAIInvalidRequestError"
+          },
+          {
+            "id": "context-28",
+            "repeat": 0,
+            "turn": 2,
+            "error_type": "OpenAIInvalidRequestError"
+          },
+          {
+            "id": "context-28",
+            "repeat": 1,
+            "turn": 1,
+            "error_type": "OpenAIInvalidRequestError"
+          },
+          {
+            "id": "context-28",
+            "repeat": 2,
+            "turn": 2,
+            "error_type": "OpenAIInvalidRequestError"
+          },
+          {
+            "id": "context-29",
+            "repeat": 0,
+            "turn": 1,
+            "error_type": "OpenAIInvalidRequestError"
+          },
+          {
+            "id": "context-29",
+            "repeat": 1,
+            "turn": 1,
+            "error_type": "OpenAIInvalidRequestError"
+          },
+          {
+            "id": "context-29",
+            "repeat": 2,
+            "turn": 1,
+            "error_type": "OpenAIInvalidRequestError"
+          }
+        ],
+        "scheduled_tasks": 90,
+        "started_tasks": 90,
+        "finished_tasks": 64,
+        "task_completion_rate": 0.12222222222222222,
+        "constraint_retention_rate": 0.2833333333333333,
+        "evidence_retention_rate": 0.9565217391304348,
+        "ordinary_constraint_retention_rate": 0.05707070707070707,
+        "input_tokens": 4080549,
+        "output_tokens": 101718,
+        "unknown_usage_calls": 26,
+        "retrieval_requested": 72,
+        "retrieval_executed": 48,
+        "retrieval_reused": 24,
+        "duplicate_retrieval_requests": 24,
+        "summary_calls": 0,
+        "counter_underestimates": 0,
+        "turn_p50_ms": 1818.04,
+        "turn_p95_ms": 2999.83,
+        "elapsed_ms": 721615.09,
+        "cost_estimate": null,
+        "uncached_cost_estimate": null,
+        "currency": "CNY",
+        "summary_triggered_turn_p95_ms": null,
+        "summary_model_time_total_ms": 0,
+        "summary_input_tokens": 0,
+        "summary_output_tokens": 0,
+        "cost_per_finished_task": null,
+        "cost_per_successful_task": null
+      },
+      "D": {
+        "model_source": "configured",
+        "model": "qwen-plus",
+        "group": "D",
+        "grading_version": "semantic-aliases-v2",
+        "history_tokens": 1200,
+        "summary_target_ratio": 0.1,
+        "parameters": {
+          "temperature": 0.2,
+          "max_output_tokens": 384,
+          "summary_temperature": 0,
+          "repeats": 3,
+          "workers": 6,
+          "seed": null
+        },
+        "dataset_sha256": "a98033824963c73885b36a28ede59696202dc9b89a7273098f5750272cac4eeb",
+        "scope": "真实模型独立生成长对话；固定工具语料v2按主题返回证据；终局结构化约束回忆任务，不代表任意工程任务完成率",
+        "stop_reason": null,
+        "model_calls": 1377,
+        "known_total_tokens": 1145909,
+        "evaluation_budget": {
+          "requests": 1377,
+          "tokens_charged_for_limit": 1246218,
+          "cost_charged_for_limit": 0.8190803199999983,
+          "unknown_calls": 75,
+          "unknown_token_upper_reserve": 100309,
+          "unknown_cost_upper_reserve": 0.11480720000000001
+        },
+        "task_errors": [
+          {
+            "id": "context-05",
+            "repeat": 0,
+            "turn": 36,
+            "error_type": "OpenAIInvalidRequestError"
+          },
+          {
+            "id": "context-05",
+            "repeat": 1,
+            "turn": 33,
+            "error_type": "OpenAIInvalidRequestError"
+          },
+          {
+            "id": "context-05",
+            "repeat": 2,
+            "turn": 27,
+            "error_type": "OpenAIInvalidRequestError"
+          },
+          {
+            "id": "context-06",
+            "repeat": 0,
+            "turn": 25,
+            "error_type": "OpenAIInvalidRequestError"
+          },
+          {
+            "id": "context-06",
+            "repeat": 1,
+            "turn": 1,
+            "error_type": "OpenAIInvalidRequestError"
+          },
+          {
+            "id": "context-06",
+            "repeat": 2,
+            "turn": 1,
+            "error_type": "OpenAIInvalidRequestError"
+          },
+          {
+            "id": "context-07",
+            "repeat": 0,
+            "turn": 4,
+            "error_type": "OpenAIInvalidRequestError"
+          },
+          {
+            "id": "context-07",
+            "repeat": 1,
+            "turn": 2,
+            "error_type": "OpenAIInvalidRequestError"
+          },
+          {
+            "id": "context-07",
+            "repeat": 2,
+            "turn": 1,
+            "error_type": "OpenAIInvalidRequestError"
+          },
+          {
+            "id": "context-08",
+            "repeat": 0,
+            "turn": 5,
+            "error_type": "OpenAIInvalidRequestError"
+          },
+          {
+            "id": "context-08",
+            "repeat": 1,
+            "turn": 2,
+            "error_type": "OpenAIInvalidRequestError"
+          },
+          {
+            "id": "context-08",
+            "repeat": 2,
+            "turn": 2,
+            "error_type": "OpenAIInvalidRequestError"
+          },
+          {
+            "id": "context-09",
+            "repeat": 0,
+            "turn": 1,
+            "error_type": "OpenAIInvalidRequestError"
+          },
+          {
+            "id": "context-09",
+            "repeat": 1,
+            "turn": 2,
+            "error_type": "OpenAIInvalidRequestError"
+          },
+          {
+            "id": "context-09",
+            "repeat": 2,
+            "turn": 1,
+            "error_type": "OpenAIInvalidRequestError"
+          },
+          {
+            "id": "context-10",
+            "repeat": 0,
+            "turn": 1,
+            "error_type": "OpenAIInvalidRequestError"
+          },
+          {
+            "id": "context-10",
+            "repeat": 1,
+            "turn": 3,
+            "error_type": "OpenAIInvalidRequestError"
+          },
+          {
+            "id": "context-10",
+            "repeat": 2,
+            "turn": 2,
+            "error_type": "OpenAIInvalidRequestError"
+          },
+          {
+            "id": "context-11",
+            "repeat": 0,
+            "turn": 1,
+            "error_type": "OpenAIInvalidRequestError"
+          },
+          {
+            "id": "context-11",
+            "repeat": 1,
+            "turn": 1,
+            "error_type": "OpenAIInvalidRequestError"
+          },
+          {
+            "id": "context-11",
+            "repeat": 2,
+            "turn": 1,
+            "error_type": "OpenAIInvalidRequestError"
+          },
+          {
+            "id": "context-12",
+            "repeat": 0,
+            "turn": 1,
+            "error_type": "OpenAIInvalidRequestError"
+          },
+          {
+            "id": "context-12",
+            "repeat": 1,
+            "turn": 2,
+            "error_type": "OpenAIInvalidRequestError"
+          },
+          {
+            "id": "context-12",
+            "repeat": 2,
+            "turn": 1,
+            "error_type": "OpenAIInvalidRequestError"
+          },
+          {
+            "id": "context-13",
+            "repeat": 0,
+            "turn": 1,
+            "error_type": "OpenAIInvalidRequestError"
+          },
+          {
+            "id": "context-13",
+            "repeat": 1,
+            "turn": 1,
+            "error_type": "OpenAIInvalidRequestError"
+          },
+          {
+            "id": "context-13",
+            "repeat": 2,
+            "turn": 6,
+            "error_type": "OpenAIInvalidRequestError"
+          },
+          {
+            "id": "context-14",
+            "repeat": 0,
+            "turn": 2,
+            "error_type": "OpenAIInvalidRequestError"
+          },
+          {
+            "id": "context-14",
+            "repeat": 1,
+            "turn": 4,
+            "error_type": "OpenAIInvalidRequestError"
+          },
+          {
+            "id": "context-14",
+            "repeat": 2,
+            "turn": 1,
+            "error_type": "OpenAIInvalidRequestError"
+          },
+          {
+            "id": "context-15",
+            "repeat": 0,
+            "turn": 2,
+            "error_type": "OpenAIInvalidRequestError"
+          },
+          {
+            "id": "context-15",
+            "repeat": 1,
+            "turn": 1,
+            "error_type": "OpenAIInvalidRequestError"
+          },
+          {
+            "id": "context-15",
+            "repeat": 2,
+            "turn": 2,
+            "error_type": "OpenAIInvalidRequestError"
+          },
+          {
+            "id": "context-16",
+            "repeat": 0,
+            "turn": 2,
+            "error_type": "OpenAIInvalidRequestError"
+          },
+          {
+            "id": "context-16",
+            "repeat": 1,
+            "turn": 1,
+            "error_type": "OpenAIInvalidRequestError"
+          },
+          {
+            "id": "context-16",
+            "repeat": 2,
+            "turn": 1,
+            "error_type": "OpenAIInvalidRequestError"
+          },
+          {
+            "id": "context-17",
+            "repeat": 0,
+            "turn": 3,
+            "error_type": "OpenAIInvalidRequestError"
+          },
+          {
+            "id": "context-17",
+            "repeat": 1,
+            "turn": 2,
+            "error_type": "OpenAIInvalidRequestError"
+          },
+          {
+            "id": "context-17",
+            "repeat": 2,
+            "turn": 2,
+            "error_type": "OpenAIInvalidRequestError"
+          },
+          {
+            "id": "context-18",
+            "repeat": 0,
+            "turn": 1,
+            "error_type": "OpenAIInvalidRequestError"
+          },
+          {
+            "id": "context-18",
+            "repeat": 1,
+            "turn": 2,
+            "error_type": "OpenAIInvalidRequestError"
+          },
+          {
+            "id": "context-18",
+            "repeat": 2,
+            "turn": 1,
+            "error_type": "OpenAIInvalidRequestError"
+          },
+          {
+            "id": "context-19",
+            "repeat": 0,
+            "turn": 3,
+            "error_type": "OpenAIInvalidRequestError"
+          },
+          {
+            "id": "context-19",
+            "repeat": 1,
+            "turn": 2,
+            "error_type": "OpenAIInvalidRequestError"
+          },
+          {
+            "id": "context-19",
+            "repeat": 2,
+            "turn": 1,
+            "error_type": "OpenAIInvalidRequestError"
+          },
+          {
+            "id": "context-20",
+            "repeat": 0,
+            "turn": 3,
+            "error_type": "OpenAIInvalidRequestError"
+          },
+          {
+            "id": "context-20",
+            "repeat": 1,
+            "turn": 1,
+            "error_type": "OpenAIInvalidRequestError"
+          },
+          {
+            "id": "context-20",
+            "repeat": 2,
+            "turn": 1,
+            "error_type": "OpenAIInvalidRequestError"
+          },
+          {
+            "id": "context-21",
+            "repeat": 0,
+            "turn": 1,
+            "error_type": "OpenAIInvalidRequestError"
+          },
+          {
+            "id": "context-21",
+            "repeat": 1,
+            "turn": 1,
+            "error_type": "OpenAIInvalidRequestError"
+          },
+          {
+            "id": "context-21",
+            "repeat": 2,
+            "turn": 4,
+            "error_type": "OpenAIInvalidRequestError"
+          },
+          {
+            "id": "context-22",
+            "repeat": 0,
+            "turn": 1,
+            "error_type": "OpenAIInvalidRequestError"
+          },
+          {
+            "id": "context-22",
+            "repeat": 1,
+            "turn": 2,
+            "error_type": "OpenAIInvalidRequestError"
+          },
+          {
+            "id": "context-22",
+            "repeat": 2,
+            "turn": 1,
+            "error_type": "OpenAIInvalidRequestError"
+          },
+          {
+            "id": "context-23",
+            "repeat": 0,
+            "turn": 3,
+            "error_type": "OpenAIInvalidRequestError"
+          },
+          {
+            "id": "context-23",
+            "repeat": 1,
+            "turn": 5,
+            "error_type": "OpenAIInvalidRequestError"
+          },
+          {
+            "id": "context-23",
+            "repeat": 2,
+            "turn": 1,
+            "error_type": "OpenAIInvalidRequestError"
+          },
+          {
+            "id": "context-24",
+            "repeat": 0,
+            "turn": 1,
+            "error_type": "OpenAIInvalidRequestError"
+          },
+          {
+            "id": "context-24",
+            "repeat": 1,
+            "turn": 1,
+            "error_type": "OpenAIInvalidRequestError"
+          },
+          {
+            "id": "context-24",
+            "repeat": 2,
+            "turn": 1,
+            "error_type": "OpenAIInvalidRequestError"
+          },
+          {
+            "id": "context-25",
+            "repeat": 0,
+            "turn": 1,
+            "error_type": "OpenAIInvalidRequestError"
+          },
+          {
+            "id": "context-25",
+            "repeat": 1,
+            "turn": 2,
+            "error_type": "OpenAIInvalidRequestError"
+          },
+          {
+            "id": "context-25",
+            "repeat": 2,
+            "turn": 1,
+            "error_type": "OpenAIInvalidRequestError"
+          },
+          {
+            "id": "context-26",
+            "repeat": 0,
+            "turn": 4,
+            "error_type": "OpenAIInvalidRequestError"
+          },
+          {
+            "id": "context-26",
+            "repeat": 1,
+            "turn": 1,
+            "error_type": "OpenAIInvalidRequestError"
+          },
+          {
+            "id": "context-26",
+            "repeat": 2,
+            "turn": 2,
+            "error_type": "OpenAIInvalidRequestError"
+          },
+          {
+            "id": "context-27",
+            "repeat": 0,
+            "turn": 1,
+            "error_type": "OpenAIInvalidRequestError"
+          },
+          {
+            "id": "context-27",
+            "repeat": 1,
+            "turn": 3,
+            "error_type": "OpenAIInvalidRequestError"
+          },
+          {
+            "id": "context-27",
+            "repeat": 2,
+            "turn": 1,
+            "error_type": "OpenAIInvalidRequestError"
+          },
+          {
+            "id": "context-28",
+            "repeat": 0,
+            "turn": 1,
+            "error_type": "OpenAIInvalidRequestError"
+          },
+          {
+            "id": "context-28",
+            "repeat": 1,
+            "turn": 1,
+            "error_type": "OpenAIInvalidRequestError"
+          },
+          {
+            "id": "context-28",
+            "repeat": 2,
+            "turn": 2,
+            "error_type": "OpenAIInvalidRequestError"
+          },
+          {
+            "id": "context-29",
+            "repeat": 0,
+            "turn": 1,
+            "error_type": "OpenAIInvalidRequestError"
+          },
+          {
+            "id": "context-29",
+            "repeat": 1,
+            "turn": 1,
+            "error_type": "OpenAIInvalidRequestError"
+          },
+          {
+            "id": "context-29",
+            "repeat": 2,
+            "turn": 1,
+            "error_type": "OpenAIInvalidRequestError"
+          }
+        ],
+        "scheduled_tasks": 90,
+        "started_tasks": 90,
+        "finished_tasks": 15,
+        "task_completion_rate": 0.16666666666666666,
+        "constraint_retention_rate": 0.16666666666666666,
+        "evidence_retention_rate": 0.8695652173913043,
+        "ordinary_constraint_retention_rate": 0.25328330206378985,
+        "input_tokens": 1098937,
+        "output_tokens": 46972,
+        "unknown_usage_calls": 75,
+        "retrieval_requested": 36,
+        "retrieval_executed": 28,
+        "retrieval_reused": 8,
+        "duplicate_retrieval_requests": 8,
+        "summary_calls": 59,
+        "counter_underestimates": 0,
+        "turn_p50_ms": 1680.59,
+        "turn_p95_ms": 8662.29,
+        "elapsed_ms": 277350.7,
+        "cost_estimate": null,
+        "uncached_cost_estimate": null,
+        "currency": "CNY",
+        "summary_triggered_turn_p95_ms": 22969.33,
+        "summary_model_time_total_ms": 567322.86,
+        "summary_input_tokens": 108449,
+        "summary_output_tokens": 24799,
+        "cost_per_finished_task": null,
+        "cost_per_successful_task": null
+      }
+    },
+    "limitations": [
+      "只对固定脚本和所测模型有效，不能外推任意工程任务。",
+      "矩阵为非流式任务；首Token延迟单独通过SSE探针记录，未在四组矩阵中配对比较。",
+      "并发数固定，网络时段和服务商负载不可严格控制。",
+      "基线若没有成功任务，其每成功任务成本无法定义，不能以总成本替代该结论。",
+      "真实Embedding凭据与向量检索必须另行通过实际调用验收。"
+    ]
+  },
+  "recovered_v2_comparison": {
+    "scope": "固定工具数据下的真实长对话约束任务；金额为公开单价估算，不等于账单",
+    "gates": {
+      "same_inputs_and_samples": true,
+      "complete_30_scripts_times_3": false,
+      "task_noninferiority": false,
+      "hard_constraints": false,
+      "tail_evidence": true,
+      "ordinary_constraints_98_percent": true,
+      "holdout_quality": false,
+      "actual_usage_complete": true,
+      "counter_conservative": true,
+      "long_input_saving_20_percent": false,
+      "duplicate_requests_not_increased": false,
+      "p95_not_increased_over_10_percent": false,
+      "cost_not_increased": false
+    },
+    "release_allowed": false,
+    "paired_task_difference_95_ci": null,
+    "comparisons_valid": false,
+    "summary_source_equivalence": null,
+    "long_input_saving": null,
+    "results": {
+      "A": {
+        "model_source": "configured",
+        "model": "qwen-plus",
+        "group": "A",
+        "grading_version": "semantic-aliases-v3-explicit-characters",
+        "dataset_version": 2,
+        "history_tokens": 1200,
+        "summary_target_ratio": 0.1,
+        "parameters": {
+          "temperature": 0.2,
+          "max_output_tokens": 384,
+          "summary_temperature": 0,
+          "repeats": 3,
+          "workers": 6,
+          "seed": null
+        },
+        "dataset_sha256": "9b3a1b175a3cf0a636c7cb27f602e3114ba0b12ca009277aaef77faf76c00774",
+        "scope": "真实模型独立生成长对话；固定工具语料v2按主题返回证据；终局结构化约束回忆任务，不代表任意工程任务完成率",
+        "stop_reason": null,
+        "model_calls": 6092,
+        "known_total_tokens": 5608943,
+        "evaluation_budget": {
+          "requests": 6092,
+          "tokens_charged_for_limit": 5608943,
+          "cost_charged_for_limit": 3.8151072800000176,
+          "unknown_calls": 0,
+          "unknown_token_upper_reserve": 0,
+          "unknown_cost_upper_reserve": 0.0
+        },
+        "task_errors": [],
+        "scheduled_tasks": 90,
+        "started_tasks": 90,
+        "finished_tasks": 90,
+        "task_completion_rate": 0.0,
+        "constraint_retention_rate": 0.2638888888888889,
+        "evidence_retention_rate": 0.9777777777777777,
+        "ordinary_constraint_retention_rate": 0.3414364640883978,
+        "input_tokens": 5482322,
+        "output_tokens": 126621,
+        "unknown_usage_calls": 0,
+        "retrieval_requested": 92,
+        "retrieval_executed": 92,
+        "retrieval_reused": 0,
+        "duplicate_retrieval_requests": 30,
+        "summary_calls": 0,
+        "counter_underestimates": 0,
+        "turn_p50_ms": 1776.405,
+        "turn_p95_ms": 2342.72,
+        "elapsed_ms": 941521.05,
+        "cost_estimate": 3.81510728,
+        "uncached_cost_estimate": 4.6390996,
+        "currency": "CNY",
+        "summary_triggered_turn_p95_ms": null,
+        "summary_model_time_total_ms": 0,
+        "summary_input_tokens": 0,
+        "summary_output_tokens": 0,
+        "cost_per_finished_task": 0.04239008088888889,
+        "cost_per_successful_task": null
+      },
+      "B": {
+        "model_source": "configured",
+        "model": "qwen-plus",
+        "group": "B",
+        "grading_version": "semantic-aliases-v3-explicit-characters",
+        "dataset_version": 2,
+        "history_tokens": 1200,
+        "summary_target_ratio": 0.1,
+        "parameters": {
+          "temperature": 0.2,
+          "max_output_tokens": 384,
+          "summary_temperature": 0,
+          "repeats": 3,
+          "workers": 6,
+          "seed": null
+        },
+        "dataset_sha256": "9b3a1b175a3cf0a636c7cb27f602e3114ba0b12ca009277aaef77faf76c00774",
+        "scope": "真实模型独立生成长对话；固定工具语料v2按主题返回证据；终局结构化约束回忆任务，不代表任意工程任务完成率",
+        "stop_reason": null,
+        "model_calls": 6091,
+        "known_total_tokens": 5441735,
+        "evaluation_budget": {
+          "requests": 6091,
+          "tokens_charged_for_limit": 5441735,
+          "cost_charged_for_limit": 3.644346240000008,
+          "unknown_calls": 0,
+          "unknown_token_upper_reserve": 0,
+          "unknown_cost_upper_reserve": 0.0
+        },
+        "task_errors": [],
+        "scheduled_tasks": 90,
+        "started_tasks": 90,
+        "finished_tasks": 90,
+        "task_completion_rate": 0.0,
+        "constraint_retention_rate": 0.25833333333333336,
+        "evidence_retention_rate": 0.9888888888888889,
+        "ordinary_constraint_retention_rate": 0.3469613259668508,
+        "input_tokens": 5315769,
+        "output_tokens": 125966,
+        "unknown_usage_calls": 0,
+        "retrieval_requested": 91,
+        "retrieval_executed": 61,
+        "retrieval_reused": 30,
+        "duplicate_retrieval_requests": 30,
+        "summary_calls": 0,
+        "counter_underestimates": 0,
+        "turn_p50_ms": 1961.665,
+        "turn_p95_ms": 2640.22,
+        "elapsed_ms": 1053552.52,
+        "cost_estimate": 3.64434624,
+        "uncached_cost_estimate": 4.5045472,
+        "currency": "CNY",
+        "summary_triggered_turn_p95_ms": null,
+        "summary_model_time_total_ms": 0,
+        "summary_input_tokens": 0,
+        "summary_output_tokens": 0,
+        "cost_per_finished_task": 0.040492736,
+        "cost_per_successful_task": null
+      },
+      "C": {
+        "model_source": "configured",
+        "model": "qwen-plus",
+        "group": "C",
+        "grading_version": "semantic-aliases-v3-explicit-characters",
+        "dataset_version": 2,
+        "history_tokens": 1200,
+        "summary_target_ratio": 0.1,
+        "parameters": {
+          "temperature": 0.2,
+          "max_output_tokens": 384,
+          "summary_temperature": 0,
+          "repeats": 3,
+          "workers": 6,
+          "seed": null
+        },
+        "dataset_sha256": "9b3a1b175a3cf0a636c7cb27f602e3114ba0b12ca009277aaef77faf76c00774",
+        "scope": "真实模型独立生成长对话；固定工具语料v2按主题返回证据；终局结构化约束回忆任务，不代表任意工程任务完成率",
+        "stop_reason": null,
+        "model_calls": 6090,
+        "known_total_tokens": 6447231,
+        "evaluation_budget": {
+          "requests": 6090,
+          "tokens_charged_for_limit": 6447231,
+          "cost_charged_for_limit": 3.7977238399999744,
+          "unknown_calls": 0,
+          "unknown_token_upper_reserve": 0,
+          "unknown_cost_upper_reserve": 0.0
+        },
+        "task_errors": [],
+        "scheduled_tasks": 90,
+        "started_tasks": 90,
+        "finished_tasks": 90,
+        "task_completion_rate": 0.2,
+        "constraint_retention_rate": 0.4583333333333333,
+        "evidence_retention_rate": 0.9666666666666667,
+        "ordinary_constraint_retention_rate": 0.9922651933701657,
+        "input_tokens": 6379429,
+        "output_tokens": 67802,
+        "unknown_usage_calls": 0,
+        "retrieval_requested": 90,
+        "retrieval_executed": 60,
+        "retrieval_reused": 30,
+        "duplicate_retrieval_requests": 30,
+        "summary_calls": 0,
+        "counter_underestimates": 0,
+        "turn_p50_ms": 1570.6399999999999,
+        "turn_p95_ms": 2391.03,
+        "elapsed_ms": 872410.85,
+        "cost_estimate": 3.79772384,
+        "uncached_cost_estimate": 5.2391472,
+        "currency": "CNY",
+        "summary_triggered_turn_p95_ms": null,
+        "summary_model_time_total_ms": 0,
+        "summary_input_tokens": 0,
+        "summary_output_tokens": 0,
+        "cost_per_finished_task": 0.04219693155555556,
+        "cost_per_successful_task": 0.21098465777777778
+      },
+      "D": {
+        "model_source": "configured",
+        "model": "qwen-plus",
+        "group": "D",
+        "grading_version": "semantic-aliases-v3-explicit-characters",
+        "dataset_version": 2,
+        "history_tokens": 1200,
+        "summary_target_ratio": 0.1,
+        "parameters": {
+          "temperature": 0.2,
+          "max_output_tokens": 384,
+          "summary_temperature": 0,
+          "repeats": 3,
+          "workers": 6,
+          "seed": null
+        },
+        "dataset_sha256": "9b3a1b175a3cf0a636c7cb27f602e3114ba0b12ca009277aaef77faf76c00774",
+        "scope": "真实模型独立生成长对话；固定工具语料v2按主题返回证据；终局结构化约束回忆任务，不代表任意工程任务完成率",
+        "stop_reason": null,
+        "model_calls": 6313,
+        "known_total_tokens": 6434543,
+        "evaluation_budget": {
+          "requests": 6313,
+          "tokens_charged_for_limit": 6434543,
+          "cost_charged_for_limit": 3.62588759999999,
+          "unknown_calls": 0,
+          "unknown_token_upper_reserve": 0,
+          "unknown_cost_upper_reserve": 0.0
+        },
+        "task_errors": [
+          {
+            "id": "context-25",
+            "repeat": 0,
+            "turn": 10,
+            "error_type": "ContextBudgetExceeded",
+            "provider_error": null
+          }
+        ],
+        "scheduled_tasks": 90,
+        "started_tasks": 90,
+        "finished_tasks": 89,
+        "task_completion_rate": 0.9888888888888889,
+        "constraint_retention_rate": 0.9888888888888889,
+        "evidence_retention_rate": 1.0,
+        "ordinary_constraint_retention_rate": 0.9838709677419355,
+        "input_tokens": 6236980,
+        "output_tokens": 197563,
+        "unknown_usage_calls": 0,
+        "retrieval_requested": 90,
+        "retrieval_executed": 60,
+        "retrieval_reused": 30,
+        "duplicate_retrieval_requests": 30,
+        "summary_calls": 325,
+        "counter_underestimates": 0,
+        "turn_p50_ms": 1493.74,
+        "turn_p95_ms": 11733.99,
+        "elapsed_ms": 1371007.25,
+        "cost_estimate": 3.6258876,
+        "uncached_cost_estimate": 5.38471,
+        "currency": "CNY",
+        "summary_triggered_turn_p95_ms": 17549.02,
+        "summary_model_time_total_ms": 3189415.59,
+        "summary_input_tokens": 604209,
+        "summary_output_tokens": 138480,
+        "cost_per_finished_task": 0.04074031011235955,
+        "cost_per_successful_task": 0.04074031011235955
+      }
+    },
+    "limitations": [
+      "只对固定脚本和所测模型有效，不能外推任意工程任务。",
+      "矩阵为非流式任务；首Token延迟单独通过SSE探针记录，未在四组矩阵中配对比较。",
+      "并发数固定，网络时段和服务商负载不可严格控制。",
+      "基线若没有成功任务，其每成功任务成本无法定义，不能以总成本替代该结论。",
+      "真实Embedding凭据与向量检索必须另行通过实际调用验收。"
+    ]
+  },
+  "source_correction_regression": {
+    "failed_candidate_replays_passed": 2,
+    "real_60_turn_tasks_passed": 3,
+    "evidence": [
+      "eval/reports/context/failed-summary-source-replay.json",
+      "eval/reports/context/correction-source-regression-fixed.json"
+    ]
+  },
+  "current_matrix": {
+    "A": {
+      "scheduled_tasks": 90,
+      "started_tasks": 90,
+      "finished_tasks": 90,
+      "task_completion_rate": 0.0,
+      "constraint_retention_rate": 0.2722222222222222,
+      "evidence_retention_rate": 1.0,
+      "ordinary_constraint_retention_rate": 0.46298342541436466,
+      "unknown_usage_calls": 2,
+      "known_total_tokens": 5838957,
+      "stop_reason": null
+    },
+    "B": {
+      "scheduled_tasks": 90,
+      "started_tasks": 90,
+      "finished_tasks": 90,
+      "task_completion_rate": 0.0,
+      "constraint_retention_rate": 0.2833333333333333,
+      "evidence_retention_rate": 1.0,
+      "ordinary_constraint_retention_rate": 0.44419889502762433,
+      "unknown_usage_calls": 1,
+      "known_total_tokens": 5548007,
+      "stop_reason": null
+    },
+    "C": {
+      "scheduled_tasks": 90,
+      "started_tasks": 90,
+      "finished_tasks": 90,
+      "task_completion_rate": 0.17777777777777778,
+      "constraint_retention_rate": 0.4583333333333333,
+      "evidence_retention_rate": 1.0,
+      "ordinary_constraint_retention_rate": 0.9915285451197053,
+      "unknown_usage_calls": 3,
+      "known_total_tokens": 6603665,
+      "stop_reason": null
+    },
+    "D": {
+      "scheduled_tasks": 90,
+      "started_tasks": 90,
+      "finished_tasks": 90,
+      "task_completion_rate": 0.7888888888888889,
+      "constraint_retention_rate": 0.95,
+      "evidence_retention_rate": 0.9888888888888889,
+      "ordinary_constraint_retention_rate": 0.990791896869245,
+      "unknown_usage_calls": 4,
+      "known_total_tokens": 6742996,
+      "stop_reason": null
+    }
+  },
+  "current_comparison": {
+    "scope": "固定工具数据下的真实长对话约束任务；金额为公开单价估算，不等于账单",
+    "gates": {
+      "same_inputs_and_samples": true,
+      "complete_30_scripts_times_3": true,
+      "task_noninferiority": true,
+      "hard_constraints": false,
+      "tail_evidence": false,
+      "ordinary_constraints_98_percent": true,
+      "holdout_quality": false,
+      "actual_usage_complete": false,
+      "counter_conservative": true,
+      "long_input_saving_20_percent": false,
+      "duplicate_requests_not_increased": false,
+      "p95_not_increased_over_10_percent": false,
+      "cost_not_increased": false
+    },
+    "release_allowed": false,
+    "paired_task_difference_95_ci": [
+      0.6666666666666666,
+      0.9
+    ],
+    "comparisons_valid": true,
+    "summary_source_equivalence": null,
+    "long_input_saving": -0.15357659907324517,
+    "results": {
+      "A": {
+        "model_source": "configured",
+        "model": "qwen-plus",
+        "group": "A",
+        "grading_version": "semantic-aliases-v4-annotated-character-turns",
+        "dataset_version": 3,
+        "history_tokens": 1200,
+        "summary_target_ratio": 0.1,
+        "parameters": {
+          "temperature": 0.2,
+          "max_output_tokens": 384,
+          "summary_temperature": 0,
+          "repeats": 3,
+          "workers": 6,
+          "seed": null
+        },
+        "dataset_sha256": "66514bca7d0665383e05455b509e8d87991e7f57a05c8829bcf81de6b2f60351",
+        "scope": "真实模型独立生成长对话；固定工具语料v2按主题返回证据；终局结构化约束回忆任务，不代表任意工程任务完成率",
+        "stop_reason": null,
+        "model_calls": 6432,
+        "known_total_tokens": 5838957,
+        "evaluation_budget": {
+          "requests": 6432,
+          "tokens_charged_for_limit": 5842145,
+          "cost_charged_for_limit": 4.016694639999982,
+          "unknown_calls": 2,
+          "unknown_token_upper_reserve": 3188,
+          "unknown_cost_upper_reserve": 0.003472
+        },
+        "task_errors": [],
+        "scheduled_tasks": 90,
+        "started_tasks": 90,
+        "finished_tasks": 90,
+        "task_completion_rate": 0.0,
+        "constraint_retention_rate": 0.2722222222222222,
+        "evidence_retention_rate": 1.0,
+        "ordinary_constraint_retention_rate": 0.46298342541436466,
+        "input_tokens": 5715806,
+        "output_tokens": 123151,
+        "unknown_usage_calls": 2,
+        "retrieval_requested": 95,
+        "retrieval_executed": 95,
+        "retrieval_reused": 0,
+        "duplicate_retrieval_requests": 32,
+        "summary_calls": 0,
+        "counter_underestimates": 0,
+        "turn_p50_ms": 1667.5500000000002,
+        "turn_p95_ms": 2268.3,
+        "elapsed_ms": 1041943.74,
+        "cost_estimate": null,
+        "uncached_cost_estimate": null,
+        "currency": "CNY",
+        "summary_model_time_total_ms": 0,
+        "summary_input_tokens": 0,
+        "summary_output_tokens": 0,
+        "summary_triggered_turn_p95_ms": null,
+        "long_input_tokens_including_interrupted": 5176342,
+        "elapsed_scope": "各执行批次耗时之和，不含等待账户恢复的空闲时间",
+        "attempted_tasks_including_interrupted": 95,
+        "historical_attempt_errors": [
+          {
+            "id": "context-20",
+            "repeat": 1,
+            "turn": 54,
+            "error_type": null,
+            "provider_error": null,
+            "source_report": "D:\\agentprogram\\AI-Robot\\eval\\reports\\context\\final-restored-v3\\A.json"
+          },
+          {
+            "id": "context-20",
+            "repeat": 2,
+            "turn": 55,
+            "error_type": null,
+            "provider_error": null,
+            "source_report": "D:\\agentprogram\\AI-Robot\\eval\\reports\\context\\final-restored-v3\\A.json"
+          },
+          {
+            "id": "context-22",
+            "repeat": 1,
+            "turn": 29,
+            "error_type": null,
+            "provider_error": null,
+            "source_report": "D:\\agentprogram\\AI-Robot\\eval\\reports\\context\\final-restored-v3\\A.json"
+          },
+          {
+            "id": "context-22",
+            "repeat": 2,
+            "turn": 27,
+            "error_type": "OpenAIInvalidRequestError",
+            "provider_error": {
+              "code": "Arrearage",
+              "http_status": 400
+            },
+            "source_report": "D:\\agentprogram\\AI-Robot\\eval\\reports\\context\\final-restored-v3\\A.json"
+          },
+          {
+            "id": "context-23",
+            "repeat": 0,
+            "turn": 3,
+            "error_type": null,
+            "provider_error": null,
+            "source_report": "D:\\agentprogram\\AI-Robot\\eval\\reports\\context\\final-restored-v3\\A.json"
+          }
+        ],
+        "first_attempt_quality": {
+          "started_tasks": 70,
+          "finished_tasks": 65,
+          "task_completion_rate": 0.0,
+          "constraint_retention_rate": 0.24285714285714285,
+          "evidence_retention_rate": 1.0,
+          "ordinary_constraint_retention_rate": 0.4080200501253133
+        },
+        "latest_task_turn_metrics": {
+          "model_calls": 6092,
+          "known_total_tokens": 5533481,
+          "input_tokens": 5416483,
+          "output_tokens": 116998,
+          "unknown_usage_calls": 1,
+          "cost_estimate": null,
+          "uncached_cost_estimate": null,
+          "currency": "CNY",
+          "retrieval_requested": 91,
+          "retrieval_executed": 91,
+          "retrieval_reused": 0,
+          "duplicate_retrieval_requests": 30,
+          "summary_calls": 0,
+          "summary_model_time_total_ms": 0,
+          "summary_input_tokens": 0,
+          "summary_output_tokens": 0,
+          "summary_triggered_turn_p95_ms": null,
+          "counter_underestimates": 0,
+          "turn_p50_ms": 1669.9699999999998,
+          "turn_p95_ms": 2271.68,
+          "long_input_tokens_including_interrupted": 4877019
+        },
+        "resume_provenance": {
+          "base_report": {
+            "path": "D:\\agentprogram\\AI-Robot\\eval\\reports\\context\\final-restored-v3\\A.json",
+            "sha256": "736ac3488d67038401648c86731e71aeddfb27dd8d1300c0a448d5d8e16a1297"
+          },
+          "additional_reports": [
+            {
+              "group": "A",
+              "repeat": 0,
+              "cases": [
+                "context-23",
+                "context-24",
+                "context-25",
+                "context-26",
+                "context-27",
+                "context-28",
+                "context-29"
+              ],
+              "report": "D:\\agentprogram\\AI-Robot\\eval\\reports\\context\\resume-restored-v3\\000-A-0.json",
+              "sha256": "3579c6e74525d1f5465f38b61111fe7a7663cf6bd1b349134414a4a76f00d7ec"
+            },
+            {
+              "group": "A",
+              "repeat": 1,
+              "cases": [
+                "context-20",
+                "context-22",
+                "context-23",
+                "context-24",
+                "context-25",
+                "context-26",
+                "context-27",
+                "context-28",
+                "context-29"
+              ],
+              "report": "D:\\agentprogram\\AI-Robot\\eval\\reports\\context\\resume-restored-v3\\001-A-1.json",
+              "sha256": "f82191e87de29003983a1ab2491d78722af689da410c308a4c908476ca58ef8d"
+            },
+            {
+              "group": "A",
+              "repeat": 2,
+              "cases": [
+                "context-20",
+                "context-22",
+                "context-23",
+                "context-24",
+                "context-25",
+                "context-26",
+                "context-27",
+                "context-28",
+                "context-29"
+              ],
+              "report": "D:\\agentprogram\\AI-Robot\\eval\\reports\\context\\resume-restored-v3\\002-A-2.json",
+              "sha256": "c0ea5f6215ed74883ca2049b9a5878a1ddfa00c134f84108421f54012cfc7613"
+            }
+          ],
+          "runtime_identity": {
+            "endpoint_sha256": "5891aed827c4e67b2d7c0c73ea819327ce3f2b6ef72213cd79669486a26b1ead",
+            "parameters": {
+              "context_model_window": 32768,
+              "context_input_limit": 16000,
+              "context_safety_tokens": 2048,
+              "context_summary_tokens": 1000,
+              "context_evidence_tokens": 4000,
+              "context_tool_tokens": 1500,
+              "context_read_tokens": 1000,
+              "context_encoding": "cl100k_base",
+              "context_evidence_ttl": 600.0,
+              "context_summary_timeout": 30.0,
+              "context_summary_trigger_ratio": 0.9,
+              "memory_max_turns": 20,
+              "memory_retrieve_turns": 6,
+              "agent_max_tool_rounds": 4,
+              "retry_attempts": 3,
+              "retry_max_wait": 8.0
+            },
+            "price_book_sha256": "f11f7c722f943055bebc8d5efb6d27399544480774876277da92d992047e68d8",
+            "calibration_sha256": "93329e02edcf1c1a3cae7d7989955d694617bd9e54d0e0558fa8cfb6028c0584"
+          },
+          "limitations": [
+            "原报告缺少完整运行配置快照及服务商模型版本标识，不能严格证明所有运行条件相同。",
+            "新旧批次网络时段、服务端缓存和调度边界不同；原中断尝试的费用及未知用量不得从正式验收中删除。",
+            "每个批次repeats=1，清单映射到原样本编号；不改写原始逐轮报告或冻结评测器。"
+          ],
+          "aggregation": "质量按唯一任务最后一次执行；费用、调用、检索及延迟含原中断尝试。完整失败任务保持失败。",
+          "formal_release_claim": false
+        },
+        "cost_per_finished_task": null,
+        "cost_per_successful_task": null
+      },
+      "B": {
+        "model_source": "configured",
+        "model": "qwen-plus",
+        "group": "B",
+        "grading_version": "semantic-aliases-v4-annotated-character-turns",
+        "dataset_version": 3,
+        "history_tokens": 1200,
+        "summary_target_ratio": 0.1,
+        "parameters": {
+          "temperature": 0.2,
+          "max_output_tokens": 384,
+          "summary_temperature": 0,
+          "repeats": 3,
+          "workers": 6,
+          "seed": null
+        },
+        "dataset_sha256": "66514bca7d0665383e05455b509e8d87991e7f57a05c8829bcf81de6b2f60351",
+        "scope": "真实模型独立生成长对话；固定工具语料v2按主题返回证据；终局结构化约束回忆任务，不代表任意工程任务完成率",
+        "stop_reason": null,
+        "model_calls": 6288,
+        "known_total_tokens": 5548007,
+        "evaluation_budget": {
+          "requests": 6288,
+          "tokens_charged_for_limit": 5549820,
+          "cost_charged_for_limit": 3.7153376000000025,
+          "unknown_calls": 1,
+          "unknown_token_upper_reserve": 1813,
+          "unknown_cost_upper_reserve": 0.0019112
+        },
+        "task_errors": [],
+        "scheduled_tasks": 90,
+        "started_tasks": 90,
+        "finished_tasks": 90,
+        "task_completion_rate": 0.0,
+        "constraint_retention_rate": 0.2833333333333333,
+        "evidence_retention_rate": 1.0,
+        "ordinary_constraint_retention_rate": 0.44419889502762433,
+        "input_tokens": 5426311,
+        "output_tokens": 121696,
+        "unknown_usage_calls": 1,
+        "retrieval_requested": 98,
+        "retrieval_executed": 65,
+        "retrieval_reused": 33,
+        "duplicate_retrieval_requests": 33,
+        "summary_calls": 0,
+        "counter_underestimates": 0,
+        "turn_p50_ms": 1865.84,
+        "turn_p95_ms": 2550.75,
+        "elapsed_ms": 1141747.85,
+        "cost_estimate": null,
+        "uncached_cost_estimate": null,
+        "currency": "CNY",
+        "summary_model_time_total_ms": 0,
+        "summary_input_tokens": 0,
+        "summary_output_tokens": 0,
+        "summary_triggered_turn_p95_ms": null,
+        "long_input_tokens_including_interrupted": 4952023,
+        "elapsed_scope": "各执行批次耗时之和，不含等待账户恢复的空闲时间",
+        "attempted_tasks_including_interrupted": 96,
+        "historical_attempt_errors": [
+          {
+            "id": "context-19",
+            "repeat": 0,
+            "turn": 19,
+            "error_type": null,
+            "provider_error": null,
+            "source_report": "D:\\agentprogram\\AI-Robot\\eval\\reports\\context\\final-restored-v3\\B.json"
+          },
+          {
+            "id": "context-19",
+            "repeat": 1,
+            "turn": 18,
+            "error_type": null,
+            "provider_error": null,
+            "source_report": "D:\\agentprogram\\AI-Robot\\eval\\reports\\context\\final-restored-v3\\B.json"
+          },
+          {
+            "id": "context-19",
+            "repeat": 2,
+            "turn": 17,
+            "error_type": null,
+            "provider_error": null,
+            "source_report": "D:\\agentprogram\\AI-Robot\\eval\\reports\\context\\final-restored-v3\\B.json"
+          },
+          {
+            "id": "context-20",
+            "repeat": 0,
+            "turn": 17,
+            "error_type": null,
+            "provider_error": null,
+            "source_report": "D:\\agentprogram\\AI-Robot\\eval\\reports\\context\\final-restored-v3\\B.json"
+          },
+          {
+            "id": "context-20",
+            "repeat": 1,
+            "turn": 12,
+            "error_type": null,
+            "provider_error": null,
+            "source_report": "D:\\agentprogram\\AI-Robot\\eval\\reports\\context\\final-restored-v3\\B.json"
+          },
+          {
+            "id": "context-20",
+            "repeat": 2,
+            "turn": 12,
+            "error_type": "OpenAIInvalidRequestError",
+            "provider_error": {
+              "code": "Arrearage",
+              "http_status": 400
+            },
+            "source_report": "D:\\agentprogram\\AI-Robot\\eval\\reports\\context\\final-restored-v3\\B.json"
+          }
+        ],
+        "first_attempt_quality": {
+          "started_tasks": 63,
+          "finished_tasks": 57,
+          "task_completion_rate": 0.0,
+          "constraint_retention_rate": 0.24603174603174602,
+          "evidence_retention_rate": 1.0,
+          "ordinary_constraint_retention_rate": 0.36757068667051357
+        },
+        "latest_task_turn_metrics": {
+          "model_calls": 6092,
+          "known_total_tokens": 5389476,
+          "input_tokens": 5270967,
+          "output_tokens": 118509,
+          "unknown_usage_calls": 0,
+          "cost_estimate": 3.6134972,
+          "uncached_cost_estimate": 4.4537916,
+          "currency": "CNY",
+          "retrieval_requested": 92,
+          "retrieval_executed": 62,
+          "retrieval_reused": 30,
+          "duplicate_retrieval_requests": 30,
+          "summary_calls": 0,
+          "summary_model_time_total_ms": 0,
+          "summary_input_tokens": 0,
+          "summary_output_tokens": 0,
+          "summary_triggered_turn_p95_ms": null,
+          "counter_underestimates": 0,
+          "turn_p50_ms": 1868.38,
+          "turn_p95_ms": 2550.75,
+          "long_input_tokens_including_interrupted": 4796679
+        },
+        "resume_provenance": {
+          "base_report": {
+            "path": "D:\\agentprogram\\AI-Robot\\eval\\reports\\context\\final-restored-v3\\B.json",
+            "sha256": "f1e2b66ae9c0f550960f2f961c6a3e2150ccbd5c229e4bb3e2297282f0675da2"
+          },
+          "additional_reports": [
+            {
+              "group": "B",
+              "repeat": 0,
+              "cases": [
+                "context-19",
+                "context-20",
+                "context-21",
+                "context-22",
+                "context-23",
+                "context-24",
+                "context-25",
+                "context-26",
+                "context-27",
+                "context-28",
+                "context-29"
+              ],
+              "report": "D:\\agentprogram\\AI-Robot\\eval\\reports\\context\\resume-restored-v3\\003-B-0.json",
+              "sha256": "e85373c75e5a098d6d43bd41a377d2be0b9b64d7a616465158c663076235e730"
+            },
+            {
+              "group": "B",
+              "repeat": 1,
+              "cases": [
+                "context-19",
+                "context-20",
+                "context-21",
+                "context-22",
+                "context-23",
+                "context-24",
+                "context-25",
+                "context-26",
+                "context-27",
+                "context-28",
+                "context-29"
+              ],
+              "report": "D:\\agentprogram\\AI-Robot\\eval\\reports\\context\\resume-restored-v3\\004-B-1.json",
+              "sha256": "315a1f302b872bcc3d38e3c2e6b971d880531765069546ee22025b54ecc568ee"
+            },
+            {
+              "group": "B",
+              "repeat": 2,
+              "cases": [
+                "context-19",
+                "context-20",
+                "context-21",
+                "context-22",
+                "context-23",
+                "context-24",
+                "context-25",
+                "context-26",
+                "context-27",
+                "context-28",
+                "context-29"
+              ],
+              "report": "D:\\agentprogram\\AI-Robot\\eval\\reports\\context\\resume-restored-v3\\005-B-2.json",
+              "sha256": "a8d4ffc355af3534f4a05e6335f622ca03dc07465e6b817b1e5c72954a547db4"
+            }
+          ],
+          "runtime_identity": {
+            "endpoint_sha256": "5891aed827c4e67b2d7c0c73ea819327ce3f2b6ef72213cd79669486a26b1ead",
+            "parameters": {
+              "context_model_window": 32768,
+              "context_input_limit": 16000,
+              "context_safety_tokens": 2048,
+              "context_summary_tokens": 1000,
+              "context_evidence_tokens": 4000,
+              "context_tool_tokens": 1500,
+              "context_read_tokens": 1000,
+              "context_encoding": "cl100k_base",
+              "context_evidence_ttl": 600.0,
+              "context_summary_timeout": 30.0,
+              "context_summary_trigger_ratio": 0.9,
+              "memory_max_turns": 20,
+              "memory_retrieve_turns": 6,
+              "agent_max_tool_rounds": 4,
+              "retry_attempts": 3,
+              "retry_max_wait": 8.0
+            },
+            "price_book_sha256": "f11f7c722f943055bebc8d5efb6d27399544480774876277da92d992047e68d8",
+            "calibration_sha256": "93329e02edcf1c1a3cae7d7989955d694617bd9e54d0e0558fa8cfb6028c0584"
+          },
+          "limitations": [
+            "原报告缺少完整运行配置快照及服务商模型版本标识，不能严格证明所有运行条件相同。",
+            "新旧批次网络时段、服务端缓存和调度边界不同；原中断尝试的费用及未知用量不得从正式验收中删除。",
+            "每个批次repeats=1，清单映射到原样本编号；不改写原始逐轮报告或冻结评测器。"
+          ],
+          "aggregation": "质量按唯一任务最后一次执行；费用、调用、检索及延迟含原中断尝试。完整失败任务保持失败。",
+          "formal_release_claim": false
+        },
+        "cost_per_finished_task": null,
+        "cost_per_successful_task": null
+      },
+      "C": {
+        "model_source": "configured",
+        "model": "qwen-plus",
+        "group": "C",
+        "grading_version": "semantic-aliases-v4-annotated-character-turns",
+        "dataset_version": 3,
+        "history_tokens": 1200,
+        "summary_target_ratio": 0.1,
+        "parameters": {
+          "temperature": 0.2,
+          "max_output_tokens": 384,
+          "summary_temperature": 0,
+          "repeats": 3,
+          "workers": 6,
+          "seed": null
+        },
+        "dataset_sha256": "66514bca7d0665383e05455b509e8d87991e7f57a05c8829bcf81de6b2f60351",
+        "scope": "真实模型独立生成长对话；固定工具语料v2按主题返回证据；终局结构化约束回忆任务，不代表任意工程任务完成率",
+        "stop_reason": null,
+        "model_calls": 6287,
+        "known_total_tokens": 6603665,
+        "evaluation_budget": {
+          "requests": 6287,
+          "tokens_charged_for_limit": 6611070,
+          "cost_charged_for_limit": 3.9656343999999955,
+          "unknown_calls": 3,
+          "unknown_token_upper_reserve": 7405,
+          "unknown_cost_upper_reserve": 0.0073064
+        },
+        "task_errors": [],
+        "scheduled_tasks": 90,
+        "started_tasks": 90,
+        "finished_tasks": 90,
+        "task_completion_rate": 0.17777777777777778,
+        "constraint_retention_rate": 0.4583333333333333,
+        "evidence_retention_rate": 1.0,
+        "ordinary_constraint_retention_rate": 0.9915285451197053,
+        "input_tokens": 6535875,
+        "output_tokens": 67790,
+        "unknown_usage_calls": 3,
+        "retrieval_requested": 96,
+        "retrieval_executed": 66,
+        "retrieval_reused": 30,
+        "duplicate_retrieval_requests": 30,
+        "summary_calls": 0,
+        "counter_underestimates": 0,
+        "turn_p50_ms": 1511.8249999999998,
+        "turn_p95_ms": 2365.19,
+        "elapsed_ms": 906761.4400000001,
+        "cost_estimate": null,
+        "uncached_cost_estimate": null,
+        "currency": "CNY",
+        "summary_model_time_total_ms": 0,
+        "summary_input_tokens": 0,
+        "summary_output_tokens": 0,
+        "summary_triggered_turn_p95_ms": null,
+        "long_input_tokens_including_interrupted": 5988282,
+        "elapsed_scope": "各执行批次耗时之和，不含等待账户恢复的空闲时间",
+        "attempted_tasks_including_interrupted": 96,
+        "historical_attempt_errors": [
+          {
+            "id": "context-23",
+            "repeat": 0,
+            "turn": 19,
+            "error_type": "OpenAIInvalidRequestError",
+            "provider_error": {
+              "code": "Arrearage",
+              "http_status": 400
+            },
+            "source_report": "D:\\agentprogram\\AI-Robot\\eval\\reports\\context\\final-restored-v3\\C.json"
+          },
+          {
+            "id": "context-23",
+            "repeat": 1,
+            "turn": 17,
+            "error_type": null,
+            "provider_error": null,
+            "source_report": "D:\\agentprogram\\AI-Robot\\eval\\reports\\context\\final-restored-v3\\C.json"
+          },
+          {
+            "id": "context-23",
+            "repeat": 2,
+            "turn": 14,
+            "error_type": null,
+            "provider_error": null,
+            "source_report": "D:\\agentprogram\\AI-Robot\\eval\\reports\\context\\final-restored-v3\\C.json"
+          },
+          {
+            "id": "context-24",
+            "repeat": 0,
+            "turn": 15,
+            "error_type": null,
+            "provider_error": null,
+            "source_report": "D:\\agentprogram\\AI-Robot\\eval\\reports\\context\\final-restored-v3\\C.json"
+          },
+          {
+            "id": "context-24",
+            "repeat": 1,
+            "turn": 16,
+            "error_type": "OpenAIInvalidRequestError",
+            "provider_error": {
+              "code": "Arrearage",
+              "http_status": 400
+            },
+            "source_report": "D:\\agentprogram\\AI-Robot\\eval\\reports\\context\\final-restored-v3\\C.json"
+          },
+          {
+            "id": "context-24",
+            "repeat": 2,
+            "turn": 15,
+            "error_type": "OpenAIInvalidRequestError",
+            "provider_error": {
+              "code": "Arrearage",
+              "http_status": 400
+            },
+            "source_report": "D:\\agentprogram\\AI-Robot\\eval\\reports\\context\\final-restored-v3\\C.json"
+          }
+        ],
+        "first_attempt_quality": {
+          "started_tasks": 75,
+          "finished_tasks": 69,
+          "task_completion_rate": 0.14666666666666667,
+          "constraint_retention_rate": 0.39666666666666667,
+          "evidence_retention_rate": 1.0,
+          "ordinary_constraint_retention_rate": 0.9880268199233716
+        },
+        "latest_task_turn_metrics": {
+          "model_calls": 6090,
+          "known_total_tokens": 6416864,
+          "input_tokens": 6350969,
+          "output_tokens": 65895,
+          "unknown_usage_calls": 0,
+          "cost_estimate": 3.85543752,
+          "uncached_cost_estimate": 5.2125652,
+          "currency": "CNY",
+          "retrieval_requested": 90,
+          "retrieval_executed": 60,
+          "retrieval_reused": 30,
+          "duplicate_retrieval_requests": 30,
+          "summary_calls": 0,
+          "summary_model_time_total_ms": 0,
+          "summary_input_tokens": 0,
+          "summary_output_tokens": 0,
+          "summary_triggered_turn_p95_ms": null,
+          "counter_underestimates": 0,
+          "turn_p50_ms": 1511.035,
+          "turn_p95_ms": 2353.34,
+          "long_input_tokens_including_interrupted": 5803376
+        },
+        "resume_provenance": {
+          "base_report": {
+            "path": "D:\\agentprogram\\AI-Robot\\eval\\reports\\context\\final-restored-v3\\C.json",
+            "sha256": "a117fa80a37d22f984376854caf95e890a8a94f8238799f66c1d61aab0de6ca6"
+          },
+          "additional_reports": [
+            {
+              "group": "C",
+              "repeat": 0,
+              "cases": [
+                "context-23",
+                "context-24",
+                "context-25",
+                "context-26",
+                "context-27",
+                "context-28",
+                "context-29"
+              ],
+              "report": "D:\\agentprogram\\AI-Robot\\eval\\reports\\context\\resume-restored-v3\\006-C-0.json",
+              "sha256": "c6c3f4c7c3900e2a418bcef468d11e1e0652f8bd07dfa80de11e29511600a9ab"
+            },
+            {
+              "group": "C",
+              "repeat": 1,
+              "cases": [
+                "context-23",
+                "context-24",
+                "context-25",
+                "context-26",
+                "context-27",
+                "context-28",
+                "context-29"
+              ],
+              "report": "D:\\agentprogram\\AI-Robot\\eval\\reports\\context\\resume-restored-v3\\007-C-1.json",
+              "sha256": "9b7bcf6badb0645a81a3715c4d65e57f677963fa21ab969cfe8b150e3a0a8525"
+            },
+            {
+              "group": "C",
+              "repeat": 2,
+              "cases": [
+                "context-23",
+                "context-24",
+                "context-25",
+                "context-26",
+                "context-27",
+                "context-28",
+                "context-29"
+              ],
+              "report": "D:\\agentprogram\\AI-Robot\\eval\\reports\\context\\resume-restored-v3\\008-C-2.json",
+              "sha256": "59255d0ffb37a27b5aac5d49bc9e2468278a6ecffa212518ed32bf92da479855"
+            }
+          ],
+          "runtime_identity": {
+            "endpoint_sha256": "5891aed827c4e67b2d7c0c73ea819327ce3f2b6ef72213cd79669486a26b1ead",
+            "parameters": {
+              "context_model_window": 32768,
+              "context_input_limit": 16000,
+              "context_safety_tokens": 2048,
+              "context_summary_tokens": 1000,
+              "context_evidence_tokens": 4000,
+              "context_tool_tokens": 1500,
+              "context_read_tokens": 1000,
+              "context_encoding": "cl100k_base",
+              "context_evidence_ttl": 600.0,
+              "context_summary_timeout": 30.0,
+              "context_summary_trigger_ratio": 0.9,
+              "memory_max_turns": 20,
+              "memory_retrieve_turns": 6,
+              "agent_max_tool_rounds": 4,
+              "retry_attempts": 3,
+              "retry_max_wait": 8.0
+            },
+            "price_book_sha256": "f11f7c722f943055bebc8d5efb6d27399544480774876277da92d992047e68d8",
+            "calibration_sha256": "93329e02edcf1c1a3cae7d7989955d694617bd9e54d0e0558fa8cfb6028c0584"
+          },
+          "limitations": [
+            "原报告缺少完整运行配置快照及服务商模型版本标识，不能严格证明所有运行条件相同。",
+            "新旧批次网络时段、服务端缓存和调度边界不同；原中断尝试的费用及未知用量不得从正式验收中删除。",
+            "每个批次repeats=1，清单映射到原样本编号；不改写原始逐轮报告或冻结评测器。"
+          ],
+          "aggregation": "质量按唯一任务最后一次执行；费用、调用、检索及延迟含原中断尝试。完整失败任务保持失败。",
+          "formal_release_claim": false
+        },
+        "cost_per_finished_task": null,
+        "cost_per_successful_task": null
+      },
+      "D": {
+        "model_source": "configured",
+        "model": "qwen-plus",
+        "group": "D",
+        "grading_version": "semantic-aliases-v4-annotated-character-turns",
+        "dataset_version": 3,
+        "history_tokens": 1200,
+        "summary_target_ratio": 0.1,
+        "parameters": {
+          "temperature": 0.2,
+          "max_output_tokens": 384,
+          "summary_temperature": 0,
+          "repeats": 3,
+          "workers": 6,
+          "seed": null
+        },
+        "dataset_sha256": "66514bca7d0665383e05455b509e8d87991e7f57a05c8829bcf81de6b2f60351",
+        "scope": "真实模型独立生成长对话；固定工具语料v2按主题返回证据；终局结构化约束回忆任务，不代表任意工程任务完成率",
+        "stop_reason": null,
+        "model_calls": 6656,
+        "known_total_tokens": 6742996,
+        "evaluation_budget": {
+          "requests": 6656,
+          "tokens_charged_for_limit": 6750483,
+          "cost_charged_for_limit": 3.8542923200000034,
+          "unknown_calls": 4,
+          "unknown_token_upper_reserve": 7487,
+          "unknown_cost_upper_reserve": 0.007832800000000001
+        },
+        "task_errors": [],
+        "scheduled_tasks": 90,
+        "started_tasks": 90,
+        "finished_tasks": 90,
+        "task_completion_rate": 0.7888888888888889,
+        "constraint_retention_rate": 0.95,
+        "evidence_retention_rate": 0.9888888888888889,
+        "ordinary_constraint_retention_rate": 0.990791896869245,
+        "input_tokens": 6546676,
+        "output_tokens": 196320,
+        "unknown_usage_calls": 4,
+        "retrieval_requested": 100,
+        "retrieval_executed": 65,
+        "retrieval_reused": 35,
+        "duplicate_retrieval_requests": 35,
+        "summary_calls": 343,
+        "counter_underestimates": 0,
+        "turn_p50_ms": 1431.46,
+        "turn_p95_ms": 9893.42,
+        "elapsed_ms": 1435383.51,
+        "cost_estimate": null,
+        "uncached_cost_estimate": null,
+        "currency": "CNY",
+        "summary_model_time_total_ms": 3095278.59,
+        "summary_input_tokens": 619437,
+        "summary_output_tokens": 133956,
+        "summary_triggered_turn_p95_ms": 17107.33,
+        "long_input_tokens_including_interrupted": 5971307,
+        "elapsed_scope": "各执行批次耗时之和，不含等待账户恢复的空闲时间",
+        "attempted_tasks_including_interrupted": 96,
+        "historical_attempt_errors": [
+          {
+            "id": "context-14",
+            "repeat": 1,
+            "turn": 30,
+            "error_type": "OpenAIInvalidRequestError",
+            "provider_error": {
+              "code": "Arrearage",
+              "http_status": 400
+            },
+            "source_report": "D:\\agentprogram\\AI-Robot\\eval\\reports\\context\\final-restored-v3\\D.json"
+          },
+          {
+            "id": "context-14",
+            "repeat": 2,
+            "turn": 21,
+            "error_type": null,
+            "provider_error": null,
+            "source_report": "D:\\agentprogram\\AI-Robot\\eval\\reports\\context\\final-restored-v3\\D.json"
+          },
+          {
+            "id": "context-15",
+            "repeat": 0,
+            "turn": 26,
+            "error_type": "OpenAIInvalidRequestError",
+            "provider_error": {
+              "code": "Arrearage",
+              "http_status": 400
+            },
+            "source_report": "D:\\agentprogram\\AI-Robot\\eval\\reports\\context\\final-restored-v3\\D.json"
+          },
+          {
+            "id": "context-15",
+            "repeat": 1,
+            "turn": 12,
+            "error_type": null,
+            "provider_error": null,
+            "source_report": "D:\\agentprogram\\AI-Robot\\eval\\reports\\context\\final-restored-v3\\D.json"
+          },
+          {
+            "id": "context-15",
+            "repeat": 2,
+            "turn": 9,
+            "error_type": null,
+            "provider_error": null,
+            "source_report": "D:\\agentprogram\\AI-Robot\\eval\\reports\\context\\final-restored-v3\\D.json"
+          },
+          {
+            "id": "context-16",
+            "repeat": 0,
+            "turn": 9,
+            "error_type": "OpenAIInvalidRequestError",
+            "provider_error": {
+              "code": "Arrearage",
+              "http_status": 400
+            },
+            "source_report": "D:\\agentprogram\\AI-Robot\\eval\\reports\\context\\final-restored-v3\\D.json"
+          }
+        ],
+        "first_attempt_quality": {
+          "started_tasks": 49,
+          "finished_tasks": 43,
+          "task_completion_rate": 0.8775510204081632,
+          "constraint_retention_rate": 0.8775510204081632,
+          "evidence_retention_rate": 1.0,
+          "ordinary_constraint_retention_rate": 0.9914101646385111
+        },
+        "latest_task_turn_metrics": {
+          "model_calls": 6423,
+          "known_total_tokens": 6510998,
+          "input_tokens": 6321401,
+          "output_tokens": 189597,
+          "unknown_usage_calls": 1,
+          "cost_estimate": null,
+          "uncached_cost_estimate": null,
+          "currency": "CNY",
+          "retrieval_requested": 90,
+          "retrieval_executed": 60,
+          "retrieval_reused": 30,
+          "duplicate_retrieval_requests": 30,
+          "summary_calls": 332,
+          "summary_model_time_total_ms": 2986694.08,
+          "summary_input_tokens": 599810,
+          "summary_output_tokens": 129213,
+          "summary_triggered_turn_p95_ms": 16945.79,
+          "counter_underestimates": 0,
+          "turn_p50_ms": 1430.335,
+          "turn_p95_ms": 9876.67,
+          "long_input_tokens_including_interrupted": 5759983
+        },
+        "resume_provenance": {
+          "base_report": {
+            "path": "D:\\agentprogram\\AI-Robot\\eval\\reports\\context\\final-restored-v3\\D.json",
+            "sha256": "b94c738b21a975029b88c020f8a025d3b659510b5ec316765aa437b2c1a782cf"
+          },
+          "additional_reports": [
+            {
+              "group": "D",
+              "repeat": 0,
+              "cases": [
+                "context-15",
+                "context-16",
+                "context-17",
+                "context-18",
+                "context-19",
+                "context-20",
+                "context-21",
+                "context-22",
+                "context-23",
+                "context-24",
+                "context-25",
+                "context-26",
+                "context-27",
+                "context-28",
+                "context-29"
+              ],
+              "report": "D:\\agentprogram\\AI-Robot\\eval\\reports\\context\\resume-restored-v3\\009-D-0.json",
+              "sha256": "c899f484a589bbad3ab122f02a57d818a29ad9cfd9287f89c13fc20f1586160c"
+            },
+            {
+              "group": "D",
+              "repeat": 1,
+              "cases": [
+                "context-14",
+                "context-15",
+                "context-16",
+                "context-17",
+                "context-18",
+                "context-19",
+                "context-20",
+                "context-21",
+                "context-22",
+                "context-23",
+                "context-24",
+                "context-25",
+                "context-26",
+                "context-27",
+                "context-28",
+                "context-29"
+              ],
+              "report": "D:\\agentprogram\\AI-Robot\\eval\\reports\\context\\resume-restored-v3\\010-D-1.json",
+              "sha256": "0f48c3fdb5e7f6307fac726db530ef0fdf738e16db476540f74f73a9de8dab0f"
+            },
+            {
+              "group": "D",
+              "repeat": 2,
+              "cases": [
+                "context-14",
+                "context-15",
+                "context-16",
+                "context-17",
+                "context-18",
+                "context-19",
+                "context-20",
+                "context-21",
+                "context-22",
+                "context-23",
+                "context-24",
+                "context-25",
+                "context-26",
+                "context-27",
+                "context-28",
+                "context-29"
+              ],
+              "report": "D:\\agentprogram\\AI-Robot\\eval\\reports\\context\\resume-restored-v3\\011-D-2.json",
+              "sha256": "9b058cca3e07014c3f218633c650e32cd3feee89b552741f8fe6bbed627408d3"
+            }
+          ],
+          "runtime_identity": {
+            "endpoint_sha256": "5891aed827c4e67b2d7c0c73ea819327ce3f2b6ef72213cd79669486a26b1ead",
+            "parameters": {
+              "context_model_window": 32768,
+              "context_input_limit": 16000,
+              "context_safety_tokens": 2048,
+              "context_summary_tokens": 1000,
+              "context_evidence_tokens": 4000,
+              "context_tool_tokens": 1500,
+              "context_read_tokens": 1000,
+              "context_encoding": "cl100k_base",
+              "context_evidence_ttl": 600.0,
+              "context_summary_timeout": 30.0,
+              "context_summary_trigger_ratio": 0.9,
+              "memory_max_turns": 20,
+              "memory_retrieve_turns": 6,
+              "agent_max_tool_rounds": 4,
+              "retry_attempts": 3,
+              "retry_max_wait": 8.0
+            },
+            "price_book_sha256": "f11f7c722f943055bebc8d5efb6d27399544480774876277da92d992047e68d8",
+            "calibration_sha256": "93329e02edcf1c1a3cae7d7989955d694617bd9e54d0e0558fa8cfb6028c0584"
+          },
+          "limitations": [
+            "原报告缺少完整运行配置快照及服务商模型版本标识，不能严格证明所有运行条件相同。",
+            "新旧批次网络时段、服务端缓存和调度边界不同；原中断尝试的费用及未知用量不得从正式验收中删除。",
+            "每个批次repeats=1，清单映射到原样本编号；不改写原始逐轮报告或冻结评测器。"
+          ],
+          "aggregation": "质量按唯一任务最后一次执行；费用、调用、检索及延迟含原中断尝试。完整失败任务保持失败。",
+          "formal_release_claim": false
+        },
+        "cost_per_finished_task": null,
+        "cost_per_successful_task": null
+      }
+    },
+    "limitations": [
+      "只对固定脚本和所测模型有效，不能外推任意工程任务。",
+      "矩阵为非流式任务；首Token延迟单独通过SSE探针记录，未在四组矩阵中配对比较。",
+      "并发数固定，网络时段和服务商负载不可严格控制。",
+      "基线若没有成功任务，其每成功任务成本无法定义，不能以总成本替代该结论。",
+      "真实Embedding凭据与向量检索必须另行通过实际调用验收。"
+    ]
+  },
+  "known_cost_scope": {
+    "scope": "仅最近两轮正式评测的已知调用，不含其他阶段/冒烟与未知调用；按公开单价估算，不等于实际账单",
+    "rows": [
+      {
+        "cohort": "final-restored-v2",
+        "group": "A",
+        "attempted": 90,
+        "finished": 90,
+        "passed": 0,
+        "known_tokens": 5608943,
+        "known_call_public_price_estimate": 3.81510728,
+        "currency": "CNY",
+        "unknown_calls": 0,
+        "stop_reason": null
+      },
+      {
+        "cohort": "final-restored-v2",
+        "group": "B",
+        "attempted": 90,
+        "finished": 90,
+        "passed": 0,
+        "known_tokens": 5441735,
+        "known_call_public_price_estimate": 3.64434624,
+        "currency": "CNY",
+        "unknown_calls": 0,
+        "stop_reason": null
+      },
+      {
+        "cohort": "final-restored-v2",
+        "group": "C",
+        "attempted": 90,
+        "finished": 90,
+        "passed": 18,
+        "known_tokens": 6447231,
+        "known_call_public_price_estimate": 3.79772384,
+        "currency": "CNY",
+        "unknown_calls": 0,
+        "stop_reason": null
+      },
+      {
+        "cohort": "final-restored-v2",
+        "group": "D",
+        "attempted": 90,
+        "finished": 89,
+        "passed": 89,
+        "known_tokens": 6434543,
+        "known_call_public_price_estimate": 3.6258876,
+        "currency": "CNY",
+        "unknown_calls": 0,
+        "stop_reason": null
+      },
+      {
+        "cohort": "final-restored-v3",
+        "group": "A",
+        "attempted": 70,
+        "finished": 65,
+        "passed": 0,
+        "known_tokens": 4078900,
+        "known_call_public_price_estimate": 2.78566848,
+        "currency": "CNY",
+        "unknown_calls": 1,
+        "stop_reason": "服务商账户或配置不可用: Arrearage"
+      },
+      {
+        "cohort": "final-restored-v3",
+        "group": "B",
+        "attempted": 63,
+        "finished": 57,
+        "passed": 0,
+        "known_tokens": 3469094,
+        "known_call_public_price_estimate": 2.32916912,
+        "currency": "CNY",
+        "unknown_calls": 1,
+        "stop_reason": "服务商账户或配置不可用: Arrearage"
+      },
+      {
+        "cohort": "final-restored-v3",
+        "group": "C",
+        "attempted": 75,
+        "finished": 69,
+        "passed": 11,
+        "known_tokens": 4936086,
+        "known_call_public_price_estimate": 2.9173952,
+        "currency": "CNY",
+        "unknown_calls": 3,
+        "stop_reason": "服务商账户或配置不可用: Arrearage"
+      },
+      {
+        "cohort": "final-restored-v3",
+        "group": "D",
+        "attempted": 49,
+        "finished": 43,
+        "passed": 43,
+        "known_tokens": 3301296,
+        "known_call_public_price_estimate": 1.89098312,
+        "currency": "CNY",
+        "unknown_calls": 4,
+        "stop_reason": "服务商账户或配置不可用: Arrearage"
+      }
+    ],
+    "known_call_public_price_estimate_total": 24.80628088
+  },
+  "resume": {
+    "script": "eval/resume_context_eval.py",
+    "status": "complete_live_process_exited",
+    "completed_reused": 234,
+    "remaining_tasks": 0,
+    "additional_paid_requests": 9256,
+    "additional_cost": null,
+    "plan": "eval/reports/context/resume-restored-v3/resume-progress.json",
+    "release_allowed": false,
+    "formal_comparison_required": true,
+    "additional_budget_scope": "shared across ABCD; cumulative across invocations; unknown attempts reserve conservative limits",
+    "newly_completed": 126,
+    "cost_charged_for_limit_cny": 5.60973144
+  },
+  "continuation": {
+    "user_instruction": "继续",
+    "notified_additional_combined_cap_cny": 10,
+    "probe": "eval/reports/context/continue-probe-20261015T062141Z.json",
+    "probe_known_cost_cny": 1.08e-05,
+    "matrix_remaining_cap_cny": 9.9999892,
+    "report_currency": "CNY",
+    "cap_is_estimate_not_invoice": true
+  },
+  "interrupted_v3_matrix": {
+    "A": {
+      "scheduled_tasks": 90,
+      "started_tasks": 70,
+      "finished_tasks": 65,
+      "unknown_usage_calls": 1,
+      "known_total_tokens": 4078900,
+      "stop_reason": "服务商账户或配置不可用: Arrearage",
+      "passed_tasks": 0
+    },
+    "B": {
+      "scheduled_tasks": 90,
+      "started_tasks": 63,
+      "finished_tasks": 57,
+      "unknown_usage_calls": 1,
+      "known_total_tokens": 3469094,
+      "stop_reason": "服务商账户或配置不可用: Arrearage",
+      "passed_tasks": 0
+    },
+    "C": {
+      "scheduled_tasks": 90,
+      "started_tasks": 75,
+      "finished_tasks": 69,
+      "unknown_usage_calls": 3,
+      "known_total_tokens": 4936086,
+      "stop_reason": "服务商账户或配置不可用: Arrearage",
+      "passed_tasks": 11
+    },
+    "D": {
+      "scheduled_tasks": 90,
+      "started_tasks": 49,
+      "finished_tasks": 43,
+      "unknown_usage_calls": 4,
+      "known_total_tokens": 3301296,
+      "stop_reason": "服务商账户或配置不可用: Arrearage",
+      "passed_tasks": 43
+    }
+  },
+  "prior_incomplete_v3_comparison": {
+    "scope": "固定工具数据下的真实长对话约束任务；金额为公开单价估算，不等于账单",
+    "gates": {
+      "same_inputs_and_samples": false,
+      "complete_30_scripts_times_3": false,
+      "task_noninferiority": false,
+      "hard_constraints": false,
+      "tail_evidence": true,
+      "ordinary_constraints_98_percent": true,
+      "holdout_quality": false,
+      "actual_usage_complete": false,
+      "counter_conservative": true,
+      "long_input_saving_20_percent": false,
+      "duplicate_requests_not_increased": false,
+      "p95_not_increased_over_10_percent": false,
+      "cost_not_increased": false
+    },
+    "release_allowed": false,
+    "paired_task_difference_95_ci": null,
+    "comparisons_valid": false,
+    "summary_source_equivalence": null,
+    "long_input_saving": null,
+    "results": {
+      "A": {
+        "model_source": "configured",
+        "model": "qwen-plus",
+        "group": "A",
+        "grading_version": "semantic-aliases-v4-annotated-character-turns",
+        "dataset_version": 3,
+        "history_tokens": 1200,
+        "summary_target_ratio": 0.1,
+        "parameters": {
+          "temperature": 0.2,
+          "max_output_tokens": 384,
+          "summary_temperature": 0,
+          "repeats": 3,
+          "workers": 6,
+          "seed": null
+        },
+        "dataset_sha256": "66514bca7d0665383e05455b509e8d87991e7f57a05c8829bcf81de6b2f60351",
+        "scope": "真实模型独立生成长对话；固定工具语料v2按主题返回证据；终局结构化约束回忆任务，不代表任意工程任务完成率",
+        "stop_reason": "服务商账户或配置不可用: Arrearage",
+        "model_calls": 4483,
+        "known_total_tokens": 4078900,
+        "evaluation_budget": {
+          "requests": 4483,
+          "tokens_charged_for_limit": 4080789,
+          "cost_charged_for_limit": 2.7876404799999817,
+          "unknown_calls": 1,
+          "unknown_token_upper_reserve": 1889,
+          "unknown_cost_upper_reserve": 0.001972
+        },
+        "task_errors": [
+          {
+            "id": "context-20",
+            "repeat": 1,
+            "turn": 54,
+            "error_type": null,
+            "provider_error": null
+          },
+          {
+            "id": "context-20",
+            "repeat": 2,
+            "turn": 55,
+            "error_type": null,
+            "provider_error": null
+          },
+          {
+            "id": "context-22",
+            "repeat": 1,
+            "turn": 29,
+            "error_type": null,
+            "provider_error": null
+          },
+          {
+            "id": "context-22",
+            "repeat": 2,
+            "turn": 27,
+            "error_type": "OpenAIInvalidRequestError",
+            "provider_error": {
+              "code": "Arrearage",
+              "http_status": 400
+            }
+          },
+          {
+            "id": "context-23",
+            "repeat": 0,
+            "turn": 3,
+            "error_type": null,
+            "provider_error": null
+          }
+        ],
+        "scheduled_tasks": 90,
+        "started_tasks": 70,
+        "finished_tasks": 65,
+        "task_completion_rate": 0.0,
+        "constraint_retention_rate": 0.24285714285714285,
+        "evidence_retention_rate": 1.0,
+        "ordinary_constraint_retention_rate": 0.4080200501253133,
+        "input_tokens": 3990308,
+        "output_tokens": 88592,
+        "unknown_usage_calls": 1,
+        "retrieval_requested": 67,
+        "retrieval_executed": 67,
+        "retrieval_reused": 0,
+        "duplicate_retrieval_requests": 24,
+        "summary_calls": 0,
+        "counter_underestimates": 0,
+        "turn_p50_ms": 1675.9250000000002,
+        "turn_p95_ms": 2267.16,
+        "elapsed_ms": 626878.21,
+        "cost_estimate": null,
+        "uncached_cost_estimate": null,
+        "currency": "CNY",
+        "summary_triggered_turn_p95_ms": null,
+        "summary_model_time_total_ms": 0,
+        "summary_input_tokens": 0,
+        "summary_output_tokens": 0,
+        "cost_per_finished_task": null,
+        "cost_per_successful_task": null
+      },
+      "B": {
+        "model_source": "configured",
+        "model": "qwen-plus",
+        "group": "B",
+        "grading_version": "semantic-aliases-v4-annotated-character-turns",
+        "dataset_version": 3,
+        "history_tokens": 1200,
+        "summary_target_ratio": 0.1,
+        "parameters": {
+          "temperature": 0.2,
+          "max_output_tokens": 384,
+          "summary_temperature": 0,
+          "repeats": 3,
+          "workers": 6,
+          "seed": null
+        },
+        "dataset_sha256": "66514bca7d0665383e05455b509e8d87991e7f57a05c8829bcf81de6b2f60351",
+        "scope": "真实模型独立生成长对话；固定工具语料v2按主题返回证据；终局结构化约束回忆任务，不代表任意工程任务完成率",
+        "stop_reason": "服务商账户或配置不可用: Arrearage",
+        "model_calls": 3912,
+        "known_total_tokens": 3469094,
+        "evaluation_budget": {
+          "requests": 3912,
+          "tokens_charged_for_limit": 3470907,
+          "cost_charged_for_limit": 2.3310803200000025,
+          "unknown_calls": 1,
+          "unknown_token_upper_reserve": 1813,
+          "unknown_cost_upper_reserve": 0.0019112
+        },
+        "task_errors": [
+          {
+            "id": "context-19",
+            "repeat": 0,
+            "turn": 19,
+            "error_type": null,
+            "provider_error": null
+          },
+          {
+            "id": "context-19",
+            "repeat": 1,
+            "turn": 18,
+            "error_type": null,
+            "provider_error": null
+          },
+          {
+            "id": "context-19",
+            "repeat": 2,
+            "turn": 17,
+            "error_type": null,
+            "provider_error": null
+          },
+          {
+            "id": "context-20",
+            "repeat": 0,
+            "turn": 17,
+            "error_type": null,
+            "provider_error": null
+          },
+          {
+            "id": "context-20",
+            "repeat": 1,
+            "turn": 12,
+            "error_type": null,
+            "provider_error": null
+          },
+          {
+            "id": "context-20",
+            "repeat": 2,
+            "turn": 12,
+            "error_type": "OpenAIInvalidRequestError",
+            "provider_error": {
+              "code": "Arrearage",
+              "http_status": 400
+            }
+          }
+        ],
+        "scheduled_tasks": 90,
+        "started_tasks": 63,
+        "finished_tasks": 57,
+        "task_completion_rate": 0.0,
+        "constraint_retention_rate": 0.24603174603174602,
+        "evidence_retention_rate": 1.0,
+        "ordinary_constraint_retention_rate": 0.36757068667051357,
+        "input_tokens": 3389504,
+        "output_tokens": 79590,
+        "unknown_usage_calls": 1,
+        "retrieval_requested": 62,
+        "retrieval_executed": 41,
+        "retrieval_reused": 21,
+        "duplicate_retrieval_requests": 21,
+        "summary_calls": 0,
+        "counter_underestimates": 0,
+        "turn_p50_ms": 1930.24,
+        "turn_p95_ms": 2592.91,
+        "elapsed_ms": 628279.62,
+        "cost_estimate": null,
+        "uncached_cost_estimate": null,
+        "currency": "CNY",
+        "summary_triggered_turn_p95_ms": null,
+        "summary_model_time_total_ms": 0,
+        "summary_input_tokens": 0,
+        "summary_output_tokens": 0,
+        "cost_per_finished_task": null,
+        "cost_per_successful_task": null
+      },
+      "C": {
+        "model_source": "configured",
+        "model": "qwen-plus",
+        "group": "C",
+        "grading_version": "semantic-aliases-v4-annotated-character-turns",
+        "dataset_version": 3,
+        "history_tokens": 1200,
+        "summary_target_ratio": 0.1,
+        "parameters": {
+          "temperature": 0.2,
+          "max_output_tokens": 384,
+          "summary_temperature": 0,
+          "repeats": 3,
+          "workers": 6,
+          "seed": null
+        },
+        "dataset_sha256": "66514bca7d0665383e05455b509e8d87991e7f57a05c8829bcf81de6b2f60351",
+        "scope": "真实模型独立生成长对话；固定工具语料v2按主题返回证据；终局结构化约束回忆任务，不代表任意工程任务完成率",
+        "stop_reason": "服务商账户或配置不可用: Arrearage",
+        "model_calls": 4703,
+        "known_total_tokens": 4936086,
+        "evaluation_budget": {
+          "requests": 4703,
+          "tokens_charged_for_limit": 4943491,
+          "cost_charged_for_limit": 2.9247015999999957,
+          "unknown_calls": 3,
+          "unknown_token_upper_reserve": 7405,
+          "unknown_cost_upper_reserve": 0.0073064
+        },
+        "task_errors": [
+          {
+            "id": "context-23",
+            "repeat": 0,
+            "turn": 19,
+            "error_type": "OpenAIInvalidRequestError",
+            "provider_error": {
+              "code": "Arrearage",
+              "http_status": 400
+            }
+          },
+          {
+            "id": "context-23",
+            "repeat": 1,
+            "turn": 17,
+            "error_type": null,
+            "provider_error": null
+          },
+          {
+            "id": "context-23",
+            "repeat": 2,
+            "turn": 14,
+            "error_type": null,
+            "provider_error": null
+          },
+          {
+            "id": "context-24",
+            "repeat": 0,
+            "turn": 15,
+            "error_type": null,
+            "provider_error": null
+          },
+          {
+            "id": "context-24",
+            "repeat": 1,
+            "turn": 16,
+            "error_type": "OpenAIInvalidRequestError",
+            "provider_error": {
+              "code": "Arrearage",
+              "http_status": 400
+            }
+          },
+          {
+            "id": "context-24",
+            "repeat": 2,
+            "turn": 15,
+            "error_type": "OpenAIInvalidRequestError",
+            "provider_error": {
+              "code": "Arrearage",
+              "http_status": 400
+            }
+          }
+        ],
+        "scheduled_tasks": 90,
+        "started_tasks": 75,
+        "finished_tasks": 69,
+        "task_completion_rate": 0.14666666666666667,
+        "constraint_retention_rate": 0.39666666666666667,
+        "evidence_retention_rate": 1.0,
+        "ordinary_constraint_retention_rate": 0.9880268199233716,
+        "input_tokens": 4884458,
+        "output_tokens": 51628,
+        "unknown_usage_calls": 3,
+        "retrieval_requested": 72,
+        "retrieval_executed": 48,
+        "retrieval_reused": 24,
+        "duplicate_retrieval_requests": 24,
+        "summary_calls": 0,
+        "counter_underestimates": 0,
+        "turn_p50_ms": 1534.8249999999998,
+        "turn_p95_ms": 2367.89,
+        "elapsed_ms": 628233.56,
+        "cost_estimate": null,
+        "uncached_cost_estimate": null,
+        "currency": "CNY",
+        "summary_triggered_turn_p95_ms": null,
+        "summary_model_time_total_ms": 0,
+        "summary_input_tokens": 0,
+        "summary_output_tokens": 0,
+        "cost_per_finished_task": null,
+        "cost_per_successful_task": null
+      },
+      "D": {
+        "model_source": "configured",
+        "model": "qwen-plus",
+        "group": "D",
+        "grading_version": "semantic-aliases-v4-annotated-character-turns",
+        "dataset_version": 3,
+        "history_tokens": 1200,
+        "summary_target_ratio": 0.1,
+        "parameters": {
+          "temperature": 0.2,
+          "max_output_tokens": 384,
+          "summary_temperature": 0,
+          "repeats": 3,
+          "workers": 6,
+          "seed": null
+        },
+        "dataset_sha256": "66514bca7d0665383e05455b509e8d87991e7f57a05c8829bcf81de6b2f60351",
+        "scope": "真实模型独立生成长对话；固定工具语料v2按主题返回证据；终局结构化约束回忆任务，不代表任意工程任务完成率",
+        "stop_reason": "服务商账户或配置不可用: Arrearage",
+        "model_calls": 3310,
+        "known_total_tokens": 3301296,
+        "evaluation_budget": {
+          "requests": 3310,
+          "tokens_charged_for_limit": 3308783,
+          "cost_charged_for_limit": 1.8988159200000034,
+          "unknown_calls": 4,
+          "unknown_token_upper_reserve": 7487,
+          "unknown_cost_upper_reserve": 0.007832800000000001
+        },
+        "task_errors": [
+          {
+            "id": "context-14",
+            "repeat": 1,
+            "turn": 30,
+            "error_type": "OpenAIInvalidRequestError",
+            "provider_error": {
+              "code": "Arrearage",
+              "http_status": 400
+            }
+          },
+          {
+            "id": "context-14",
+            "repeat": 2,
+            "turn": 21,
+            "error_type": null,
+            "provider_error": null
+          },
+          {
+            "id": "context-15",
+            "repeat": 0,
+            "turn": 26,
+            "error_type": "OpenAIInvalidRequestError",
+            "provider_error": {
+              "code": "Arrearage",
+              "http_status": 400
+            }
+          },
+          {
+            "id": "context-15",
+            "repeat": 1,
+            "turn": 12,
+            "error_type": null,
+            "provider_error": null
+          },
+          {
+            "id": "context-15",
+            "repeat": 2,
+            "turn": 9,
+            "error_type": null,
+            "provider_error": null
+          },
+          {
+            "id": "context-16",
+            "repeat": 0,
+            "turn": 9,
+            "error_type": "OpenAIInvalidRequestError",
+            "provider_error": {
+              "code": "Arrearage",
+              "http_status": 400
+            }
+          }
+        ],
+        "scheduled_tasks": 90,
+        "started_tasks": 49,
+        "finished_tasks": 43,
+        "task_completion_rate": 0.8775510204081632,
+        "constraint_retention_rate": 0.8775510204081632,
+        "evidence_retention_rate": 1.0,
+        "ordinary_constraint_retention_rate": 0.9914101646385111,
+        "input_tokens": 3207049,
+        "output_tokens": 94247,
+        "unknown_usage_calls": 4,
+        "retrieval_requested": 48,
+        "retrieval_executed": 30,
+        "retrieval_reused": 18,
+        "duplicate_retrieval_requests": 18,
+        "summary_calls": 169,
+        "counter_underestimates": 0,
+        "turn_p50_ms": 1441.3,
+        "turn_p95_ms": 9665.72,
+        "elapsed_ms": 636953.24,
+        "cost_estimate": null,
+        "uncached_cost_estimate": null,
+        "currency": "CNY",
+        "summary_triggered_turn_p95_ms": 16702.8,
+        "summary_model_time_total_ms": 1463133.74,
+        "summary_input_tokens": 301613,
+        "summary_output_tokens": 63214,
+        "cost_per_finished_task": null,
+        "cost_per_successful_task": null
+      }
+    },
+    "limitations": [
+      "只对固定脚本和所测模型有效，不能外推任意工程任务。",
+      "矩阵为非流式任务；首Token延迟单独通过SSE探针记录，未在四组矩阵中配对比较。",
+      "并发数固定，网络时段和服务商负载不可严格控制。",
+      "基线若没有成功任务，其每成功任务成本无法定义，不能以总成本替代该结论。",
+      "真实Embedding凭据与向量检索必须另行通过实际调用验收。"
+    ]
+  },
+  "semantic_review_supplement": {
+    "kind": "assistant-semantic-review-supplement-v1",
+    "reviewer": "Codex assistant; not independent human annotation",
+    "changes_model_or_frozen_grade": false,
+    "rule": "仅当初始要求明确外部依赖禁止（仅标准库），且dependency恰为none时，补充复核为无外部依赖；其他字段、证据和原评分不变。",
+    "groups": {
+      "A": {
+        "strict_passed": 0,
+        "supplement_passed": 0,
+        "supplement_constraint_retention": 0.275,
+        "annotations": [
+          {
+            "id": "context-22",
+            "repeat": 1,
+            "strict_task_pass": false,
+            "strict_constraints": {
+              "language": true,
+              "version": false,
+              "dependency": false,
+              "task_id": false
+            },
+            "raw_dependency": "none",
+            "reviewed_constraints": {
+              "language": true,
+              "version": false,
+              "dependency": true,
+              "task_id": false
+            },
+            "source_turn": 1,
+            "source_requirement": "项目语言固定为 Go，工具链版本 1.26.2，外部依赖禁止（仅标准库），任务标识 HOLD-22-Z。以下穿插讨论不更改这些要求；最后按指定 JSON 字段回填。现在仅确认收到。"
+          }
+        ]
+      },
+      "B": {
+        "strict_passed": 0,
+        "supplement_passed": 0,
+        "supplement_constraint_retention": 0.2833333333333333,
+        "annotations": []
+      },
+      "C": {
+        "strict_passed": 16,
+        "supplement_passed": 16,
+        "supplement_constraint_retention": 0.46111111111111114,
+        "annotations": [
+          {
+            "id": "context-25",
+            "repeat": 2,
+            "strict_task_pass": false,
+            "strict_constraints": {
+              "language": true,
+              "version": false,
+              "dependency": false,
+              "task_id": false
+            },
+            "raw_dependency": "none",
+            "reviewed_constraints": {
+              "language": true,
+              "version": false,
+              "dependency": true,
+              "task_id": false
+            },
+            "source_turn": 1,
+            "source_requirement": "项目语言固定为 Go，工具链版本 1.25.0，外部依赖禁止（仅标准库），任务标识 HOLD-25-Z。以下穿插讨论不更改这些要求；最后按指定 JSON 字段回填。现在仅确认收到。"
+          }
+        ]
+      },
+      "D": {
+        "strict_passed": 71,
+        "supplement_passed": 89,
+        "supplement_constraint_retention": 1.0,
+        "annotations": [
+          {
+            "id": "context-20",
+            "repeat": 0,
+            "strict_task_pass": false,
+            "strict_constraints": {
+              "language": true,
+              "version": true,
+              "dependency": false,
+              "task_id": true
+            },
+            "raw_dependency": "none",
+            "reviewed_constraints": {
+              "language": true,
+              "version": true,
+              "dependency": true,
+              "task_id": true
+            },
+            "source_turn": 1,
+            "source_requirement": "项目语言固定为 Go，工具链版本 1.24.0，外部依赖禁止（仅标准库），任务标识 HOLD-20-Z。以下穿插讨论不更改这些要求；最后按指定 JSON 字段回填。现在仅确认收到。"
+          },
+          {
+            "id": "context-20",
+            "repeat": 1,
+            "strict_task_pass": false,
+            "strict_constraints": {
+              "language": true,
+              "version": true,
+              "dependency": false,
+              "task_id": true
+            },
+            "raw_dependency": "none",
+            "reviewed_constraints": {
+              "language": true,
+              "version": true,
+              "dependency": true,
+              "task_id": true
+            },
+            "source_turn": 1,
+            "source_requirement": "项目语言固定为 Go，工具链版本 1.24.0，外部依赖禁止（仅标准库），任务标识 HOLD-20-Z。以下穿插讨论不更改这些要求；最后按指定 JSON 字段回填。现在仅确认收到。"
+          },
+          {
+            "id": "context-21",
+            "repeat": 0,
+            "strict_task_pass": false,
+            "strict_constraints": {
+              "language": true,
+              "version": true,
+              "dependency": false,
+              "task_id": true
+            },
+            "raw_dependency": "none",
+            "reviewed_constraints": {
+              "language": true,
+              "version": true,
+              "dependency": true,
+              "task_id": true
+            },
+            "source_turn": 1,
+            "source_requirement": "项目语言固定为 Go，工具链版本 1.25.0，外部依赖禁止（仅标准库），任务标识 HOLD-21-Z。以下穿插讨论不更改这些要求；最后按指定 JSON 字段回填。现在仅确认收到。"
+          },
+          {
+            "id": "context-21",
+            "repeat": 1,
+            "strict_task_pass": false,
+            "strict_constraints": {
+              "language": true,
+              "version": true,
+              "dependency": false,
+              "task_id": true
+            },
+            "raw_dependency": "none",
+            "reviewed_constraints": {
+              "language": true,
+              "version": true,
+              "dependency": true,
+              "task_id": true
+            },
+            "source_turn": 1,
+            "source_requirement": "项目语言固定为 Go，工具链版本 1.25.0，外部依赖禁止（仅标准库），任务标识 HOLD-21-Z。以下穿插讨论不更改这些要求；最后按指定 JSON 字段回填。现在仅确认收到。"
+          },
+          {
+            "id": "context-22",
+            "repeat": 0,
+            "strict_task_pass": false,
+            "strict_constraints": {
+              "language": true,
+              "version": true,
+              "dependency": false,
+              "task_id": true
+            },
+            "raw_dependency": "none",
+            "reviewed_constraints": {
+              "language": true,
+              "version": true,
+              "dependency": true,
+              "task_id": true
+            },
+            "source_turn": 1,
+            "source_requirement": "项目语言固定为 Go，工具链版本 1.26.2，外部依赖禁止（仅标准库），任务标识 HOLD-22-Z。以下穿插讨论不更改这些要求；最后按指定 JSON 字段回填。现在仅确认收到。"
+          },
+          {
+            "id": "context-22",
+            "repeat": 2,
+            "strict_task_pass": false,
+            "strict_constraints": {
+              "language": true,
+              "version": true,
+              "dependency": false,
+              "task_id": true
+            },
+            "raw_dependency": "none",
+            "reviewed_constraints": {
+              "language": true,
+              "version": true,
+              "dependency": true,
+              "task_id": true
+            },
+            "source_turn": 1,
+            "source_requirement": "项目语言固定为 Go，工具链版本 1.26.2，外部依赖禁止（仅标准库），任务标识 HOLD-22-Z。以下穿插讨论不更改这些要求；最后按指定 JSON 字段回填。现在仅确认收到。"
+          },
+          {
+            "id": "context-23",
+            "repeat": 0,
+            "strict_task_pass": false,
+            "strict_constraints": {
+              "language": true,
+              "version": true,
+              "dependency": false,
+              "task_id": true
+            },
+            "raw_dependency": "none",
+            "reviewed_constraints": {
+              "language": true,
+              "version": true,
+              "dependency": true,
+              "task_id": true
+            },
+            "source_turn": 1,
+            "source_requirement": "项目语言固定为 Go，工具链版本 1.23.0，外部依赖禁止（仅标准库），任务标识 HOLD-23-Z。以下穿插讨论不更改这些要求；最后按指定 JSON 字段回填。现在仅确认收到。"
+          },
+          {
+            "id": "context-23",
+            "repeat": 2,
+            "strict_task_pass": false,
+            "strict_constraints": {
+              "language": true,
+              "version": true,
+              "dependency": false,
+              "task_id": true
+            },
+            "raw_dependency": "none",
+            "reviewed_constraints": {
+              "language": true,
+              "version": true,
+              "dependency": true,
+              "task_id": true
+            },
+            "source_turn": 1,
+            "source_requirement": "项目语言固定为 Go，工具链版本 1.23.0，外部依赖禁止（仅标准库），任务标识 HOLD-23-Z。以下穿插讨论不更改这些要求；最后按指定 JSON 字段回填。现在仅确认收到。"
+          },
+          {
+            "id": "context-24",
+            "repeat": 0,
+            "strict_task_pass": false,
+            "strict_constraints": {
+              "language": true,
+              "version": true,
+              "dependency": false,
+              "task_id": true
+            },
+            "raw_dependency": "none",
+            "reviewed_constraints": {
+              "language": true,
+              "version": true,
+              "dependency": true,
+              "task_id": true
+            },
+            "source_turn": 1,
+            "source_requirement": "项目语言固定为 Go，工具链版本 1.24.0，外部依赖禁止（仅标准库），任务标识 HOLD-24-Z。以下穿插讨论不更改这些要求；最后按指定 JSON 字段回填。现在仅确认收到。"
+          },
+          {
+            "id": "context-24",
+            "repeat": 1,
+            "strict_task_pass": false,
+            "strict_constraints": {
+              "language": true,
+              "version": true,
+              "dependency": false,
+              "task_id": true
+            },
+            "raw_dependency": "none",
+            "reviewed_constraints": {
+              "language": true,
+              "version": true,
+              "dependency": true,
+              "task_id": true
+            },
+            "source_turn": 1,
+            "source_requirement": "项目语言固定为 Go，工具链版本 1.24.0，外部依赖禁止（仅标准库），任务标识 HOLD-24-Z。以下穿插讨论不更改这些要求；最后按指定 JSON 字段回填。现在仅确认收到。"
+          },
+          {
+            "id": "context-24",
+            "repeat": 2,
+            "strict_task_pass": false,
+            "strict_constraints": {
+              "language": true,
+              "version": true,
+              "dependency": false,
+              "task_id": true
+            },
+            "raw_dependency": "none",
+            "reviewed_constraints": {
+              "language": true,
+              "version": true,
+              "dependency": true,
+              "task_id": true
+            },
+            "source_turn": 1,
+            "source_requirement": "项目语言固定为 Go，工具链版本 1.24.0，外部依赖禁止（仅标准库），任务标识 HOLD-24-Z。以下穿插讨论不更改这些要求；最后按指定 JSON 字段回填。现在仅确认收到。"
+          },
+          {
+            "id": "context-25",
+            "repeat": 0,
+            "strict_task_pass": false,
+            "strict_constraints": {
+              "language": true,
+              "version": true,
+              "dependency": false,
+              "task_id": true
+            },
+            "raw_dependency": "none",
+            "reviewed_constraints": {
+              "language": true,
+              "version": true,
+              "dependency": true,
+              "task_id": true
+            },
+            "source_turn": 1,
+            "source_requirement": "项目语言固定为 Go，工具链版本 1.25.0，外部依赖禁止（仅标准库），任务标识 HOLD-25-Z。以下穿插讨论不更改这些要求；最后按指定 JSON 字段回填。现在仅确认收到。"
+          },
+          {
+            "id": "context-26",
+            "repeat": 1,
+            "strict_task_pass": false,
+            "strict_constraints": {
+              "language": true,
+              "version": true,
+              "dependency": false,
+              "task_id": true
+            },
+            "raw_dependency": "none",
+            "reviewed_constraints": {
+              "language": true,
+              "version": true,
+              "dependency": true,
+              "task_id": true
+            },
+            "source_turn": 1,
+            "source_requirement": "项目语言固定为 Go，工具链版本 1.26.2，外部依赖禁止（仅标准库），任务标识 HOLD-26-Z。以下穿插讨论不更改这些要求；最后按指定 JSON 字段回填。现在仅确认收到。"
+          },
+          {
+            "id": "context-27",
+            "repeat": 0,
+            "strict_task_pass": false,
+            "strict_constraints": {
+              "language": true,
+              "version": true,
+              "dependency": false,
+              "task_id": true
+            },
+            "raw_dependency": "none",
+            "reviewed_constraints": {
+              "language": true,
+              "version": true,
+              "dependency": true,
+              "task_id": true
+            },
+            "source_turn": 1,
+            "source_requirement": "项目语言固定为 Go，工具链版本 1.23.0，外部依赖禁止（仅标准库），任务标识 HOLD-27-Z。以下穿插讨论不更改这些要求；最后按指定 JSON 字段回填。现在仅确认收到。"
+          },
+          {
+            "id": "context-27",
+            "repeat": 1,
+            "strict_task_pass": false,
+            "strict_constraints": {
+              "language": true,
+              "version": true,
+              "dependency": false,
+              "task_id": true
+            },
+            "raw_dependency": "none",
+            "reviewed_constraints": {
+              "language": true,
+              "version": true,
+              "dependency": true,
+              "task_id": true
+            },
+            "source_turn": 1,
+            "source_requirement": "项目语言固定为 Go，工具链版本 1.23.0，外部依赖禁止（仅标准库），任务标识 HOLD-27-Z。以下穿插讨论不更改这些要求；最后按指定 JSON 字段回填。现在仅确认收到。"
+          },
+          {
+            "id": "context-27",
+            "repeat": 2,
+            "strict_task_pass": false,
+            "strict_constraints": {
+              "language": true,
+              "version": true,
+              "dependency": false,
+              "task_id": true
+            },
+            "raw_dependency": "none",
+            "reviewed_constraints": {
+              "language": true,
+              "version": true,
+              "dependency": true,
+              "task_id": true
+            },
+            "source_turn": 1,
+            "source_requirement": "项目语言固定为 Go，工具链版本 1.23.0，外部依赖禁止（仅标准库），任务标识 HOLD-27-Z。以下穿插讨论不更改这些要求；最后按指定 JSON 字段回填。现在仅确认收到。"
+          },
+          {
+            "id": "context-28",
+            "repeat": 1,
+            "strict_task_pass": false,
+            "strict_constraints": {
+              "language": true,
+              "version": true,
+              "dependency": false,
+              "task_id": true
+            },
+            "raw_dependency": "none",
+            "reviewed_constraints": {
+              "language": true,
+              "version": true,
+              "dependency": true,
+              "task_id": true
+            },
+            "source_turn": 1,
+            "source_requirement": "项目语言固定为 Go，工具链版本 1.24.0，外部依赖禁止（仅标准库），任务标识 HOLD-28-Z。以下穿插讨论不更改这些要求；最后按指定 JSON 字段回填。现在仅确认收到。"
+          },
+          {
+            "id": "context-28",
+            "repeat": 2,
+            "strict_task_pass": false,
+            "strict_constraints": {
+              "language": true,
+              "version": true,
+              "dependency": false,
+              "task_id": true
+            },
+            "raw_dependency": "none",
+            "reviewed_constraints": {
+              "language": true,
+              "version": true,
+              "dependency": true,
+              "task_id": true
+            },
+            "source_turn": 1,
+            "source_requirement": "项目语言固定为 Go，工具链版本 1.24.0，外部依赖禁止（仅标准库），任务标识 HOLD-28-Z。以下穿插讨论不更改这些要求；最后按指定 JSON 字段回填。现在仅确认收到。"
+          }
+        ]
+      }
+    },
+    "continuation_cost": {
+      "additional_cap_cny": 10,
+      "requests_including_probe": 9256,
+      "tokens_charged_for_limit_including_probe": 8949560,
+      "budget_charged_cny_including_probe": 5.60973144,
+      "known_public_price_estimate_cny_including_probe": 5.60823144,
+      "unknown_cost_upper_reserve_cny": 0.0015,
+      "unknown_usage_calls": 1,
+      "complete_actual_cost_estimate_cny": null,
+      "invoice": false
+    }
+  },
+  "continuation_cost": {
+    "additional_cap_cny": 10,
+    "requests_including_probe": 9256,
+    "tokens_charged_for_limit_including_probe": 8949560,
+    "budget_charged_cny_including_probe": 5.60973144,
+    "known_public_price_estimate_cny_including_probe": 5.60823144,
+    "unknown_cost_upper_reserve_cny": 0.0015,
+    "unknown_usage_calls": 1,
+    "complete_actual_cost_estimate_cny": null,
+    "invoice": false
+  },
+  "checklist": {
+    "21": "complete",
+    "22": "acceptance_failed"
+  },
+  "final_results_document": "docs/context-management-final-results.md"
+}

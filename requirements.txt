@@ -12,6 +12,8 @@ langchain-openai>=0.2.0
 langchain-text-splitters>=0.3.0
 # Agent 状态图、工具调用循环与流式执行
 langgraph>=1.0.0
+# 上下文计量显式依赖；不同模型的计数方式需经过校准。
+tiktoken>=0.12,<1
 pypdf>=4.2.0
 python-docx>=1.1.0
 # 检索工程（jieba 分词 + BM25 词面检索）

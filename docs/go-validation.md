@@ -70,7 +70,7 @@ Dashboard 上方填写管理员令牌；在“Go 示例生成与验证”选择�
 
 独立管理调用携带 `Authorization: Bearer <AIROBOT_ADMIN_TOKEN>`。经过已有 Go 网关时携带受信任的 `X-Internal-Token` 与 `X-Account-Id`，网关必须自己验证登录态；网页不得持有共享网关令牌。报告按认证主体隔离，其他账户读取返回 404。当前仓库只增加 Python 接口，外部 Go 网关还需配置对应转发路径。
 
-HTTP 200 表示请求有报告；业务成功由报告的 `status` 判断。可能的终态为 `passed`、`failed`、`timeout`、`unavailable`、`cancelled`、`generation_error`、`budget_exceeded`；运行中的报告为 `running`。环境不可用和超时直接停止，检查失败最多触发两轮修复。
+HTTP 200 表示请求有报告；业务成功由报告的 `status` 判断。可能的终态为 `passed`、`failed`、`timeout`、`unavailable`、`cancelled`、`generation_error`、`budget_exceeded`；运行中的报告为 `running`。环境不可用与沙箱级超时直接停止；模型代码挂起（go test 内部超时）按检查失败处理，可触发修复，检查失败最多两轮。
 
 SSE 事件：`go_start` 携带 run_id；`go_stage` 展示检索、生成、验证和修复；`go_call` 记录预算；`go_usage` 记录服务商返回的 token 用量；`go_attempt` 携带每轮完整报告；`go_done` 携带最终结果。断开流会取消任务并清理容器；界面取消后可用 run_id 查询保存的最终状态。
 
@@ -87,7 +87,7 @@ SSE 事件：`go_start` 携带 run_id；`go_stage` 展示检索、生成、验�
 | 限制 | 当前值 |
 | --- | --- |
 | 首次生成 + 修复 | 最多 3 次模型调用、3 次验证、1 次检索 |
-| 整个任务 | 180 秒，包含等待并发槽位 |
+| 整个任务 | 360 秒，包含等待并发槽位；单次模型生成调用上限 120 秒 |
 | 同时执行 | 每个 Python 进程最多 2 个任务 |
 | 单次验证 | 90 秒，结束后等待容器清理 |
 | Docker 权限 | UID 65532、只读根目录、无网络、删除全部 capabilities、禁止新增权限 |

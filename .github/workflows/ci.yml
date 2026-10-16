@@ -46,6 +46,8 @@ jobs:
           python -m pytest tests/test_go_contracts.py tests/test_go_workflow.py tests/test_go_runner.py tests/test_go_acceptance.py -q
       - name: 服务可导入冒烟
         run: python -c "from app.main import app; print('import OK, routes:', len(app.routes))"
+      - name: 上下文机制与原业务回归
+        run: python -m pytest tests -q
 
   go-validation:
     name: Go 实际沙箱与修复流程

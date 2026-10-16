@@ -20,6 +20,8 @@ class ChatResponse(BaseModel):
     steps: list = []
     cache_hit: bool = False
     session_id: str = ""
+    context_stats: dict | None = None
+    token_usage: dict | None = None
 
 
 class IngestResponse(BaseModel):

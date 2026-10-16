@@ -68,7 +68,10 @@ class DockerGoRunner:
             output, error = await asyncio.gather(read_bounded(proc.stdout), read_bounded(proc.stderr))
             code = await proc.wait()
             if code != 0:
-                return ValidationReport(status="unavailable" if code in (125, 126, 127) else "failed",
+                # 沙箱 validator 总是正常退出并以 JSON 报告结果；非零退出只能是
+                # entrypoint/工具链/守护进程层故障（缓存复制失败、validator panic 等），
+                # 归为不可用，不消耗修复轮次。
+                return ValidationReport(status="unavailable",
                         stages=[StageReport(stage="sandbox", exit_code=code,
                                 output=error.decode("utf-8", "replace")[:2000] or "验证进程异常退出")])
             parsed = ValidationReport.model_validate(json.loads(output))

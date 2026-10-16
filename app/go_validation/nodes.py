@@ -12,12 +12,15 @@ from app.config import settings
 from app.go_validation.contracts import Attempt, CodeBundle, GeneratedCode, MAX_REPAIRS, SCENARIO_SPECS, ValidationReport
 from app.go_validation.tools import validate_go_code
 from app.go_validation.fixtures import ACCEPTANCE_FILE, with_acceptance_tests
+from app.context import usage as context_usage
+from app.context.contracts import ContextBudgetExceeded
+from app.context.go_adapter import messages as prepare_messages
 
 logger = logging.getLogger("airobot.go_validation")
 
 MAX_MODEL_CALLS = 3
 MAX_TOOL_CALLS = 4  # 一次检索、最多三次验证。
-MODEL_CALL_TIMEOUT = 90  # 单次生成调用的墙钟上限；SDK 默认 600s，挂起的请求会吃光任务预算。
+MODEL_CALL_TIMEOUT = 120  # 单次生成调用的墙钟上限；围栏格式单次输出可达 3-5K token，需留足余量。
 MODEL_MAX_TOKENS = 8192  # 限制失控生成；正常单包源码远小于此。
 
 _FILE_HEADER = re.compile(r"===\s*FILE:\s*([A-Za-z][A-Za-z0-9_]*\.go)\s*===")
@@ -68,14 +71,21 @@ async def retrieve(state):
         raw = await state["go_retrieve"](state["go_request"]["requirement"])
     elif settings.embedding_api_key:
         try:
-            raw = await search_knowledge_tool.ainvoke({"query": state["go_request"]["requirement"]})
+            usage_token=context_usage.current_run.set(state["run_id"])
+            try:raw = await search_knowledge_tool.ainvoke({"query": state["go_request"]["requirement"]})
+            finally:context_usage.current_run.reset(usage_token)
         except Exception:
             raw = {"chunks": [], "sources": [], "warning": "社区检索暂不可用"}
     else:
         raw = {"chunks": [], "sources": [], "warning": "未配置 Embedding，未引用社区资料"}
     if isinstance(raw, str):
         raw = json.loads(raw)
-    context = json.dumps(raw.get("chunks", []), ensure_ascii=False)[:16000]
+    if settings.context_mode=="enforce":
+        from app.context.tool_projection import project
+        projected=project("search_knowledge",raw,session=state["session_id"],run_id=state["run_id"],args={"query":state["go_request"]["requirement"]})
+        context=json.dumps(projected.get("chunks",[]),ensure_ascii=False)
+    else:
+        context = json.dumps(raw.get("chunks", []), ensure_ascii=False)[:16000]
     sources = [str(s) for s in raw.get("sources", [])][:20]
     event("retrieval", raw.get("warning", "参考资料检索完成"), sources=sources)
     return {"go_context": context, "go_sources": sources, "go_tools": 1}
@@ -110,6 +120,10 @@ CHANGE: (一句话改动说明)
             "reference_data": state.get("go_context", "[]")}
     if attempts:
         data["previous_attempt"] = attempts[-1]
+    try:
+        prompt=prepare_messages(state,instructions,data,MODEL_MAX_TOKENS)
+    except ContextBudgetExceeded as exc:
+        return {"go_status":"budget_exceeded","go_error":str(exc)}
     model = state.get("go_model")
     if model is None:
         from app.agents.graph import get_llm
@@ -125,9 +139,8 @@ CHANGE: (一句话改动说明)
         get_stream_writer()({"type": "go_call", "model_calls": model_calls + 1})
         model_calls += 1
         try:
-            response = await asyncio.wait_for(model.ainvoke(
-                [SystemMessage(content=instructions),
-                 HumanMessage(content=json.dumps(data, ensure_ascii=False))]), MODEL_CALL_TIMEOUT)
+            response = await asyncio.wait_for(context_usage.invoke(model,prompt,run_id=state["run_id"],
+                stage="go_generate",model_name=settings.llm_model,retry=False), MODEL_CALL_TIMEOUT)
             if isinstance(response, dict) and "parsed" in response:
                 # 兼容注入的结构化输出模型（含 include_raw 包装）。
                 usage = getattr(response.get("raw"), "usage_metadata", None)

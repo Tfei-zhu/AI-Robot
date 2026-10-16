@@ -10,8 +10,9 @@ from app.go_validation.contracts import GoTaskRequest, GoTaskResult
 from app.go_validation.store import GoTaskStore
 from app.services.concurrency import run_blocking
 from app.services.tracing import traces
+from app.context import usage as context_usage
 
-TASK_TIMEOUT = 180
+TASK_TIMEOUT = 360  # 围栏格式单次生成 15~60s，3 轮生成加验证在 180s 内放不下（99 样本实测校准）。
 store = GoTaskStore(str(Path(__file__).resolve().parents[2] / "data" / "go_tasks.sqlite3"))
 
 
@@ -28,6 +29,7 @@ class GoTaskService:
                 sources=state.get("go_sources", []), model_calls=state.get("go_model_calls", 0),
                 validation_calls=state.get("go_validations", 0), error=state.get("go_error"),
                 token_usage=state.get("go_usage", {}), model_source="fixture" if self.model is not None else "configured",
+                context_stats=context_usage.ledger(state["run_id"]).report(),
                 elapsed_ms=round((time.perf_counter()-started)*1000, 1))
 
     async def stream(self, request: GoTaskRequest, principal: str, session_key: str):
@@ -64,6 +66,7 @@ class GoTaskService:
         except (asyncio.CancelledError, GeneratorExit):
             state.update(go_status="cancelled", go_error="请求取消，沙箱已请求清理")
             await run_blocking(self.store.save, state["run_id"], owner, self.result(state, started).model_dump())
+            context_usage.discard(state["run_id"])
             raise
         except Exception:
             state.update(go_status="failed", go_error="任务执行失败，请通过 run_id 查看已有报告")
@@ -71,7 +74,8 @@ class GoTaskService:
         await run_blocking(self.store.save, state["run_id"], owner, result.model_dump())
         traces.record({"run_id": result.run_id, "session_id": session_key, "intent": "go_validation",
                        "status": 200 if result.status == "passed" else 422,
-                       "tool_calls": state.get("go_tools", 0), "total_ms": result.elapsed_ms})
+                       "tool_calls": state.get("go_tools", 0), "total_ms": result.elapsed_ms,"context_usage":result.context_stats})
+        context_usage.discard(state["run_id"])
         yield {"type": "go_done", "result": result.model_dump()}
 
     async def run(self, request, principal, session_key):

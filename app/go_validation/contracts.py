@@ -92,6 +92,7 @@ class GoTaskResult(BaseModel):
     error: str | None = None
     model_source: Literal["configured", "fixture"] = "configured"
     token_usage: dict[str, int] = Field(default_factory=dict)
+    context_stats: dict = Field(default_factory=dict)
     # 通过编译和当前测试不能等同于证明任意输入下都正确。
     validation_scope: str = "仅验证当前代码、当前测试和固定 Go 工具链；不保证全部行为正确"
 

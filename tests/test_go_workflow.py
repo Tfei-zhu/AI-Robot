@@ -129,7 +129,12 @@ def test_json_and_stream_use_identical_workflow():
         ordinary=await make(FakeModel([generated()]),FakeRunner(["passed"])).run(REQUEST,"account/1","test")
         events=[e async for e in make(FakeModel([generated()]),FakeRunner(["passed"])).stream(REQUEST,"account/1","test")]
         streamed=events[-1]["result"]
-        assert ordinary.model_dump(exclude={"run_id","elapsed_ms"})=={k:v for k,v in streamed.items() if k not in {"run_id","elapsed_ms"}}
+        def comparable(data):
+            data={k:v for k,v in data.items() if k not in {"run_id","elapsed_ms"}}
+            # 两次独立运行的真实计量耗时自然不同，其余业务结果和次数必须一致。
+            for call in data.get("context_stats",{}).get("calls",[]):call.pop("elapsed_ms",None)
+            return data
+        assert comparable(ordinary.model_dump())==comparable(streamed)
         assert any(e["type"]=="go_stage" and e["stage"]=="validate" for e in events)
         assert any(e["type"]=="go_attempt" for e in events)
     asyncio.run(run())

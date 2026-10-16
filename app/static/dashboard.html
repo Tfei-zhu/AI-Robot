@@ -195,6 +195,7 @@ tr:hover td{background:#1a2130}
       <span><i style="background:var(--warn)"></i>意图</span>
       <span><i style="background:#a78bfa"></i>其他</span>
     </div>
+    <div id="contextStats" class="mono" style="padding:12px 0;white-space:pre-wrap">上下文统计：等待请求</div>
     <div class="hist" id="hist"></div>
     <div style="color:var(--muted);font-size:12px;margin-top:6px">最近 20 条请求总耗时（ms）</div>
   </section>
@@ -381,6 +382,7 @@ function renderGoAttempt(attempt){
   }
 }
 function renderGoResult(result){
+  if(result.context_stats)renderContextStats(result.context_stats);
   document.getElementById("goRunId").value=result.run_id;
   const status=document.getElementById("goStatus");
   status.textContent=`${GO_LABELS[result.status]||result.status} · ${ms(result.elapsed_ms)} · 模型调用 ${result.model_calls} · 验证 ${result.validation_calls}`;
@@ -450,11 +452,20 @@ function handleEvent(ev,bubble){
     bubble.textContent+=ev.content;
     scrollChat();
   }else if(ev.type==="done"){
+    if(ev.context_stats)renderContextStats(ev.context_stats);
     if(pipeState.error.status!=="err"){
       if(pipeState.write.status==="wait")markStage("write","skip",null,"（未执行）","");
       document.getElementById("pipeState").textContent="完成 · "+ms(ev.total_ms);
     }
   }
+}
+function renderContextStats(stats){
+  // 用量缺失按未知展示，流事件数不作为 Token 或费用。
+  const tokens=stats.token_usage;
+  document.getElementById("contextStats").textContent=
+    `上下文策略：${stats.context_mode||'off'} · 输入估计 ${stats.input_before??'-'} → ${stats.input_after??stats.go_input_estimate??'-'}\n`+
+    `历史保留 ${stats.selected_turns??'-'} 轮 · 摘要版本 ${stats.summary_version??0} · 检索请求/执行/复用 ${stats.retrieval_requested??0}/${stats.retrieval_executed??0}/${stats.retrieval_reused??0}\n`+
+    `模型调用 ${stats.model_calls??0} · Embedding ${stats.embedding_calls??0} · Token ${tokens?tokens.total_tokens:'未知'} · 金额 ${stats.cost_estimate==null?'未知':stats.cost_estimate+' '+(stats.currency||'')}`;
 }
 async function sendChat(){
   const input=document.getElementById("chatInput");
@@ -522,6 +533,7 @@ async function refresh(manual){
     renderStats(s,t.summary);
     renderRows(t.entries);
     renderHist(t.entries);
+    if(t.entries?.[0]?.context_usage)renderContextStats(t.entries[0].context_usage);
     document.getElementById("traceCount").textContent=`${t.summary.total} 条 · 3 秒自动刷新`;
     document.getElementById("refreshAt").textContent=`最后刷新 ${new Date().toLocaleTimeString()}`;
   }catch(err){
