@@ -1,0 +1,4 @@
+DNS registry-1.docker.io [(<AddressFamily.AF_INET: 2>, <SocketKind.SOCK_DGRAM: 2>, 17, '', ('103.246.246.144', 443)), (<AddressFamily.AF_INET: 2>, <SocketKind.SOCK_STREAM: 1>, 6, '', ('103.246.246.144', 443)), (<AddressFamily.AF_INET6: 30>, <SocketKind.SOCK_DGRAM: 2>, 17, '', ('2001::6ca0:a7a5', 443, 0, 0)), (<AddressFamily.AF_INET6: 30>, <SocketKind.SOCK_STREAM: 1>, 6, '', ('2001::6ca0:a7a5', 443, 0, 0))]
+DNS auth.docker.io [(<AddressFamily.AF_INET6: 30>, <SocketKind.SOCK_DGRAM: 2>, 17, '', ('2a03:2880:f12a:83:face:b00c:0:25de', 443, 0, 0)), (<AddressFamily.AF_INET6: 30>, <SocketKind.SOCK_STREAM: 1>, 6, '', ('2a03:2880:f12a:83:face:b00c:0:25de', 443, 0, 0)), (<AddressFamily.AF_INET: 2>, <SocketKind.SOCK_DGRAM: 2>, 17, '', ('128.242.245.180', 443)), (<AddressFamily.AF_INET: 2>, <SocketKind.SOCK_STREAM: 1>, 6, '', ('128.242.245.180', 443))]
+TLS reached HTTP 401
+TLS https://auth.docker.io/token?service=registry.docker.io&scope=repository:library/golang:pull 200

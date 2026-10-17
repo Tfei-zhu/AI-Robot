@@ -1,0 +1,1517 @@
+<?xml version="1.0" encoding="utf-8"?><testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="13" skipped="0" tests="25" time="3.387" timestamp="2026-10-17T15:34:32.497491+08:00" hostname="EnriciMac.local"><testcase classname="tests.test_multi_agent_http" name="test_actual_json_sse_equal_and_persist_every_round[pass-passed]" time="0.146"><failure message="assert False&#10; +  where False = any(&lt;generator object test_actual_json_sse_equal_and_persist_every_round.&lt;locals&gt;.run.&lt;locals&gt;.&lt;genexpr&gt; at 0x115eff510&gt;)">setup = &lt;test_multi_agent_http.RecordingStore object at 0x117243b60&gt;
+monkeypatch = &lt;_pytest.monkeypatch.MonkeyPatch object at 0x1144e8180&gt;
+case = 'pass', expected = 'passed'
+
+    @pytest.mark.parametrize("case,expected", [("pass", "passed"), ("repair", "passed"),
+        ("failed", "failed"), ("unavailable", "unavailable"), ("budget", "budget_exceeded"),
+        ("generation_error", "generation_error")])
+    def test_actual_json_sse_equal_and_persist_every_round(setup, monkeypatch, case, expected):
+        async def run():
+            async with AsyncClient(transport=ASGITransport(app=main.app), base_url="http://test") as client:
+                install(monkeypatch, setup, case)
+                ordinary = await client.post("/api/v1/go/tasks", headers=HEADERS, json=request().model_dump())
+                assert ordinary.status_code == 200
+                data = ordinary.json()
+                assert data["status"] == expected
+                install(monkeypatch, setup, case)
+                streamed = await client.post("/api/v1/go/tasks/stream", headers=HEADERS, json=request().model_dump())
+                assert streamed.status_code == 200
+                messages = events(streamed)
+                assert messages[0]["type"] == "go_start"
+                assert messages[-1]["type"] == "go_done"
+                assert sum(e["type"] == "go_done" for e in messages) == 1
+                final = messages[-1]["result"]
+                assert business(data) == business(final)
+                assert final["status"] == expected  # HTTP 200 / stream completion is not business success.
+                for result in (data, final):
+                    loaded = await client.get("/api/v1/go/tasks/" + result["run_id"], headers=HEADERS)
+                    assert loaded.status_code == 200
+                    assert loaded.json() == result
+                    for art, attempt in zip(result["artifacts"], result["attempts"]):
+                        assert artifact_hash(art["files"]) == art["artifact_hash"]
+                        assert attempt["validation"]["artifact_hash"] == art["artifact_hash"]
+                    assert result["model_calls"] == len(result["agent_calls"])
+                if case in {"pass", "repair", "failed"}:
+                    assert any(e["type"] == "go_call" for e in messages)
+                    assert sum(e["type"] == "go_attempt" for e in messages) == len(final["attempts"])
+                if case == "repair":
+                    assert len(final["artifacts"]) == len(final["reviews"]) == 2
+                    assert final["artifacts"][0]["artifact_hash"] != final["artifacts"][1]["artifact_hash"]
+                    assert any(r["task_spec"] and len(r["artifacts"]) == 1 and len(r["reviews"]) == 1
+                               and r["status"] == "running" for r in setup.saved)
+&gt;       asyncio.run(run())
+
+tests/test_multi_agent_http.py:126: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+/Library/Frameworks/Python.framework/Versions/3.13/lib/python3.13/asyncio/runners.py:195: in run
+    return runner.run(main)
+           ^^^^^^^^^^^^^^^^
+/Library/Frameworks/Python.framework/Versions/3.13/lib/python3.13/asyncio/runners.py:118: in run
+    return self._loop.run_until_complete(task)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/Library/Frameworks/Python.framework/Versions/3.13/lib/python3.13/asyncio/base_events.py:725: in run_until_complete
+    return future.result()
+           ^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+    async def run():
+        async with AsyncClient(transport=ASGITransport(app=main.app), base_url="http://test") as client:
+            install(monkeypatch, setup, case)
+            ordinary = await client.post("/api/v1/go/tasks", headers=HEADERS, json=request().model_dump())
+            assert ordinary.status_code == 200
+            data = ordinary.json()
+            assert data["status"] == expected
+            install(monkeypatch, setup, case)
+            streamed = await client.post("/api/v1/go/tasks/stream", headers=HEADERS, json=request().model_dump())
+            assert streamed.status_code == 200
+            messages = events(streamed)
+            assert messages[0]["type"] == "go_start"
+            assert messages[-1]["type"] == "go_done"
+            assert sum(e["type"] == "go_done" for e in messages) == 1
+            final = messages[-1]["result"]
+            assert business(data) == business(final)
+            assert final["status"] == expected  # HTTP 200 / stream completion is not business success.
+            for result in (data, final):
+                loaded = await client.get("/api/v1/go/tasks/" + result["run_id"], headers=HEADERS)
+                assert loaded.status_code == 200
+                assert loaded.json() == result
+                for art, attempt in zip(result["artifacts"], result["attempts"]):
+                    assert artifact_hash(art["files"]) == art["artifact_hash"]
+                    assert attempt["validation"]["artifact_hash"] == art["artifact_hash"]
+                assert result["model_calls"] == len(result["agent_calls"])
+            if case in {"pass", "repair", "failed"}:
+&gt;               assert any(e["type"] == "go_call" for e in messages)
+E               assert False
+E                +  where False = any(&lt;generator object test_actual_json_sse_equal_and_persist_every_round.&lt;locals&gt;.run.&lt;locals&gt;.&lt;genexpr&gt; at 0x115eff510&gt;)
+
+tests/test_multi_agent_http.py:119: AssertionError</failure></testcase><testcase classname="tests.test_multi_agent_http" name="test_actual_json_sse_equal_and_persist_every_round[repair-passed]" time="0.062"><failure message="AssertionError: assert {'status': 'p...ces': [], ...} == {'status': 'p...ces': [], ...}&#10;  &#10;  Omitting 17 identical items, use -vv to show&#10;  Differing items:&#10;  {'context_stats': {'model_calls': 5, 'embedding_calls': 0, 'usage_complete': True, 'token_usage': {'input_tokens': 60, 'output_tokens': 170, 'total_tokens': 230}, ...}} != {'context_stats': {'model_calls': 5, 'embedding_calls': 0, 'usage_complete': True, 'token_usage': {'input_tokens': 60, 'output_tokens': 170, 'total_tokens': 230}, ...}}&#10;  Use -v to get more diff">setup = &lt;test_multi_agent_http.RecordingStore object at 0x1162befd0&gt;
+monkeypatch = &lt;_pytest.monkeypatch.MonkeyPatch object at 0x1144e8c30&gt;
+case = 'repair', expected = 'passed'
+
+    @pytest.mark.parametrize("case,expected", [("pass", "passed"), ("repair", "passed"),
+        ("failed", "failed"), ("unavailable", "unavailable"), ("budget", "budget_exceeded"),
+        ("generation_error", "generation_error")])
+    def test_actual_json_sse_equal_and_persist_every_round(setup, monkeypatch, case, expected):
+        async def run():
+            async with AsyncClient(transport=ASGITransport(app=main.app), base_url="http://test") as client:
+                install(monkeypatch, setup, case)
+                ordinary = await client.post("/api/v1/go/tasks", headers=HEADERS, json=request().model_dump())
+                assert ordinary.status_code == 200
+                data = ordinary.json()
+                assert data["status"] == expected
+                install(monkeypatch, setup, case)
+                streamed = await client.post("/api/v1/go/tasks/stream", headers=HEADERS, json=request().model_dump())
+                assert streamed.status_code == 200
+                messages = events(streamed)
+                assert messages[0]["type"] == "go_start"
+                assert messages[-1]["type"] == "go_done"
+                assert sum(e["type"] == "go_done" for e in messages) == 1
+                final = messages[-1]["result"]
+                assert business(data) == business(final)
+                assert final["status"] == expected  # HTTP 200 / stream completion is not business success.
+                for result in (data, final):
+                    loaded = await client.get("/api/v1/go/tasks/" + result["run_id"], headers=HEADERS)
+                    assert loaded.status_code == 200
+                    assert loaded.json() == result
+                    for art, attempt in zip(result["artifacts"], result["attempts"]):
+                        assert artifact_hash(art["files"]) == art["artifact_hash"]
+                        assert attempt["validation"]["artifact_hash"] == art["artifact_hash"]
+                    assert result["model_calls"] == len(result["agent_calls"])
+                if case in {"pass", "repair", "failed"}:
+                    assert any(e["type"] == "go_call" for e in messages)
+                    assert sum(e["type"] == "go_attempt" for e in messages) == len(final["attempts"])
+                if case == "repair":
+                    assert len(final["artifacts"]) == len(final["reviews"]) == 2
+                    assert final["artifacts"][0]["artifact_hash"] != final["artifacts"][1]["artifact_hash"]
+                    assert any(r["task_spec"] and len(r["artifacts"]) == 1 and len(r["reviews"]) == 1
+                               and r["status"] == "running" for r in setup.saved)
+&gt;       asyncio.run(run())
+
+tests/test_multi_agent_http.py:126: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+/Library/Frameworks/Python.framework/Versions/3.13/lib/python3.13/asyncio/runners.py:195: in run
+    return runner.run(main)
+           ^^^^^^^^^^^^^^^^
+/Library/Frameworks/Python.framework/Versions/3.13/lib/python3.13/asyncio/runners.py:118: in run
+    return self._loop.run_until_complete(task)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/Library/Frameworks/Python.framework/Versions/3.13/lib/python3.13/asyncio/base_events.py:725: in run_until_complete
+    return future.result()
+           ^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+    async def run():
+        async with AsyncClient(transport=ASGITransport(app=main.app), base_url="http://test") as client:
+            install(monkeypatch, setup, case)
+            ordinary = await client.post("/api/v1/go/tasks", headers=HEADERS, json=request().model_dump())
+            assert ordinary.status_code == 200
+            data = ordinary.json()
+            assert data["status"] == expected
+            install(monkeypatch, setup, case)
+            streamed = await client.post("/api/v1/go/tasks/stream", headers=HEADERS, json=request().model_dump())
+            assert streamed.status_code == 200
+            messages = events(streamed)
+            assert messages[0]["type"] == "go_start"
+            assert messages[-1]["type"] == "go_done"
+            assert sum(e["type"] == "go_done" for e in messages) == 1
+            final = messages[-1]["result"]
+&gt;           assert business(data) == business(final)
+E           AssertionError: assert {'status': 'p...ces': [], ...} == {'status': 'p...ces': [], ...}
+E             
+E             Omitting 17 identical items, use -vv to show
+E             Differing items:
+E             {'context_stats': {'model_calls': 5, 'embedding_calls': 0, 'usage_complete': True, 'token_usage': {'input_tokens': 60, 'output_tokens': 170, 'total_tokens': 230}, ...}} != {'context_stats': {'model_calls': 5, 'embedding_calls': 0, 'usage_complete': True, 'token_usage': {'input_tokens': 60, 'output_tokens': 170, 'total_tokens': 230}, ...}}
+E             Use -v to get more diff
+
+tests/test_multi_agent_http.py:108: AssertionError</failure></testcase><testcase classname="tests.test_multi_agent_http" name="test_actual_json_sse_equal_and_persist_every_round[failed-failed]" time="0.036"><failure message="AssertionError: assert {'status': 'f...ces': [], ...} == {'status': 'f...ces': [], ...}&#10;  &#10;  Omitting 17 identical items, use -vv to show&#10;  Differing items:&#10;  {'context_stats': {'model_calls': 3, 'embedding_calls': 0, 'usage_complete': True, 'token_usage': {'input_tokens': 36, 'output_tokens': 102, 'total_tokens': 138}, ...}} != {'context_stats': {'model_calls': 3, 'embedding_calls': 0, 'usage_complete': True, 'token_usage': {'input_tokens': 36, 'output_tokens': 102, 'total_tokens': 138}, ...}}&#10;  Use -v to get more diff">setup = &lt;test_multi_agent_http.RecordingStore object at 0x1144c1590&gt;
+monkeypatch = &lt;_pytest.monkeypatch.MonkeyPatch object at 0x114e8ccb0&gt;
+case = 'failed', expected = 'failed'
+
+    @pytest.mark.parametrize("case,expected", [("pass", "passed"), ("repair", "passed"),
+        ("failed", "failed"), ("unavailable", "unavailable"), ("budget", "budget_exceeded"),
+        ("generation_error", "generation_error")])
+    def test_actual_json_sse_equal_and_persist_every_round(setup, monkeypatch, case, expected):
+        async def run():
+            async with AsyncClient(transport=ASGITransport(app=main.app), base_url="http://test") as client:
+                install(monkeypatch, setup, case)
+                ordinary = await client.post("/api/v1/go/tasks", headers=HEADERS, json=request().model_dump())
+                assert ordinary.status_code == 200
+                data = ordinary.json()
+                assert data["status"] == expected
+                install(monkeypatch, setup, case)
+                streamed = await client.post("/api/v1/go/tasks/stream", headers=HEADERS, json=request().model_dump())
+                assert streamed.status_code == 200
+                messages = events(streamed)
+                assert messages[0]["type"] == "go_start"
+                assert messages[-1]["type"] == "go_done"
+                assert sum(e["type"] == "go_done" for e in messages) == 1
+                final = messages[-1]["result"]
+                assert business(data) == business(final)
+                assert final["status"] == expected  # HTTP 200 / stream completion is not business success.
+                for result in (data, final):
+                    loaded = await client.get("/api/v1/go/tasks/" + result["run_id"], headers=HEADERS)
+                    assert loaded.status_code == 200
+                    assert loaded.json() == result
+                    for art, attempt in zip(result["artifacts"], result["attempts"]):
+                        assert artifact_hash(art["files"]) == art["artifact_hash"]
+                        assert attempt["validation"]["artifact_hash"] == art["artifact_hash"]
+                    assert result["model_calls"] == len(result["agent_calls"])
+                if case in {"pass", "repair", "failed"}:
+                    assert any(e["type"] == "go_call" for e in messages)
+                    assert sum(e["type"] == "go_attempt" for e in messages) == len(final["attempts"])
+                if case == "repair":
+                    assert len(final["artifacts"]) == len(final["reviews"]) == 2
+                    assert final["artifacts"][0]["artifact_hash"] != final["artifacts"][1]["artifact_hash"]
+                    assert any(r["task_spec"] and len(r["artifacts"]) == 1 and len(r["reviews"]) == 1
+                               and r["status"] == "running" for r in setup.saved)
+&gt;       asyncio.run(run())
+
+tests/test_multi_agent_http.py:126: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+/Library/Frameworks/Python.framework/Versions/3.13/lib/python3.13/asyncio/runners.py:195: in run
+    return runner.run(main)
+           ^^^^^^^^^^^^^^^^
+/Library/Frameworks/Python.framework/Versions/3.13/lib/python3.13/asyncio/runners.py:118: in run
+    return self._loop.run_until_complete(task)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/Library/Frameworks/Python.framework/Versions/3.13/lib/python3.13/asyncio/base_events.py:725: in run_until_complete
+    return future.result()
+           ^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+    async def run():
+        async with AsyncClient(transport=ASGITransport(app=main.app), base_url="http://test") as client:
+            install(monkeypatch, setup, case)
+            ordinary = await client.post("/api/v1/go/tasks", headers=HEADERS, json=request().model_dump())
+            assert ordinary.status_code == 200
+            data = ordinary.json()
+            assert data["status"] == expected
+            install(monkeypatch, setup, case)
+            streamed = await client.post("/api/v1/go/tasks/stream", headers=HEADERS, json=request().model_dump())
+            assert streamed.status_code == 200
+            messages = events(streamed)
+            assert messages[0]["type"] == "go_start"
+            assert messages[-1]["type"] == "go_done"
+            assert sum(e["type"] == "go_done" for e in messages) == 1
+            final = messages[-1]["result"]
+&gt;           assert business(data) == business(final)
+E           AssertionError: assert {'status': 'f...ces': [], ...} == {'status': 'f...ces': [], ...}
+E             
+E             Omitting 17 identical items, use -vv to show
+E             Differing items:
+E             {'context_stats': {'model_calls': 3, 'embedding_calls': 0, 'usage_complete': True, 'token_usage': {'input_tokens': 36, 'output_tokens': 102, 'total_tokens': 138}, ...}} != {'context_stats': {'model_calls': 3, 'embedding_calls': 0, 'usage_complete': True, 'token_usage': {'input_tokens': 36, 'output_tokens': 102, 'total_tokens': 138}, ...}}
+E             Use -v to get more diff
+
+tests/test_multi_agent_http.py:108: AssertionError</failure></testcase><testcase classname="tests.test_multi_agent_http" name="test_actual_json_sse_equal_and_persist_every_round[unavailable-unavailable]" time="0.040" /><testcase classname="tests.test_multi_agent_http" name="test_actual_json_sse_equal_and_persist_every_round[budget-budget_exceeded]" time="0.028" /><testcase classname="tests.test_multi_agent_http" name="test_actual_json_sse_equal_and_persist_every_round[generation_error-generation_error]" time="0.017" /><testcase classname="tests.test_multi_agent_http" name="test_historical_report_rows_read_through_http_after_store_reopen" time="0.024" /><testcase classname="tests.test_multi_agent_http" name="test_interruptions_preserve_evidence_and_release_session[cancel-json-generate]" time="0.009"><failure message="assert False&#10; +  where False = is_set()&#10; +    where is_set = &lt;asyncio.locks.Event object at 0x114c84950 [unset]&gt;.is_set&#10; +      where &lt;asyncio.locks.Event object at 0x114c84950 [unset]&gt; = &lt;test_multi_agent_http.BlockingModel object at 0x117243b60&gt;.closed">setup = &lt;test_multi_agent_http.RecordingStore object at 0x1144746b0&gt;
+monkeypatch = &lt;_pytest.monkeypatch.MonkeyPatch object at 0x1144b64e0&gt;
+stage = 'generate', transport = 'json', stop = 'cancel'
+
+    @pytest.mark.parametrize("stage", ["generate", "review", "sandbox", "repair_generate"])
+    @pytest.mark.parametrize("transport", ["json", "sse"])
+    @pytest.mark.parametrize("stop", ["cancel", "timeout"])
+    def test_interruptions_preserve_evidence_and_release_session(setup, monkeypatch, stage, transport, stop):
+        async def run():
+            sup = ScriptedModel(plan_json(), review_json())
+            code = ScriptedModel(code_reply())
+            runner = StubRunner()
+            if stage == "generate":
+                blocker = code = BlockingModel(block_at=0)
+            elif stage == "review":
+                blocker = sup = BlockingModel(plan_json(), block_at=1)
+            elif stage == "sandbox":
+                blocker = runner = BlockingSandbox()
+            else:
+                sup = ScriptedModel(plan_json(), revise_json())
+                blocker = code = BlockingModel(fenced(("solution.go", BROKEN), ("solution_test.go", TEST_A)), block_at=1)
+                runner = StubRunner("failed")
+            limits = {"code_timeout": 0.08} if stage in {"generate", "repair_generate"} else {
+                      "supervisor_timeout" if stage == "review" else "validation_timeout": 0.08}
+            monkeypatch.setattr(settings, "go_multi_agent", cfg(**(limits if stop == "timeout" else {})))
+            install(monkeypatch, setup, supervisor_model=sup, code_model=code, runner=runner)
+            session = f"s5-{stage}-{transport}-{stop}"
+            payload = {**request().model_dump(), "session_id": session}
+            path = "/api/v1/go/tasks" + ("/stream" if transport == "sse" else "")
+            exchange = Exchange(path, payload)
+            job = asyncio.create_task(exchange.run())
+            try:
+                await asyncio.wait_for(blocker.entered.wait(), 3)
+                key = session_identity("account/1", session)[1]
+                assert key in _busy
+                async with AsyncClient(transport=ASGITransport(app=main.app), base_url="http://test") as client:
+                    conflict = await client.post("/api/v1/go/tasks", headers=HEADERS, json=payload)
+                    assert conflict.status_code == 409
+                if stop == "cancel":
+                    if transport == "sse":
+                        exchange.disconnect()
+                    else:
+                        job.cancel()
+                try:
+                    await asyncio.wait_for(job, 3)
+                except asyncio.CancelledError:
+                    assert stop == "cancel"
+                assert blocker.closed.is_set()
+                assert key not in _busy
+                assert setup.saved, "Cancellation must persist a report, including before first artifact"
+                saved = setup.get(setup.saved[-1]["run_id"], OWNER)
+                expected = "cancelled" if stop == "cancel" else "timeout"
+                assert saved["status"] == saved["stop_reason"] == expected
+                assert saved["workflow_version"] == "multi-v1" and saved["task_spec"] is not None
+                expected_calls = {"generate": 2, "review": 3, "sandbox": 2, "repair_generate": 4}[stage]
+                assert saved["model_calls"] == len(sup.inputs) + len(code.inputs) == expected_calls
+                assert saved["context_stats"]["model_calls"] == expected_calls
+                assert saved["validation_calls"] == (0 if stage == "generate" else 1)
+                assert len(saved["artifacts"]) == (0 if stage == "generate" else 1)
+                assert len(saved["reviews"]) == (1 if stage == "repair_generate" else 0)
+                if stage != "sandbox":
+                    assert saved["agent_calls"][-1]["status"] in {"failed", "cancelled"}
+                    assert saved["context_stats"]["unknown_usage_calls"] == 1
+                if stage == "sandbox":
+                    assert len(saved["attempts"]) == 1
+                    assert saved["attempts"][0]["validation"]["status"] == expected
+                    assert saved["attempts"][0]["validation"]["container_removed"]
+                for art in saved["artifacts"]:
+                    assert artifact_hash(art["files"]) == art["artifact_hash"]
+                assert saved["run_id"] not in usage._ledgers
+                async with AsyncClient(transport=ASGITransport(app=main.app), base_url="http://test") as client:
+                    own = await client.get("/api/v1/go/tasks/" + saved["run_id"], headers=HEADERS)
+                    assert own.status_code == 200 and own.json() == saved
+                    other = await client.get("/api/v1/go/tasks/" + saved["run_id"],
+                                             headers={**HEADERS, "X-Account-Id": "2"})
+                    assert other.status_code == 404
+                    install(monkeypatch, setup)
+                    again = await client.post("/api/v1/go/tasks", headers=HEADERS, json=payload)
+                    assert again.status_code == 200 and again.json()["status"] == "passed"
+            finally:
+                if not job.done():
+                    job.cancel()
+                    try:
+                        await job
+                    except asyncio.CancelledError:
+                        pass
+&gt;       asyncio.run(run())
+
+tests/test_multi_agent_http.py:307: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+/Library/Frameworks/Python.framework/Versions/3.13/lib/python3.13/asyncio/runners.py:195: in run
+    return runner.run(main)
+           ^^^^^^^^^^^^^^^^
+/Library/Frameworks/Python.framework/Versions/3.13/lib/python3.13/asyncio/runners.py:118: in run
+    return self._loop.run_until_complete(task)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/Library/Frameworks/Python.framework/Versions/3.13/lib/python3.13/asyncio/base_events.py:725: in run_until_complete
+    return future.result()
+           ^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+    async def run():
+        sup = ScriptedModel(plan_json(), review_json())
+        code = ScriptedModel(code_reply())
+        runner = StubRunner()
+        if stage == "generate":
+            blocker = code = BlockingModel(block_at=0)
+        elif stage == "review":
+            blocker = sup = BlockingModel(plan_json(), block_at=1)
+        elif stage == "sandbox":
+            blocker = runner = BlockingSandbox()
+        else:
+            sup = ScriptedModel(plan_json(), revise_json())
+            blocker = code = BlockingModel(fenced(("solution.go", BROKEN), ("solution_test.go", TEST_A)), block_at=1)
+            runner = StubRunner("failed")
+        limits = {"code_timeout": 0.08} if stage in {"generate", "repair_generate"} else {
+                  "supervisor_timeout" if stage == "review" else "validation_timeout": 0.08}
+        monkeypatch.setattr(settings, "go_multi_agent", cfg(**(limits if stop == "timeout" else {})))
+        install(monkeypatch, setup, supervisor_model=sup, code_model=code, runner=runner)
+        session = f"s5-{stage}-{transport}-{stop}"
+        payload = {**request().model_dump(), "session_id": session}
+        path = "/api/v1/go/tasks" + ("/stream" if transport == "sse" else "")
+        exchange = Exchange(path, payload)
+        job = asyncio.create_task(exchange.run())
+        try:
+            await asyncio.wait_for(blocker.entered.wait(), 3)
+            key = session_identity("account/1", session)[1]
+            assert key in _busy
+            async with AsyncClient(transport=ASGITransport(app=main.app), base_url="http://test") as client:
+                conflict = await client.post("/api/v1/go/tasks", headers=HEADERS, json=payload)
+                assert conflict.status_code == 409
+            if stop == "cancel":
+                if transport == "sse":
+                    exchange.disconnect()
+                else:
+                    job.cancel()
+            try:
+                await asyncio.wait_for(job, 3)
+            except asyncio.CancelledError:
+                assert stop == "cancel"
+&gt;           assert blocker.closed.is_set()
+E           assert False
+E            +  where False = is_set()
+E            +    where is_set = &lt;asyncio.locks.Event object at 0x114c84950 [unset]&gt;.is_set
+E            +      where &lt;asyncio.locks.Event object at 0x114c84950 [unset]&gt; = &lt;test_multi_agent_http.BlockingModel object at 0x117243b60&gt;.closed
+
+tests/test_multi_agent_http.py:268: AssertionError</failure></testcase><testcase classname="tests.test_multi_agent_http" name="test_interruptions_preserve_evidence_and_release_session[cancel-json-review]" time="0.010"><failure message="assert False&#10; +  where False = is_set()&#10; +    where is_set = &lt;asyncio.locks.Event object at 0x114c86b70 [unset]&gt;.is_set&#10; +      where &lt;asyncio.locks.Event object at 0x114c86b70 [unset]&gt; = &lt;test_multi_agent_http.BlockingModel object at 0x1162bf4d0&gt;.closed">setup = &lt;test_multi_agent_http.RecordingStore object at 0x114494f50&gt;
+monkeypatch = &lt;_pytest.monkeypatch.MonkeyPatch object at 0x1144b4500&gt;
+stage = 'review', transport = 'json', stop = 'cancel'
+
+    @pytest.mark.parametrize("stage", ["generate", "review", "sandbox", "repair_generate"])
+    @pytest.mark.parametrize("transport", ["json", "sse"])
+    @pytest.mark.parametrize("stop", ["cancel", "timeout"])
+    def test_interruptions_preserve_evidence_and_release_session(setup, monkeypatch, stage, transport, stop):
+        async def run():
+            sup = ScriptedModel(plan_json(), review_json())
+            code = ScriptedModel(code_reply())
+            runner = StubRunner()
+            if stage == "generate":
+                blocker = code = BlockingModel(block_at=0)
+            elif stage == "review":
+                blocker = sup = BlockingModel(plan_json(), block_at=1)
+            elif stage == "sandbox":
+                blocker = runner = BlockingSandbox()
+            else:
+                sup = ScriptedModel(plan_json(), revise_json())
+                blocker = code = BlockingModel(fenced(("solution.go", BROKEN), ("solution_test.go", TEST_A)), block_at=1)
+                runner = StubRunner("failed")
+            limits = {"code_timeout": 0.08} if stage in {"generate", "repair_generate"} else {
+                      "supervisor_timeout" if stage == "review" else "validation_timeout": 0.08}
+            monkeypatch.setattr(settings, "go_multi_agent", cfg(**(limits if stop == "timeout" else {})))
+            install(monkeypatch, setup, supervisor_model=sup, code_model=code, runner=runner)
+            session = f"s5-{stage}-{transport}-{stop}"
+            payload = {**request().model_dump(), "session_id": session}
+            path = "/api/v1/go/tasks" + ("/stream" if transport == "sse" else "")
+            exchange = Exchange(path, payload)
+            job = asyncio.create_task(exchange.run())
+            try:
+                await asyncio.wait_for(blocker.entered.wait(), 3)
+                key = session_identity("account/1", session)[1]
+                assert key in _busy
+                async with AsyncClient(transport=ASGITransport(app=main.app), base_url="http://test") as client:
+                    conflict = await client.post("/api/v1/go/tasks", headers=HEADERS, json=payload)
+                    assert conflict.status_code == 409
+                if stop == "cancel":
+                    if transport == "sse":
+                        exchange.disconnect()
+                    else:
+                        job.cancel()
+                try:
+                    await asyncio.wait_for(job, 3)
+                except asyncio.CancelledError:
+                    assert stop == "cancel"
+                assert blocker.closed.is_set()
+                assert key not in _busy
+                assert setup.saved, "Cancellation must persist a report, including before first artifact"
+                saved = setup.get(setup.saved[-1]["run_id"], OWNER)
+                expected = "cancelled" if stop == "cancel" else "timeout"
+                assert saved["status"] == saved["stop_reason"] == expected
+                assert saved["workflow_version"] == "multi-v1" and saved["task_spec"] is not None
+                expected_calls = {"generate": 2, "review": 3, "sandbox": 2, "repair_generate": 4}[stage]
+                assert saved["model_calls"] == len(sup.inputs) + len(code.inputs) == expected_calls
+                assert saved["context_stats"]["model_calls"] == expected_calls
+                assert saved["validation_calls"] == (0 if stage == "generate" else 1)
+                assert len(saved["artifacts"]) == (0 if stage == "generate" else 1)
+                assert len(saved["reviews"]) == (1 if stage == "repair_generate" else 0)
+                if stage != "sandbox":
+                    assert saved["agent_calls"][-1]["status"] in {"failed", "cancelled"}
+                    assert saved["context_stats"]["unknown_usage_calls"] == 1
+                if stage == "sandbox":
+                    assert len(saved["attempts"]) == 1
+                    assert saved["attempts"][0]["validation"]["status"] == expected
+                    assert saved["attempts"][0]["validation"]["container_removed"]
+                for art in saved["artifacts"]:
+                    assert artifact_hash(art["files"]) == art["artifact_hash"]
+                assert saved["run_id"] not in usage._ledgers
+                async with AsyncClient(transport=ASGITransport(app=main.app), base_url="http://test") as client:
+                    own = await client.get("/api/v1/go/tasks/" + saved["run_id"], headers=HEADERS)
+                    assert own.status_code == 200 and own.json() == saved
+                    other = await client.get("/api/v1/go/tasks/" + saved["run_id"],
+                                             headers={**HEADERS, "X-Account-Id": "2"})
+                    assert other.status_code == 404
+                    install(monkeypatch, setup)
+                    again = await client.post("/api/v1/go/tasks", headers=HEADERS, json=payload)
+                    assert again.status_code == 200 and again.json()["status"] == "passed"
+            finally:
+                if not job.done():
+                    job.cancel()
+                    try:
+                        await job
+                    except asyncio.CancelledError:
+                        pass
+&gt;       asyncio.run(run())
+
+tests/test_multi_agent_http.py:307: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+/Library/Frameworks/Python.framework/Versions/3.13/lib/python3.13/asyncio/runners.py:195: in run
+    return runner.run(main)
+           ^^^^^^^^^^^^^^^^
+/Library/Frameworks/Python.framework/Versions/3.13/lib/python3.13/asyncio/runners.py:118: in run
+    return self._loop.run_until_complete(task)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/Library/Frameworks/Python.framework/Versions/3.13/lib/python3.13/asyncio/base_events.py:725: in run_until_complete
+    return future.result()
+           ^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+    async def run():
+        sup = ScriptedModel(plan_json(), review_json())
+        code = ScriptedModel(code_reply())
+        runner = StubRunner()
+        if stage == "generate":
+            blocker = code = BlockingModel(block_at=0)
+        elif stage == "review":
+            blocker = sup = BlockingModel(plan_json(), block_at=1)
+        elif stage == "sandbox":
+            blocker = runner = BlockingSandbox()
+        else:
+            sup = ScriptedModel(plan_json(), revise_json())
+            blocker = code = BlockingModel(fenced(("solution.go", BROKEN), ("solution_test.go", TEST_A)), block_at=1)
+            runner = StubRunner("failed")
+        limits = {"code_timeout": 0.08} if stage in {"generate", "repair_generate"} else {
+                  "supervisor_timeout" if stage == "review" else "validation_timeout": 0.08}
+        monkeypatch.setattr(settings, "go_multi_agent", cfg(**(limits if stop == "timeout" else {})))
+        install(monkeypatch, setup, supervisor_model=sup, code_model=code, runner=runner)
+        session = f"s5-{stage}-{transport}-{stop}"
+        payload = {**request().model_dump(), "session_id": session}
+        path = "/api/v1/go/tasks" + ("/stream" if transport == "sse" else "")
+        exchange = Exchange(path, payload)
+        job = asyncio.create_task(exchange.run())
+        try:
+            await asyncio.wait_for(blocker.entered.wait(), 3)
+            key = session_identity("account/1", session)[1]
+            assert key in _busy
+            async with AsyncClient(transport=ASGITransport(app=main.app), base_url="http://test") as client:
+                conflict = await client.post("/api/v1/go/tasks", headers=HEADERS, json=payload)
+                assert conflict.status_code == 409
+            if stop == "cancel":
+                if transport == "sse":
+                    exchange.disconnect()
+                else:
+                    job.cancel()
+            try:
+                await asyncio.wait_for(job, 3)
+            except asyncio.CancelledError:
+                assert stop == "cancel"
+&gt;           assert blocker.closed.is_set()
+E           assert False
+E            +  where False = is_set()
+E            +    where is_set = &lt;asyncio.locks.Event object at 0x114c86b70 [unset]&gt;.is_set
+E            +      where &lt;asyncio.locks.Event object at 0x114c86b70 [unset]&gt; = &lt;test_multi_agent_http.BlockingModel object at 0x1162bf4d0&gt;.closed
+
+tests/test_multi_agent_http.py:268: AssertionError</failure></testcase><testcase classname="tests.test_multi_agent_http" name="test_interruptions_preserve_evidence_and_release_session[cancel-json-sandbox]" time="0.019"><failure message="assert False&#10; +  where False = is_set()&#10; +    where is_set = &lt;asyncio.locks.Event object at 0x114c85a30 [unset]&gt;.is_set&#10; +      where &lt;asyncio.locks.Event object at 0x114c85a30 [unset]&gt; = &lt;test_multi_agent_http.BlockingSandbox object at 0x117243b60&gt;.closed">setup = &lt;test_multi_agent_http.RecordingStore object at 0x114497c50&gt;
+monkeypatch = &lt;_pytest.monkeypatch.MonkeyPatch object at 0x1144b90f0&gt;
+stage = 'sandbox', transport = 'json', stop = 'cancel'
+
+    @pytest.mark.parametrize("stage", ["generate", "review", "sandbox", "repair_generate"])
+    @pytest.mark.parametrize("transport", ["json", "sse"])
+    @pytest.mark.parametrize("stop", ["cancel", "timeout"])
+    def test_interruptions_preserve_evidence_and_release_session(setup, monkeypatch, stage, transport, stop):
+        async def run():
+            sup = ScriptedModel(plan_json(), review_json())
+            code = ScriptedModel(code_reply())
+            runner = StubRunner()
+            if stage == "generate":
+                blocker = code = BlockingModel(block_at=0)
+            elif stage == "review":
+                blocker = sup = BlockingModel(plan_json(), block_at=1)
+            elif stage == "sandbox":
+                blocker = runner = BlockingSandbox()
+            else:
+                sup = ScriptedModel(plan_json(), revise_json())
+                blocker = code = BlockingModel(fenced(("solution.go", BROKEN), ("solution_test.go", TEST_A)), block_at=1)
+                runner = StubRunner("failed")
+            limits = {"code_timeout": 0.08} if stage in {"generate", "repair_generate"} else {
+                      "supervisor_timeout" if stage == "review" else "validation_timeout": 0.08}
+            monkeypatch.setattr(settings, "go_multi_agent", cfg(**(limits if stop == "timeout" else {})))
+            install(monkeypatch, setup, supervisor_model=sup, code_model=code, runner=runner)
+            session = f"s5-{stage}-{transport}-{stop}"
+            payload = {**request().model_dump(), "session_id": session}
+            path = "/api/v1/go/tasks" + ("/stream" if transport == "sse" else "")
+            exchange = Exchange(path, payload)
+            job = asyncio.create_task(exchange.run())
+            try:
+                await asyncio.wait_for(blocker.entered.wait(), 3)
+                key = session_identity("account/1", session)[1]
+                assert key in _busy
+                async with AsyncClient(transport=ASGITransport(app=main.app), base_url="http://test") as client:
+                    conflict = await client.post("/api/v1/go/tasks", headers=HEADERS, json=payload)
+                    assert conflict.status_code == 409
+                if stop == "cancel":
+                    if transport == "sse":
+                        exchange.disconnect()
+                    else:
+                        job.cancel()
+                try:
+                    await asyncio.wait_for(job, 3)
+                except asyncio.CancelledError:
+                    assert stop == "cancel"
+                assert blocker.closed.is_set()
+                assert key not in _busy
+                assert setup.saved, "Cancellation must persist a report, including before first artifact"
+                saved = setup.get(setup.saved[-1]["run_id"], OWNER)
+                expected = "cancelled" if stop == "cancel" else "timeout"
+                assert saved["status"] == saved["stop_reason"] == expected
+                assert saved["workflow_version"] == "multi-v1" and saved["task_spec"] is not None
+                expected_calls = {"generate": 2, "review": 3, "sandbox": 2, "repair_generate": 4}[stage]
+                assert saved["model_calls"] == len(sup.inputs) + len(code.inputs) == expected_calls
+                assert saved["context_stats"]["model_calls"] == expected_calls
+                assert saved["validation_calls"] == (0 if stage == "generate" else 1)
+                assert len(saved["artifacts"]) == (0 if stage == "generate" else 1)
+                assert len(saved["reviews"]) == (1 if stage == "repair_generate" else 0)
+                if stage != "sandbox":
+                    assert saved["agent_calls"][-1]["status"] in {"failed", "cancelled"}
+                    assert saved["context_stats"]["unknown_usage_calls"] == 1
+                if stage == "sandbox":
+                    assert len(saved["attempts"]) == 1
+                    assert saved["attempts"][0]["validation"]["status"] == expected
+                    assert saved["attempts"][0]["validation"]["container_removed"]
+                for art in saved["artifacts"]:
+                    assert artifact_hash(art["files"]) == art["artifact_hash"]
+                assert saved["run_id"] not in usage._ledgers
+                async with AsyncClient(transport=ASGITransport(app=main.app), base_url="http://test") as client:
+                    own = await client.get("/api/v1/go/tasks/" + saved["run_id"], headers=HEADERS)
+                    assert own.status_code == 200 and own.json() == saved
+                    other = await client.get("/api/v1/go/tasks/" + saved["run_id"],
+                                             headers={**HEADERS, "X-Account-Id": "2"})
+                    assert other.status_code == 404
+                    install(monkeypatch, setup)
+                    again = await client.post("/api/v1/go/tasks", headers=HEADERS, json=payload)
+                    assert again.status_code == 200 and again.json()["status"] == "passed"
+            finally:
+                if not job.done():
+                    job.cancel()
+                    try:
+                        await job
+                    except asyncio.CancelledError:
+                        pass
+&gt;       asyncio.run(run())
+
+tests/test_multi_agent_http.py:307: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+/Library/Frameworks/Python.framework/Versions/3.13/lib/python3.13/asyncio/runners.py:195: in run
+    return runner.run(main)
+           ^^^^^^^^^^^^^^^^
+/Library/Frameworks/Python.framework/Versions/3.13/lib/python3.13/asyncio/runners.py:118: in run
+    return self._loop.run_until_complete(task)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/Library/Frameworks/Python.framework/Versions/3.13/lib/python3.13/asyncio/base_events.py:725: in run_until_complete
+    return future.result()
+           ^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+    async def run():
+        sup = ScriptedModel(plan_json(), review_json())
+        code = ScriptedModel(code_reply())
+        runner = StubRunner()
+        if stage == "generate":
+            blocker = code = BlockingModel(block_at=0)
+        elif stage == "review":
+            blocker = sup = BlockingModel(plan_json(), block_at=1)
+        elif stage == "sandbox":
+            blocker = runner = BlockingSandbox()
+        else:
+            sup = ScriptedModel(plan_json(), revise_json())
+            blocker = code = BlockingModel(fenced(("solution.go", BROKEN), ("solution_test.go", TEST_A)), block_at=1)
+            runner = StubRunner("failed")
+        limits = {"code_timeout": 0.08} if stage in {"generate", "repair_generate"} else {
+                  "supervisor_timeout" if stage == "review" else "validation_timeout": 0.08}
+        monkeypatch.setattr(settings, "go_multi_agent", cfg(**(limits if stop == "timeout" else {})))
+        install(monkeypatch, setup, supervisor_model=sup, code_model=code, runner=runner)
+        session = f"s5-{stage}-{transport}-{stop}"
+        payload = {**request().model_dump(), "session_id": session}
+        path = "/api/v1/go/tasks" + ("/stream" if transport == "sse" else "")
+        exchange = Exchange(path, payload)
+        job = asyncio.create_task(exchange.run())
+        try:
+            await asyncio.wait_for(blocker.entered.wait(), 3)
+            key = session_identity("account/1", session)[1]
+            assert key in _busy
+            async with AsyncClient(transport=ASGITransport(app=main.app), base_url="http://test") as client:
+                conflict = await client.post("/api/v1/go/tasks", headers=HEADERS, json=payload)
+                assert conflict.status_code == 409
+            if stop == "cancel":
+                if transport == "sse":
+                    exchange.disconnect()
+                else:
+                    job.cancel()
+            try:
+                await asyncio.wait_for(job, 3)
+            except asyncio.CancelledError:
+                assert stop == "cancel"
+&gt;           assert blocker.closed.is_set()
+E           assert False
+E            +  where False = is_set()
+E            +    where is_set = &lt;asyncio.locks.Event object at 0x114c85a30 [unset]&gt;.is_set
+E            +      where &lt;asyncio.locks.Event object at 0x114c85a30 [unset]&gt; = &lt;test_multi_agent_http.BlockingSandbox object at 0x117243b60&gt;.closed
+
+tests/test_multi_agent_http.py:268: AssertionError</failure></testcase><testcase classname="tests.test_multi_agent_http" name="test_interruptions_preserve_evidence_and_release_session[cancel-json-repair_generate]" time="0.011"><failure message="assert False&#10; +  where False = is_set()&#10; +    where is_set = &lt;asyncio.locks.Event object at 0x114c87410 [unset]&gt;.is_set&#10; +      where &lt;asyncio.locks.Event object at 0x114c87410 [unset]&gt; = &lt;test_multi_agent_http.BlockingModel object at 0x1162bf610&gt;.closed">setup = &lt;test_multi_agent_http.RecordingStore object at 0x1144b65d0&gt;
+monkeypatch = &lt;_pytest.monkeypatch.MonkeyPatch object at 0x1144bb230&gt;
+stage = 'repair_generate', transport = 'json', stop = 'cancel'
+
+    @pytest.mark.parametrize("stage", ["generate", "review", "sandbox", "repair_generate"])
+    @pytest.mark.parametrize("transport", ["json", "sse"])
+    @pytest.mark.parametrize("stop", ["cancel", "timeout"])
+    def test_interruptions_preserve_evidence_and_release_session(setup, monkeypatch, stage, transport, stop):
+        async def run():
+            sup = ScriptedModel(plan_json(), review_json())
+            code = ScriptedModel(code_reply())
+            runner = StubRunner()
+            if stage == "generate":
+                blocker = code = BlockingModel(block_at=0)
+            elif stage == "review":
+                blocker = sup = BlockingModel(plan_json(), block_at=1)
+            elif stage == "sandbox":
+                blocker = runner = BlockingSandbox()
+            else:
+                sup = ScriptedModel(plan_json(), revise_json())
+                blocker = code = BlockingModel(fenced(("solution.go", BROKEN), ("solution_test.go", TEST_A)), block_at=1)
+                runner = StubRunner("failed")
+            limits = {"code_timeout": 0.08} if stage in {"generate", "repair_generate"} else {
+                      "supervisor_timeout" if stage == "review" else "validation_timeout": 0.08}
+            monkeypatch.setattr(settings, "go_multi_agent", cfg(**(limits if stop == "timeout" else {})))
+            install(monkeypatch, setup, supervisor_model=sup, code_model=code, runner=runner)
+            session = f"s5-{stage}-{transport}-{stop}"
+            payload = {**request().model_dump(), "session_id": session}
+            path = "/api/v1/go/tasks" + ("/stream" if transport == "sse" else "")
+            exchange = Exchange(path, payload)
+            job = asyncio.create_task(exchange.run())
+            try:
+                await asyncio.wait_for(blocker.entered.wait(), 3)
+                key = session_identity("account/1", session)[1]
+                assert key in _busy
+                async with AsyncClient(transport=ASGITransport(app=main.app), base_url="http://test") as client:
+                    conflict = await client.post("/api/v1/go/tasks", headers=HEADERS, json=payload)
+                    assert conflict.status_code == 409
+                if stop == "cancel":
+                    if transport == "sse":
+                        exchange.disconnect()
+                    else:
+                        job.cancel()
+                try:
+                    await asyncio.wait_for(job, 3)
+                except asyncio.CancelledError:
+                    assert stop == "cancel"
+                assert blocker.closed.is_set()
+                assert key not in _busy
+                assert setup.saved, "Cancellation must persist a report, including before first artifact"
+                saved = setup.get(setup.saved[-1]["run_id"], OWNER)
+                expected = "cancelled" if stop == "cancel" else "timeout"
+                assert saved["status"] == saved["stop_reason"] == expected
+                assert saved["workflow_version"] == "multi-v1" and saved["task_spec"] is not None
+                expected_calls = {"generate": 2, "review": 3, "sandbox": 2, "repair_generate": 4}[stage]
+                assert saved["model_calls"] == len(sup.inputs) + len(code.inputs) == expected_calls
+                assert saved["context_stats"]["model_calls"] == expected_calls
+                assert saved["validation_calls"] == (0 if stage == "generate" else 1)
+                assert len(saved["artifacts"]) == (0 if stage == "generate" else 1)
+                assert len(saved["reviews"]) == (1 if stage == "repair_generate" else 0)
+                if stage != "sandbox":
+                    assert saved["agent_calls"][-1]["status"] in {"failed", "cancelled"}
+                    assert saved["context_stats"]["unknown_usage_calls"] == 1
+                if stage == "sandbox":
+                    assert len(saved["attempts"]) == 1
+                    assert saved["attempts"][0]["validation"]["status"] == expected
+                    assert saved["attempts"][0]["validation"]["container_removed"]
+                for art in saved["artifacts"]:
+                    assert artifact_hash(art["files"]) == art["artifact_hash"]
+                assert saved["run_id"] not in usage._ledgers
+                async with AsyncClient(transport=ASGITransport(app=main.app), base_url="http://test") as client:
+                    own = await client.get("/api/v1/go/tasks/" + saved["run_id"], headers=HEADERS)
+                    assert own.status_code == 200 and own.json() == saved
+                    other = await client.get("/api/v1/go/tasks/" + saved["run_id"],
+                                             headers={**HEADERS, "X-Account-Id": "2"})
+                    assert other.status_code == 404
+                    install(monkeypatch, setup)
+                    again = await client.post("/api/v1/go/tasks", headers=HEADERS, json=payload)
+                    assert again.status_code == 200 and again.json()["status"] == "passed"
+            finally:
+                if not job.done():
+                    job.cancel()
+                    try:
+                        await job
+                    except asyncio.CancelledError:
+                        pass
+&gt;       asyncio.run(run())
+
+tests/test_multi_agent_http.py:307: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+/Library/Frameworks/Python.framework/Versions/3.13/lib/python3.13/asyncio/runners.py:195: in run
+    return runner.run(main)
+           ^^^^^^^^^^^^^^^^
+/Library/Frameworks/Python.framework/Versions/3.13/lib/python3.13/asyncio/runners.py:118: in run
+    return self._loop.run_until_complete(task)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/Library/Frameworks/Python.framework/Versions/3.13/lib/python3.13/asyncio/base_events.py:725: in run_until_complete
+    return future.result()
+           ^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+    async def run():
+        sup = ScriptedModel(plan_json(), review_json())
+        code = ScriptedModel(code_reply())
+        runner = StubRunner()
+        if stage == "generate":
+            blocker = code = BlockingModel(block_at=0)
+        elif stage == "review":
+            blocker = sup = BlockingModel(plan_json(), block_at=1)
+        elif stage == "sandbox":
+            blocker = runner = BlockingSandbox()
+        else:
+            sup = ScriptedModel(plan_json(), revise_json())
+            blocker = code = BlockingModel(fenced(("solution.go", BROKEN), ("solution_test.go", TEST_A)), block_at=1)
+            runner = StubRunner("failed")
+        limits = {"code_timeout": 0.08} if stage in {"generate", "repair_generate"} else {
+                  "supervisor_timeout" if stage == "review" else "validation_timeout": 0.08}
+        monkeypatch.setattr(settings, "go_multi_agent", cfg(**(limits if stop == "timeout" else {})))
+        install(monkeypatch, setup, supervisor_model=sup, code_model=code, runner=runner)
+        session = f"s5-{stage}-{transport}-{stop}"
+        payload = {**request().model_dump(), "session_id": session}
+        path = "/api/v1/go/tasks" + ("/stream" if transport == "sse" else "")
+        exchange = Exchange(path, payload)
+        job = asyncio.create_task(exchange.run())
+        try:
+            await asyncio.wait_for(blocker.entered.wait(), 3)
+            key = session_identity("account/1", session)[1]
+            assert key in _busy
+            async with AsyncClient(transport=ASGITransport(app=main.app), base_url="http://test") as client:
+                conflict = await client.post("/api/v1/go/tasks", headers=HEADERS, json=payload)
+                assert conflict.status_code == 409
+            if stop == "cancel":
+                if transport == "sse":
+                    exchange.disconnect()
+                else:
+                    job.cancel()
+            try:
+                await asyncio.wait_for(job, 3)
+            except asyncio.CancelledError:
+                assert stop == "cancel"
+&gt;           assert blocker.closed.is_set()
+E           assert False
+E            +  where False = is_set()
+E            +    where is_set = &lt;asyncio.locks.Event object at 0x114c87410 [unset]&gt;.is_set
+E            +      where &lt;asyncio.locks.Event object at 0x114c87410 [unset]&gt; = &lt;test_multi_agent_http.BlockingModel object at 0x1162bf610&gt;.closed
+
+tests/test_multi_agent_http.py:268: AssertionError</failure></testcase><testcase classname="tests.test_multi_agent_http" name="test_interruptions_preserve_evidence_and_release_session[cancel-sse-generate]" time="0.009"><failure message="assert False&#10; +  where False = is_set()&#10; +    where is_set = &lt;asyncio.locks.Event object at 0x114be8b90 [unset]&gt;.is_set&#10; +      where &lt;asyncio.locks.Event object at 0x114be8b90 [unset]&gt; = &lt;test_multi_agent_http.BlockingModel object at 0x114e2ce90&gt;.closed">setup = &lt;test_multi_agent_http.RecordingStore object at 0x114c0bd40&gt;
+monkeypatch = &lt;_pytest.monkeypatch.MonkeyPatch object at 0x115efe000&gt;
+stage = 'generate', transport = 'sse', stop = 'cancel'
+
+    @pytest.mark.parametrize("stage", ["generate", "review", "sandbox", "repair_generate"])
+    @pytest.mark.parametrize("transport", ["json", "sse"])
+    @pytest.mark.parametrize("stop", ["cancel", "timeout"])
+    def test_interruptions_preserve_evidence_and_release_session(setup, monkeypatch, stage, transport, stop):
+        async def run():
+            sup = ScriptedModel(plan_json(), review_json())
+            code = ScriptedModel(code_reply())
+            runner = StubRunner()
+            if stage == "generate":
+                blocker = code = BlockingModel(block_at=0)
+            elif stage == "review":
+                blocker = sup = BlockingModel(plan_json(), block_at=1)
+            elif stage == "sandbox":
+                blocker = runner = BlockingSandbox()
+            else:
+                sup = ScriptedModel(plan_json(), revise_json())
+                blocker = code = BlockingModel(fenced(("solution.go", BROKEN), ("solution_test.go", TEST_A)), block_at=1)
+                runner = StubRunner("failed")
+            limits = {"code_timeout": 0.08} if stage in {"generate", "repair_generate"} else {
+                      "supervisor_timeout" if stage == "review" else "validation_timeout": 0.08}
+            monkeypatch.setattr(settings, "go_multi_agent", cfg(**(limits if stop == "timeout" else {})))
+            install(monkeypatch, setup, supervisor_model=sup, code_model=code, runner=runner)
+            session = f"s5-{stage}-{transport}-{stop}"
+            payload = {**request().model_dump(), "session_id": session}
+            path = "/api/v1/go/tasks" + ("/stream" if transport == "sse" else "")
+            exchange = Exchange(path, payload)
+            job = asyncio.create_task(exchange.run())
+            try:
+                await asyncio.wait_for(blocker.entered.wait(), 3)
+                key = session_identity("account/1", session)[1]
+                assert key in _busy
+                async with AsyncClient(transport=ASGITransport(app=main.app), base_url="http://test") as client:
+                    conflict = await client.post("/api/v1/go/tasks", headers=HEADERS, json=payload)
+                    assert conflict.status_code == 409
+                if stop == "cancel":
+                    if transport == "sse":
+                        exchange.disconnect()
+                    else:
+                        job.cancel()
+                try:
+                    await asyncio.wait_for(job, 3)
+                except asyncio.CancelledError:
+                    assert stop == "cancel"
+                assert blocker.closed.is_set()
+                assert key not in _busy
+                assert setup.saved, "Cancellation must persist a report, including before first artifact"
+                saved = setup.get(setup.saved[-1]["run_id"], OWNER)
+                expected = "cancelled" if stop == "cancel" else "timeout"
+                assert saved["status"] == saved["stop_reason"] == expected
+                assert saved["workflow_version"] == "multi-v1" and saved["task_spec"] is not None
+                expected_calls = {"generate": 2, "review": 3, "sandbox": 2, "repair_generate": 4}[stage]
+                assert saved["model_calls"] == len(sup.inputs) + len(code.inputs) == expected_calls
+                assert saved["context_stats"]["model_calls"] == expected_calls
+                assert saved["validation_calls"] == (0 if stage == "generate" else 1)
+                assert len(saved["artifacts"]) == (0 if stage == "generate" else 1)
+                assert len(saved["reviews"]) == (1 if stage == "repair_generate" else 0)
+                if stage != "sandbox":
+                    assert saved["agent_calls"][-1]["status"] in {"failed", "cancelled"}
+                    assert saved["context_stats"]["unknown_usage_calls"] == 1
+                if stage == "sandbox":
+                    assert len(saved["attempts"]) == 1
+                    assert saved["attempts"][0]["validation"]["status"] == expected
+                    assert saved["attempts"][0]["validation"]["container_removed"]
+                for art in saved["artifacts"]:
+                    assert artifact_hash(art["files"]) == art["artifact_hash"]
+                assert saved["run_id"] not in usage._ledgers
+                async with AsyncClient(transport=ASGITransport(app=main.app), base_url="http://test") as client:
+                    own = await client.get("/api/v1/go/tasks/" + saved["run_id"], headers=HEADERS)
+                    assert own.status_code == 200 and own.json() == saved
+                    other = await client.get("/api/v1/go/tasks/" + saved["run_id"],
+                                             headers={**HEADERS, "X-Account-Id": "2"})
+                    assert other.status_code == 404
+                    install(monkeypatch, setup)
+                    again = await client.post("/api/v1/go/tasks", headers=HEADERS, json=payload)
+                    assert again.status_code == 200 and again.json()["status"] == "passed"
+            finally:
+                if not job.done():
+                    job.cancel()
+                    try:
+                        await job
+                    except asyncio.CancelledError:
+                        pass
+&gt;       asyncio.run(run())
+
+tests/test_multi_agent_http.py:307: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+/Library/Frameworks/Python.framework/Versions/3.13/lib/python3.13/asyncio/runners.py:195: in run
+    return runner.run(main)
+           ^^^^^^^^^^^^^^^^
+/Library/Frameworks/Python.framework/Versions/3.13/lib/python3.13/asyncio/runners.py:118: in run
+    return self._loop.run_until_complete(task)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/Library/Frameworks/Python.framework/Versions/3.13/lib/python3.13/asyncio/base_events.py:725: in run_until_complete
+    return future.result()
+           ^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+    async def run():
+        sup = ScriptedModel(plan_json(), review_json())
+        code = ScriptedModel(code_reply())
+        runner = StubRunner()
+        if stage == "generate":
+            blocker = code = BlockingModel(block_at=0)
+        elif stage == "review":
+            blocker = sup = BlockingModel(plan_json(), block_at=1)
+        elif stage == "sandbox":
+            blocker = runner = BlockingSandbox()
+        else:
+            sup = ScriptedModel(plan_json(), revise_json())
+            blocker = code = BlockingModel(fenced(("solution.go", BROKEN), ("solution_test.go", TEST_A)), block_at=1)
+            runner = StubRunner("failed")
+        limits = {"code_timeout": 0.08} if stage in {"generate", "repair_generate"} else {
+                  "supervisor_timeout" if stage == "review" else "validation_timeout": 0.08}
+        monkeypatch.setattr(settings, "go_multi_agent", cfg(**(limits if stop == "timeout" else {})))
+        install(monkeypatch, setup, supervisor_model=sup, code_model=code, runner=runner)
+        session = f"s5-{stage}-{transport}-{stop}"
+        payload = {**request().model_dump(), "session_id": session}
+        path = "/api/v1/go/tasks" + ("/stream" if transport == "sse" else "")
+        exchange = Exchange(path, payload)
+        job = asyncio.create_task(exchange.run())
+        try:
+            await asyncio.wait_for(blocker.entered.wait(), 3)
+            key = session_identity("account/1", session)[1]
+            assert key in _busy
+            async with AsyncClient(transport=ASGITransport(app=main.app), base_url="http://test") as client:
+                conflict = await client.post("/api/v1/go/tasks", headers=HEADERS, json=payload)
+                assert conflict.status_code == 409
+            if stop == "cancel":
+                if transport == "sse":
+                    exchange.disconnect()
+                else:
+                    job.cancel()
+            try:
+                await asyncio.wait_for(job, 3)
+            except asyncio.CancelledError:
+                assert stop == "cancel"
+&gt;           assert blocker.closed.is_set()
+E           assert False
+E            +  where False = is_set()
+E            +    where is_set = &lt;asyncio.locks.Event object at 0x114be8b90 [unset]&gt;.is_set
+E            +      where &lt;asyncio.locks.Event object at 0x114be8b90 [unset]&gt; = &lt;test_multi_agent_http.BlockingModel object at 0x114e2ce90&gt;.closed
+
+tests/test_multi_agent_http.py:268: AssertionError</failure></testcase><testcase classname="tests.test_multi_agent_http" name="test_interruptions_preserve_evidence_and_release_session[cancel-sse-review]" time="0.010"><failure message="assert False&#10; +  where False = is_set()&#10; +    where is_set = &lt;asyncio.locks.Event object at 0x114bebd70 [unset]&gt;.is_set&#10; +      where &lt;asyncio.locks.Event object at 0x114bebd70 [unset]&gt; = &lt;test_multi_agent_http.BlockingModel object at 0x114e2efd0&gt;.closed">setup = &lt;test_multi_agent_http.RecordingStore object at 0x114bd4050&gt;
+monkeypatch = &lt;_pytest.monkeypatch.MonkeyPatch object at 0x114442810&gt;
+stage = 'review', transport = 'sse', stop = 'cancel'
+
+    @pytest.mark.parametrize("stage", ["generate", "review", "sandbox", "repair_generate"])
+    @pytest.mark.parametrize("transport", ["json", "sse"])
+    @pytest.mark.parametrize("stop", ["cancel", "timeout"])
+    def test_interruptions_preserve_evidence_and_release_session(setup, monkeypatch, stage, transport, stop):
+        async def run():
+            sup = ScriptedModel(plan_json(), review_json())
+            code = ScriptedModel(code_reply())
+            runner = StubRunner()
+            if stage == "generate":
+                blocker = code = BlockingModel(block_at=0)
+            elif stage == "review":
+                blocker = sup = BlockingModel(plan_json(), block_at=1)
+            elif stage == "sandbox":
+                blocker = runner = BlockingSandbox()
+            else:
+                sup = ScriptedModel(plan_json(), revise_json())
+                blocker = code = BlockingModel(fenced(("solution.go", BROKEN), ("solution_test.go", TEST_A)), block_at=1)
+                runner = StubRunner("failed")
+            limits = {"code_timeout": 0.08} if stage in {"generate", "repair_generate"} else {
+                      "supervisor_timeout" if stage == "review" else "validation_timeout": 0.08}
+            monkeypatch.setattr(settings, "go_multi_agent", cfg(**(limits if stop == "timeout" else {})))
+            install(monkeypatch, setup, supervisor_model=sup, code_model=code, runner=runner)
+            session = f"s5-{stage}-{transport}-{stop}"
+            payload = {**request().model_dump(), "session_id": session}
+            path = "/api/v1/go/tasks" + ("/stream" if transport == "sse" else "")
+            exchange = Exchange(path, payload)
+            job = asyncio.create_task(exchange.run())
+            try:
+                await asyncio.wait_for(blocker.entered.wait(), 3)
+                key = session_identity("account/1", session)[1]
+                assert key in _busy
+                async with AsyncClient(transport=ASGITransport(app=main.app), base_url="http://test") as client:
+                    conflict = await client.post("/api/v1/go/tasks", headers=HEADERS, json=payload)
+                    assert conflict.status_code == 409
+                if stop == "cancel":
+                    if transport == "sse":
+                        exchange.disconnect()
+                    else:
+                        job.cancel()
+                try:
+                    await asyncio.wait_for(job, 3)
+                except asyncio.CancelledError:
+                    assert stop == "cancel"
+                assert blocker.closed.is_set()
+                assert key not in _busy
+                assert setup.saved, "Cancellation must persist a report, including before first artifact"
+                saved = setup.get(setup.saved[-1]["run_id"], OWNER)
+                expected = "cancelled" if stop == "cancel" else "timeout"
+                assert saved["status"] == saved["stop_reason"] == expected
+                assert saved["workflow_version"] == "multi-v1" and saved["task_spec"] is not None
+                expected_calls = {"generate": 2, "review": 3, "sandbox": 2, "repair_generate": 4}[stage]
+                assert saved["model_calls"] == len(sup.inputs) + len(code.inputs) == expected_calls
+                assert saved["context_stats"]["model_calls"] == expected_calls
+                assert saved["validation_calls"] == (0 if stage == "generate" else 1)
+                assert len(saved["artifacts"]) == (0 if stage == "generate" else 1)
+                assert len(saved["reviews"]) == (1 if stage == "repair_generate" else 0)
+                if stage != "sandbox":
+                    assert saved["agent_calls"][-1]["status"] in {"failed", "cancelled"}
+                    assert saved["context_stats"]["unknown_usage_calls"] == 1
+                if stage == "sandbox":
+                    assert len(saved["attempts"]) == 1
+                    assert saved["attempts"][0]["validation"]["status"] == expected
+                    assert saved["attempts"][0]["validation"]["container_removed"]
+                for art in saved["artifacts"]:
+                    assert artifact_hash(art["files"]) == art["artifact_hash"]
+                assert saved["run_id"] not in usage._ledgers
+                async with AsyncClient(transport=ASGITransport(app=main.app), base_url="http://test") as client:
+                    own = await client.get("/api/v1/go/tasks/" + saved["run_id"], headers=HEADERS)
+                    assert own.status_code == 200 and own.json() == saved
+                    other = await client.get("/api/v1/go/tasks/" + saved["run_id"],
+                                             headers={**HEADERS, "X-Account-Id": "2"})
+                    assert other.status_code == 404
+                    install(monkeypatch, setup)
+                    again = await client.post("/api/v1/go/tasks", headers=HEADERS, json=payload)
+                    assert again.status_code == 200 and again.json()["status"] == "passed"
+            finally:
+                if not job.done():
+                    job.cancel()
+                    try:
+                        await job
+                    except asyncio.CancelledError:
+                        pass
+&gt;       asyncio.run(run())
+
+tests/test_multi_agent_http.py:307: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+/Library/Frameworks/Python.framework/Versions/3.13/lib/python3.13/asyncio/runners.py:195: in run
+    return runner.run(main)
+           ^^^^^^^^^^^^^^^^
+/Library/Frameworks/Python.framework/Versions/3.13/lib/python3.13/asyncio/runners.py:118: in run
+    return self._loop.run_until_complete(task)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/Library/Frameworks/Python.framework/Versions/3.13/lib/python3.13/asyncio/base_events.py:725: in run_until_complete
+    return future.result()
+           ^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+    async def run():
+        sup = ScriptedModel(plan_json(), review_json())
+        code = ScriptedModel(code_reply())
+        runner = StubRunner()
+        if stage == "generate":
+            blocker = code = BlockingModel(block_at=0)
+        elif stage == "review":
+            blocker = sup = BlockingModel(plan_json(), block_at=1)
+        elif stage == "sandbox":
+            blocker = runner = BlockingSandbox()
+        else:
+            sup = ScriptedModel(plan_json(), revise_json())
+            blocker = code = BlockingModel(fenced(("solution.go", BROKEN), ("solution_test.go", TEST_A)), block_at=1)
+            runner = StubRunner("failed")
+        limits = {"code_timeout": 0.08} if stage in {"generate", "repair_generate"} else {
+                  "supervisor_timeout" if stage == "review" else "validation_timeout": 0.08}
+        monkeypatch.setattr(settings, "go_multi_agent", cfg(**(limits if stop == "timeout" else {})))
+        install(monkeypatch, setup, supervisor_model=sup, code_model=code, runner=runner)
+        session = f"s5-{stage}-{transport}-{stop}"
+        payload = {**request().model_dump(), "session_id": session}
+        path = "/api/v1/go/tasks" + ("/stream" if transport == "sse" else "")
+        exchange = Exchange(path, payload)
+        job = asyncio.create_task(exchange.run())
+        try:
+            await asyncio.wait_for(blocker.entered.wait(), 3)
+            key = session_identity("account/1", session)[1]
+            assert key in _busy
+            async with AsyncClient(transport=ASGITransport(app=main.app), base_url="http://test") as client:
+                conflict = await client.post("/api/v1/go/tasks", headers=HEADERS, json=payload)
+                assert conflict.status_code == 409
+            if stop == "cancel":
+                if transport == "sse":
+                    exchange.disconnect()
+                else:
+                    job.cancel()
+            try:
+                await asyncio.wait_for(job, 3)
+            except asyncio.CancelledError:
+                assert stop == "cancel"
+&gt;           assert blocker.closed.is_set()
+E           assert False
+E            +  where False = is_set()
+E            +    where is_set = &lt;asyncio.locks.Event object at 0x114bebd70 [unset]&gt;.is_set
+E            +      where &lt;asyncio.locks.Event object at 0x114bebd70 [unset]&gt; = &lt;test_multi_agent_http.BlockingModel object at 0x114e2efd0&gt;.closed
+
+tests/test_multi_agent_http.py:268: AssertionError</failure></testcase><testcase classname="tests.test_multi_agent_http" name="test_interruptions_preserve_evidence_and_release_session[cancel-sse-sandbox]" time="0.021"><failure message="assert False&#10; +  where False = is_set()&#10; +    where is_set = &lt;asyncio.locks.Event object at 0x114be9a90 [unset]&gt;.is_set&#10; +      where &lt;asyncio.locks.Event object at 0x114be9a90 [unset]&gt; = &lt;test_multi_agent_http.BlockingSandbox object at 0x1162bfb10&gt;.closed">setup = &lt;test_multi_agent_http.RecordingStore object at 0x114bd7150&gt;
+monkeypatch = &lt;_pytest.monkeypatch.MonkeyPatch object at 0x114443a10&gt;
+stage = 'sandbox', transport = 'sse', stop = 'cancel'
+
+    @pytest.mark.parametrize("stage", ["generate", "review", "sandbox", "repair_generate"])
+    @pytest.mark.parametrize("transport", ["json", "sse"])
+    @pytest.mark.parametrize("stop", ["cancel", "timeout"])
+    def test_interruptions_preserve_evidence_and_release_session(setup, monkeypatch, stage, transport, stop):
+        async def run():
+            sup = ScriptedModel(plan_json(), review_json())
+            code = ScriptedModel(code_reply())
+            runner = StubRunner()
+            if stage == "generate":
+                blocker = code = BlockingModel(block_at=0)
+            elif stage == "review":
+                blocker = sup = BlockingModel(plan_json(), block_at=1)
+            elif stage == "sandbox":
+                blocker = runner = BlockingSandbox()
+            else:
+                sup = ScriptedModel(plan_json(), revise_json())
+                blocker = code = BlockingModel(fenced(("solution.go", BROKEN), ("solution_test.go", TEST_A)), block_at=1)
+                runner = StubRunner("failed")
+            limits = {"code_timeout": 0.08} if stage in {"generate", "repair_generate"} else {
+                      "supervisor_timeout" if stage == "review" else "validation_timeout": 0.08}
+            monkeypatch.setattr(settings, "go_multi_agent", cfg(**(limits if stop == "timeout" else {})))
+            install(monkeypatch, setup, supervisor_model=sup, code_model=code, runner=runner)
+            session = f"s5-{stage}-{transport}-{stop}"
+            payload = {**request().model_dump(), "session_id": session}
+            path = "/api/v1/go/tasks" + ("/stream" if transport == "sse" else "")
+            exchange = Exchange(path, payload)
+            job = asyncio.create_task(exchange.run())
+            try:
+                await asyncio.wait_for(blocker.entered.wait(), 3)
+                key = session_identity("account/1", session)[1]
+                assert key in _busy
+                async with AsyncClient(transport=ASGITransport(app=main.app), base_url="http://test") as client:
+                    conflict = await client.post("/api/v1/go/tasks", headers=HEADERS, json=payload)
+                    assert conflict.status_code == 409
+                if stop == "cancel":
+                    if transport == "sse":
+                        exchange.disconnect()
+                    else:
+                        job.cancel()
+                try:
+                    await asyncio.wait_for(job, 3)
+                except asyncio.CancelledError:
+                    assert stop == "cancel"
+                assert blocker.closed.is_set()
+                assert key not in _busy
+                assert setup.saved, "Cancellation must persist a report, including before first artifact"
+                saved = setup.get(setup.saved[-1]["run_id"], OWNER)
+                expected = "cancelled" if stop == "cancel" else "timeout"
+                assert saved["status"] == saved["stop_reason"] == expected
+                assert saved["workflow_version"] == "multi-v1" and saved["task_spec"] is not None
+                expected_calls = {"generate": 2, "review": 3, "sandbox": 2, "repair_generate": 4}[stage]
+                assert saved["model_calls"] == len(sup.inputs) + len(code.inputs) == expected_calls
+                assert saved["context_stats"]["model_calls"] == expected_calls
+                assert saved["validation_calls"] == (0 if stage == "generate" else 1)
+                assert len(saved["artifacts"]) == (0 if stage == "generate" else 1)
+                assert len(saved["reviews"]) == (1 if stage == "repair_generate" else 0)
+                if stage != "sandbox":
+                    assert saved["agent_calls"][-1]["status"] in {"failed", "cancelled"}
+                    assert saved["context_stats"]["unknown_usage_calls"] == 1
+                if stage == "sandbox":
+                    assert len(saved["attempts"]) == 1
+                    assert saved["attempts"][0]["validation"]["status"] == expected
+                    assert saved["attempts"][0]["validation"]["container_removed"]
+                for art in saved["artifacts"]:
+                    assert artifact_hash(art["files"]) == art["artifact_hash"]
+                assert saved["run_id"] not in usage._ledgers
+                async with AsyncClient(transport=ASGITransport(app=main.app), base_url="http://test") as client:
+                    own = await client.get("/api/v1/go/tasks/" + saved["run_id"], headers=HEADERS)
+                    assert own.status_code == 200 and own.json() == saved
+                    other = await client.get("/api/v1/go/tasks/" + saved["run_id"],
+                                             headers={**HEADERS, "X-Account-Id": "2"})
+                    assert other.status_code == 404
+                    install(monkeypatch, setup)
+                    again = await client.post("/api/v1/go/tasks", headers=HEADERS, json=payload)
+                    assert again.status_code == 200 and again.json()["status"] == "passed"
+            finally:
+                if not job.done():
+                    job.cancel()
+                    try:
+                        await job
+                    except asyncio.CancelledError:
+                        pass
+&gt;       asyncio.run(run())
+
+tests/test_multi_agent_http.py:307: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+/Library/Frameworks/Python.framework/Versions/3.13/lib/python3.13/asyncio/runners.py:195: in run
+    return runner.run(main)
+           ^^^^^^^^^^^^^^^^
+/Library/Frameworks/Python.framework/Versions/3.13/lib/python3.13/asyncio/runners.py:118: in run
+    return self._loop.run_until_complete(task)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/Library/Frameworks/Python.framework/Versions/3.13/lib/python3.13/asyncio/base_events.py:725: in run_until_complete
+    return future.result()
+           ^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+    async def run():
+        sup = ScriptedModel(plan_json(), review_json())
+        code = ScriptedModel(code_reply())
+        runner = StubRunner()
+        if stage == "generate":
+            blocker = code = BlockingModel(block_at=0)
+        elif stage == "review":
+            blocker = sup = BlockingModel(plan_json(), block_at=1)
+        elif stage == "sandbox":
+            blocker = runner = BlockingSandbox()
+        else:
+            sup = ScriptedModel(plan_json(), revise_json())
+            blocker = code = BlockingModel(fenced(("solution.go", BROKEN), ("solution_test.go", TEST_A)), block_at=1)
+            runner = StubRunner("failed")
+        limits = {"code_timeout": 0.08} if stage in {"generate", "repair_generate"} else {
+                  "supervisor_timeout" if stage == "review" else "validation_timeout": 0.08}
+        monkeypatch.setattr(settings, "go_multi_agent", cfg(**(limits if stop == "timeout" else {})))
+        install(monkeypatch, setup, supervisor_model=sup, code_model=code, runner=runner)
+        session = f"s5-{stage}-{transport}-{stop}"
+        payload = {**request().model_dump(), "session_id": session}
+        path = "/api/v1/go/tasks" + ("/stream" if transport == "sse" else "")
+        exchange = Exchange(path, payload)
+        job = asyncio.create_task(exchange.run())
+        try:
+            await asyncio.wait_for(blocker.entered.wait(), 3)
+            key = session_identity("account/1", session)[1]
+            assert key in _busy
+            async with AsyncClient(transport=ASGITransport(app=main.app), base_url="http://test") as client:
+                conflict = await client.post("/api/v1/go/tasks", headers=HEADERS, json=payload)
+                assert conflict.status_code == 409
+            if stop == "cancel":
+                if transport == "sse":
+                    exchange.disconnect()
+                else:
+                    job.cancel()
+            try:
+                await asyncio.wait_for(job, 3)
+            except asyncio.CancelledError:
+                assert stop == "cancel"
+&gt;           assert blocker.closed.is_set()
+E           assert False
+E            +  where False = is_set()
+E            +    where is_set = &lt;asyncio.locks.Event object at 0x114be9a90 [unset]&gt;.is_set
+E            +      where &lt;asyncio.locks.Event object at 0x114be9a90 [unset]&gt; = &lt;test_multi_agent_http.BlockingSandbox object at 0x1162bfb10&gt;.closed
+
+tests/test_multi_agent_http.py:268: AssertionError</failure></testcase><testcase classname="tests.test_multi_agent_http" name="test_interruptions_preserve_evidence_and_release_session[cancel-sse-repair_generate]" time="0.025"><failure message="assert False&#10; +  where False = is_set()&#10; +    where is_set = &lt;asyncio.locks.Event object at 0x114bba390 [unset]&gt;.is_set&#10; +      where &lt;asyncio.locks.Event object at 0x114bba390 [unset]&gt; = &lt;test_multi_agent_http.BlockingModel object at 0x114e8ee70&gt;.closed">setup = &lt;test_multi_agent_http.RecordingStore object at 0x114c413d0&gt;
+monkeypatch = &lt;_pytest.monkeypatch.MonkeyPatch object at 0x114e37540&gt;
+stage = 'repair_generate', transport = 'sse', stop = 'cancel'
+
+    @pytest.mark.parametrize("stage", ["generate", "review", "sandbox", "repair_generate"])
+    @pytest.mark.parametrize("transport", ["json", "sse"])
+    @pytest.mark.parametrize("stop", ["cancel", "timeout"])
+    def test_interruptions_preserve_evidence_and_release_session(setup, monkeypatch, stage, transport, stop):
+        async def run():
+            sup = ScriptedModel(plan_json(), review_json())
+            code = ScriptedModel(code_reply())
+            runner = StubRunner()
+            if stage == "generate":
+                blocker = code = BlockingModel(block_at=0)
+            elif stage == "review":
+                blocker = sup = BlockingModel(plan_json(), block_at=1)
+            elif stage == "sandbox":
+                blocker = runner = BlockingSandbox()
+            else:
+                sup = ScriptedModel(plan_json(), revise_json())
+                blocker = code = BlockingModel(fenced(("solution.go", BROKEN), ("solution_test.go", TEST_A)), block_at=1)
+                runner = StubRunner("failed")
+            limits = {"code_timeout": 0.08} if stage in {"generate", "repair_generate"} else {
+                      "supervisor_timeout" if stage == "review" else "validation_timeout": 0.08}
+            monkeypatch.setattr(settings, "go_multi_agent", cfg(**(limits if stop == "timeout" else {})))
+            install(monkeypatch, setup, supervisor_model=sup, code_model=code, runner=runner)
+            session = f"s5-{stage}-{transport}-{stop}"
+            payload = {**request().model_dump(), "session_id": session}
+            path = "/api/v1/go/tasks" + ("/stream" if transport == "sse" else "")
+            exchange = Exchange(path, payload)
+            job = asyncio.create_task(exchange.run())
+            try:
+                await asyncio.wait_for(blocker.entered.wait(), 3)
+                key = session_identity("account/1", session)[1]
+                assert key in _busy
+                async with AsyncClient(transport=ASGITransport(app=main.app), base_url="http://test") as client:
+                    conflict = await client.post("/api/v1/go/tasks", headers=HEADERS, json=payload)
+                    assert conflict.status_code == 409
+                if stop == "cancel":
+                    if transport == "sse":
+                        exchange.disconnect()
+                    else:
+                        job.cancel()
+                try:
+                    await asyncio.wait_for(job, 3)
+                except asyncio.CancelledError:
+                    assert stop == "cancel"
+                assert blocker.closed.is_set()
+                assert key not in _busy
+                assert setup.saved, "Cancellation must persist a report, including before first artifact"
+                saved = setup.get(setup.saved[-1]["run_id"], OWNER)
+                expected = "cancelled" if stop == "cancel" else "timeout"
+                assert saved["status"] == saved["stop_reason"] == expected
+                assert saved["workflow_version"] == "multi-v1" and saved["task_spec"] is not None
+                expected_calls = {"generate": 2, "review": 3, "sandbox": 2, "repair_generate": 4}[stage]
+                assert saved["model_calls"] == len(sup.inputs) + len(code.inputs) == expected_calls
+                assert saved["context_stats"]["model_calls"] == expected_calls
+                assert saved["validation_calls"] == (0 if stage == "generate" else 1)
+                assert len(saved["artifacts"]) == (0 if stage == "generate" else 1)
+                assert len(saved["reviews"]) == (1 if stage == "repair_generate" else 0)
+                if stage != "sandbox":
+                    assert saved["agent_calls"][-1]["status"] in {"failed", "cancelled"}
+                    assert saved["context_stats"]["unknown_usage_calls"] == 1
+                if stage == "sandbox":
+                    assert len(saved["attempts"]) == 1
+                    assert saved["attempts"][0]["validation"]["status"] == expected
+                    assert saved["attempts"][0]["validation"]["container_removed"]
+                for art in saved["artifacts"]:
+                    assert artifact_hash(art["files"]) == art["artifact_hash"]
+                assert saved["run_id"] not in usage._ledgers
+                async with AsyncClient(transport=ASGITransport(app=main.app), base_url="http://test") as client:
+                    own = await client.get("/api/v1/go/tasks/" + saved["run_id"], headers=HEADERS)
+                    assert own.status_code == 200 and own.json() == saved
+                    other = await client.get("/api/v1/go/tasks/" + saved["run_id"],
+                                             headers={**HEADERS, "X-Account-Id": "2"})
+                    assert other.status_code == 404
+                    install(monkeypatch, setup)
+                    again = await client.post("/api/v1/go/tasks", headers=HEADERS, json=payload)
+                    assert again.status_code == 200 and again.json()["status"] == "passed"
+            finally:
+                if not job.done():
+                    job.cancel()
+                    try:
+                        await job
+                    except asyncio.CancelledError:
+                        pass
+&gt;       asyncio.run(run())
+
+tests/test_multi_agent_http.py:307: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+/Library/Frameworks/Python.framework/Versions/3.13/lib/python3.13/asyncio/runners.py:195: in run
+    return runner.run(main)
+           ^^^^^^^^^^^^^^^^
+/Library/Frameworks/Python.framework/Versions/3.13/lib/python3.13/asyncio/runners.py:118: in run
+    return self._loop.run_until_complete(task)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/Library/Frameworks/Python.framework/Versions/3.13/lib/python3.13/asyncio/base_events.py:725: in run_until_complete
+    return future.result()
+           ^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+    async def run():
+        sup = ScriptedModel(plan_json(), review_json())
+        code = ScriptedModel(code_reply())
+        runner = StubRunner()
+        if stage == "generate":
+            blocker = code = BlockingModel(block_at=0)
+        elif stage == "review":
+            blocker = sup = BlockingModel(plan_json(), block_at=1)
+        elif stage == "sandbox":
+            blocker = runner = BlockingSandbox()
+        else:
+            sup = ScriptedModel(plan_json(), revise_json())
+            blocker = code = BlockingModel(fenced(("solution.go", BROKEN), ("solution_test.go", TEST_A)), block_at=1)
+            runner = StubRunner("failed")
+        limits = {"code_timeout": 0.08} if stage in {"generate", "repair_generate"} else {
+                  "supervisor_timeout" if stage == "review" else "validation_timeout": 0.08}
+        monkeypatch.setattr(settings, "go_multi_agent", cfg(**(limits if stop == "timeout" else {})))
+        install(monkeypatch, setup, supervisor_model=sup, code_model=code, runner=runner)
+        session = f"s5-{stage}-{transport}-{stop}"
+        payload = {**request().model_dump(), "session_id": session}
+        path = "/api/v1/go/tasks" + ("/stream" if transport == "sse" else "")
+        exchange = Exchange(path, payload)
+        job = asyncio.create_task(exchange.run())
+        try:
+            await asyncio.wait_for(blocker.entered.wait(), 3)
+            key = session_identity("account/1", session)[1]
+            assert key in _busy
+            async with AsyncClient(transport=ASGITransport(app=main.app), base_url="http://test") as client:
+                conflict = await client.post("/api/v1/go/tasks", headers=HEADERS, json=payload)
+                assert conflict.status_code == 409
+            if stop == "cancel":
+                if transport == "sse":
+                    exchange.disconnect()
+                else:
+                    job.cancel()
+            try:
+                await asyncio.wait_for(job, 3)
+            except asyncio.CancelledError:
+                assert stop == "cancel"
+&gt;           assert blocker.closed.is_set()
+E           assert False
+E            +  where False = is_set()
+E            +    where is_set = &lt;asyncio.locks.Event object at 0x114bba390 [unset]&gt;.is_set
+E            +      where &lt;asyncio.locks.Event object at 0x114bba390 [unset]&gt; = &lt;test_multi_agent_http.BlockingModel object at 0x114e8ee70&gt;.closed
+
+tests/test_multi_agent_http.py:268: AssertionError</failure></testcase><testcase classname="tests.test_multi_agent_http" name="test_interruptions_preserve_evidence_and_release_session[timeout-json-generate]" time="0.135" /><testcase classname="tests.test_multi_agent_http" name="test_interruptions_preserve_evidence_and_release_session[timeout-json-review]" time="0.110" /><testcase classname="tests.test_multi_agent_http" name="test_interruptions_preserve_evidence_and_release_session[timeout-json-sandbox]" time="0.116" /><testcase classname="tests.test_multi_agent_http" name="test_interruptions_preserve_evidence_and_release_session[timeout-json-repair_generate]" time="0.107" /><testcase classname="tests.test_multi_agent_http" name="test_interruptions_preserve_evidence_and_release_session[timeout-sse-generate]" time="0.104" /><testcase classname="tests.test_multi_agent_http" name="test_interruptions_preserve_evidence_and_release_session[timeout-sse-review]" time="0.106" /><testcase classname="tests.test_multi_agent_http" name="test_interruptions_preserve_evidence_and_release_session[timeout-sse-sandbox]" time="0.117" /><testcase classname="tests.test_multi_agent_http" name="test_interruptions_preserve_evidence_and_release_session[timeout-sse-repair_generate]" time="0.108" /><testcase classname="tests.test_multi_agent_http" name="test_close_at_go_start_persists_cancelled_without_external_calls" time="0.003"><failure message="assert (None is not None)">setup = &lt;test_multi_agent_http.RecordingStore object at 0x114bd2850&gt;
+monkeypatch = &lt;_pytest.monkeypatch.MonkeyPatch object at 0x114bc7bd0&gt;
+
+    def test_close_at_go_start_persists_cancelled_without_external_calls(setup, monkeypatch):
+        async def run():
+            service = install(monkeypatch, setup)
+            stream = service.stream(request(), "account/1", "early-close")
+            start = await anext(stream)
+            await stream.aclose()
+            saved = setup.get(start["run_id"], OWNER)
+            assert saved is not None and saved["status"] == saved["stop_reason"] == "cancelled"
+            assert saved["workflow_version"] == "multi-v1"
+            assert saved["model_calls"] == saved["validation_calls"] == 0
+            assert not service.supervisor_model.inputs and not service.code_model.inputs
+&gt;       asyncio.run(run())
+
+tests/test_multi_agent_http.py:321: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+/Library/Frameworks/Python.framework/Versions/3.13/lib/python3.13/asyncio/runners.py:195: in run
+    return runner.run(main)
+           ^^^^^^^^^^^^^^^^
+/Library/Frameworks/Python.framework/Versions/3.13/lib/python3.13/asyncio/runners.py:118: in run
+    return self._loop.run_until_complete(task)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/Library/Frameworks/Python.framework/Versions/3.13/lib/python3.13/asyncio/base_events.py:725: in run_until_complete
+    return future.result()
+           ^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+    async def run():
+        service = install(monkeypatch, setup)
+        stream = service.stream(request(), "account/1", "early-close")
+        start = await anext(stream)
+        await stream.aclose()
+        saved = setup.get(start["run_id"], OWNER)
+&gt;       assert saved is not None and saved["status"] == saved["stop_reason"] == "cancelled"
+E       assert (None is not None)
+
+tests/test_multi_agent_http.py:317: AssertionError</failure></testcase><testcase classname="tests.test_multi_agent_http" name="test_accounts_same_public_session_can_run_concurrently" time="0.022"><failure message="assert False&#10; +  where False = is_set()&#10; +    where is_set = &lt;asyncio.locks.Event object at 0x114bad130 [unset]&gt;.is_set&#10; +      where &lt;asyncio.locks.Event object at 0x114bad130 [unset]&gt; = &lt;test_multi_agent_http.BlockingModel object at 0x1162a6f90&gt;.closed">setup = &lt;test_multi_agent_http.RecordingStore object at 0x114c6c3d0&gt;
+monkeypatch = &lt;_pytest.monkeypatch.MonkeyPatch object at 0x114c6c750&gt;
+
+    def test_accounts_same_public_session_can_run_concurrently(setup, monkeypatch):
+        async def run():
+            gate = BlockingModel(block_at=0)
+            service = install(monkeypatch, setup, code_model=gate)
+            first = Exchange("/api/v1/go/tasks/stream", {**request().model_dump(), "session_id": "shared"})
+            job = asyncio.create_task(first.run())
+            try:
+                await asyncio.wait_for(gate.entered.wait(), 3)
+                install(monkeypatch, setup)
+                async with AsyncClient(transport=ASGITransport(app=main.app), base_url="http://test") as client:
+                    other = await client.post("/api/v1/go/tasks", headers={**HEADERS, "X-Account-Id": "2"},
+                                               json={**request().model_dump(), "session_id": "shared"})
+                    assert other.status_code == 200 and other.json()["status"] == "passed"
+                    denied = await client.get("/api/v1/go/tasks/" + other.json()["run_id"], headers=HEADERS)
+                    assert denied.status_code == 404
+                first.disconnect()
+                await asyncio.wait_for(job, 3)
+                assert gate.closed.is_set()
+                assert not service._semaphore.locked()
+            finally:
+                if not job.done():
+                    job.cancel()
+                    try:
+                        await job
+                    except asyncio.CancelledError:
+                        pass
+&gt;       asyncio.run(run())
+
+tests/test_multi_agent_http.py:350: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+/Library/Frameworks/Python.framework/Versions/3.13/lib/python3.13/asyncio/runners.py:195: in run
+    return runner.run(main)
+           ^^^^^^^^^^^^^^^^
+/Library/Frameworks/Python.framework/Versions/3.13/lib/python3.13/asyncio/runners.py:118: in run
+    return self._loop.run_until_complete(task)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/Library/Frameworks/Python.framework/Versions/3.13/lib/python3.13/asyncio/base_events.py:725: in run_until_complete
+    return future.result()
+           ^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+    async def run():
+        gate = BlockingModel(block_at=0)
+        service = install(monkeypatch, setup, code_model=gate)
+        first = Exchange("/api/v1/go/tasks/stream", {**request().model_dump(), "session_id": "shared"})
+        job = asyncio.create_task(first.run())
+        try:
+            await asyncio.wait_for(gate.entered.wait(), 3)
+            install(monkeypatch, setup)
+            async with AsyncClient(transport=ASGITransport(app=main.app), base_url="http://test") as client:
+                other = await client.post("/api/v1/go/tasks", headers={**HEADERS, "X-Account-Id": "2"},
+                                           json={**request().model_dump(), "session_id": "shared"})
+                assert other.status_code == 200 and other.json()["status"] == "passed"
+                denied = await client.get("/api/v1/go/tasks/" + other.json()["run_id"], headers=HEADERS)
+                assert denied.status_code == 404
+            first.disconnect()
+            await asyncio.wait_for(job, 3)
+&gt;           assert gate.closed.is_set()
+E           assert False
+E            +  where False = is_set()
+E            +    where is_set = &lt;asyncio.locks.Event object at 0x114bad130 [unset]&gt;.is_set
+E            +      where &lt;asyncio.locks.Event object at 0x114bad130 [unset]&gt; = &lt;test_multi_agent_http.BlockingModel object at 0x1162a6f90&gt;.closed
+
+tests/test_multi_agent_http.py:341: AssertionError</failure></testcase></testsuite></testsuites>

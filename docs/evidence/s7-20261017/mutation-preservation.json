@@ -1,0 +1,93 @@
+{
+  "original_manifest": "b39d90c754255978c3a68645efbe86b8af79dff2cd29fd4b9c5de5b546a87f59",
+  "after_manifest": "b39d90c754255978c3a68645efbe86b8af79dff2cd29fd4b9c5de5b546a87f59",
+  "checkout_unchanged": true,
+  "isolated_copy_removed": true,
+  "rows": [
+    {
+      "mutation": "machine-gate",
+      "source": "app/agents/go_workflow.py",
+      "test": "tests/test_multi_agent_review.py::MultiAgentReviewTests::test_failed_validation_cannot_be_overridden_by_model_approve",
+      "exit_code": 1,
+      "killed_by_assertion": true,
+      "original_sha256": "da85c5b36b32eb5d03689c9a764769c686e836ab732b50adf38bcac108466312",
+      "mutant_sha256": "bbebd5dbed3170ed77fe0ec66f45c501237d9baba0d904400ac5ebbd7e116255",
+      "failures": [
+        {
+          "name": "test_failed_validation_cannot_be_overridden_by_model_approve",
+          "text": "self = <test_multi_agent_review.MultiAgentReviewTests testMethod=test_failed_validation_cannot_be_overridden_by_model_approve>\n\n    def test_failed_validation_cannot_be_overridden_by_model_approve(self):\n        result = self.decide(machine=validation(artifact(), \"failed\"))\n>       self.assertEqual((result.action, result.status, result.reason), (\"repair\", \"running\", \"validation_failed\"))\nE       AssertionError: Tuples differ: ('finish', 'passed', 'completed') != ('repair', 'running', 'validation_failed')\nE       \nE       First differing element 0:\nE       'finish'\nE       'repair'\nE       \nE       - ('finish', 'passed', 'completed')\nE       + ('repair', 'running', 'validation_failed')\n\ntests/test_multi_agent_review.py:22: AssertionError"
+        }
+      ],
+      "restored_exit_code": 0,
+      "restored_sha256": "da85c5b36b32eb5d03689c9a764769c686e836ab732b50adf38bcac108466312"
+    },
+    {
+      "mutation": "review-hash",
+      "source": "app/go_validation/contracts.py",
+      "test": "tests/test_multi_agent_review.py::MultiAgentReviewTests::test_mismatched_hash_missing_binding_and_old_round_never_pass",
+      "exit_code": 1,
+      "killed_by_assertion": true,
+      "original_sha256": "711af2a30f3318aed4b98f8ac945278084c6b2dfdadef44789a1c1b342c032c6",
+      "mutant_sha256": "3a6f6cd55ffbb7fcee253cbb547ce98ff697ec8d7ae86e0bb1dd3789055c32c4",
+      "failures": [
+        {
+          "name": "test_mismatched_hash_missing_binding_and_old_round_never_pass",
+          "text": "self = <test_multi_agent_review.MultiAgentReviewTests testMethod=test_mismatched_hash_missing_binding_and_old_round_never_pass>\n\n    def test_mismatched_hash_missing_binding_and_old_round_never_pass(self):\n        art = artifact()\n        for key, value in [(\"artifact_hash\", \"0\" * 64), (\"artifact_id\", \"other\"), (\"task_id\", \"other\"), (\"round\", 1)]:\n            with self.subTest(report=\"review\", key=key):\n>               self.assertEqual(self.decide(audited=review(art).model_copy(update={key: value})).reason, \"review_error\")\nE               AssertionError: 'completed' != 'review_error'\nE               - completed\nE               + review_error\n\ntests/test_multi_agent_review.py:35: AssertionError"
+        }
+      ],
+      "restored_exit_code": 0,
+      "restored_sha256": "711af2a30f3318aed4b98f8ac945278084c6b2dfdadef44789a1c1b342c032c6"
+    },
+    {
+      "mutation": "trusted-test",
+      "source": "app/go_validation/contracts.py",
+      "test": "tests/test_multi_agent_contracts.py::MultiAgentContractsTests::test_hash_or_trusted_test_tampering_is_rejected_even_if_rehashed",
+      "exit_code": 1,
+      "killed_by_assertion": true,
+      "original_sha256": "711af2a30f3318aed4b98f8ac945278084c6b2dfdadef44789a1c1b342c032c6",
+      "mutant_sha256": "f5225b4e624357a674dc1495b4f92fe0f12f5db281cfa8f83b6109a30c88e315",
+      "failures": [
+        {
+          "name": "test_hash_or_trusted_test_tampering_is_rejected_even_if_rehashed",
+          "text": "self = <test_multi_agent_contracts.MultiAgentContractsTests testMethod=test_hash_or_trusted_test_tampering_is_rejected_even_if_rehashed>\n\n    def test_hash_or_trusted_test_tampering_is_rejected_even_if_rehashed(self):\n        art = artifact()\n        modified = art.model_dump()\n        modified[\"files\"][0][\"content\"] += \"\\n// changed\"\n        with self.assertRaises(ValidationError):\n            CodeArtifact.model_validate(modified)\n        modified = json.loads(art.model_dump_json())\n        modified[\"files\"][-1][\"content\"] = \"package example\\n\"\n        modified[\"artifact_hash\"] = artifact_hash(modified[\"files\"])\n>       with self.assertRaises(ValidationError):\n             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nE       AssertionError: ValidationError not raised\n\ntests/test_multi_agent_contracts.py:67: AssertionError"
+        }
+      ],
+      "restored_exit_code": 0,
+      "restored_sha256": "711af2a30f3318aed4b98f8ac945278084c6b2dfdadef44789a1c1b342c032c6"
+    },
+    {
+      "mutation": "total-budget",
+      "source": "app/agents/go_workflow.py",
+      "test": "tests/test_multi_agent_acceptance.py::AcceptanceCounterexamples::test_total_guard_blocks_retry_with_unused_retry_quota",
+      "exit_code": 1,
+      "killed_by_assertion": true,
+      "original_sha256": "da85c5b36b32eb5d03689c9a764769c686e836ab732b50adf38bcac108466312",
+      "mutant_sha256": "075facf59617dd007d67443bcfe30462dc704fbc1fec614755e74eb1adc7f70e",
+      "failures": [
+        {
+          "name": "test_total_guard_blocks_retry_with_unused_retry_quota",
+          "text": "self = <test_multi_agent_acceptance.AcceptanceCounterexamples testMethod=test_total_guard_blocks_retry_with_unused_retry_quota>\n\n    async def test_total_guard_blocks_retry_with_unused_retry_quota(self):\n        budget = SharedBudget(max_normal_calls=2, max_retries=1, max_model_calls=2)\n        client = ScriptedModel(\"ok\", \"ok\", \"MUST NOT SEND\")\n        role = RoleRunner(\"code\", client, model_name=\"fixture\", run_id=\"s7-budget\", timeout=1)\n    \n        async def send(retry=False):\n            budget.reserve_model(retry=retry)\n            await role.call([], stage=\"generate\")\n    \n        await send()\n        await send()\n>       with self.assertRaises(BudgetExceededError):\n             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nE       AssertionError: BudgetExceededError not raised\n\ntests/test_multi_agent_acceptance.py:30: AssertionError"
+        }
+      ],
+      "restored_exit_code": 0,
+      "restored_sha256": "da85c5b36b32eb5d03689c9a764769c686e836ab732b50adf38bcac108466312"
+    },
+    {
+      "mutation": "cancel-propagation",
+      "source": "app/agents/role_runtime.py",
+      "test": "tests/test_multi_agent_workflow.py::ClosedLoopTests::test_cancellation_propagates_and_no_further_requests",
+      "exit_code": 1,
+      "killed_by_assertion": true,
+      "original_sha256": "6828a732fe63371461cdf8ad97c4284fa2d2e4e3151c004ab308314856fe22a5",
+      "mutant_sha256": "db83026d8fd899696a035dfeb2404bf49de0118cfce4f720bbab441921a082f8",
+      "failures": [
+        {
+          "name": "test_cancellation_propagates_and_no_further_requests",
+          "text": "self = <test_multi_agent_workflow.ClosedLoopTests testMethod=test_cancellation_propagates_and_no_further_requests>\n\n    async def test_cancellation_propagates_and_no_further_requests(self):\n        cancelled = asyncio.CancelledError()\n        workflow, sup, code = make(plan_json(),\n                                   code_replies=[cancelled])\n>       with self.assertRaises(asyncio.CancelledError):\n             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nE       AssertionError: CancelledError not raised\n\ntests/test_multi_agent_workflow.py:251: AssertionError"
+        }
+      ],
+      "restored_exit_code": 0,
+      "restored_sha256": "6828a732fe63371461cdf8ad97c4284fa2d2e4e3151c004ab308314856fe22a5"
+    }
+  ]
+}

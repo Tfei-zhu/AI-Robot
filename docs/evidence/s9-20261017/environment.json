@@ -1,0 +1,18 @@
+{
+  "python": "3.13.13 (v3.13.13:01104ce1beb, Apr  7 2026, 14:43:30) [Clang 16.0.0 (clang-1600.0.26.6)]",
+  "executable": "/Users/xumanchun/Documents/agent项目/AI-Robot-latest/.venv/bin/python",
+  "platform": "macOS-14.4.1-arm64-arm-64bit-Mach-O",
+  "docker_image_id": "sha256:381dd0955d9414dc0debedafb6201a28d4da15b32ce0883310a5e4430fa2d4af",
+  "packages": {
+    "pytest": "9.1.1",
+    "pydantic": "2.13.5",
+    "fastapi": "0.141.1",
+    "langgraph": "1.2.11",
+    "langchain-openai": "1.1.9",
+    "httpx": "0.28.1"
+  },
+  "leftover_containers": [],
+  "remote_ci": "not_run",
+  "python311_runtime": "not_run; grammar checked locally only",
+  "model_requests": "fixed clients only; no paid provider requests"
+}

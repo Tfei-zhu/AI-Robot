@@ -1,0 +1,14 @@
+{
+  "freeze_hash": "f60fe4f9fe10d781aa646268c468b983a975843da2b1043c744f6f804c64b333",
+  "passed": false,
+  "checks": {
+    "live_model_evaluated": false,
+    "independent_task_holdout": false,
+    "zero_known_holdout_false_accepts": false,
+    "live_cost_budget_fixed": false,
+    "live_quality_no_drop": null,
+    "live_latency_goal_met": null
+  },
+  "source": "actual independent labels, data audit and authorization preflight; approve excluded",
+  "production_switch_changed": false
+}

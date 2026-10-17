@@ -1,0 +1,122 @@
+{
+  "browser": "155.0.8059.80",
+  "checks": [
+    {
+      "name": "passed",
+      "source": "browser response replacement; captured service shapes, model + validator substitutes",
+      "status": "passed"
+    },
+    {
+      "name": "repair",
+      "source": "browser response replacement; captured service shapes, model + validator substitutes",
+      "status": "passed"
+    },
+    {
+      "name": "failed",
+      "source": "browser response replacement; captured service shapes, model + validator substitutes",
+      "status": "passed"
+    },
+    {
+      "name": "timeout",
+      "source": "browser response replacement; captured service shapes, model + validator substitutes",
+      "status": "passed"
+    },
+    {
+      "name": "unavailable",
+      "source": "browser response replacement; captured service shapes, model + validator substitutes",
+      "status": "passed"
+    },
+    {
+      "name": "unknown",
+      "source": "browser response replacement; captured service shapes, model + validator substitutes",
+      "status": "passed"
+    },
+    {
+      "name": "drop",
+      "source": "browser response replacement; captured service shapes, model + validator substitutes",
+      "status": "passed"
+    },
+    {
+      "name": "wrong-run",
+      "source": "browser response replacement; captured service shapes, model + validator substitutes",
+      "status": "passed"
+    },
+    {
+      "name": "nonterminal-done",
+      "source": "browser response replacement; captured service shapes, model + validator substitutes",
+      "status": "passed"
+    },
+    {
+      "name": "missing-id",
+      "source": "browser response replacement; captured service shapes, model + validator substitutes",
+      "status": "passed"
+    },
+    {
+      "name": "bad-json",
+      "source": "browser response replacement; captured service shapes, model + validator substitutes",
+      "status": "passed"
+    },
+    {
+      "name": "suggestion",
+      "source": "browser response replacement; captured service shapes, model + validator substitutes",
+      "status": "passed"
+    },
+    {
+      "name": "legacy-stream",
+      "source": "browser response replacement; captured service shapes, model + validator substitutes",
+      "status": "passed"
+    },
+    {
+      "name": "intermediate passed never green; old stream/finally cannot overwrite new task or unlock its controls",
+      "source": "browser fetch/ReadableStream replacement",
+      "status": "passed"
+    },
+    {
+      "name": "late historical query cannot overwrite newer run",
+      "source": "browser fetch replacement",
+      "status": "passed"
+    },
+    {
+      "name": "actual historical report shape remains readable",
+      "source": "browser GET response replacement; historical Docker report file",
+      "status": "passed"
+    },
+    {
+      "name": "code/log/model/issue text renders inert; unknown usage; mobile no horizontal overflow",
+      "source": "intentionally tampered browser response; not a valid server artifact",
+      "status": "passed"
+    },
+    {
+      "name": "queried report run_id mismatch rejected",
+      "source": "browser GET response replacement",
+      "status": "passed"
+    },
+    {
+      "name": "passed",
+      "source": "real backend; fixed models; real Docker",
+      "status": "passed"
+    },
+    {
+      "name": "repair",
+      "source": "real backend; fixed models; real Docker",
+      "status": "passed"
+    },
+    {
+      "name": "failed",
+      "source": "real backend; fixed models; real Docker",
+      "status": "passed"
+    },
+    {
+      "name": "cancel request distinct from server-confirmed cancelled",
+      "source": "real browser abort + real backend GET",
+      "status": "passed"
+    },
+    {
+      "name": "legacy stored JSON through actual GET and browser",
+      "source": "real backend; historical sample, no new validation",
+      "status": "passed"
+    }
+  ],
+  "page_errors": [],
+  "paid_models": "not_run"
+}

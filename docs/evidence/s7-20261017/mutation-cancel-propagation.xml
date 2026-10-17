@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?><testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="1" skipped="0" tests="1" time="1.160" timestamp="2026-10-17T16:25:02.695571+08:00" hostname="EnriciMac.local"><testcase classname="tests.test_multi_agent_workflow.ClosedLoopTests" name="test_cancellation_propagates_and_no_further_requests" time="0.080"><failure message="AssertionError: CancelledError not raised">self = &lt;test_multi_agent_workflow.ClosedLoopTests testMethod=test_cancellation_propagates_and_no_further_requests&gt;
+
+    async def test_cancellation_propagates_and_no_further_requests(self):
+        cancelled = asyncio.CancelledError()
+        workflow, sup, code = make(plan_json(),
+                                   code_replies=[cancelled])
+&gt;       with self.assertRaises(asyncio.CancelledError):
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       AssertionError: CancelledError not raised
+
+tests/test_multi_agent_workflow.py:251: AssertionError</failure></testcase></testsuite></testsuites>

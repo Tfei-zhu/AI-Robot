@@ -1,0 +1,150 @@
+ENTRY {"enabled": true, "workflow": "single-v1", "status": "passed", "reviews": 0, "model_calls": 1}
+ROLE_LEDGERS {"agent_calls": 3, "context_model_calls": 0, "aggregate_tokens": {"input_tokens": 36, "output_tokens": 102, "total_tokens": 138}, "context_tokens": {"input_tokens": 0, "output_tokens": 0, "total_tokens": 0}}
+PARTIAL_USAGE {'input_tokens': 12, 'output_tokens': 0, 'total_tokens': 0}
+INPUT_BUDGET {"limit": 1, "actual_first_prompt_estimate": 599, "model_sends": 3, "status": "passed"}
+UNKNOWN_USAGE {"per_call": [null, null, null], "aggregate": {"input_tokens": 0, "output_tokens": 0, "total_tokens": 0}, "context_complete": true, "unknown_calls": 0}
+VALIDATION_TIMEOUT {"status": "unavailable", "error": "\u9a8c\u8bc1\u5668\u672a\u7ed1\u5b9a\u5b9e\u9645\u8f93\u5165\u7248\u672c\uff0c\u6216\u7248\u672c\u4e0d\u5339\u914d\uff1b\u4e0d\u80fd\u91cd\u6807\u5386\u53f2\u62a5\u544a", "validation_calls": 0, "reserved": 1, "attempts": 0, "supervisor_sends": 1}
+/Users/xumanchun/Documents/agent项目/AI-Robot-latest/.venv/lib/python3.13/site-packages/jieba/__init__.py:44: SyntaxWarning: invalid escape sequence '\.'
+  re_han_default = re.compile("([\u4E00-\u9FD5a-zA-Z0-9+#&\._%\-]+)", re.U)
+/Users/xumanchun/Documents/agent项目/AI-Robot-latest/.venv/lib/python3.13/site-packages/jieba/__init__.py:46: SyntaxWarning: invalid escape sequence '\s'
+  re_skip_default = re.compile("(\r\n|\s)", re.U)
+/Users/xumanchun/Documents/agent项目/AI-Robot-latest/.venv/lib/python3.13/site-packages/jieba/finalseg/__init__.py:78: SyntaxWarning: invalid escape sequence '\.'
+  re_skip = re.compile("([a-zA-Z0-9]+(?:\.\d+)?%?)")
+test_enabled_switch_selects_multi_workflow (__main__.ReviewProbes.test_enabled_switch_selects_multi_workflow) ... Executing <Task pending name='Task-2' coro=<ReviewProbes.test_enabled_switch_selects_multi_workflow() running at /Users/xumanchun/Documents/agent项目/AI-Robot-latest/docs/evidence/review-s2s4-20261017/probes.py:53> wait_for=<Future pending cb=[Task.task_wakeup()] created at /Library/Frameworks/Python.framework/Versions/3.13/lib/python3.13/asyncio/base_events.py:459> cb=[_run_until_complete_cb() at /Library/Frameworks/Python.framework/Versions/3.13/lib/python3.13/asyncio/base_events.py:181] created at /Library/Frameworks/Python.framework/Versions/3.13/lib/python3.13/asyncio/runners.py:100> took 0.287 seconds
+FAIL
+test_injected_role_usage_is_in_task_ledger (__main__.ReviewProbes.test_injected_role_usage_is_in_task_ledger) ... FAIL
+test_json_surrounded_by_prose_can_be_parsed (__main__.ReviewProbes.test_json_surrounded_by_prose_can_be_parsed) ... ERROR
+test_partial_provider_usage_stays_unknown (__main__.ReviewProbes.test_partial_provider_usage_stays_unknown) ... FAIL
+test_role_input_budget_blocks_before_model_send (__main__.ReviewProbes.test_role_input_budget_blocks_before_model_send) ... FAIL
+test_unknown_usage_is_not_reported_as_known_zero (__main__.ReviewProbes.test_unknown_usage_is_not_reported_as_known_zero) ... FAIL
+test_validation_stage_timeout_is_retained_as_timeout (__main__.ReviewProbes.test_validation_stage_timeout_is_retained_as_timeout) ... FAIL
+
+======================================================================
+ERROR: test_json_surrounded_by_prose_can_be_parsed (__main__.ReviewProbes.test_json_surrounded_by_prose_can_be_parsed)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/xumanchun/Documents/agent项目/AI-Robot-latest/app/agents/role_runtime.py", line 44, in extract_json
+    data = json.loads(text)
+  File "/Library/Frameworks/Python.framework/Versions/3.13/lib/python3.13/json/__init__.py", line 352, in loads
+    return _default_decoder.decode(s)
+           ~~~~~~~~~~~~~~~~~~~~~~~^^^
+  File "/Library/Frameworks/Python.framework/Versions/3.13/lib/python3.13/json/decoder.py", line 345, in decode
+    obj, end = self.raw_decode(s, idx=_w(s, 0).end())
+               ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Library/Frameworks/Python.framework/Versions/3.13/lib/python3.13/json/decoder.py", line 363, in raw_decode
+    raise JSONDecodeError("Expecting value", s, err.value) from None
+json.decoder.JSONDecodeError: Expecting value: line 1 column 1 (char 0)
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/Users/xumanchun/Documents/agent项目/AI-Robot-latest/docs/evidence/review-s2s4-20261017/probes.py", line 115, in test_json_surrounded_by_prose_can_be_parsed
+    self.assertEqual(extract_json("说明：" + json.dumps(payload) + "\n结束"), payload)
+                     ~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/xumanchun/Documents/agent项目/AI-Robot-latest/app/agents/role_runtime.py", line 50, in extract_json
+    data = json.loads(text[start:end])
+  File "/Library/Frameworks/Python.framework/Versions/3.13/lib/python3.13/json/__init__.py", line 352, in loads
+    return _default_decoder.decode(s)
+           ~~~~~~~~~~~~~~~~~~~~~~~^^^
+  File "/Library/Frameworks/Python.framework/Versions/3.13/lib/python3.13/json/decoder.py", line 345, in decode
+    obj, end = self.raw_decode(s, idx=_w(s, 0).end())
+               ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Library/Frameworks/Python.framework/Versions/3.13/lib/python3.13/json/decoder.py", line 361, in raw_decode
+    obj, end = self.scan_once(s, idx)
+               ~~~~~~~~~~~~~~^^^^^^^^
+json.decoder.JSONDecodeError: Expecting ',' delimiter: line 1 column 22 (char 21)
+
+======================================================================
+FAIL: test_enabled_switch_selects_multi_workflow (__main__.ReviewProbes.test_enabled_switch_selects_multi_workflow)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Library/Frameworks/Python.framework/Versions/3.13/lib/python3.13/asyncio/runners.py", line 118, in run
+    return self._loop.run_until_complete(task)
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^
+  File "/Library/Frameworks/Python.framework/Versions/3.13/lib/python3.13/asyncio/base_events.py", line 725, in run_until_complete
+    return future.result()
+           ~~~~~~~~~~~~~^^
+  File "/Users/xumanchun/Documents/agent项目/AI-Robot-latest/docs/evidence/review-s2s4-20261017/probes.py", line 58, in test_enabled_switch_selects_multi_workflow
+    self.assertEqual(result.workflow_version, "multi-v1")
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: 'single-v1' != 'multi-v1'
+- single-v1
++ multi-v1
+
+
+======================================================================
+FAIL: test_injected_role_usage_is_in_task_ledger (__main__.ReviewProbes.test_injected_role_usage_is_in_task_ledger)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Library/Frameworks/Python.framework/Versions/3.13/lib/python3.13/asyncio/runners.py", line 118, in run
+    return self._loop.run_until_complete(task)
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^
+  File "/Library/Frameworks/Python.framework/Versions/3.13/lib/python3.13/asyncio/base_events.py", line 725, in run_until_complete
+    return future.result()
+           ~~~~~~~~~~~~~^^
+  File "/Users/xumanchun/Documents/agent项目/AI-Robot-latest/docs/evidence/review-s2s4-20261017/probes.py", line 96, in test_injected_role_usage_is_in_task_ledger
+    self.assertEqual(result.context_stats["model_calls"], result.model_calls)
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: 0 != 3
+
+======================================================================
+FAIL: test_partial_provider_usage_stays_unknown (__main__.ReviewProbes.test_partial_provider_usage_stays_unknown)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/xumanchun/Documents/agent项目/AI-Robot-latest/docs/evidence/review-s2s4-20261017/probes.py", line 111, in test_partial_provider_usage_stays_unknown
+    self.assertIsNone(actual)
+    ~~~~~~~~~~~~~~~~~^^^^^^^^
+AssertionError: {'input_tokens': 12, 'output_tokens': 0, 'total_tokens': 0} is not None
+
+======================================================================
+FAIL: test_role_input_budget_blocks_before_model_send (__main__.ReviewProbes.test_role_input_budget_blocks_before_model_send)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Library/Frameworks/Python.framework/Versions/3.13/lib/python3.13/asyncio/runners.py", line 118, in run
+    return self._loop.run_until_complete(task)
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^
+  File "/Library/Frameworks/Python.framework/Versions/3.13/lib/python3.13/asyncio/base_events.py", line 725, in run_until_complete
+    return future.result()
+           ~~~~~~~~~~~~~^^
+  File "/Users/xumanchun/Documents/agent项目/AI-Robot-latest/docs/evidence/review-s2s4-20261017/probes.py", line 72, in test_role_input_budget_blocks_before_model_send
+    self.assertEqual(len(sup.inputs) + len(code.inputs), 0)
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: 3 != 0
+
+======================================================================
+FAIL: test_unknown_usage_is_not_reported_as_known_zero (__main__.ReviewProbes.test_unknown_usage_is_not_reported_as_known_zero)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Library/Frameworks/Python.framework/Versions/3.13/lib/python3.13/asyncio/runners.py", line 118, in run
+    return self._loop.run_until_complete(task)
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^
+  File "/Library/Frameworks/Python.framework/Versions/3.13/lib/python3.13/asyncio/base_events.py", line 725, in run_until_complete
+    return future.result()
+           ~~~~~~~~~~~~~^^
+  File "/Users/xumanchun/Documents/agent项目/AI-Robot-latest/docs/evidence/review-s2s4-20261017/probes.py", line 104, in test_unknown_usage_is_not_reported_as_known_zero
+    self.assertEqual(result.context_stats["unknown_usage_calls"], 3)
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: 0 != 3
+
+======================================================================
+FAIL: test_validation_stage_timeout_is_retained_as_timeout (__main__.ReviewProbes.test_validation_stage_timeout_is_retained_as_timeout)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Library/Frameworks/Python.framework/Versions/3.13/lib/python3.13/asyncio/runners.py", line 118, in run
+    return self._loop.run_until_complete(task)
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^
+  File "/Library/Frameworks/Python.framework/Versions/3.13/lib/python3.13/asyncio/base_events.py", line 725, in run_until_complete
+    return future.result()
+           ~~~~~~~~~~~~~^^
+  File "/Users/xumanchun/Documents/agent项目/AI-Robot-latest/docs/evidence/review-s2s4-20261017/probes.py", line 85, in test_validation_stage_timeout_is_retained_as_timeout
+    self.assertEqual(result.status, "timeout")
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: 'unavailable' != 'timeout'
+- unavailable
++ timeout
+
+
+----------------------------------------------------------------------
+Ran 7 tests in 0.450s
+
+FAILED (failures=6, errors=1)

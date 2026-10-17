@@ -1,0 +1,7 @@
+{
+  "python3.11": null,
+  "framework_versions": [
+    "3.13",
+    "Current"
+  ]
+}

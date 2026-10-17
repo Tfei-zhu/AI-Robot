@@ -1,0 +1,11 @@
+--- app/go_validation/contracts.py
++++ app/go_validation/contracts.py (isolated mutant)
+@@ -173,7 +173,7 @@
+         from app.go_validation.fixtures import ACCEPTANCE_FILE, ACCEPTANCE_TESTS
+         actual = artifact_hash(self.files)  # Revalidate size, uniqueness and complete bundle.
+         trusted = [f for f in self.files if f.name == ACCEPTANCE_FILE]
+-        if len(trusted) != 1 or trusted[0].content != ACCEPTANCE_TESTS[self.scenario]:
++        if len(trusted) != 1:
+             raise ValueError("最终产物必须包含当前场景原样的服务端验收测试")
+         if self.artifact_hash is not None and self.artifact_hash != actual:
+             raise ValueError("产物 hash 与完整文件不匹配")

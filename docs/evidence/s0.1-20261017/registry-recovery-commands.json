@@ -1,0 +1,16 @@
+[
+  {
+    "id": "registry-manifest-probe",
+    "argv": [
+      "/Users/xumanchun/Documents/agent项目/AI-Robot-latest/.venv/bin/python",
+      "/Users/xumanchun/Documents/agent项目/AI-Robot-latest/docs/evidence/s0.1-20261017/registry-recovery.py"
+    ],
+    "cwd": "/Users/xumanchun/Documents/agent项目/AI-Robot-latest",
+    "started_utc": "2026-10-17T03:33:26.697360+00:00",
+    "exit_code": 0,
+    "elapsed_seconds": 2.771,
+    "network_guard": false,
+    "output": "registry-manifest-probe.txt",
+    "output_sha256": "c55fa1d0d2b671807ad1a4a496473f7f8a948ac02c200fd313071de0904da68a"
+  }
+]

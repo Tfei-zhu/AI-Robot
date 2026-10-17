@@ -1,0 +1,10 @@
+/Users/xumanchun/Documents/agent项目/AI-Robot-latest/app/main.py
+routes: 14
+multi enabled: False
+nodes: ['__end__', '__start__', 'agent', 'finalize', 'go_finish', 'go_generate', 'go_retrieve', 'go_validate', 'tools']
+/Users/xumanchun/Documents/agent项目/AI-Robot-FastAPI-LangChain-RAG-CrewAI-Agent-/.venv/lib/python3.13/site-packages/jieba/__init__.py:44: SyntaxWarning: invalid escape sequence '\.'
+  re_han_default = re.compile("([\u4E00-\u9FD5a-zA-Z0-9+#&\._%\-]+)", re.U)
+/Users/xumanchun/Documents/agent项目/AI-Robot-FastAPI-LangChain-RAG-CrewAI-Agent-/.venv/lib/python3.13/site-packages/jieba/__init__.py:46: SyntaxWarning: invalid escape sequence '\s'
+  re_skip_default = re.compile("(\r\n|\s)", re.U)
+/Users/xumanchun/Documents/agent项目/AI-Robot-FastAPI-LangChain-RAG-CrewAI-Agent-/.venv/lib/python3.13/site-packages/jieba/finalseg/__init__.py:78: SyntaxWarning: invalid escape sequence '\.'
+  re_skip = re.compile("([a-zA-Z0-9]+(?:\.\d+)?%?)")

@@ -1,0 +1,632 @@
+[
+  {
+    "label": "counterexamples",
+    "argv": [
+      "/Users/xumanchun/Documents/agent项目/AI-Robot-latest/.venv/bin/python",
+      "-m",
+      "pytest",
+      "tests/test_multi_agent_acceptance.py",
+      "-q",
+      "-ra",
+      "--junitxml=/Users/xumanchun/Documents/agent项目/AI-Robot-latest/docs/evidence/s7-20261017/counterexamples.xml"
+    ],
+    "cwd": "/Users/xumanchun/Documents/agent项目/AI-Robot-latest",
+    "started_utc": "2026-10-17T08:23:42.437486+00:00",
+    "exit_code": 0,
+    "elapsed_seconds": 4.043,
+    "output": "01-counterexamples.txt",
+    "output_sha256": "9ccf21ed45dcef9f2f355ec7491feb3c5c3aab9dac94140c1e3e1aa1f83149f8",
+    "head": "1ea7e6b7abbde3bd1a5963f03cd142fac553685a",
+    "source_manifest_sha256": "3e70afe3698cf92c983031cc0dc5f80405ef8f3d6149efe39e92317376531e5c",
+    "tracked_diff_sha256": "2be76607869053633d5a7ec7b8383b42d64137bf6724405001ee868836b93f1a",
+    "source_unchanged": true,
+    "environment_overrides": {}
+  },
+  {
+    "label": "mutations-control",
+    "argv": [
+      "/Users/xumanchun/Documents/agent项目/AI-Robot-latest/.venv/bin/python",
+      "-m",
+      "pytest",
+      "tests/test_multi_agent_review.py::MultiAgentReviewTests::test_failed_validation_cannot_be_overridden_by_model_approve",
+      "tests/test_multi_agent_review.py::MultiAgentReviewTests::test_mismatched_hash_missing_binding_and_old_round_never_pass",
+      "tests/test_multi_agent_contracts.py::MultiAgentContractsTests::test_hash_or_trusted_test_tampering_is_rejected_even_if_rehashed",
+      "tests/test_multi_agent_acceptance.py::AcceptanceCounterexamples::test_total_guard_blocks_retry_with_unused_retry_quota",
+      "tests/test_multi_agent_workflow.py::ClosedLoopTests::test_cancellation_propagates_and_no_further_requests",
+      "-q",
+      "-ra",
+      "--junitxml=/Users/xumanchun/Documents/agent项目/AI-Robot-latest/docs/evidence/s7-20261017/mutations-control.xml"
+    ],
+    "cwd": "/private/tmp/airobot-s7-mutations-ecescsud",
+    "started_utc": "2026-10-17T08:24:41.196047+00:00",
+    "exit_code": 0,
+    "elapsed_seconds": 3.338,
+    "output": "02-mutations-control.txt",
+    "output_sha256": "8ebec9eaf09437e26f9eec25468d8787f5209878a7773178194b74321615ff8e",
+    "head": "1ea7e6b7abbde3bd1a5963f03cd142fac553685a",
+    "source_manifest_sha256": "b39d90c754255978c3a68645efbe86b8af79dff2cd29fd4b9c5de5b546a87f59",
+    "tracked_diff_sha256": "2be76607869053633d5a7ec7b8383b42d64137bf6724405001ee868836b93f1a",
+    "source_unchanged": true,
+    "environment_overrides": {
+      "PYTHONPATH": "/Users/xumanchun/Documents/agent项目/AI-Robot-latest/docs/evidence/s0.1-20261017/offline_guard:/private/tmp/airobot-s7-mutations-ecescsud:/private/tmp/airobot-s7-mutations-ecescsud/tests",
+      "PYTHONPYCACHEPREFIX": "/private/tmp/airobot-s7-mutations-ecescsud/pycache"
+    }
+  },
+  {
+    "label": "mutation-machine-gate",
+    "argv": [
+      "/Users/xumanchun/Documents/agent项目/AI-Robot-latest/.venv/bin/python",
+      "-m",
+      "pytest",
+      "tests/test_multi_agent_review.py::MultiAgentReviewTests::test_failed_validation_cannot_be_overridden_by_model_approve",
+      "-q",
+      "-ra",
+      "--junitxml=/Users/xumanchun/Documents/agent项目/AI-Robot-latest/docs/evidence/s7-20261017/mutation-machine-gate.xml"
+    ],
+    "cwd": "/private/tmp/airobot-s7-mutations-ecescsud",
+    "started_utc": "2026-10-17T08:24:44.604908+00:00",
+    "exit_code": 1,
+    "elapsed_seconds": 1.764,
+    "output": "03-mutation-machine-gate.txt",
+    "output_sha256": "85757ed6021876d933678bacc1a225b849ddf23ff21d15ad32915a2457252d83",
+    "head": "1ea7e6b7abbde3bd1a5963f03cd142fac553685a",
+    "source_manifest_sha256": "b39d90c754255978c3a68645efbe86b8af79dff2cd29fd4b9c5de5b546a87f59",
+    "tracked_diff_sha256": "2be76607869053633d5a7ec7b8383b42d64137bf6724405001ee868836b93f1a",
+    "source_unchanged": true,
+    "environment_overrides": {
+      "PYTHONPATH": "/Users/xumanchun/Documents/agent项目/AI-Robot-latest/docs/evidence/s0.1-20261017/offline_guard:/private/tmp/airobot-s7-mutations-ecescsud:/private/tmp/airobot-s7-mutations-ecescsud/tests",
+      "PYTHONPYCACHEPREFIX": "/private/tmp/airobot-s7-mutations-ecescsud/pycache"
+    }
+  },
+  {
+    "label": "restored-machine-gate",
+    "argv": [
+      "/Users/xumanchun/Documents/agent项目/AI-Robot-latest/.venv/bin/python",
+      "-m",
+      "pytest",
+      "tests/test_multi_agent_review.py::MultiAgentReviewTests::test_failed_validation_cannot_be_overridden_by_model_approve",
+      "-q",
+      "-ra",
+      "--junitxml=/Users/xumanchun/Documents/agent项目/AI-Robot-latest/docs/evidence/s7-20261017/restored-machine-gate.xml"
+    ],
+    "cwd": "/private/tmp/airobot-s7-mutations-ecescsud",
+    "started_utc": "2026-10-17T08:24:46.438102+00:00",
+    "exit_code": 0,
+    "elapsed_seconds": 1.666,
+    "output": "04-restored-machine-gate.txt",
+    "output_sha256": "35d86279d96ed65491ba8ff0748e1c8e7891711531404dc5d4b9cd6ae33de3ec",
+    "head": "1ea7e6b7abbde3bd1a5963f03cd142fac553685a",
+    "source_manifest_sha256": "b39d90c754255978c3a68645efbe86b8af79dff2cd29fd4b9c5de5b546a87f59",
+    "tracked_diff_sha256": "2be76607869053633d5a7ec7b8383b42d64137bf6724405001ee868836b93f1a",
+    "source_unchanged": true,
+    "environment_overrides": {
+      "PYTHONPATH": "/Users/xumanchun/Documents/agent项目/AI-Robot-latest/docs/evidence/s0.1-20261017/offline_guard:/private/tmp/airobot-s7-mutations-ecescsud:/private/tmp/airobot-s7-mutations-ecescsud/tests",
+      "PYTHONPYCACHEPREFIX": "/private/tmp/airobot-s7-mutations-ecescsud/pycache"
+    }
+  },
+  {
+    "label": "mutation-review-hash",
+    "argv": [
+      "/Users/xumanchun/Documents/agent项目/AI-Robot-latest/.venv/bin/python",
+      "-m",
+      "pytest",
+      "tests/test_multi_agent_review.py::MultiAgentReviewTests::test_mismatched_hash_missing_binding_and_old_round_never_pass",
+      "-q",
+      "-ra",
+      "--junitxml=/Users/xumanchun/Documents/agent项目/AI-Robot-latest/docs/evidence/s7-20261017/mutation-review-hash.xml"
+    ],
+    "cwd": "/private/tmp/airobot-s7-mutations-ecescsud",
+    "started_utc": "2026-10-17T08:24:48.186111+00:00",
+    "exit_code": 1,
+    "elapsed_seconds": 1.624,
+    "output": "05-mutation-review-hash.txt",
+    "output_sha256": "bd40afacf1f317cad8ca4da20748b7105f5894c2584101a08d7f66535199fec5",
+    "head": "1ea7e6b7abbde3bd1a5963f03cd142fac553685a",
+    "source_manifest_sha256": "b39d90c754255978c3a68645efbe86b8af79dff2cd29fd4b9c5de5b546a87f59",
+    "tracked_diff_sha256": "2be76607869053633d5a7ec7b8383b42d64137bf6724405001ee868836b93f1a",
+    "source_unchanged": true,
+    "environment_overrides": {
+      "PYTHONPATH": "/Users/xumanchun/Documents/agent项目/AI-Robot-latest/docs/evidence/s0.1-20261017/offline_guard:/private/tmp/airobot-s7-mutations-ecescsud:/private/tmp/airobot-s7-mutations-ecescsud/tests",
+      "PYTHONPYCACHEPREFIX": "/private/tmp/airobot-s7-mutations-ecescsud/pycache"
+    }
+  },
+  {
+    "label": "restored-review-hash",
+    "argv": [
+      "/Users/xumanchun/Documents/agent项目/AI-Robot-latest/.venv/bin/python",
+      "-m",
+      "pytest",
+      "tests/test_multi_agent_review.py::MultiAgentReviewTests::test_mismatched_hash_missing_binding_and_old_round_never_pass",
+      "-q",
+      "-ra",
+      "--junitxml=/Users/xumanchun/Documents/agent项目/AI-Robot-latest/docs/evidence/s7-20261017/restored-review-hash.xml"
+    ],
+    "cwd": "/private/tmp/airobot-s7-mutations-ecescsud",
+    "started_utc": "2026-10-17T08:24:49.879297+00:00",
+    "exit_code": 0,
+    "elapsed_seconds": 1.758,
+    "output": "06-restored-review-hash.txt",
+    "output_sha256": "ed01c984452f24c7413beda3c395c6ca4f7e3e8d16343930f8cf7d5df6dff078",
+    "head": "1ea7e6b7abbde3bd1a5963f03cd142fac553685a",
+    "source_manifest_sha256": "b39d90c754255978c3a68645efbe86b8af79dff2cd29fd4b9c5de5b546a87f59",
+    "tracked_diff_sha256": "2be76607869053633d5a7ec7b8383b42d64137bf6724405001ee868836b93f1a",
+    "source_unchanged": true,
+    "environment_overrides": {
+      "PYTHONPATH": "/Users/xumanchun/Documents/agent项目/AI-Robot-latest/docs/evidence/s0.1-20261017/offline_guard:/private/tmp/airobot-s7-mutations-ecescsud:/private/tmp/airobot-s7-mutations-ecescsud/tests",
+      "PYTHONPYCACHEPREFIX": "/private/tmp/airobot-s7-mutations-ecescsud/pycache"
+    }
+  },
+  {
+    "label": "mutation-trusted-test",
+    "argv": [
+      "/Users/xumanchun/Documents/agent项目/AI-Robot-latest/.venv/bin/python",
+      "-m",
+      "pytest",
+      "tests/test_multi_agent_contracts.py::MultiAgentContractsTests::test_hash_or_trusted_test_tampering_is_rejected_even_if_rehashed",
+      "-q",
+      "-ra",
+      "--junitxml=/Users/xumanchun/Documents/agent项目/AI-Robot-latest/docs/evidence/s7-20261017/mutation-trusted-test.xml"
+    ],
+    "cwd": "/private/tmp/airobot-s7-mutations-ecescsud",
+    "started_utc": "2026-10-17T08:24:51.709147+00:00",
+    "exit_code": 1,
+    "elapsed_seconds": 1.696,
+    "output": "07-mutation-trusted-test.txt",
+    "output_sha256": "2524a4e3508f601f89bee01df712a10d94da7e17b14a2d6070bfdb5c20a9781f",
+    "head": "1ea7e6b7abbde3bd1a5963f03cd142fac553685a",
+    "source_manifest_sha256": "b39d90c754255978c3a68645efbe86b8af79dff2cd29fd4b9c5de5b546a87f59",
+    "tracked_diff_sha256": "2be76607869053633d5a7ec7b8383b42d64137bf6724405001ee868836b93f1a",
+    "source_unchanged": true,
+    "environment_overrides": {
+      "PYTHONPATH": "/Users/xumanchun/Documents/agent项目/AI-Robot-latest/docs/evidence/s0.1-20261017/offline_guard:/private/tmp/airobot-s7-mutations-ecescsud:/private/tmp/airobot-s7-mutations-ecescsud/tests",
+      "PYTHONPYCACHEPREFIX": "/private/tmp/airobot-s7-mutations-ecescsud/pycache"
+    }
+  },
+  {
+    "label": "restored-trusted-test",
+    "argv": [
+      "/Users/xumanchun/Documents/agent项目/AI-Robot-latest/.venv/bin/python",
+      "-m",
+      "pytest",
+      "tests/test_multi_agent_contracts.py::MultiAgentContractsTests::test_hash_or_trusted_test_tampering_is_rejected_even_if_rehashed",
+      "-q",
+      "-ra",
+      "--junitxml=/Users/xumanchun/Documents/agent项目/AI-Robot-latest/docs/evidence/s7-20261017/restored-trusted-test.xml"
+    ],
+    "cwd": "/private/tmp/airobot-s7-mutations-ecescsud",
+    "started_utc": "2026-10-17T08:24:53.473224+00:00",
+    "exit_code": 0,
+    "elapsed_seconds": 1.591,
+    "output": "08-restored-trusted-test.txt",
+    "output_sha256": "35d86279d96ed65491ba8ff0748e1c8e7891711531404dc5d4b9cd6ae33de3ec",
+    "head": "1ea7e6b7abbde3bd1a5963f03cd142fac553685a",
+    "source_manifest_sha256": "b39d90c754255978c3a68645efbe86b8af79dff2cd29fd4b9c5de5b546a87f59",
+    "tracked_diff_sha256": "2be76607869053633d5a7ec7b8383b42d64137bf6724405001ee868836b93f1a",
+    "source_unchanged": true,
+    "environment_overrides": {
+      "PYTHONPATH": "/Users/xumanchun/Documents/agent项目/AI-Robot-latest/docs/evidence/s0.1-20261017/offline_guard:/private/tmp/airobot-s7-mutations-ecescsud:/private/tmp/airobot-s7-mutations-ecescsud/tests",
+      "PYTHONPYCACHEPREFIX": "/private/tmp/airobot-s7-mutations-ecescsud/pycache"
+    }
+  },
+  {
+    "label": "mutation-total-budget",
+    "argv": [
+      "/Users/xumanchun/Documents/agent项目/AI-Robot-latest/.venv/bin/python",
+      "-m",
+      "pytest",
+      "tests/test_multi_agent_acceptance.py::AcceptanceCounterexamples::test_total_guard_blocks_retry_with_unused_retry_quota",
+      "-q",
+      "-ra",
+      "--junitxml=/Users/xumanchun/Documents/agent项目/AI-Robot-latest/docs/evidence/s7-20261017/mutation-total-budget.xml"
+    ],
+    "cwd": "/private/tmp/airobot-s7-mutations-ecescsud",
+    "started_utc": "2026-10-17T08:24:55.138710+00:00",
+    "exit_code": 1,
+    "elapsed_seconds": 3.157,
+    "output": "09-mutation-total-budget.txt",
+    "output_sha256": "d72e6def6052818b0cb470cd1174c8eee36cc9ea37c7627e8029c23e56cc9c93",
+    "head": "1ea7e6b7abbde3bd1a5963f03cd142fac553685a",
+    "source_manifest_sha256": "b39d90c754255978c3a68645efbe86b8af79dff2cd29fd4b9c5de5b546a87f59",
+    "tracked_diff_sha256": "2be76607869053633d5a7ec7b8383b42d64137bf6724405001ee868836b93f1a",
+    "source_unchanged": true,
+    "environment_overrides": {
+      "PYTHONPATH": "/Users/xumanchun/Documents/agent项目/AI-Robot-latest/docs/evidence/s0.1-20261017/offline_guard:/private/tmp/airobot-s7-mutations-ecescsud:/private/tmp/airobot-s7-mutations-ecescsud/tests",
+      "PYTHONPYCACHEPREFIX": "/private/tmp/airobot-s7-mutations-ecescsud/pycache"
+    }
+  },
+  {
+    "label": "restored-total-budget",
+    "argv": [
+      "/Users/xumanchun/Documents/agent项目/AI-Robot-latest/.venv/bin/python",
+      "-m",
+      "pytest",
+      "tests/test_multi_agent_acceptance.py::AcceptanceCounterexamples::test_total_guard_blocks_retry_with_unused_retry_quota",
+      "-q",
+      "-ra",
+      "--junitxml=/Users/xumanchun/Documents/agent项目/AI-Robot-latest/docs/evidence/s7-20261017/restored-total-budget.xml"
+    ],
+    "cwd": "/private/tmp/airobot-s7-mutations-ecescsud",
+    "started_utc": "2026-10-17T08:24:58.362341+00:00",
+    "exit_code": 0,
+    "elapsed_seconds": 2.77,
+    "output": "10-restored-total-budget.txt",
+    "output_sha256": "8a3f7875d67dd3f2e924f9c685083580eed8836eb3514825a15b5846707e0fb8",
+    "head": "1ea7e6b7abbde3bd1a5963f03cd142fac553685a",
+    "source_manifest_sha256": "b39d90c754255978c3a68645efbe86b8af79dff2cd29fd4b9c5de5b546a87f59",
+    "tracked_diff_sha256": "2be76607869053633d5a7ec7b8383b42d64137bf6724405001ee868836b93f1a",
+    "source_unchanged": true,
+    "environment_overrides": {
+      "PYTHONPATH": "/Users/xumanchun/Documents/agent项目/AI-Robot-latest/docs/evidence/s0.1-20261017/offline_guard:/private/tmp/airobot-s7-mutations-ecescsud:/private/tmp/airobot-s7-mutations-ecescsud/tests",
+      "PYTHONPYCACHEPREFIX": "/private/tmp/airobot-s7-mutations-ecescsud/pycache"
+    }
+  },
+  {
+    "label": "mutation-cancel-propagation",
+    "argv": [
+      "/Users/xumanchun/Documents/agent项目/AI-Robot-latest/.venv/bin/python",
+      "-m",
+      "pytest",
+      "tests/test_multi_agent_workflow.py::ClosedLoopTests::test_cancellation_propagates_and_no_further_requests",
+      "-q",
+      "-ra",
+      "--junitxml=/Users/xumanchun/Documents/agent项目/AI-Robot-latest/docs/evidence/s7-20261017/mutation-cancel-propagation.xml"
+    ],
+    "cwd": "/private/tmp/airobot-s7-mutations-ecescsud",
+    "started_utc": "2026-10-17T08:25:01.197309+00:00",
+    "exit_code": 1,
+    "elapsed_seconds": 2.964,
+    "output": "11-mutation-cancel-propagation.txt",
+    "output_sha256": "56963cb7d42cd7bd5987587b89948ac4c25e5919129a6b9d4a60c04531ce65f8",
+    "head": "1ea7e6b7abbde3bd1a5963f03cd142fac553685a",
+    "source_manifest_sha256": "b39d90c754255978c3a68645efbe86b8af79dff2cd29fd4b9c5de5b546a87f59",
+    "tracked_diff_sha256": "2be76607869053633d5a7ec7b8383b42d64137bf6724405001ee868836b93f1a",
+    "source_unchanged": true,
+    "environment_overrides": {
+      "PYTHONPATH": "/Users/xumanchun/Documents/agent项目/AI-Robot-latest/docs/evidence/s0.1-20261017/offline_guard:/private/tmp/airobot-s7-mutations-ecescsud:/private/tmp/airobot-s7-mutations-ecescsud/tests",
+      "PYTHONPYCACHEPREFIX": "/private/tmp/airobot-s7-mutations-ecescsud/pycache"
+    }
+  },
+  {
+    "label": "restored-cancel-propagation",
+    "argv": [
+      "/Users/xumanchun/Documents/agent项目/AI-Robot-latest/.venv/bin/python",
+      "-m",
+      "pytest",
+      "tests/test_multi_agent_workflow.py::ClosedLoopTests::test_cancellation_propagates_and_no_further_requests",
+      "-q",
+      "-ra",
+      "--junitxml=/Users/xumanchun/Documents/agent项目/AI-Robot-latest/docs/evidence/s7-20261017/restored-cancel-propagation.xml"
+    ],
+    "cwd": "/private/tmp/airobot-s7-mutations-ecescsud",
+    "started_utc": "2026-10-17T08:25:04.229672+00:00",
+    "exit_code": 0,
+    "elapsed_seconds": 2.998,
+    "output": "12-restored-cancel-propagation.txt",
+    "output_sha256": "f97cb826aa8c6655522105b8eb711e986ecb081e4a70bc0eaefe572453d9ca0e",
+    "head": "1ea7e6b7abbde3bd1a5963f03cd142fac553685a",
+    "source_manifest_sha256": "b39d90c754255978c3a68645efbe86b8af79dff2cd29fd4b9c5de5b546a87f59",
+    "tracked_diff_sha256": "2be76607869053633d5a7ec7b8383b42d64137bf6724405001ee868836b93f1a",
+    "source_unchanged": true,
+    "environment_overrides": {
+      "PYTHONPATH": "/Users/xumanchun/Documents/agent项目/AI-Robot-latest/docs/evidence/s0.1-20261017/offline_guard:/private/tmp/airobot-s7-mutations-ecescsud:/private/tmp/airobot-s7-mutations-ecescsud/tests",
+      "PYTHONPYCACHEPREFIX": "/private/tmp/airobot-s7-mutations-ecescsud/pycache"
+    }
+  },
+  {
+    "label": "python",
+    "argv": [
+      "/Users/xumanchun/Documents/agent项目/AI-Robot-latest/.venv/bin/python",
+      "--version"
+    ],
+    "cwd": "/Users/xumanchun/Documents/agent项目/AI-Robot-latest",
+    "started_utc": "2026-10-17T08:25:10.774976+00:00",
+    "exit_code": 0,
+    "elapsed_seconds": 0.084,
+    "output": "13-python.txt",
+    "output_sha256": "6b64edf0fc8f22e798fb64873acba6b4106df290f0bf458b507e8cb409b63e49",
+    "head": "1ea7e6b7abbde3bd1a5963f03cd142fac553685a",
+    "source_manifest_sha256": "b39d90c754255978c3a68645efbe86b8af79dff2cd29fd4b9c5de5b546a87f59",
+    "tracked_diff_sha256": "2be76607869053633d5a7ec7b8383b42d64137bf6724405001ee868836b93f1a",
+    "source_unchanged": true,
+    "environment_overrides": {}
+  },
+  {
+    "label": "dependencies",
+    "argv": [
+      "/Users/xumanchun/Documents/agent项目/AI-Robot-latest/.venv/bin/python",
+      "-m",
+      "pip",
+      "check"
+    ],
+    "cwd": "/Users/xumanchun/Documents/agent项目/AI-Robot-latest",
+    "started_utc": "2026-10-17T08:25:10.940108+00:00",
+    "exit_code": 0,
+    "elapsed_seconds": 0.836,
+    "output": "14-dependencies.txt",
+    "output_sha256": "9261363b733079a641c2e4cc9bc46ffa1d8336945a87f807b6cf68847dbc9b09",
+    "head": "1ea7e6b7abbde3bd1a5963f03cd142fac553685a",
+    "source_manifest_sha256": "b39d90c754255978c3a68645efbe86b8af79dff2cd29fd4b9c5de5b546a87f59",
+    "tracked_diff_sha256": "2be76607869053633d5a7ec7b8383b42d64137bf6724405001ee868836b93f1a",
+    "source_unchanged": true,
+    "environment_overrides": {}
+  },
+  {
+    "label": "docker-version",
+    "argv": [
+      "docker",
+      "version"
+    ],
+    "cwd": "/Users/xumanchun/Documents/agent项目/AI-Robot-latest",
+    "started_utc": "2026-10-17T08:25:11.870958+00:00",
+    "exit_code": 0,
+    "elapsed_seconds": 0.135,
+    "output": "15-docker-version.txt",
+    "output_sha256": "1dfc935ad289e35847bb71a278a92a1779c690ad54f15112ed86757c19947995",
+    "head": "1ea7e6b7abbde3bd1a5963f03cd142fac553685a",
+    "source_manifest_sha256": "b39d90c754255978c3a68645efbe86b8af79dff2cd29fd4b9c5de5b546a87f59",
+    "tracked_diff_sha256": "2be76607869053633d5a7ec7b8383b42d64137bf6724405001ee868836b93f1a",
+    "source_unchanged": true,
+    "environment_overrides": {}
+  },
+  {
+    "label": "docker-image",
+    "argv": [
+      "docker",
+      "image",
+      "inspect",
+      "airobot-go-validator:1.26.2",
+      "--format",
+      "{{json .}}"
+    ],
+    "cwd": "/Users/xumanchun/Documents/agent项目/AI-Robot-latest",
+    "started_utc": "2026-10-17T08:25:12.076952+00:00",
+    "exit_code": 0,
+    "elapsed_seconds": 0.167,
+    "output": "16-docker-image.txt",
+    "output_sha256": "c6d917a3949bb90aeaa836d5275f59dae9e0bbe6a07f3dedb8e3c5f764c5e83b",
+    "head": "1ea7e6b7abbde3bd1a5963f03cd142fac553685a",
+    "source_manifest_sha256": "b39d90c754255978c3a68645efbe86b8af79dff2cd29fd4b9c5de5b546a87f59",
+    "tracked_diff_sha256": "2be76607869053633d5a7ec7b8383b42d64137bf6724405001ee868836b93f1a",
+    "source_unchanged": true,
+    "environment_overrides": {}
+  },
+  {
+    "label": "containers-before",
+    "argv": [
+      "docker",
+      "ps",
+      "-a",
+      "--filter",
+      "name=airobot-go-",
+      "--format",
+      "{{.Names}} {{.Status}}"
+    ],
+    "cwd": "/Users/xumanchun/Documents/agent项目/AI-Robot-latest",
+    "started_utc": "2026-10-17T08:25:12.318712+00:00",
+    "exit_code": 0,
+    "elapsed_seconds": 0.123,
+    "output": "17-containers-before.txt",
+    "output_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "head": "1ea7e6b7abbde3bd1a5963f03cd142fac553685a",
+    "source_manifest_sha256": "b39d90c754255978c3a68645efbe86b8af79dff2cd29fd4b9c5de5b546a87f59",
+    "tracked_diff_sha256": "2be76607869053633d5a7ec7b8383b42d64137bf6724405001ee868836b93f1a",
+    "source_unchanged": true,
+    "environment_overrides": {}
+  },
+  {
+    "label": "all-docker",
+    "argv": [
+      "/Users/xumanchun/Documents/agent项目/AI-Robot-latest/.venv/bin/python",
+      "-m",
+      "pytest",
+      "tests",
+      "-q",
+      "-ra",
+      "--junitxml=/Users/xumanchun/Documents/agent项目/AI-Robot-latest/docs/evidence/s7-20261017/all-docker.xml"
+    ],
+    "cwd": "/Users/xumanchun/Documents/agent项目/AI-Robot-latest",
+    "started_utc": "2026-10-17T08:25:27.724187+00:00",
+    "exit_code": 0,
+    "elapsed_seconds": 98.922,
+    "output": "18-all-docker.txt",
+    "output_sha256": "c248fb5d04da16dc35e7cb91af63ec414e64cd3a8486a7bb035a8ac8ab42d654",
+    "head": "1ea7e6b7abbde3bd1a5963f03cd142fac553685a",
+    "source_manifest_sha256": "b39d90c754255978c3a68645efbe86b8af79dff2cd29fd4b9c5de5b546a87f59",
+    "tracked_diff_sha256": "2be76607869053633d5a7ec7b8383b42d64137bf6724405001ee868836b93f1a",
+    "source_unchanged": true,
+    "environment_overrides": {
+      "AIROBOT_TEST_DOCKER": "1",
+      "S7_REAL_EVIDENCE": "/Users/xumanchun/Documents/agent项目/AI-Robot-latest/docs/evidence/s7-20261017/real-compile-result.json"
+    }
+  },
+  {
+    "label": "early-interruptions",
+    "argv": [
+      "/Users/xumanchun/Documents/agent项目/AI-Robot-latest/.venv/bin/python",
+      "-m",
+      "pytest",
+      "tests/test_multi_agent_early_interruptions.py",
+      "-q",
+      "-ra",
+      "--junitxml=/Users/xumanchun/Documents/agent项目/AI-Robot-latest/docs/evidence/s7-20261017/early-interruptions.xml"
+    ],
+    "cwd": "/Users/xumanchun/Documents/agent项目/AI-Robot-latest",
+    "started_utc": "2026-10-17T08:28:03.612639+00:00",
+    "exit_code": 0,
+    "elapsed_seconds": 4.711,
+    "output": "19-early-interruptions.txt",
+    "output_sha256": "f7d489c9ccb7966b8de0eb0c5110526a87fbc1958acc8fde09a9e3b9b7ad112e",
+    "head": "1ea7e6b7abbde3bd1a5963f03cd142fac553685a",
+    "source_manifest_sha256": "f999fb091f3fe4d1f7cd4beb8483b6a4ad500af54182feb7aca8d70d8dfa43df",
+    "tracked_diff_sha256": "2be76607869053633d5a7ec7b8383b42d64137bf6724405001ee868836b93f1a",
+    "source_unchanged": true,
+    "environment_overrides": {}
+  },
+  {
+    "label": "all-docker-final",
+    "argv": [
+      "/Users/xumanchun/Documents/agent项目/AI-Robot-latest/.venv/bin/python",
+      "-m",
+      "pytest",
+      "tests",
+      "-q",
+      "-ra",
+      "--junitxml=/Users/xumanchun/Documents/agent项目/AI-Robot-latest/docs/evidence/s7-20261017/all-docker-final.xml"
+    ],
+    "cwd": "/Users/xumanchun/Documents/agent项目/AI-Robot-latest",
+    "started_utc": "2026-10-17T08:29:14.809820+00:00",
+    "exit_code": 0,
+    "elapsed_seconds": 85.597,
+    "output": "20-all-docker-final.txt",
+    "output_sha256": "963e1924dddef6bc52dab7536feac0f06fdc2de4a4a3a671e9a926792b7b8682",
+    "head": "1ea7e6b7abbde3bd1a5963f03cd142fac553685a",
+    "source_manifest_sha256": "a921ed45278e3ba7f998c83955be331a0d61afb1845210fc11168bfa1085b7dc",
+    "tracked_diff_sha256": "2be76607869053633d5a7ec7b8383b42d64137bf6724405001ee868836b93f1a",
+    "source_unchanged": true,
+    "environment_overrides": {
+      "AIROBOT_TEST_DOCKER": "1",
+      "S7_REAL_EVIDENCE": "/Users/xumanchun/Documents/agent项目/AI-Robot-latest/docs/evidence/s7-20261017/all-docker-final-compile-result.json"
+    }
+  },
+  {
+    "label": "business",
+    "argv": [
+      "/Users/xumanchun/Documents/agent项目/AI-Robot-latest/.venv/bin/python",
+      "-m",
+      "pytest",
+      "tests/test_agent.py",
+      "tests/test_integration.py",
+      "tests/test_stability.py",
+      "tests/test_tracing.py",
+      "tests/test_hardening.py",
+      "-q",
+      "-ra",
+      "--junitxml=/Users/xumanchun/Documents/agent项目/AI-Robot-latest/docs/evidence/s7-20261017/business.xml"
+    ],
+    "cwd": "/Users/xumanchun/Documents/agent项目/AI-Robot-latest",
+    "started_utc": "2026-10-17T08:31:14.206279+00:00",
+    "exit_code": 0,
+    "elapsed_seconds": 4.513,
+    "output": "21-business.txt",
+    "output_sha256": "2e7a805f95eaeba5f75f0673e3ac901050c65bad7039ee06ae76c3ac74745df8",
+    "head": "1ea7e6b7abbde3bd1a5963f03cd142fac553685a",
+    "source_manifest_sha256": "a921ed45278e3ba7f998c83955be331a0d61afb1845210fc11168bfa1085b7dc",
+    "tracked_diff_sha256": "2be76607869053633d5a7ec7b8383b42d64137bf6724405001ee868836b93f1a",
+    "source_unchanged": true,
+    "environment_overrides": {}
+  },
+  {
+    "label": "agent-fixtures",
+    "argv": [
+      "/Users/xumanchun/Documents/agent项目/AI-Robot-latest/.venv/bin/python",
+      "eval/run_agent_eval.py"
+    ],
+    "cwd": "/Users/xumanchun/Documents/agent项目/AI-Robot-latest",
+    "started_utc": "2026-10-17T08:31:22.048947+00:00",
+    "exit_code": 0,
+    "elapsed_seconds": 2.379,
+    "output": "22-agent-fixtures.txt",
+    "output_sha256": "c01fc4734b5f77d841c545c619ce837d7580cdddf3bb2178a7d8ad790f8ba2c3",
+    "head": "1ea7e6b7abbde3bd1a5963f03cd142fac553685a",
+    "source_manifest_sha256": "a921ed45278e3ba7f998c83955be331a0d61afb1845210fc11168bfa1085b7dc",
+    "tracked_diff_sha256": "2be76607869053633d5a7ec7b8383b42d64137bf6724405001ee868836b93f1a",
+    "source_unchanged": true,
+    "environment_overrides": {}
+  },
+  {
+    "label": "containers-after",
+    "argv": [
+      "docker",
+      "ps",
+      "-a",
+      "--filter",
+      "name=airobot-go-",
+      "--format",
+      "{{.Names}} {{.Status}} "
+    ],
+    "cwd": "/Users/xumanchun/Documents/agent项目/AI-Robot-latest",
+    "started_utc": "2026-10-17T08:31:32.907043+00:00",
+    "exit_code": 0,
+    "elapsed_seconds": 0.084,
+    "output": "23-containers-after.txt",
+    "output_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "head": "1ea7e6b7abbde3bd1a5963f03cd142fac553685a",
+    "source_manifest_sha256": "a921ed45278e3ba7f998c83955be331a0d61afb1845210fc11168bfa1085b7dc",
+    "tracked_diff_sha256": "2be76607869053633d5a7ec7b8383b42d64137bf6724405001ee868836b93f1a",
+    "source_unchanged": true,
+    "environment_overrides": {}
+  },
+  {
+    "label": "map-final",
+    "argv": [
+      "/Users/xumanchun/Documents/agent项目/AI-Robot-latest/.venv/bin/python",
+      "/Users/xumanchun/Documents/agent项目/AI-Robot-latest/docs/evidence/s7-20261017/map_results.py"
+    ],
+    "cwd": "/Users/xumanchun/Documents/agent项目/AI-Robot-latest",
+    "started_utc": "2026-10-17T08:31:33.112081+00:00",
+    "exit_code": 0,
+    "elapsed_seconds": 0.174,
+    "output": "24-map-final.txt",
+    "output_sha256": "fe7a4e480df1f70a06260c0589ab5bc1d70d66bd3938e250ec85ed5a954e350f",
+    "head": "1ea7e6b7abbde3bd1a5963f03cd142fac553685a",
+    "source_manifest_sha256": "a921ed45278e3ba7f998c83955be331a0d61afb1845210fc11168bfa1085b7dc",
+    "tracked_diff_sha256": "2be76607869053633d5a7ec7b8383b42d64137bf6724405001ee868836b93f1a",
+    "source_unchanged": true,
+    "environment_overrides": {}
+  },
+  {
+    "label": "diff-check",
+    "argv": [
+      "git",
+      "diff",
+      "--check"
+    ],
+    "cwd": "/Users/xumanchun/Documents/agent项目/AI-Robot-latest",
+    "started_utc": "2026-10-17T08:31:39.857488+00:00",
+    "exit_code": 0,
+    "elapsed_seconds": 0.16,
+    "output": "25-diff-check.txt",
+    "output_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "head": "1ea7e6b7abbde3bd1a5963f03cd142fac553685a",
+    "source_manifest_sha256": "a921ed45278e3ba7f998c83955be331a0d61afb1845210fc11168bfa1085b7dc",
+    "tracked_diff_sha256": "2be76607869053633d5a7ec7b8383b42d64137bf6724405001ee868836b93f1a",
+    "source_unchanged": true,
+    "environment_overrides": {}
+  },
+  {
+    "label": "evidence-check",
+    "argv": [
+      "/Users/xumanchun/Documents/agent项目/AI-Robot-latest/.venv/bin/python",
+      "/Users/xumanchun/Documents/agent项目/AI-Robot-latest/docs/evidence/s7-20261017/verify_evidence.py"
+    ],
+    "cwd": "/Users/xumanchun/Documents/agent项目/AI-Robot-latest",
+    "started_utc": "2026-10-17T08:31:40.120580+00:00",
+    "exit_code": 0,
+    "elapsed_seconds": 0.422,
+    "output": "26-evidence-check.txt",
+    "output_sha256": "913632fd40d7492674f2f59885bf5a59ebf47eb6affd4f8fd3b347c1043230bb",
+    "head": "1ea7e6b7abbde3bd1a5963f03cd142fac553685a",
+    "source_manifest_sha256": "a921ed45278e3ba7f998c83955be331a0d61afb1845210fc11168bfa1085b7dc",
+    "tracked_diff_sha256": "2be76607869053633d5a7ec7b8383b42d64137bf6724405001ee868836b93f1a",
+    "source_unchanged": true,
+    "environment_overrides": {}
+  },
+  {
+    "label": "post-log-evidence-check",
+    "argv": [
+      "/Users/xumanchun/Documents/agent项目/AI-Robot-latest/.venv/bin/python",
+      "/Users/xumanchun/Documents/agent项目/AI-Robot-latest/docs/evidence/s7-20261017/verify_evidence.py"
+    ],
+    "cwd": "/Users/xumanchun/Documents/agent项目/AI-Robot-latest",
+    "started_utc": "2026-10-17T08:33:56.006812+00:00",
+    "exit_code": 0,
+    "elapsed_seconds": 0.395,
+    "output": "27-post-log-evidence-check.txt",
+    "output_sha256": "913632fd40d7492674f2f59885bf5a59ebf47eb6affd4f8fd3b347c1043230bb",
+    "head": "1ea7e6b7abbde3bd1a5963f03cd142fac553685a",
+    "source_manifest_sha256": "a921ed45278e3ba7f998c83955be331a0d61afb1845210fc11168bfa1085b7dc",
+    "tracked_diff_sha256": "2be76607869053633d5a7ec7b8383b42d64137bf6724405001ee868836b93f1a",
+    "source_unchanged": true,
+    "environment_overrides": {}
+  }
+]

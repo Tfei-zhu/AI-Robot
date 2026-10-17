@@ -1,0 +1,49 @@
+{
+  "run_id": "dfc973719a3e4aa5b341af6c61a2e77d",
+  "status": "timeout",
+  "scenario": "worker_pool",
+  "attempts": [],
+  "sources": [],
+  "model_calls": 1,
+  "validation_calls": 0,
+  "elapsed_ms": 154.5,
+  "error": "任务超过总时间预算",
+  "model_source": "fixture",
+  "token_usage": {},
+  "context_stats": {
+    "model_calls": 1,
+    "embedding_calls": 0,
+    "usage_complete": false,
+    "token_usage": null,
+    "known_token_usage": {
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "total_tokens": 0
+    },
+    "unknown_usage_calls": 1,
+    "calls": [
+      {
+        "stage": "go_generate",
+        "model": "qwen-plus",
+        "attempt": 1,
+        "status": "cancelled",
+        "usage": null,
+        "elapsed_ms": 149.24,
+        "input_estimate": 489
+      }
+    ],
+    "cost_estimate": null,
+    "uncached_cost_estimate": null,
+    "currency": null,
+    "cost_note": "单价、端点或实际用量不完整，金额未知"
+  },
+  "budget": {},
+  "validation_scope": "仅验证当前代码、当前测试和固定 Go 工具链；不保证全部行为正确",
+  "workflow_version": "single-v1",
+  "task_spec": null,
+  "artifacts": [],
+  "reviews": [],
+  "agent_calls": [],
+  "stop_reason": null,
+  "final_summary": ""
+}

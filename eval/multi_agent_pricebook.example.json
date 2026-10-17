@@ -1,0 +1,9 @@
+{
+  "model": "REPLACE_WITH_VERIFIED_PINNED_MODEL_ID",
+  "endpoint": "https://dashscope.aliyuncs.com/compatible-mode/v1",
+  "currency": null,
+  "input_ceiling_per_million": null,
+  "output_ceiling_per_million": null,
+  "verified_at": null,
+  "includes_all_token_surcharges": false
+}

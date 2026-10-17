@@ -39,8 +39,9 @@ const event = value => `data: ${JSON.stringify(value)}\n\n`;
     assert.match(await page.locator('#goReport').textContent(), /TestServer/);
     assert.match(await page.locator('#goReport').textContent(), /人工固定模型输出/);
     assert.equal(await page.locator('#goRunId').inputValue(), result.run_id);
-    fs.mkdirSync(path.join(root, 'eval/reports/go'), { recursive: true });
-    await page.locator('#goValidation').screenshot({ path: path.join(root, 'eval/reports/go/dashboard.png') });
+    const screenshot=process.env.GO_DASHBOARD_SCREENSHOT || path.join(root, 'eval/reports/go/dashboard.png');
+    fs.mkdirSync(path.dirname(screenshot), { recursive: true });
+    await page.locator('#goValidation').screenshot({ path: screenshot });
     await page.locator('#goLoad').click();
     await page.waitForFunction(() => document.querySelector('#goReport > details') !== null);
     // 恶意代码、日志、修改说明只能成为文本，不能执行页面脚本。

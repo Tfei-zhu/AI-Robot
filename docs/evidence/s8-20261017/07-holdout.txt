@@ -1,0 +1,54 @@
+/Users/xumanchun/Documents/agent项目/AI-Robot-latest/.venv/lib/python3.13/site-packages/jieba/__init__.py:44: SyntaxWarning: invalid escape sequence '\.'
+  re_han_default = re.compile("([\u4E00-\u9FD5a-zA-Z0-9+#&\._%\-]+)", re.U)
+/Users/xumanchun/Documents/agent项目/AI-Robot-latest/.venv/lib/python3.13/site-packages/jieba/__init__.py:46: SyntaxWarning: invalid escape sequence '\s'
+  re_skip_default = re.compile("(\r\n|\s)", re.U)
+/Users/xumanchun/Documents/agent项目/AI-Robot-latest/.venv/lib/python3.13/site-packages/jieba/finalseg/__init__.py:78: SyntaxWarning: invalid escape sequence '\.'
+  re_skip = re.compile("([a-zA-Z0-9]+(?:\.\d+)?%?)")
+{"completed": 1, "expected": 48, "case": "channel-08", "arm": "single_native", "business": "failed", "independent": false, "calls": 3}
+{"completed": 2, "expected": 48, "case": "channel-08", "arm": "multi_native", "business": "failed", "independent": false, "calls": 7}
+{"completed": 3, "expected": 48, "case": "channel-08", "arm": "single_equal3", "business": "failed", "independent": false, "calls": 3}
+{"completed": 4, "expected": 48, "case": "channel-08", "arm": "multi_equal3", "business": "budget_exceeded", "independent": false, "calls": 3}
+{"completed": 5, "expected": 48, "case": "channel-09", "arm": "single_native", "business": "passed", "independent": false, "calls": 1}
+{"completed": 6, "expected": 48, "case": "channel-09", "arm": "multi_native", "business": "passed", "independent": false, "calls": 3}
+{"completed": 7, "expected": 48, "case": "channel-09", "arm": "single_equal3", "business": "passed", "independent": false, "calls": 1}
+{"completed": 8, "expected": 48, "case": "channel-09", "arm": "multi_equal3", "business": "passed", "independent": false, "calls": 3}
+{"completed": 9, "expected": 48, "case": "worker_pool-09", "arm": "multi_equal3", "business": "passed", "independent": false, "calls": 3}
+{"completed": 10, "expected": 48, "case": "worker_pool-09", "arm": "single_native", "business": "passed", "independent": false, "calls": 1}
+{"completed": 11, "expected": 48, "case": "worker_pool-09", "arm": "multi_native", "business": "passed", "independent": false, "calls": 3}
+{"completed": 12, "expected": 48, "case": "worker_pool-09", "arm": "single_equal3", "business": "passed", "independent": false, "calls": 1}
+{"completed": 13, "expected": 48, "case": "channel-07", "arm": "single_native", "business": "passed", "independent": true, "calls": 1}
+{"completed": 14, "expected": 48, "case": "channel-07", "arm": "multi_native", "business": "passed", "independent": true, "calls": 3}
+{"completed": 15, "expected": 48, "case": "channel-07", "arm": "single_equal3", "business": "passed", "independent": true, "calls": 1}
+{"completed": 16, "expected": 48, "case": "channel-07", "arm": "multi_equal3", "business": "passed", "independent": true, "calls": 3}
+{"completed": 17, "expected": 48, "case": "worker_pool-08", "arm": "multi_equal3", "business": "budget_exceeded", "independent": false, "calls": 3}
+{"completed": 18, "expected": 48, "case": "worker_pool-08", "arm": "single_native", "business": "failed", "independent": false, "calls": 3}
+{"completed": 19, "expected": 48, "case": "worker_pool-08", "arm": "multi_native", "business": "failed", "independent": false, "calls": 7}
+{"completed": 20, "expected": 48, "case": "worker_pool-08", "arm": "single_equal3", "business": "failed", "independent": false, "calls": 3}
+{"completed": 21, "expected": 48, "case": "channel-10", "arm": "single_native", "business": "passed", "independent": false, "calls": 1}
+{"completed": 22, "expected": 48, "case": "channel-10", "arm": "multi_native", "business": "passed", "independent": false, "calls": 3}
+{"completed": 23, "expected": 48, "case": "channel-10", "arm": "single_equal3", "business": "passed", "independent": false, "calls": 1}
+{"completed": 24, "expected": 48, "case": "channel-10", "arm": "multi_equal3", "business": "passed", "independent": false, "calls": 3}
+{"completed": 25, "expected": 48, "case": "context_cancel-10", "arm": "single_native", "business": "passed", "independent": false, "calls": 1}
+{"completed": 26, "expected": 48, "case": "context_cancel-10", "arm": "multi_native", "business": "passed", "independent": false, "calls": 3}
+{"completed": 27, "expected": 48, "case": "context_cancel-10", "arm": "single_equal3", "business": "passed", "independent": false, "calls": 1}
+{"completed": 28, "expected": 48, "case": "context_cancel-10", "arm": "multi_equal3", "business": "passed", "independent": false, "calls": 3}
+{"completed": 29, "expected": 48, "case": "context_cancel-08", "arm": "multi_equal3", "business": "budget_exceeded", "independent": false, "calls": 3}
+{"completed": 30, "expected": 48, "case": "context_cancel-08", "arm": "single_native", "business": "failed", "independent": false, "calls": 3}
+{"completed": 31, "expected": 48, "case": "context_cancel-08", "arm": "multi_native", "business": "failed", "independent": false, "calls": 7}
+{"completed": 32, "expected": 48, "case": "context_cancel-08", "arm": "single_equal3", "business": "failed", "independent": false, "calls": 3}
+{"completed": 33, "expected": 48, "case": "context_cancel-09", "arm": "multi_equal3", "business": "passed", "independent": false, "calls": 3}
+{"completed": 34, "expected": 48, "case": "context_cancel-09", "arm": "single_native", "business": "passed", "independent": false, "calls": 1}
+{"completed": 35, "expected": 48, "case": "context_cancel-09", "arm": "multi_native", "business": "passed", "independent": false, "calls": 3}
+{"completed": 36, "expected": 48, "case": "context_cancel-09", "arm": "single_equal3", "business": "passed", "independent": false, "calls": 1}
+{"completed": 37, "expected": 48, "case": "worker_pool-10", "arm": "multi_equal3", "business": "passed", "independent": false, "calls": 3}
+{"completed": 38, "expected": 48, "case": "worker_pool-10", "arm": "single_native", "business": "passed", "independent": false, "calls": 1}
+{"completed": 39, "expected": 48, "case": "worker_pool-10", "arm": "multi_native", "business": "passed", "independent": false, "calls": 3}
+{"completed": 40, "expected": 48, "case": "worker_pool-10", "arm": "single_equal3", "business": "passed", "independent": false, "calls": 1}
+{"completed": 41, "expected": 48, "case": "context_cancel-07", "arm": "single_native", "business": "passed", "independent": true, "calls": 1}
+{"completed": 42, "expected": 48, "case": "context_cancel-07", "arm": "multi_native", "business": "passed", "independent": true, "calls": 3}
+{"completed": 43, "expected": 48, "case": "context_cancel-07", "arm": "single_equal3", "business": "passed", "independent": true, "calls": 1}
+{"completed": 44, "expected": 48, "case": "context_cancel-07", "arm": "multi_equal3", "business": "passed", "independent": true, "calls": 3}
+{"completed": 45, "expected": 48, "case": "worker_pool-07", "arm": "single_native", "business": "passed", "independent": true, "calls": 1}
+{"completed": 46, "expected": 48, "case": "worker_pool-07", "arm": "multi_native", "business": "passed", "independent": true, "calls": 3}
+{"completed": 47, "expected": 48, "case": "worker_pool-07", "arm": "single_equal3", "business": "passed", "independent": true, "calls": 1}
+{"completed": 48, "expected": 48, "case": "worker_pool-07", "arm": "multi_equal3", "business": "passed", "independent": true, "calls": 3}

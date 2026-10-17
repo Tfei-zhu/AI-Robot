@@ -1,0 +1,5 @@
+PASS test_trace_recorder_empty
+PASS test_trace_recorder_ring_and_summary
+PASS test_trace_recorder_ring_capacity
+
+3 tests passed

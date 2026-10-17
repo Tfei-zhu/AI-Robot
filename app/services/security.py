@@ -108,4 +108,13 @@ class SessionStreamResponse(StreamingResponse):
         try:
             await super().__call__(scope, receive, send)
         finally:
-            release_session(self.session_key)
+            # A socket send failure can leave the generator paused at yield.
+            # Closing it triggers cancellation, sandbox cleanup and persistence;
+            # the same session must remain occupied until all three finish.
+            from app.services.concurrency import finish_cleanup
+            try:
+                close = getattr(self.body_iterator, "aclose", None)
+                if close is not None:
+                    await finish_cleanup(close())
+            finally:
+                release_session(self.session_key)

@@ -1,0 +1,22 @@
+F                                                                        [100%]
+=================================== FAILURES ===================================
+_ MultiAgentReviewTests.test_failed_validation_cannot_be_overridden_by_model_approve _
+
+self = <test_multi_agent_review.MultiAgentReviewTests testMethod=test_failed_validation_cannot_be_overridden_by_model_approve>
+
+    def test_failed_validation_cannot_be_overridden_by_model_approve(self):
+        result = self.decide(machine=validation(artifact(), "failed"))
+>       self.assertEqual((result.action, result.status, result.reason), ("repair", "running", "validation_failed"))
+E       AssertionError: Tuples differ: ('finish', 'passed', 'completed') != ('repair', 'running', 'validation_failed')
+E       
+E       First differing element 0:
+E       'finish'
+E       'repair'
+E       
+E       - ('finish', 'passed', 'completed')
+E       + ('repair', 'running', 'validation_failed')
+
+tests/test_multi_agent_review.py:22: AssertionError
+=========================== short test summary info ============================
+FAILED tests/test_multi_agent_review.py::MultiAgentReviewTests::test_failed_validation_cannot_be_overridden_by_model_approve
+1 failed in 0.06s

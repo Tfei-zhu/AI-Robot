@@ -5,6 +5,17 @@ on:
     branches: [main]
   pull_request:
 
+# CI 只运行固定模型/离线检查；真实模型评测须另行冻结累计金额并通过服务端预检。
+env:
+  PYTHON_DOTENV_DISABLED: "1"
+  AIROBOT_LLM_API_KEY: ""
+  AIROBOT_EMBEDDING_API_KEY: ""
+  AIROBOT_GO_MULTI_AGENT_ENABLED: "false"
+  AIROBOT_RERANK_ENABLED: "false"
+  AIROBOT_CONTEXT_MODE: "off"
+  LANGSMITH_TRACING: "false"
+  LANGCHAIN_TRACING_V2: "false"
+
 jobs:
   build:
     name: build（py_compile 语法门禁）
@@ -67,7 +78,9 @@ jobs:
       - name: 构建固定 Go 验证镜像
         run: docker build -t airobot-go-validator:1.26.2 sandbox/go
       - name: 真实沙箱与工作流验收
-        run: python -m pytest tests/test_go_contracts.py tests/test_go_runner.py tests/test_go_workflow.py tests/test_go_acceptance.py -q
+        run: python -m pytest tests -q -ra --junitxml=test-results/go-sandbox.xml
+      - name: 显式关闭多 Agent 后验证原流程和旧报告
+        run: python scripts/check_multi_agent_rollback.py --output eval/reports/go/rollback
       - name: 固定输出对比评测（实际编译器）
         run: python eval/run_go_eval.py --fixtures
       - name: 上传对比报告
@@ -75,47 +88,13 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: go-validation-fixture-report
-          path: eval/reports/go/
+          path: |
+            eval/reports/go/
+            test-results/go-sandbox.xml
 
-  eval:
-    name: eval（RAGAS 冒烟，前 5 条）
-    needs: test
-    # 配置仓库 Secrets.AIROBOT_LLM_API_KEY / AIROBOT_EMBEDDING_API_KEY 后自动启用；
-    # 未配置时评测步骤跳过，build/test 门禁仍生效。
-    # 注意：secrets 上下文不允许出现在 if 条件中，因此先映射到 job 级 env 再在步骤中判断。
+  live-evaluation-policy:
+    name: 真实评测未授权（不发送模型请求）
     runs-on: ubuntu-latest
-    env:
-      AIROBOT_LLM_BASE_URL: https://dashscope.aliyuncs.com/compatible-mode/v1
-      AIROBOT_LLM_API_KEY: ${{ secrets.AIROBOT_LLM_API_KEY }}
-      AIROBOT_LLM_MODEL: qwen-plus
-      AIROBOT_EMBEDDING_BASE_URL: https://dashscope.aliyuncs.com/compatible-mode/v1
-      AIROBOT_EMBEDDING_API_KEY: ${{ secrets.AIROBOT_EMBEDDING_API_KEY }}
-      AIROBOT_EMBEDDING_MODEL: text-embedding-v4
-      # CI 不下载重排模型（约 1.1GB），评测只覆盖 向量+BM25+RRF
-      AIROBOT_RERANK_ENABLED: "false"
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-python@v5
-        with:
-          python-version: "3.11"
-          cache: pip
-      - name: 安装核心依赖
-        run: pip install -r requirements.txt
-      - name: 未配置评测密钥，跳过 RAGAS
-        if: ${{ env.AIROBOT_LLM_API_KEY == '' || env.AIROBOT_EMBEDDING_API_KEY == '' }}
-        run: echo "SKIP：未配置 Secrets（AIROBOT_LLM_API_KEY / AIROBOT_EMBEDDING_API_KEY），RAGAS 评测已跳过"
-      - name: 安装评测依赖
-        if: ${{ env.AIROBOT_LLM_API_KEY != '' && env.AIROBOT_EMBEDDING_API_KEY != '' }}
-        run: pip install -r requirements-eval.txt
-      - name: RAGAS 冒烟评测（前 5 条）
-        if: ${{ env.AIROBOT_LLM_API_KEY != '' && env.AIROBOT_EMBEDDING_API_KEY != '' }}
-        run: >
-          python eval/run_eval.py --agent --limit 5 --top-k 3
-          --min-baseline-hit-rate 0.85
-          --min-judge-score 3.5
-      - name: 上传评测报告
-        if: ${{ always() && env.AIROBOT_LLM_API_KEY != '' && env.AIROBOT_EMBEDDING_API_KEY != '' }}
-        uses: actions/upload-artifact@v4
-        with:
-          name: eval-report
-          path: eval/reports/
+      - name: 保持真实模型评测关闭
+        run: echo "NOT RUN：本工作流没有累计费用授权。真实评测须使用新冻结协议及 eval/run_multi_agent_eval.py 的费用/模型预检，不因配置 Secrets 自动启动。"

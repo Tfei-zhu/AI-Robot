@@ -1,0 +1,7 @@
+PASS test_agent_sse_events_keep_tool_metadata
+PASS test_graph_has_agent_tool_and_finalize_nodes
+PASS test_graph_runs_a_tool_loop_without_a_real_model
+PASS test_sources_are_ordered_and_deduplicated
+PASS test_sse_consumes_the_same_agent_tool_loop
+
+5 tests passed

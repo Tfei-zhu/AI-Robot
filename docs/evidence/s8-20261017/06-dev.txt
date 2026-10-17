@@ -1,0 +1,84 @@
+/Users/xumanchun/Documents/agent项目/AI-Robot-latest/.venv/lib/python3.13/site-packages/jieba/__init__.py:44: SyntaxWarning: invalid escape sequence '\.'
+  re_han_default = re.compile("([\u4E00-\u9FD5a-zA-Z0-9+#&\._%\-]+)", re.U)
+/Users/xumanchun/Documents/agent项目/AI-Robot-latest/.venv/lib/python3.13/site-packages/jieba/__init__.py:46: SyntaxWarning: invalid escape sequence '\s'
+  re_skip_default = re.compile("(\r\n|\s)", re.U)
+/Users/xumanchun/Documents/agent项目/AI-Robot-latest/.venv/lib/python3.13/site-packages/jieba/finalseg/__init__.py:78: SyntaxWarning: invalid escape sequence '\.'
+  re_skip = re.compile("([a-zA-Z0-9]+(?:\.\d+)?%?)")
+{"completed": 1, "expected": 72, "case": "worker_pool-06", "arm": "multi_native", "business": "passed", "independent": true, "calls": 4}
+第 1 次生成未通过结构校验: S8 controlled provider failure, counted and never refunded
+{"completed": 2, "expected": 72, "case": "worker_pool-06", "arm": "single_equal3", "business": "passed", "independent": true, "calls": 2}
+{"completed": 3, "expected": 72, "case": "worker_pool-06", "arm": "multi_equal3", "business": "budget_exceeded", "independent": null, "calls": 2}
+第 1 次生成未通过结构校验: S8 controlled provider failure, counted and never refunded
+{"completed": 4, "expected": 72, "case": "worker_pool-06", "arm": "single_native", "business": "passed", "independent": true, "calls": 2}
+{"completed": 5, "expected": 72, "case": "channel-05", "arm": "multi_equal3", "business": "budget_exceeded", "independent": false, "calls": 3}
+{"completed": 6, "expected": 72, "case": "channel-05", "arm": "single_native", "business": "passed", "independent": false, "calls": 1}
+{"completed": 7, "expected": 72, "case": "channel-05", "arm": "multi_native", "business": "passed", "independent": true, "calls": 5}
+{"completed": 8, "expected": 72, "case": "channel-05", "arm": "single_equal3", "business": "passed", "independent": false, "calls": 1}
+{"completed": 9, "expected": 72, "case": "channel-04", "arm": "multi_equal3", "business": "budget_exceeded", "independent": false, "calls": 3}
+{"completed": 10, "expected": 72, "case": "channel-04", "arm": "single_native", "business": "passed", "independent": true, "calls": 2}
+{"completed": 11, "expected": 72, "case": "channel-04", "arm": "multi_native", "business": "passed", "independent": true, "calls": 5}
+{"completed": 12, "expected": 72, "case": "channel-04", "arm": "single_equal3", "business": "passed", "independent": true, "calls": 2}
+{"completed": 13, "expected": 72, "case": "worker_pool-01", "arm": "single_equal3", "business": "passed", "independent": true, "calls": 1}
+{"completed": 14, "expected": 72, "case": "worker_pool-01", "arm": "multi_equal3", "business": "passed", "independent": true, "calls": 3}
+{"completed": 15, "expected": 72, "case": "worker_pool-01", "arm": "single_native", "business": "passed", "independent": true, "calls": 1}
+{"completed": 16, "expected": 72, "case": "worker_pool-01", "arm": "multi_native", "business": "passed", "independent": true, "calls": 3}
+{"completed": 17, "expected": 72, "case": "context_cancel-04", "arm": "multi_equal3", "business": "budget_exceeded", "independent": false, "calls": 3}
+{"completed": 18, "expected": 72, "case": "context_cancel-04", "arm": "single_native", "business": "passed", "independent": true, "calls": 2}
+{"completed": 19, "expected": 72, "case": "context_cancel-04", "arm": "multi_native", "business": "passed", "independent": true, "calls": 5}
+{"completed": 20, "expected": 72, "case": "context_cancel-04", "arm": "single_equal3", "business": "passed", "independent": true, "calls": 2}
+{"completed": 21, "expected": 72, "case": "channel-01", "arm": "single_equal3", "business": "passed", "independent": true, "calls": 1}
+{"completed": 22, "expected": 72, "case": "channel-01", "arm": "multi_equal3", "business": "passed", "independent": true, "calls": 3}
+{"completed": 23, "expected": 72, "case": "channel-01", "arm": "single_native", "business": "passed", "independent": true, "calls": 1}
+{"completed": 24, "expected": 72, "case": "channel-01", "arm": "multi_native", "business": "passed", "independent": true, "calls": 3}
+{"completed": 25, "expected": 72, "case": "context_cancel-05", "arm": "single_equal3", "business": "passed", "independent": false, "calls": 1}
+{"completed": 26, "expected": 72, "case": "context_cancel-05", "arm": "multi_equal3", "business": "budget_exceeded", "independent": false, "calls": 3}
+{"completed": 27, "expected": 72, "case": "context_cancel-05", "arm": "single_native", "business": "passed", "independent": false, "calls": 1}
+{"completed": 28, "expected": 72, "case": "context_cancel-05", "arm": "multi_native", "business": "passed", "independent": true, "calls": 5}
+{"completed": 29, "expected": 72, "case": "context_cancel-06", "arm": "multi_equal3", "business": "budget_exceeded", "independent": null, "calls": 2}
+第 1 次生成未通过结构校验: S8 controlled provider failure, counted and never refunded
+{"completed": 30, "expected": 72, "case": "context_cancel-06", "arm": "single_native", "business": "passed", "independent": true, "calls": 2}
+{"completed": 31, "expected": 72, "case": "context_cancel-06", "arm": "multi_native", "business": "passed", "independent": true, "calls": 4}
+第 1 次生成未通过结构校验: S8 controlled provider failure, counted and never refunded
+{"completed": 32, "expected": 72, "case": "context_cancel-06", "arm": "single_equal3", "business": "passed", "independent": true, "calls": 2}
+{"completed": 33, "expected": 72, "case": "worker_pool-04", "arm": "single_native", "business": "passed", "independent": true, "calls": 2}
+{"completed": 34, "expected": 72, "case": "worker_pool-04", "arm": "multi_native", "business": "passed", "independent": true, "calls": 5}
+{"completed": 35, "expected": 72, "case": "worker_pool-04", "arm": "single_equal3", "business": "passed", "independent": true, "calls": 2}
+{"completed": 36, "expected": 72, "case": "worker_pool-04", "arm": "multi_equal3", "business": "budget_exceeded", "independent": false, "calls": 3}
+{"completed": 37, "expected": 72, "case": "channel-02", "arm": "single_equal3", "business": "passed", "independent": true, "calls": 2}
+{"completed": 38, "expected": 72, "case": "channel-02", "arm": "multi_equal3", "business": "budget_exceeded", "independent": false, "calls": 3}
+{"completed": 39, "expected": 72, "case": "channel-02", "arm": "single_native", "business": "passed", "independent": true, "calls": 2}
+{"completed": 40, "expected": 72, "case": "channel-02", "arm": "multi_native", "business": "passed", "independent": true, "calls": 5}
+第 1 次生成未通过结构校验: S8 controlled provider failure, counted and never refunded
+{"completed": 41, "expected": 72, "case": "channel-06", "arm": "single_equal3", "business": "passed", "independent": true, "calls": 2}
+{"completed": 42, "expected": 72, "case": "channel-06", "arm": "multi_equal3", "business": "budget_exceeded", "independent": null, "calls": 2}
+第 1 次生成未通过结构校验: S8 controlled provider failure, counted and never refunded
+{"completed": 43, "expected": 72, "case": "channel-06", "arm": "single_native", "business": "passed", "independent": true, "calls": 2}
+{"completed": 44, "expected": 72, "case": "channel-06", "arm": "multi_native", "business": "passed", "independent": true, "calls": 4}
+{"completed": 45, "expected": 72, "case": "worker_pool-02", "arm": "single_native", "business": "passed", "independent": true, "calls": 2}
+{"completed": 46, "expected": 72, "case": "worker_pool-02", "arm": "multi_native", "business": "passed", "independent": true, "calls": 5}
+{"completed": 47, "expected": 72, "case": "worker_pool-02", "arm": "single_equal3", "business": "passed", "independent": true, "calls": 2}
+{"completed": 48, "expected": 72, "case": "worker_pool-02", "arm": "multi_equal3", "business": "budget_exceeded", "independent": false, "calls": 3}
+{"completed": 49, "expected": 72, "case": "context_cancel-02", "arm": "multi_equal3", "business": "budget_exceeded", "independent": false, "calls": 3}
+{"completed": 50, "expected": 72, "case": "context_cancel-02", "arm": "single_native", "business": "passed", "independent": true, "calls": 2}
+{"completed": 51, "expected": 72, "case": "context_cancel-02", "arm": "multi_native", "business": "passed", "independent": true, "calls": 5}
+{"completed": 52, "expected": 72, "case": "context_cancel-02", "arm": "single_equal3", "business": "passed", "independent": true, "calls": 2}
+{"completed": 53, "expected": 72, "case": "worker_pool-05", "arm": "multi_equal3", "business": "budget_exceeded", "independent": false, "calls": 3}
+{"completed": 54, "expected": 72, "case": "worker_pool-05", "arm": "single_native", "business": "passed", "independent": false, "calls": 1}
+{"completed": 55, "expected": 72, "case": "worker_pool-05", "arm": "multi_native", "business": "passed", "independent": true, "calls": 5}
+{"completed": 56, "expected": 72, "case": "worker_pool-05", "arm": "single_equal3", "business": "passed", "independent": false, "calls": 1}
+{"completed": 57, "expected": 72, "case": "context_cancel-03", "arm": "multi_equal3", "business": "budget_exceeded", "independent": false, "calls": 3}
+{"completed": 58, "expected": 72, "case": "context_cancel-03", "arm": "single_native", "business": "passed", "independent": true, "calls": 2}
+{"completed": 59, "expected": 72, "case": "context_cancel-03", "arm": "multi_native", "business": "passed", "independent": true, "calls": 5}
+{"completed": 60, "expected": 72, "case": "context_cancel-03", "arm": "single_equal3", "business": "passed", "independent": true, "calls": 2}
+{"completed": 61, "expected": 72, "case": "channel-03", "arm": "multi_native", "business": "passed", "independent": true, "calls": 5}
+{"completed": 62, "expected": 72, "case": "channel-03", "arm": "single_equal3", "business": "passed", "independent": true, "calls": 2}
+{"completed": 63, "expected": 72, "case": "channel-03", "arm": "multi_equal3", "business": "budget_exceeded", "independent": false, "calls": 3}
+{"completed": 64, "expected": 72, "case": "channel-03", "arm": "single_native", "business": "passed", "independent": true, "calls": 2}
+{"completed": 65, "expected": 72, "case": "context_cancel-01", "arm": "multi_native", "business": "passed", "independent": true, "calls": 3}
+{"completed": 66, "expected": 72, "case": "context_cancel-01", "arm": "single_equal3", "business": "passed", "independent": true, "calls": 1}
+{"completed": 67, "expected": 72, "case": "context_cancel-01", "arm": "multi_equal3", "business": "passed", "independent": true, "calls": 3}
+{"completed": 68, "expected": 72, "case": "context_cancel-01", "arm": "single_native", "business": "passed", "independent": true, "calls": 1}
+{"completed": 69, "expected": 72, "case": "worker_pool-03", "arm": "single_native", "business": "passed", "independent": true, "calls": 2}
+{"completed": 70, "expected": 72, "case": "worker_pool-03", "arm": "multi_native", "business": "passed", "independent": true, "calls": 5}
+{"completed": 71, "expected": 72, "case": "worker_pool-03", "arm": "single_equal3", "business": "passed", "independent": true, "calls": 2}
+{"completed": 72, "expected": 72, "case": "worker_pool-03", "arm": "multi_equal3", "business": "budget_exceeded", "independent": false, "calls": 3}

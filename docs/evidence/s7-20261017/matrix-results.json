@@ -1,0 +1,829 @@
+{
+  "inputs": [
+    "all-docker-final.xml"
+  ],
+  "rows": [
+    {
+      "id": "A01",
+      "criterion": "首次通过，仅一次生成",
+      "tests": [
+        "tests/test_multi_agent_workflow.py::ClosedLoopTests::test_first_pass_uses_three_model_calls_and_review_summary",
+        "tests/test_multi_agent_workflow.py::RealSandboxClosedLoopTests::test_real_first_pass"
+      ],
+      "scope": "固定模型；第二项真实 Docker",
+      "resolved": [
+        {
+          "selector": "tests/test_multi_agent_workflow.py::ClosedLoopTests::test_first_pass_uses_three_model_calls_and_review_summary",
+          "records": 1,
+          "nodes": [
+            "tests.test_multi_agent_workflow.ClosedLoopTests::test_first_pass_uses_three_model_calls_and_review_summary"
+          ],
+          "status": "passed"
+        },
+        {
+          "selector": "tests/test_multi_agent_workflow.py::RealSandboxClosedLoopTests::test_real_first_pass",
+          "records": 1,
+          "nodes": [
+            "tests.test_multi_agent_workflow.RealSandboxClosedLoopTests::test_real_first_pass"
+          ],
+          "status": "passed"
+        }
+      ],
+      "status": "passed"
+    },
+    {
+      "id": "A02",
+      "criterion": "真实编译错误回传，修复后重新验证/审查",
+      "tests": [
+        "tests/test_multi_agent_acceptance.py::RealCompileAcceptance::test_real_compile_error_is_repaired_with_fresh_validation_and_review"
+      ],
+      "scope": "固定模型 + 真实 Docker；保留 real-compile-result.json",
+      "resolved": [
+        {
+          "selector": "tests/test_multi_agent_acceptance.py::RealCompileAcceptance::test_real_compile_error_is_repaired_with_fresh_validation_and_review",
+          "records": 1,
+          "nodes": [
+            "tests.test_multi_agent_acceptance.RealCompileAcceptance::test_real_compile_error_is_repaired_with_fresh_validation_and_review"
+          ],
+          "status": "passed"
+        }
+      ],
+      "status": "passed"
+    },
+    {
+      "id": "A03",
+      "criterion": "机器通过仍缺必要需求，补测后再审",
+      "tests": [
+        "tests/test_multi_agent_acceptance.py::AcceptanceCounterexamples::test_missing_requirement_after_machine_pass_is_repaired_and_rechecked",
+        "tests/test_multi_agent_review.py::MultiAgentReviewTests::test_missing_required_check_is_review_error_and_cannot_shrink_task_scope"
+      ],
+      "scope": "模型与验证替身；检查需求 ID、修复输入、新测试/hash 和复审",
+      "resolved": [
+        {
+          "selector": "tests/test_multi_agent_acceptance.py::AcceptanceCounterexamples::test_missing_requirement_after_machine_pass_is_repaired_and_rechecked",
+          "records": 1,
+          "nodes": [
+            "tests.test_multi_agent_acceptance.AcceptanceCounterexamples::test_missing_requirement_after_machine_pass_is_repaired_and_rechecked"
+          ],
+          "status": "passed"
+        },
+        {
+          "selector": "tests/test_multi_agent_review.py::MultiAgentReviewTests::test_missing_required_check_is_review_error_and_cannot_shrink_task_scope",
+          "records": 1,
+          "nodes": [
+            "tests.test_multi_agent_review.MultiAgentReviewTests::test_missing_required_check_is_review_error_and_cannot_shrink_task_scope"
+          ],
+          "status": "passed"
+        }
+      ],
+      "status": "passed"
+    },
+    {
+      "id": "A04",
+      "criterion": "两轮修复耗尽，保留三个版本",
+      "tests": [
+        "tests/test_multi_agent_workflow.py::ClosedLoopTests::test_model_approve_cannot_override_machine_failure_until_repair_limit"
+      ],
+      "scope": "模型与验证替身；7 次底层请求、3 份验证",
+      "resolved": [
+        {
+          "selector": "tests/test_multi_agent_workflow.py::ClosedLoopTests::test_model_approve_cannot_override_machine_failure_until_repair_limit",
+          "records": 1,
+          "nodes": [
+            "tests.test_multi_agent_workflow.ClosedLoopTests::test_model_approve_cannot_override_machine_failure_until_repair_limit"
+          ],
+          "status": "passed"
+        }
+      ],
+      "status": "passed"
+    },
+    {
+      "id": "A05",
+      "criterion": "approve 不能覆盖失败验证或阻断问题",
+      "tests": [
+        "tests/test_multi_agent_review.py::MultiAgentReviewTests::test_failed_validation_cannot_be_overridden_by_model_approve",
+        "tests/test_multi_agent_review.py::MultiAgentReviewTests::test_invalid_approve_with_blocking_is_rejected_even_for_bypassed_model_instances",
+        "tests/test_multi_agent_regressions.py::MultiAgentRegressionTests::test_service_cannot_pass_failed_validation_when_review_approves",
+        "tests/test_multi_agent_http.py::test_store_rejects_false_success_and_owner_overwrite",
+        "tests/test_multi_agent_acceptance.py::RealCompileAcceptance::test_real_compile_error_is_repaired_with_fresh_validation_and_review"
+      ],
+      "scope": "纯契约/服务端和模型、验证替身；失效检查 machine-gate；真实编译失败即使 approve 仍修复",
+      "resolved": [
+        {
+          "selector": "tests/test_multi_agent_review.py::MultiAgentReviewTests::test_failed_validation_cannot_be_overridden_by_model_approve",
+          "records": 1,
+          "nodes": [
+            "tests.test_multi_agent_review.MultiAgentReviewTests::test_failed_validation_cannot_be_overridden_by_model_approve"
+          ],
+          "status": "passed"
+        },
+        {
+          "selector": "tests/test_multi_agent_review.py::MultiAgentReviewTests::test_invalid_approve_with_blocking_is_rejected_even_for_bypassed_model_instances",
+          "records": 1,
+          "nodes": [
+            "tests.test_multi_agent_review.MultiAgentReviewTests::test_invalid_approve_with_blocking_is_rejected_even_for_bypassed_model_instances"
+          ],
+          "status": "passed"
+        },
+        {
+          "selector": "tests/test_multi_agent_regressions.py::MultiAgentRegressionTests::test_service_cannot_pass_failed_validation_when_review_approves",
+          "records": 1,
+          "nodes": [
+            "tests.test_multi_agent_regressions.MultiAgentRegressionTests::test_service_cannot_pass_failed_validation_when_review_approves"
+          ],
+          "status": "passed"
+        },
+        {
+          "selector": "tests/test_multi_agent_http.py::test_store_rejects_false_success_and_owner_overwrite",
+          "records": 1,
+          "nodes": [
+            "tests.test_multi_agent_http::test_store_rejects_false_success_and_owner_overwrite"
+          ],
+          "status": "passed"
+        },
+        {
+          "selector": "tests/test_multi_agent_acceptance.py::RealCompileAcceptance::test_real_compile_error_is_repaired_with_fresh_validation_and_review",
+          "records": 1,
+          "nodes": [
+            "tests.test_multi_agent_acceptance.RealCompileAcceptance::test_real_compile_error_is_repaired_with_fresh_validation_and_review"
+          ],
+          "status": "passed"
+        }
+      ],
+      "status": "passed"
+    },
+    {
+      "id": "A06",
+      "criterion": "旧源码、hash、轮次或任务错配不能通过",
+      "tests": [
+        "tests/test_multi_agent_acceptance.py::AcceptanceCounterexamples::test_stale_review_cannot_finish_current_round_even_after_retry",
+        "tests/test_multi_agent_review.py::MultiAgentReviewTests::test_mismatched_hash_missing_binding_and_old_round_never_pass",
+        "tests/test_multi_agent_contracts.py::MultiAgentContractsTests::test_validation_binding_never_relabels_a_previous_execution"
+      ],
+      "scope": "服务端与固定组件；失效检查 review-hash",
+      "resolved": [
+        {
+          "selector": "tests/test_multi_agent_acceptance.py::AcceptanceCounterexamples::test_stale_review_cannot_finish_current_round_even_after_retry",
+          "records": 1,
+          "nodes": [
+            "tests.test_multi_agent_acceptance.AcceptanceCounterexamples::test_stale_review_cannot_finish_current_round_even_after_retry"
+          ],
+          "status": "passed"
+        },
+        {
+          "selector": "tests/test_multi_agent_review.py::MultiAgentReviewTests::test_mismatched_hash_missing_binding_and_old_round_never_pass",
+          "records": 1,
+          "nodes": [
+            "tests.test_multi_agent_review.MultiAgentReviewTests::test_mismatched_hash_missing_binding_and_old_round_never_pass"
+          ],
+          "status": "passed"
+        },
+        {
+          "selector": "tests/test_multi_agent_contracts.py::MultiAgentContractsTests::test_validation_binding_never_relabels_a_previous_execution",
+          "records": 1,
+          "nodes": [
+            "tests.test_multi_agent_contracts.MultiAgentContractsTests::test_validation_binding_never_relabels_a_previous_execution"
+          ],
+          "status": "passed"
+        }
+      ],
+      "status": "passed"
+    },
+    {
+      "id": "A07",
+      "criterion": "拒绝可信测试改写；削弱模型测试不能绕过",
+      "tests": [
+        "tests/test_multi_agent_contracts.py::MultiAgentContractsTests::test_hash_or_trusted_test_tampering_is_rejected_even_if_rehashed",
+        "tests/test_multi_agent_agents.py::CodeGenerateTests::test_generate_rejects_model_acceptance_file_and_malformed_output",
+        "tests/test_go_acceptance.py::test_server_tests_detect_bad_behavior_even_with_weak_model_tests",
+        "tests/test_go_acceptance.py::test_real_repair_cannot_remove_server_tests"
+      ],
+      "scope": "含三个场景真实 Docker 弱测试反例；失效检查 trusted-test",
+      "resolved": [
+        {
+          "selector": "tests/test_multi_agent_contracts.py::MultiAgentContractsTests::test_hash_or_trusted_test_tampering_is_rejected_even_if_rehashed",
+          "records": 1,
+          "nodes": [
+            "tests.test_multi_agent_contracts.MultiAgentContractsTests::test_hash_or_trusted_test_tampering_is_rejected_even_if_rehashed"
+          ],
+          "status": "passed"
+        },
+        {
+          "selector": "tests/test_multi_agent_agents.py::CodeGenerateTests::test_generate_rejects_model_acceptance_file_and_malformed_output",
+          "records": 1,
+          "nodes": [
+            "tests.test_multi_agent_agents.CodeGenerateTests::test_generate_rejects_model_acceptance_file_and_malformed_output"
+          ],
+          "status": "passed"
+        },
+        {
+          "selector": "tests/test_go_acceptance.py::test_server_tests_detect_bad_behavior_even_with_weak_model_tests",
+          "records": 3,
+          "nodes": [
+            "tests.test_go_acceptance::test_server_tests_detect_bad_behavior_even_with_weak_model_tests[channel]",
+            "tests.test_go_acceptance::test_server_tests_detect_bad_behavior_even_with_weak_model_tests[context_cancel]",
+            "tests.test_go_acceptance::test_server_tests_detect_bad_behavior_even_with_weak_model_tests[worker_pool]"
+          ],
+          "status": "passed"
+        },
+        {
+          "selector": "tests/test_go_acceptance.py::test_real_repair_cannot_remove_server_tests",
+          "records": 1,
+          "nodes": [
+            "tests.test_go_acceptance::test_real_repair_cannot_remove_server_tests"
+          ],
+          "status": "passed"
+        }
+      ],
+      "status": "passed"
+    },
+    {
+      "id": "A08",
+      "criterion": "审查非法/无法判断有界重试；超时明确终止",
+      "tests": [
+        "tests/test_multi_agent_workflow.py::ClosedLoopTests::test_review_format_error_consumes_shared_retry_then_passes_or_fails",
+        "tests/test_multi_agent_acceptance.py::AcceptanceCounterexamples::test_cannot_assess_consumes_one_retry_and_stops",
+        "tests/test_multi_agent_http.py::test_interruptions_preserve_evidence_and_release_session"
+      ],
+      "scope": "模型与验证替身；覆盖 review+timeout 参数。角色超时直接 timeout，非法/无法判断共享重试一次",
+      "resolved": [
+        {
+          "selector": "tests/test_multi_agent_workflow.py::ClosedLoopTests::test_review_format_error_consumes_shared_retry_then_passes_or_fails",
+          "records": 1,
+          "nodes": [
+            "tests.test_multi_agent_workflow.ClosedLoopTests::test_review_format_error_consumes_shared_retry_then_passes_or_fails"
+          ],
+          "status": "passed"
+        },
+        {
+          "selector": "tests/test_multi_agent_acceptance.py::AcceptanceCounterexamples::test_cannot_assess_consumes_one_retry_and_stops",
+          "records": 1,
+          "nodes": [
+            "tests.test_multi_agent_acceptance.AcceptanceCounterexamples::test_cannot_assess_consumes_one_retry_and_stops"
+          ],
+          "status": "passed"
+        },
+        {
+          "selector": "tests/test_multi_agent_http.py::test_interruptions_preserve_evidence_and_release_session",
+          "records": 16,
+          "nodes": [
+            "tests.test_multi_agent_http::test_interruptions_preserve_evidence_and_release_session[cancel-json-generate]",
+            "tests.test_multi_agent_http::test_interruptions_preserve_evidence_and_release_session[cancel-json-repair_generate]",
+            "tests.test_multi_agent_http::test_interruptions_preserve_evidence_and_release_session[cancel-json-review]",
+            "tests.test_multi_agent_http::test_interruptions_preserve_evidence_and_release_session[cancel-json-sandbox]",
+            "tests.test_multi_agent_http::test_interruptions_preserve_evidence_and_release_session[cancel-sse-generate]",
+            "tests.test_multi_agent_http::test_interruptions_preserve_evidence_and_release_session[cancel-sse-repair_generate]",
+            "tests.test_multi_agent_http::test_interruptions_preserve_evidence_and_release_session[cancel-sse-review]",
+            "tests.test_multi_agent_http::test_interruptions_preserve_evidence_and_release_session[cancel-sse-sandbox]",
+            "tests.test_multi_agent_http::test_interruptions_preserve_evidence_and_release_session[timeout-json-generate]",
+            "tests.test_multi_agent_http::test_interruptions_preserve_evidence_and_release_session[timeout-json-repair_generate]",
+            "tests.test_multi_agent_http::test_interruptions_preserve_evidence_and_release_session[timeout-json-review]",
+            "tests.test_multi_agent_http::test_interruptions_preserve_evidence_and_release_session[timeout-json-sandbox]",
+            "tests.test_multi_agent_http::test_interruptions_preserve_evidence_and_release_session[timeout-sse-generate]",
+            "tests.test_multi_agent_http::test_interruptions_preserve_evidence_and_release_session[timeout-sse-repair_generate]",
+            "tests.test_multi_agent_http::test_interruptions_preserve_evidence_and_release_session[timeout-sse-review]",
+            "tests.test_multi_agent_http::test_interruptions_preserve_evidence_and_release_session[timeout-sse-sandbox]"
+          ],
+          "status": "passed"
+        }
+      ],
+      "status": "passed"
+    },
+    {
+      "id": "A09",
+      "criterion": "只有建议可通过，不强制修复",
+      "tests": [
+        "tests/test_multi_agent_review.py::MultiAgentReviewTests::test_only_complete_matching_evidence_passes_and_suggestions_do_not_force_repair"
+      ],
+      "scope": "纯服务端门禁；浏览器展示沿用 S6 证据，本次未重跑浏览器",
+      "resolved": [
+        {
+          "selector": "tests/test_multi_agent_review.py::MultiAgentReviewTests::test_only_complete_matching_evidence_passes_and_suggestions_do_not_force_repair",
+          "records": 1,
+          "nodes": [
+            "tests.test_multi_agent_review.MultiAgentReviewTests::test_only_complete_matching_evidence_passes_and_suggestions_do_not_force_repair"
+          ],
+          "status": "passed"
+        }
+      ],
+      "status": "passed"
+    },
+    {
+      "id": "A10",
+      "criterion": "恶意资料/日志/模型权限声明不改变服务端",
+      "tests": [
+        "tests/test_multi_agent_acceptance.py::AcceptanceCounterexamples::test_injected_logs_references_and_model_authority_claims_cannot_override_server",
+        "tests/test_go_runner.py::test_command_has_isolation_and_no_host_mounts",
+        "tests/test_go_runner.py::test_real_container_resource_and_network_configuration",
+        "tests/test_go_runner.py::test_real_identity_filesystem_and_secret_isolation"
+      ],
+      "scope": "固定恶意输入 + 真实 Docker 权限；只证明权限/预算/终态机制，不证明真实模型抗注入能力",
+      "resolved": [
+        {
+          "selector": "tests/test_multi_agent_acceptance.py::AcceptanceCounterexamples::test_injected_logs_references_and_model_authority_claims_cannot_override_server",
+          "records": 1,
+          "nodes": [
+            "tests.test_multi_agent_acceptance.AcceptanceCounterexamples::test_injected_logs_references_and_model_authority_claims_cannot_override_server"
+          ],
+          "status": "passed"
+        },
+        {
+          "selector": "tests/test_go_runner.py::test_command_has_isolation_and_no_host_mounts",
+          "records": 1,
+          "nodes": [
+            "tests.test_go_runner::test_command_has_isolation_and_no_host_mounts"
+          ],
+          "status": "passed"
+        },
+        {
+          "selector": "tests/test_go_runner.py::test_real_container_resource_and_network_configuration",
+          "records": 1,
+          "nodes": [
+            "tests.test_go_runner::test_real_container_resource_and_network_configuration"
+          ],
+          "status": "passed"
+        },
+        {
+          "selector": "tests/test_go_runner.py::test_real_identity_filesystem_and_secret_isolation",
+          "records": 1,
+          "nodes": [
+            "tests.test_go_runner::test_real_identity_filesystem_and_secret_isolation"
+          ],
+          "status": "passed"
+        }
+      ],
+      "status": "passed"
+    },
+    {
+      "id": "A11",
+      "criterion": "Docker 不可用/异常直接终止，不进入修复",
+      "tests": [
+        "tests/test_go_runner.py::test_missing_docker_never_runs_host_code",
+        "tests/test_multi_agent_workflow.py::ClosedLoopTests::test_environment_unavailable_terminates_without_review_or_repair",
+        "tests/test_multi_agent_http.py::test_validator_exception_is_preserved_with_current_artifact"
+      ],
+      "scope": "故意模拟缺失/异常；本机 Docker 可用另有实证",
+      "resolved": [
+        {
+          "selector": "tests/test_go_runner.py::test_missing_docker_never_runs_host_code",
+          "records": 1,
+          "nodes": [
+            "tests.test_go_runner::test_missing_docker_never_runs_host_code"
+          ],
+          "status": "passed"
+        },
+        {
+          "selector": "tests/test_multi_agent_workflow.py::ClosedLoopTests::test_environment_unavailable_terminates_without_review_or_repair",
+          "records": 1,
+          "nodes": [
+            "tests.test_multi_agent_workflow.ClosedLoopTests::test_environment_unavailable_terminates_without_review_or_repair"
+          ],
+          "status": "passed"
+        },
+        {
+          "selector": "tests/test_multi_agent_http.py::test_validator_exception_is_preserved_with_current_artifact",
+          "records": 1,
+          "nodes": [
+            "tests.test_multi_agent_http::test_validator_exception_is_preserved_with_current_artifact"
+          ],
+          "status": "passed"
+        }
+      ],
+      "status": "passed"
+    },
+    {
+      "id": "A12",
+      "criterion": "各阶段取消/超时，保留报告、清理、释放占用",
+      "tests": [
+        "tests/test_multi_agent_early_interruptions.py::test_early_interrupt_preserves_call_and_releases_session",
+        "tests/test_multi_agent_http.py::test_interruptions_preserve_evidence_and_release_session",
+        "tests/test_multi_agent_http.py::test_waiting_for_capacity_keeps_zero_calls_and_releases_session",
+        "tests/test_multi_agent_http.py::test_close_at_go_start_persists_cancelled_without_external_calls",
+        "tests/test_multi_agent_http.py::test_repeated_cancellation_keeps_session_until_report_commit",
+        "tests/test_multi_agent_http.py::test_execution_capacity_is_held_until_sandbox_cleanup_finishes",
+        "tests/test_multi_agent_http.py::test_real_docker_http_interrupt_preserves_report_and_confirms_cleanup",
+        "tests/test_multi_agent_workflow.py::ClosedLoopTests::test_cancellation_propagates_and_no_further_requests"
+      ],
+      "scope": "计划/检索新增 8 项 + 生成/审查/沙箱/修复生成 16 项中断；排队/首事件关闭/重复取消/落库与清理占用；4 个真实 Docker HTTP 中断；失效检查 cancel-propagation",
+      "resolved": [
+        {
+          "selector": "tests/test_multi_agent_early_interruptions.py::test_early_interrupt_preserves_call_and_releases_session",
+          "records": 8,
+          "nodes": [
+            "tests.test_multi_agent_early_interruptions::test_early_interrupt_preserves_call_and_releases_session[cancel-json-plan]",
+            "tests.test_multi_agent_early_interruptions::test_early_interrupt_preserves_call_and_releases_session[cancel-json-retrieve]",
+            "tests.test_multi_agent_early_interruptions::test_early_interrupt_preserves_call_and_releases_session[cancel-sse-plan]",
+            "tests.test_multi_agent_early_interruptions::test_early_interrupt_preserves_call_and_releases_session[cancel-sse-retrieve]",
+            "tests.test_multi_agent_early_interruptions::test_early_interrupt_preserves_call_and_releases_session[timeout-json-plan]",
+            "tests.test_multi_agent_early_interruptions::test_early_interrupt_preserves_call_and_releases_session[timeout-json-retrieve]",
+            "tests.test_multi_agent_early_interruptions::test_early_interrupt_preserves_call_and_releases_session[timeout-sse-plan]",
+            "tests.test_multi_agent_early_interruptions::test_early_interrupt_preserves_call_and_releases_session[timeout-sse-retrieve]"
+          ],
+          "status": "passed"
+        },
+        {
+          "selector": "tests/test_multi_agent_http.py::test_interruptions_preserve_evidence_and_release_session",
+          "records": 16,
+          "nodes": [
+            "tests.test_multi_agent_http::test_interruptions_preserve_evidence_and_release_session[cancel-json-generate]",
+            "tests.test_multi_agent_http::test_interruptions_preserve_evidence_and_release_session[cancel-json-repair_generate]",
+            "tests.test_multi_agent_http::test_interruptions_preserve_evidence_and_release_session[cancel-json-review]",
+            "tests.test_multi_agent_http::test_interruptions_preserve_evidence_and_release_session[cancel-json-sandbox]",
+            "tests.test_multi_agent_http::test_interruptions_preserve_evidence_and_release_session[cancel-sse-generate]",
+            "tests.test_multi_agent_http::test_interruptions_preserve_evidence_and_release_session[cancel-sse-repair_generate]",
+            "tests.test_multi_agent_http::test_interruptions_preserve_evidence_and_release_session[cancel-sse-review]",
+            "tests.test_multi_agent_http::test_interruptions_preserve_evidence_and_release_session[cancel-sse-sandbox]",
+            "tests.test_multi_agent_http::test_interruptions_preserve_evidence_and_release_session[timeout-json-generate]",
+            "tests.test_multi_agent_http::test_interruptions_preserve_evidence_and_release_session[timeout-json-repair_generate]",
+            "tests.test_multi_agent_http::test_interruptions_preserve_evidence_and_release_session[timeout-json-review]",
+            "tests.test_multi_agent_http::test_interruptions_preserve_evidence_and_release_session[timeout-json-sandbox]",
+            "tests.test_multi_agent_http::test_interruptions_preserve_evidence_and_release_session[timeout-sse-generate]",
+            "tests.test_multi_agent_http::test_interruptions_preserve_evidence_and_release_session[timeout-sse-repair_generate]",
+            "tests.test_multi_agent_http::test_interruptions_preserve_evidence_and_release_session[timeout-sse-review]",
+            "tests.test_multi_agent_http::test_interruptions_preserve_evidence_and_release_session[timeout-sse-sandbox]"
+          ],
+          "status": "passed"
+        },
+        {
+          "selector": "tests/test_multi_agent_http.py::test_waiting_for_capacity_keeps_zero_calls_and_releases_session",
+          "records": 2,
+          "nodes": [
+            "tests.test_multi_agent_http::test_waiting_for_capacity_keeps_zero_calls_and_releases_session[cancel]",
+            "tests.test_multi_agent_http::test_waiting_for_capacity_keeps_zero_calls_and_releases_session[timeout]"
+          ],
+          "status": "passed"
+        },
+        {
+          "selector": "tests/test_multi_agent_http.py::test_close_at_go_start_persists_cancelled_without_external_calls",
+          "records": 1,
+          "nodes": [
+            "tests.test_multi_agent_http::test_close_at_go_start_persists_cancelled_without_external_calls"
+          ],
+          "status": "passed"
+        },
+        {
+          "selector": "tests/test_multi_agent_http.py::test_repeated_cancellation_keeps_session_until_report_commit",
+          "records": 1,
+          "nodes": [
+            "tests.test_multi_agent_http::test_repeated_cancellation_keeps_session_until_report_commit"
+          ],
+          "status": "passed"
+        },
+        {
+          "selector": "tests/test_multi_agent_http.py::test_execution_capacity_is_held_until_sandbox_cleanup_finishes",
+          "records": 1,
+          "nodes": [
+            "tests.test_multi_agent_http::test_execution_capacity_is_held_until_sandbox_cleanup_finishes"
+          ],
+          "status": "passed"
+        },
+        {
+          "selector": "tests/test_multi_agent_http.py::test_real_docker_http_interrupt_preserves_report_and_confirms_cleanup",
+          "records": 4,
+          "nodes": [
+            "tests.test_multi_agent_http::test_real_docker_http_interrupt_preserves_report_and_confirms_cleanup[cancel-json]",
+            "tests.test_multi_agent_http::test_real_docker_http_interrupt_preserves_report_and_confirms_cleanup[cancel-sse]",
+            "tests.test_multi_agent_http::test_real_docker_http_interrupt_preserves_report_and_confirms_cleanup[timeout-json]",
+            "tests.test_multi_agent_http::test_real_docker_http_interrupt_preserves_report_and_confirms_cleanup[timeout-sse]"
+          ],
+          "status": "passed"
+        },
+        {
+          "selector": "tests/test_multi_agent_workflow.py::ClosedLoopTests::test_cancellation_propagates_and_no_further_requests",
+          "records": 1,
+          "nodes": [
+            "tests.test_multi_agent_workflow.ClosedLoopTests::test_cancellation_propagates_and_no_further_requests"
+          ],
+          "status": "passed"
+        }
+      ],
+      "status": "passed"
+    },
+    {
+      "id": "A13",
+      "criterion": "失败/解析/重试计数，发送前禁止超额",
+      "tests": [
+        "tests/test_multi_agent_acceptance.py::AcceptanceCounterexamples::test_eight_actual_requests_include_provider_failure_and_ninth_is_blocked",
+        "tests/test_multi_agent_acceptance.py::AcceptanceCounterexamples::test_total_cap_blocks_shared_retry_before_client_send",
+        "tests/test_multi_agent_acceptance.py::AcceptanceCounterexamples::test_total_guard_blocks_retry_with_unused_retry_quota",
+        "tests/test_multi_agent_workflow.py::ClosedLoopTests::test_generate_parse_failure_consumes_shared_retry_and_counts",
+        "tests/test_multi_agent_budget.py::SharedBudgetTests::test_hard_caps_seven_normal_one_retry_eight_total",
+        "tests/test_multi_agent_config.py::MultiAgentConfigTests::test_illegal_limits_types_nonfinite_time_and_model_rejected"
+      ],
+      "scope": "固定客户端捕获实际 8 请求；第 9 次在发送前预占处拒绝；低总额也独立生效；失效检查 total-budget",
+      "resolved": [
+        {
+          "selector": "tests/test_multi_agent_acceptance.py::AcceptanceCounterexamples::test_eight_actual_requests_include_provider_failure_and_ninth_is_blocked",
+          "records": 1,
+          "nodes": [
+            "tests.test_multi_agent_acceptance.AcceptanceCounterexamples::test_eight_actual_requests_include_provider_failure_and_ninth_is_blocked"
+          ],
+          "status": "passed"
+        },
+        {
+          "selector": "tests/test_multi_agent_acceptance.py::AcceptanceCounterexamples::test_total_cap_blocks_shared_retry_before_client_send",
+          "records": 1,
+          "nodes": [
+            "tests.test_multi_agent_acceptance.AcceptanceCounterexamples::test_total_cap_blocks_shared_retry_before_client_send"
+          ],
+          "status": "passed"
+        },
+        {
+          "selector": "tests/test_multi_agent_acceptance.py::AcceptanceCounterexamples::test_total_guard_blocks_retry_with_unused_retry_quota",
+          "records": 1,
+          "nodes": [
+            "tests.test_multi_agent_acceptance.AcceptanceCounterexamples::test_total_guard_blocks_retry_with_unused_retry_quota"
+          ],
+          "status": "passed"
+        },
+        {
+          "selector": "tests/test_multi_agent_workflow.py::ClosedLoopTests::test_generate_parse_failure_consumes_shared_retry_and_counts",
+          "records": 1,
+          "nodes": [
+            "tests.test_multi_agent_workflow.ClosedLoopTests::test_generate_parse_failure_consumes_shared_retry_and_counts"
+          ],
+          "status": "passed"
+        },
+        {
+          "selector": "tests/test_multi_agent_budget.py::SharedBudgetTests::test_hard_caps_seven_normal_one_retry_eight_total",
+          "records": 1,
+          "nodes": [
+            "tests.test_multi_agent_budget.SharedBudgetTests::test_hard_caps_seven_normal_one_retry_eight_total"
+          ],
+          "status": "passed"
+        },
+        {
+          "selector": "tests/test_multi_agent_config.py::MultiAgentConfigTests::test_illegal_limits_types_nonfinite_time_and_model_rejected",
+          "records": 1,
+          "nodes": [
+            "tests.test_multi_agent_config.MultiAgentConfigTests::test_illegal_limits_types_nonfinite_time_and_model_rejected"
+          ],
+          "status": "passed"
+        }
+      ],
+      "status": "passed"
+    },
+    {
+      "id": "A14",
+      "criterion": "JSON/SSE 业务结果与最终事件一致",
+      "tests": [
+        "tests/test_multi_agent_http.py::test_actual_json_sse_equal_and_persist_every_round",
+        "tests/test_go_acceptance.py::test_http_real_graph_json_stream_and_report_ownership"
+      ],
+      "scope": "六种业务状态的真实 ASGI+SQLite（模型、验证替身），以及旧流程真实 Docker；HTTP 200 不等于 passed",
+      "resolved": [
+        {
+          "selector": "tests/test_multi_agent_http.py::test_actual_json_sse_equal_and_persist_every_round",
+          "records": 6,
+          "nodes": [
+            "tests.test_multi_agent_http::test_actual_json_sse_equal_and_persist_every_round[budget-budget_exceeded]",
+            "tests.test_multi_agent_http::test_actual_json_sse_equal_and_persist_every_round[failed-failed]",
+            "tests.test_multi_agent_http::test_actual_json_sse_equal_and_persist_every_round[generation_error-generation_error]",
+            "tests.test_multi_agent_http::test_actual_json_sse_equal_and_persist_every_round[pass-passed]",
+            "tests.test_multi_agent_http::test_actual_json_sse_equal_and_persist_every_round[repair-passed]",
+            "tests.test_multi_agent_http::test_actual_json_sse_equal_and_persist_every_round[unavailable-unavailable]"
+          ],
+          "status": "passed"
+        },
+        {
+          "selector": "tests/test_go_acceptance.py::test_http_real_graph_json_stream_and_report_ownership",
+          "records": 1,
+          "nodes": [
+            "tests.test_go_acceptance::test_http_real_graph_json_stream_and_report_ownership"
+          ],
+          "status": "passed"
+        }
+      ],
+      "status": "passed"
+    },
+    {
+      "id": "A15",
+      "criterion": "跨账户不可读、相同会话并发隔离与占用",
+      "tests": [
+        "tests/test_multi_agent_http.py::test_accounts_same_public_session_can_run_concurrently",
+        "tests/test_multi_agent_http.py::test_interruptions_preserve_evidence_and_release_session",
+        "tests/test_hardening.py::SecurityTests::test_concurrent_same_session_returns_conflict_then_releases"
+      ],
+      "scope": "真实 ASGI、SQLite，固定角色响应；409/404 与取消后同会话再运行均检查",
+      "resolved": [
+        {
+          "selector": "tests/test_multi_agent_http.py::test_accounts_same_public_session_can_run_concurrently",
+          "records": 1,
+          "nodes": [
+            "tests.test_multi_agent_http::test_accounts_same_public_session_can_run_concurrently"
+          ],
+          "status": "passed"
+        },
+        {
+          "selector": "tests/test_multi_agent_http.py::test_interruptions_preserve_evidence_and_release_session",
+          "records": 16,
+          "nodes": [
+            "tests.test_multi_agent_http::test_interruptions_preserve_evidence_and_release_session[cancel-json-generate]",
+            "tests.test_multi_agent_http::test_interruptions_preserve_evidence_and_release_session[cancel-json-repair_generate]",
+            "tests.test_multi_agent_http::test_interruptions_preserve_evidence_and_release_session[cancel-json-review]",
+            "tests.test_multi_agent_http::test_interruptions_preserve_evidence_and_release_session[cancel-json-sandbox]",
+            "tests.test_multi_agent_http::test_interruptions_preserve_evidence_and_release_session[cancel-sse-generate]",
+            "tests.test_multi_agent_http::test_interruptions_preserve_evidence_and_release_session[cancel-sse-repair_generate]",
+            "tests.test_multi_agent_http::test_interruptions_preserve_evidence_and_release_session[cancel-sse-review]",
+            "tests.test_multi_agent_http::test_interruptions_preserve_evidence_and_release_session[cancel-sse-sandbox]",
+            "tests.test_multi_agent_http::test_interruptions_preserve_evidence_and_release_session[timeout-json-generate]",
+            "tests.test_multi_agent_http::test_interruptions_preserve_evidence_and_release_session[timeout-json-repair_generate]",
+            "tests.test_multi_agent_http::test_interruptions_preserve_evidence_and_release_session[timeout-json-review]",
+            "tests.test_multi_agent_http::test_interruptions_preserve_evidence_and_release_session[timeout-json-sandbox]",
+            "tests.test_multi_agent_http::test_interruptions_preserve_evidence_and_release_session[timeout-sse-generate]",
+            "tests.test_multi_agent_http::test_interruptions_preserve_evidence_and_release_session[timeout-sse-repair_generate]",
+            "tests.test_multi_agent_http::test_interruptions_preserve_evidence_and_release_session[timeout-sse-review]",
+            "tests.test_multi_agent_http::test_interruptions_preserve_evidence_and_release_session[timeout-sse-sandbox]"
+          ],
+          "status": "passed"
+        },
+        {
+          "selector": "tests/test_hardening.py::SecurityTests::test_concurrent_same_session_returns_conflict_then_releases",
+          "records": 1,
+          "nodes": [
+            "tests.test_hardening.SecurityTests::test_concurrent_same_session_returns_conflict_then_releases"
+          ],
+          "status": "passed"
+        }
+      ],
+      "status": "passed"
+    },
+    {
+      "id": "A16",
+      "criterion": "旧 JSON 样本升级读取补默认值",
+      "tests": [
+        "tests/test_multi_agent_contracts.py::MultiAgentContractsTests::test_actual_legacy_report_json_remains_readable_with_nested_defaults",
+        "tests/test_multi_agent_http.py::test_historical_report_rows_read_through_http_after_store_reopen"
+      ],
+      "scope": "9 个已有历史原始报告直接写库重开，真实 GET；S6 浏览器为历史证据",
+      "resolved": [
+        {
+          "selector": "tests/test_multi_agent_contracts.py::MultiAgentContractsTests::test_actual_legacy_report_json_remains_readable_with_nested_defaults",
+          "records": 1,
+          "nodes": [
+            "tests.test_multi_agent_contracts.MultiAgentContractsTests::test_actual_legacy_report_json_remains_readable_with_nested_defaults"
+          ],
+          "status": "passed"
+        },
+        {
+          "selector": "tests/test_multi_agent_http.py::test_historical_report_rows_read_through_http_after_store_reopen",
+          "records": 1,
+          "nodes": [
+            "tests.test_multi_agent_http::test_historical_report_rows_read_through_http_after_store_reopen"
+          ],
+          "status": "passed"
+        }
+      ],
+      "status": "passed"
+    },
+    {
+      "id": "A17",
+      "criterion": "相同失败代码及时停止",
+      "tests": [
+        "tests/test_multi_agent_workflow.py::ClosedLoopTests::test_identical_failed_artifact_stops_as_no_progress",
+        "tests/test_multi_agent_review.py::MultiAgentReviewTests::test_unchanged_failed_artifact_stops_without_repair"
+      ],
+      "scope": "模型与验证替身；2 次验证后 no_progress，不发第三轮生成",
+      "resolved": [
+        {
+          "selector": "tests/test_multi_agent_workflow.py::ClosedLoopTests::test_identical_failed_artifact_stops_as_no_progress",
+          "records": 1,
+          "nodes": [
+            "tests.test_multi_agent_workflow.ClosedLoopTests::test_identical_failed_artifact_stops_as_no_progress"
+          ],
+          "status": "passed"
+        },
+        {
+          "selector": "tests/test_multi_agent_review.py::MultiAgentReviewTests::test_unchanged_failed_artifact_stops_without_repair",
+          "records": 1,
+          "nodes": [
+            "tests.test_multi_agent_review.MultiAgentReviewTests::test_unchanged_failed_artifact_stops_without_repair"
+          ],
+          "status": "passed"
+        }
+      ],
+      "status": "passed"
+    },
+    {
+      "id": "A18",
+      "criterion": "开关关闭保持旧 Go 与原问答/文章路径",
+      "tests": [
+        "tests/test_multi_agent_regressions.py::MultiAgentRegressionTests::test_switch_off_uses_original_path_even_when_graph_was_cached",
+        "tests/test_go_acceptance.py::test_http_real_graph_json_stream_and_report_ownership",
+        "tests/test_agent.py",
+        "tests/test_integration.py",
+        "tests/test_stability.py",
+        "tests/test_tracing.py",
+        "tests/test_hardening.py"
+      ],
+      "scope": "旧 Go 真实 Docker；问答/检索/文章/消费者等真实应用代码、外部服务替身；另执行离线 Agent 六场景",
+      "resolved": [
+        {
+          "selector": "tests/test_multi_agent_regressions.py::MultiAgentRegressionTests::test_switch_off_uses_original_path_even_when_graph_was_cached",
+          "records": 1,
+          "nodes": [
+            "tests.test_multi_agent_regressions.MultiAgentRegressionTests::test_switch_off_uses_original_path_even_when_graph_was_cached"
+          ],
+          "status": "passed"
+        },
+        {
+          "selector": "tests/test_go_acceptance.py::test_http_real_graph_json_stream_and_report_ownership",
+          "records": 1,
+          "nodes": [
+            "tests.test_go_acceptance::test_http_real_graph_json_stream_and_report_ownership"
+          ],
+          "status": "passed"
+        },
+        {
+          "selector": "tests/test_agent.py",
+          "records": 5,
+          "nodes": [
+            "tests.test_agent::test_agent_sse_events_keep_tool_metadata",
+            "tests.test_agent::test_graph_has_agent_tool_and_finalize_nodes",
+            "tests.test_agent::test_graph_runs_a_tool_loop_without_a_real_model",
+            "tests.test_agent::test_sources_are_ordered_and_deduplicated",
+            "tests.test_agent::test_sse_consumes_the_same_agent_tool_loop"
+          ],
+          "status": "passed"
+        },
+        {
+          "selector": "tests/test_integration.py",
+          "records": 12,
+          "nodes": [
+            "tests.test_integration::test_bm25_incremental_alignment",
+            "tests.test_integration::test_build_article_docs",
+            "tests.test_integration::test_consumer_ingest_and_dedupe",
+            "tests.test_integration::test_consumer_not_found_and_invalid_and_skipped",
+            "tests.test_integration::test_consumer_persistent_dedupe_and_restore",
+            "tests.test_integration::test_consumer_requeues_recoverable_failure",
+            "tests.test_integration::test_extract_article_id",
+            "tests.test_integration::test_format_article",
+            "tests.test_integration::test_go_client_200_and_404",
+            "tests.test_integration::test_go_client_500_raises",
+            "tests.test_integration::test_go_client_disabled",
+            "tests.test_integration::test_go_client_sync_path"
+          ],
+          "status": "passed"
+        },
+        {
+          "selector": "tests/test_stability.py",
+          "records": 6,
+          "nodes": [
+            "tests.test_stability::test_ratelimit_sliding_window",
+            "tests.test_stability::test_ratelimit_window_expiry",
+            "tests.test_stability::test_retryable_classification",
+            "tests.test_stability::test_semantic_cache_double_gate",
+            "tests.test_stability::test_semantic_cache_second_best_candidate",
+            "tests.test_stability::test_semantic_cache_stats"
+          ],
+          "status": "passed"
+        },
+        {
+          "selector": "tests/test_tracing.py",
+          "records": 3,
+          "nodes": [
+            "tests.test_tracing::test_trace_recorder_empty",
+            "tests.test_tracing::test_trace_recorder_ring_and_summary",
+            "tests.test_tracing::test_trace_recorder_ring_capacity"
+          ],
+          "status": "passed"
+        },
+        {
+          "selector": "tests/test_hardening.py",
+          "records": 26,
+          "nodes": [
+            "tests.test_hardening.AsyncTests::test_closing_stream_cancels_graph_without_committing_memory",
+            "tests.test_hardening.AsyncTests::test_consumer_pending_retry_concurrency_and_event_loop",
+            "tests.test_hardening.AsyncTests::test_consumer_retries_are_bounded_and_back_off",
+            "tests.test_hardening.AsyncTests::test_stream_failure_does_not_commit_partial_answer",
+            "tests.test_hardening.AsyncTests::test_stream_tokens_arrive_before_final_generation_completes",
+            "tests.test_hardening.AsyncTests::test_thread_cancellation_waits_before_cleanup",
+            "tests.test_hardening.CacheTests::test_cache_hits_write_memory_for_json_and_sse",
+            "tests.test_hardening.CacheTests::test_cache_isolation_and_exact_guard",
+            "tests.test_hardening.CacheTests::test_cache_lookup_hits_rephrased_question_inside_account",
+            "tests.test_hardening.CacheTests::test_dynamic_failure_and_mixed_tools_never_cached",
+            "tests.test_hardening.CacheTests::test_knowledge_tool_returns_raw_evidence_without_llm",
+            "tests.test_hardening.SecurityTests::test_accounts_sessions_and_generated_ids_are_isolated",
+            "tests.test_hardening.SecurityTests::test_anonymous_and_forged_identity_rejected",
+            "tests.test_hardening.SecurityTests::test_concurrent_same_session_returns_conflict_then_releases",
+            "tests.test_hardening.SecurityTests::test_gateway_cannot_access_management_and_admin_can",
+            "tests.test_hardening.SecurityTests::test_json_body_limit_before_parser",
+            "tests.test_hardening.SecurityTests::test_stream_session_lock_released_on_completion",
+            "tests.test_hardening.SecurityTests::test_upload_size_before_parser_and_original_title",
+            "tests.test_hardening.StorageTests::test_bm25_tokenizes_only_new_documents",
+            "tests.test_hardening.StorageTests::test_concurrent_ingest_search_and_duplicate",
+            "tests.test_hardening.StorageTests::test_incremental_bm25_equals_batch_and_empty_is_safe",
+            "tests.test_hardening.StorageTests::test_isolated_collections_and_no_constructor_io",
+            "tests.test_hardening.StorageTests::test_milvus_first_insert_then_idempotent_upsert",
+            "tests.test_hardening.StorageTests::test_old_auto_id_collection_is_rejected_without_drop",
+            "tests.test_hardening.StorageTests::test_persistent_upload_restore_and_idempotency",
+            "tests.test_hardening.StorageTests::test_vector_failure_keeps_local_indexes_atomic_and_recoverable"
+          ],
+          "status": "passed"
+        }
+      ],
+      "status": "passed"
+    }
+  ],
+  "all_18_passed": true
+}

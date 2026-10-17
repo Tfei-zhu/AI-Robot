@@ -1,0 +1,149 @@
+PASS test_agent_sse_events_keep_tool_metadata
+PASS test_graph_has_agent_tool_and_finalize_nodes
+/Users/xumanchun/Documents/agent项目/AI-Robot-FastAPI-LangChain-RAG-CrewAI-Agent-/.venv/lib/python3.13/site-packages/jieba/__init__.py:44: SyntaxWarning: invalid escape sequence '\.'
+  re_han_default = re.compile("([\u4E00-\u9FD5a-zA-Z0-9+#&\._%\-]+)", re.U)
+/Users/xumanchun/Documents/agent项目/AI-Robot-FastAPI-LangChain-RAG-CrewAI-Agent-/.venv/lib/python3.13/site-packages/jieba/__init__.py:46: SyntaxWarning: invalid escape sequence '\s'
+  re_skip_default = re.compile("(\r\n|\s)", re.U)
+/Users/xumanchun/Documents/agent项目/AI-Robot-FastAPI-LangChain-RAG-CrewAI-Agent-/.venv/lib/python3.13/site-packages/jieba/finalseg/__init__.py:78: SyntaxWarning: invalid escape sequence '\.'
+  re_skip = re.compile("([a-zA-Z0-9]+(?:\.\d+)?%?)")
+Traceback (most recent call last):
+  File "/Users/xumanchun/Documents/agent项目/AI-Robot-latest/tests/test_agent.py", line 108, in <module>
+    fn()
+    ~~^^
+  File "/Users/xumanchun/Documents/agent项目/AI-Robot-latest/tests/test_agent.py", line 54, in test_graph_runs_a_tool_loop_without_a_real_model
+    state = asyncio.run(get_agent_graph().ainvoke({
+        "messages": [HumanMessage(content="发文要注意什么？")], "session_id": "test",
+        "run_id": "test-run", "sources": [], "steps": [], "tool_rounds": 0,
+    }))
+  File "/Library/Frameworks/Python.framework/Versions/3.13/lib/python3.13/asyncio/runners.py", line 195, in run
+    return runner.run(main)
+           ~~~~~~~~~~^^^^^^
+  File "/Library/Frameworks/Python.framework/Versions/3.13/lib/python3.13/asyncio/runners.py", line 118, in run
+    return self._loop.run_until_complete(task)
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^
+  File "/Library/Frameworks/Python.framework/Versions/3.13/lib/python3.13/asyncio/base_events.py", line 725, in run_until_complete
+    return future.result()
+           ~~~~~~~~~~~~~^^
+  File "/Users/xumanchun/Documents/agent项目/AI-Robot-FastAPI-LangChain-RAG-CrewAI-Agent-/.venv/lib/python3.13/site-packages/langgraph/pregel/main.py", line 4090, in ainvoke
+    async for chunk in self.astream(
+    ...<30 lines>...
+            chunks.append(chunk)
+  File "/Users/xumanchun/Documents/agent项目/AI-Robot-FastAPI-LangChain-RAG-CrewAI-Agent-/.venv/lib/python3.13/site-packages/langgraph/pregel/main.py", line 3440, in astream
+    async for _ in runner.atick(
+    ...<16 lines>...
+            yield o
+  File "/Users/xumanchun/Documents/agent项目/AI-Robot-FastAPI-LangChain-RAG-CrewAI-Agent-/.venv/lib/python3.13/site-packages/langgraph/pregel/_runner.py", line 396, in atick
+    await arun_with_retry(
+    ...<15 lines>...
+    )
+  File "/Users/xumanchun/Documents/agent项目/AI-Robot-FastAPI-LangChain-RAG-CrewAI-Agent-/.venv/lib/python3.13/site-packages/langgraph/pregel/_retry.py", line 744, in arun_with_retry
+    return await task.proc.ainvoke(task.input, config)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/xumanchun/Documents/agent项目/AI-Robot-FastAPI-LangChain-RAG-CrewAI-Agent-/.venv/lib/python3.13/site-packages/langgraph/_internal/_runnable.py", line 756, in ainvoke
+    input = await asyncio.create_task(
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^
+        step.ainvoke(input, config, **kwargs), context=context
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "/Users/xumanchun/Documents/agent项目/AI-Robot-FastAPI-LangChain-RAG-CrewAI-Agent-/.venv/lib/python3.13/site-packages/langgraph/_internal/_runnable.py", line 522, in ainvoke
+    ret = await self.afunc(*args, **kwargs)
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/xumanchun/Documents/agent项目/AI-Robot-latest/app/agents/graph.py", line 139, in _agent_node
+    response = await usage.invoke(
+               ^^^^^^^^^^^^^^^^^^^
+    ...<2 lines>...
+    )
+    ^
+  File "/Users/xumanchun/Documents/agent项目/AI-Robot-latest/app/context/usage.py", line 163, in invoke
+    return await ainvoke_with_retry(attempt, messages) if retry else await attempt(messages)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/xumanchun/Documents/agent项目/AI-Robot-latest/app/services/resilience.py", line 48, in ainvoke_with_retry
+    async for attempt in AsyncRetrying(
+    ...<7 lines>...
+            return await fn(*args, **kwargs)
+  File "/Users/xumanchun/Documents/agent项目/AI-Robot-FastAPI-LangChain-RAG-CrewAI-Agent-/.venv/lib/python3.13/site-packages/tenacity/asyncio/__init__.py", line 166, in __anext__
+    do = await self.iter(retry_state=self._retry_state)
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/xumanchun/Documents/agent项目/AI-Robot-FastAPI-LangChain-RAG-CrewAI-Agent-/.venv/lib/python3.13/site-packages/tenacity/asyncio/__init__.py", line 153, in iter
+    result = await action(retry_state)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/xumanchun/Documents/agent项目/AI-Robot-FastAPI-LangChain-RAG-CrewAI-Agent-/.venv/lib/python3.13/site-packages/tenacity/_utils.py", line 99, in inner
+    return call(*args, **kwargs)
+  File "/Users/xumanchun/Documents/agent项目/AI-Robot-FastAPI-LangChain-RAG-CrewAI-Agent-/.venv/lib/python3.13/site-packages/tenacity/__init__.py", line 398, in <lambda>
+    self._add_action_func(lambda rs: rs.outcome.result())
+                                     ~~~~~~~~~~~~~~~~~^^
+  File "/Library/Frameworks/Python.framework/Versions/3.13/lib/python3.13/concurrent/futures/_base.py", line 449, in result
+    return self.__get_result()
+           ~~~~~~~~~~~~~~~~~^^
+  File "/Library/Frameworks/Python.framework/Versions/3.13/lib/python3.13/concurrent/futures/_base.py", line 401, in __get_result
+    raise self._exception
+  File "/Users/xumanchun/Documents/agent项目/AI-Robot-latest/app/services/resilience.py", line 56, in ainvoke_with_retry
+    return await fn(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/xumanchun/Documents/agent项目/AI-Robot-latest/app/context/usage.py", line 137, in attempt
+    estimate=TokenCounter().count(payload,tools)
+             ~~~~~~~~~~~~^^
+  File "/Users/xumanchun/Documents/agent项目/AI-Robot-latest/app/context/token_counter.py", line 25, in __init__
+    self.encoding=tiktoken.get_encoding(self.encoding_name)
+                  ~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^
+  File "/Users/xumanchun/Documents/agent项目/AI-Robot-FastAPI-LangChain-RAG-CrewAI-Agent-/.venv/lib/python3.13/site-packages/tiktoken/registry.py", line 86, in get_encoding
+    enc = Encoding(**constructor())
+                     ~~~~~~~~~~~^^
+  File "/Users/xumanchun/Documents/agent项目/AI-Robot-FastAPI-LangChain-RAG-CrewAI-Agent-/.venv/lib/python3.13/site-packages/tiktoken_ext/openai_public.py", line 76, in cl100k_base
+    mergeable_ranks = load_tiktoken_bpe(
+        "https://openaipublic.blob.core.windows.net/encodings/cl100k_base.tiktoken",
+        expected_hash="223921b76ee99bde995b7ff738513eef100fb51d18c93597a113bcffe865b2a7",
+    )
+  File "/Users/xumanchun/Documents/agent项目/AI-Robot-FastAPI-LangChain-RAG-CrewAI-Agent-/.venv/lib/python3.13/site-packages/tiktoken/load.py", line 161, in load_tiktoken_bpe
+    contents = read_file_cached(tiktoken_bpe_file, expected_hash)
+  File "/Users/xumanchun/Documents/agent项目/AI-Robot-FastAPI-LangChain-RAG-CrewAI-Agent-/.venv/lib/python3.13/site-packages/tiktoken/load.py", line 66, in read_file_cached
+    contents = read_file(blobpath)
+  File "/Users/xumanchun/Documents/agent项目/AI-Robot-FastAPI-LangChain-RAG-CrewAI-Agent-/.venv/lib/python3.13/site-packages/tiktoken/load.py", line 17, in read_file
+    resp = requests.get(blobpath)
+  File "/Users/xumanchun/Documents/agent项目/AI-Robot-FastAPI-LangChain-RAG-CrewAI-Agent-/.venv/lib/python3.13/site-packages/requests/api.py", line 87, in get
+    return request("get", url, params=params, **kwargs)
+  File "/Users/xumanchun/Documents/agent项目/AI-Robot-FastAPI-LangChain-RAG-CrewAI-Agent-/.venv/lib/python3.13/site-packages/requests/api.py", line 71, in request
+    return session.request(method=method, url=url, **kwargs)
+           ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/xumanchun/Documents/agent项目/AI-Robot-FastAPI-LangChain-RAG-CrewAI-Agent-/.venv/lib/python3.13/site-packages/requests/sessions.py", line 651, in request
+    resp = self.send(prep, **send_kwargs)
+  File "/Users/xumanchun/Documents/agent项目/AI-Robot-FastAPI-LangChain-RAG-CrewAI-Agent-/.venv/lib/python3.13/site-packages/requests/sessions.py", line 784, in send
+    r = adapter.send(request, **kwargs)
+  File "/Users/xumanchun/Documents/agent项目/AI-Robot-FastAPI-LangChain-RAG-CrewAI-Agent-/.venv/lib/python3.13/site-packages/requests/adapters.py", line 696, in send
+    resp = conn.urlopen(
+        method=request.method,
+    ...<9 lines>...
+        chunked=chunked,
+    )
+  File "/Users/xumanchun/Documents/agent项目/AI-Robot-FastAPI-LangChain-RAG-CrewAI-Agent-/.venv/lib/python3.13/site-packages/urllib3/connectionpool.py", line 788, in urlopen
+    response = self._make_request(
+        conn,
+    ...<10 lines>...
+        **response_kw,
+    )
+  File "/Users/xumanchun/Documents/agent项目/AI-Robot-FastAPI-LangChain-RAG-CrewAI-Agent-/.venv/lib/python3.13/site-packages/urllib3/connectionpool.py", line 464, in _make_request
+    self._validate_conn(conn)
+    ~~~~~~~~~~~~~~~~~~~^^^^^^
+  File "/Users/xumanchun/Documents/agent项目/AI-Robot-FastAPI-LangChain-RAG-CrewAI-Agent-/.venv/lib/python3.13/site-packages/urllib3/connectionpool.py", line 1106, in _validate_conn
+    conn.connect()
+    ~~~~~~~~~~~~^^
+  File "/Users/xumanchun/Documents/agent项目/AI-Robot-FastAPI-LangChain-RAG-CrewAI-Agent-/.venv/lib/python3.13/site-packages/urllib3/connection.py", line 759, in connect
+    self.sock = sock = self._new_conn()
+                       ~~~~~~~~~~~~~~^^
+  File "/Users/xumanchun/Documents/agent项目/AI-Robot-FastAPI-LangChain-RAG-CrewAI-Agent-/.venv/lib/python3.13/site-packages/urllib3/connection.py", line 204, in _new_conn
+    sock = connection.create_connection(
+        (self._dns_host, self.port),
+    ...<2 lines>...
+        socket_options=self.socket_options,
+    )
+  File "/Users/xumanchun/Documents/agent项目/AI-Robot-FastAPI-LangChain-RAG-CrewAI-Agent-/.venv/lib/python3.13/site-packages/urllib3/util/connection.py", line 60, in create_connection
+    for res in socket.getaddrinfo(host, port, family, socket.SOCK_STREAM):
+               ~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Library/Frameworks/Python.framework/Versions/3.13/lib/python3.13/socket.py", line 977, in getaddrinfo
+    for res in _socket.getaddrinfo(host, port, family, type, proto, flags):
+               ~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/xumanchun/Documents/agent项目/AI-Robot-latest/docs/evidence/s0-20261017/offline_guard/sitecustomize.py", line 11, in reject_network
+    raise RuntimeError("S0_OFFLINE_NETWORK_BLOCKED")
+RuntimeError: S0_OFFLINE_NETWORK_BLOCKED
+During task with name 'agent' and id '23829114-fdca-3599-e8d0-c17e5e273c4f'

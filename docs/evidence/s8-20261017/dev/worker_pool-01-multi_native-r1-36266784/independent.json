@@ -1,0 +1,170 @@
+{
+  "final": {
+    "correct": true,
+    "checks": [
+      {
+        "id": "r-values",
+        "status": "pass",
+        "tests": [
+          "TestEvalPoolValues"
+        ]
+      },
+      {
+        "id": "r-bound",
+        "status": "pass",
+        "tests": [
+          "TestEvalPoolBound"
+        ]
+      },
+      {
+        "id": "r-cancel",
+        "status": "pass",
+        "tests": [
+          "TestEvalPoolCancel"
+        ]
+      }
+    ],
+    "reason": "independent_pass",
+    "artifact_hash": "e9625396fae541d6fb9d519e302b6d0dab5c53a1f07e5f806119fe1d226e6124",
+    "scorer_input_hash": "cc02556f014143cd35a2eb4b0663ede8fc0653b09b4d3b8622b68590632cf0ff",
+    "report": {
+      "status": "passed",
+      "go_version": "1.26.2",
+      "stages": [
+        {
+          "stage": "policy",
+          "exit_code": 0,
+          "output": "单包、源码及标准库依赖校验通过",
+          "elapsed_ms": 0.0,
+          "truncated": false
+        },
+        {
+          "stage": "compile",
+          "exit_code": 0,
+          "output": "",
+          "elapsed_ms": 57.0,
+          "truncated": false
+        },
+        {
+          "stage": "vet",
+          "exit_code": 0,
+          "output": "",
+          "elapsed_ms": 1639.0,
+          "truncated": false
+        },
+        {
+          "stage": "test",
+          "exit_code": 0,
+          "output": "{\"Time\":\"2026-10-17T09:02:01.278600925Z\",\"Action\":\"start\",\"Package\":\"airobot.example\"}\n{\"Time\":\"2026-10-17T09:02:01.280377592Z\",\"Action\":\"run\",\"Package\":\"airobot.example\",\"Test\":\"TestEvalPoolValues\"}\n{\"Time\":\"2026-10-17T09:02:01.280388425Z\",\"Action\":\"output\",\"Package\":\"airobot.example\",\"Test\":\"TestEvalPoolValues\",\"Output\":\"=== RUN   TestEvalPoolValues\\n\"}\n{\"Time\":\"2026-10-17T09:02:01.280426008Z\",\"Action\":\"output\",\"Package\":\"airobot.example\",\"Test\":\"TestEvalPoolValues\",\"Output\":\"--- PASS: TestEvalPoolValues (0.00s)\\n\"}\n{\"Time\":\"2026-10-17T09:02:01.280431883Z\",\"Action\":\"pass\",\"Package\":\"airobot.example\",\"Test\":\"TestEvalPoolValues\",\"Elapsed\":0}\n{\"Time\":\"2026-10-17T09:02:01.2804348Z\",\"Action\":\"run\",\"Package\":\"airobot.example\",\"Test\":\"TestEvalPoolBound\"}\n{\"Time\":\"2026-10-17T09:02:01.280435967Z\",\"Action\":\"output\",\"Package\":\"airobot.example\",\"Test\":\"TestEvalPoolBound\",\"Output\":\"=== RUN   TestEvalPoolBound\\n\"}\n{\"Time\":\"2026-10-17T09:02:01.302757175Z\",\"Action\":\"output\",\"Package\":\"airobot.example\",\"Test\":\"TestEvalPoolBound\",\"Output\":\"--- PASS: TestEvalPoolBound (0.02s)\\n\"}\n{\"Time\":\"2026-10-17T09:02:01.302783842Z\",\"Action\":\"pass\",\"Package\":\"airobot.example\",\"Test\":\"TestEvalPoolBound\",\"Elapsed\":0.02}\n{\"Time\":\"2026-10-17T09:02:01.302793883Z\",\"Action\":\"run\",\"Package\":\"airobot.example\",\"Test\":\"TestEvalPoolCancel\"}\n{\"Time\":\"2026-10-17T09:02:01.302796467Z\",\"Action\":\"output\",\"Package\":\"airobot.example\",\"Test\":\"TestEvalPoolCancel\",\"Output\":\"=== RUN   TestEvalPoolCancel\\n\"}\n{\"Time\":\"2026-10-17T09:02:01.302881883Z\",\"Action\":\"output\",\"Package\":\"airobot.example\",\"Test\":\"TestEvalPoolCancel\",\"Output\":\"--- PASS: TestEvalPoolCancel (0.00s)\\n\"}\n{\"Time\":\"2026-10-17T09:02:01.302891467Z\",\"Action\":\"pass\",\"Package\":\"airobot.example\",\"Test\":\"TestEvalPoolCancel\",\"Elapsed\":0}\n{\"Time\":\"2026-10-17T09:02:01.302893717Z\",\"Action\":\"run\",\"Package\":\"airobot.example\",\"Test\":\"TestServerPoolValuesOrderAndInput\"}\n{\"Time\":\"2026-10-17T09:02:01.3028953Z\",\"Action\":\"output\",\"Package\":\"airobot.example\",\"Test\":\"TestServerPoolValuesOrderAndInput\",\"Output\":\"=== RUN   TestServerPoolValuesOrderAndInput\\n\"}\n{\"Time\":\"2026-10-17T09:02:01.30289905Z\",\"Action\":\"output\",\"Package\":\"airobot.example\",\"Test\":\"TestServerPoolValuesOrderAndInput\",\"Output\":\"--- PASS: TestServerPoolValuesOrderAndInput (0.00s)\\n\"}\n{\"Time\":\"2026-10-17T09:02:01.302900883Z\",\"Action\":\"pass\",\"Package\":\"airobot.example\",\"Test\":\"TestServerPoolValuesOrderAndInput\",\"Elapsed\":0}\n{\"Time\":\"2026-10-17T09:02:01.302902467Z\",\"Action\":\"run\",\"Package\":\"airobot.example\",\"Test\":\"TestServerPoolInvalidWorkers\"}\n{\"Time\":\"2026-10-17T09:02:01.302903633Z\",\"Action\":\"output\",\"Package\":\"airobot.example\",\"Test\":\"TestServerPoolInvalidWorkers\",\"Output\":\"=== RUN   TestServerPoolInvalidWorkers\\n\"}\n{\"Time\":\"2026-10-17T09:02:01.302905133Z\",\"Action\":\"output\",\"Package\":\"airobot.example\",\"Test\":\"TestServerPoolInvalidWorkers\",\"Output\":\"--- PASS: TestServerPoolInvalidWorkers (0.00s)\\n\"}\n{\"Time\":\"2026-10-17T09:02:01.302906342Z\",\"Action\":\"pass\",\"Package\":\"airobot.example\",\"Test\":\"TestServerPoolInvalidWorkers\",\"Elapsed\":0}\n{\"Time\":\"2026-10-17T09:02:01.302907758Z\",\"Action\":\"run\",\"Package\":\"airobot.example\",\"Test\":\"TestServerPoolCancelled\"}\n{\"Time\":\"2026-10-17T09:02:01.302908925Z\",\"Action\":\"output\",\"Package\":\"airobot.example\",\"Test\":\"TestServerPoolCancelled\",\"Output\":\"=== RUN   TestServerPoolCancelled\\n\"}\n{\"Time\":\"2026-10-17T09:02:01.302910425Z\",\"Action\":\"output\",\"Package\":\"airobot.example\",\"Test\":\"TestServerPoolCancelled\",\"Output\":\"--- PASS: TestServerPoolCancelled (0.00s)\\n\"}\n{\"Time\":\"2026-10-17T09:02:01.302912592Z\",\"Action\":\"pass\",\"Package\":\"airobot.example\",\"Test\":\"TestServerPoolCancelled\",\"Elapsed\":0}\n{\"Time\":\"2026-10-17T09:02:01.302913758Z\",\"Action\":\"run\",\"Package\":\"airobot.example\",\"Test\":\"TestServerPoolEmpty\"}\n{\"Time\":\"2026-10-17T09:02:01.302914883Z\",\"Action\":\"output\",\"Package\":\"airobot.example\",\"Test\":\"TestServerPoolEmpty\",\"Output\":\"=== RUN   TestServerPoolEmpty\\n\"}\n{\"Time\":\"2026-10-17T09:02:01.302916342Z\",\"Action\":\"output\",\"Package\":\"airobot.example\",\"Test\":\"TestServerPoolEmpty\",\"Output\":\"--- PASS: TestServerPoolEmpty (0.00s)\\n\"}\n{\"Time\":\"2026-10-17T09:02:01.302917592Z\",\"Action\":\"pass\",\"Package\":\"airobot.example\",\"Test\":\"TestServerPoolEmpty\",\"Elapsed\":0}\n{\"Time\":\"2026-10-17T09:02:01.302918717Z\",\"Action\":\"output\",\"Package\":\"airobot.example\",\"Output\":\"PASS\\n\"}\n{\"Time\":\"2026-10-17T09:02:01.303255967Z\",\"Action\":\"output\",\"Package\":\"airobot.example\",\"Output\":\"ok  \\tairobot.example\\t0.024s\\n\"}\n{\"Time\":\"2026-10-17T09:02:01.303268133Z\",\"Action\":\"pass\",\"Package\":\"airobot.example\",\"Elapsed\":0.025}\n",
+          "elapsed_ms": 302.0,
+          "truncated": false
+        }
+      ],
+      "elapsed_ms": 2390.3,
+      "container_removed": true,
+      "artifact_hash": "cc02556f014143cd35a2eb4b0663ede8fc0653b09b4d3b8622b68590632cf0ff",
+      "task_id": null,
+      "artifact_id": null,
+      "round": null
+    },
+    "scorer_files": [
+      {
+        "name": "solution.go",
+        "content": "package example\nimport (\"context\"; \"fmt\"; \"sync\")\n// 固定 worker 数量，索引对应输出位置；不修改输入。\nfunc WorkerPool(ctx context.Context, jobs []int, workers int) ([]int,error) {\n    if workers<=0 { return nil,fmt.Errorf(\"workers 必须大于零\") }\n    if err:=ctx.Err();err!=nil {return nil,err}\n    out:=make([]int,len(jobs));if len(jobs)==0{return out,nil}\n    if workers>len(jobs){workers=len(jobs)}\n    queue:=make(chan int);var wg sync.WaitGroup\n    for n:=0;n<workers;n++ {wg.Add(1);go func(){defer wg.Done()\n        for {select {case <-ctx.Done():return;case i,ok:=<-queue:if !ok{return};out[i]=jobs[i]*2}}\n    }()}\n    send: for i:=range jobs {select {case <-ctx.Done():break send;case queue<-i:}}\n    close(queue);wg.Wait();if err:=ctx.Err();err!=nil{return nil,err};return out,nil\n}\n\n// fixture version 1"
+      },
+      {
+        "name": "server_acceptance_test.go",
+        "content": "package example\nimport (\"context\"; \"reflect\"; \"testing\")\nfunc TestServerPoolValuesOrderAndInput(t *testing.T) {\n    jobs:=[]int{4,-3,0,8,2}; original:=append([]int{},jobs...)\n    out,err:=WorkerPool(context.Background(),jobs,2)\n    if err!=nil||!reflect.DeepEqual(out,[]int{8,-6,0,16,4}){t.Fatalf(\"输出或顺序错误: %v %v\",out,err)}\n    if !reflect.DeepEqual(jobs,original){t.Fatal(\"修改了输入\")}\n}\nfunc TestServerPoolInvalidWorkers(t *testing.T) {\n    for _,n:=range []int{0,-1}{if _,err:=WorkerPool(context.Background(),[]int{1},n);err==nil{t.Fatal(\"非法 workers 必须报错\")}}\n}\nfunc TestServerPoolCancelled(t *testing.T) {\n    ctx,cancel:=context.WithCancel(context.Background());cancel()\n    if _,err:=WorkerPool(ctx,[]int{1,2},2);err==nil{t.Fatal(\"取消必须报错\")}\n}\nfunc TestServerPoolEmpty(t *testing.T) {\n    out,err:=WorkerPool(context.Background(),nil,2)\n    if err!=nil||len(out)!=0{t.Fatal(\"空任务处理错误\")}\n}\n"
+      },
+      {
+        "name": "eval_independent_test.go",
+        "content": "package example\nimport (\"context\";\"reflect\";\"runtime\";\"testing\")\nfunc TestEvalPoolValues(t *testing.T) {\n    jobs:=[]int{13,-7,0,17,-31,2};original:=append([]int{},jobs...)\n    want:=make([]int,len(jobs));for i,x:=range jobs{want[i]=x*2}\n    for _,w:=range []int{1,3,100}{out,err:=WorkerPool(context.Background(),jobs,w)\n        if err!=nil||!reflect.DeepEqual(out,want)||!reflect.DeepEqual(jobs,original){t.Fatal(out,err,jobs)}}\n}\nfunc TestEvalPoolBound(t *testing.T) {\n    baseline:=runtime.NumGoroutine();done:=make(chan error,1)\n    jobs:=make([]int,65536)\n    go func(){_,err:=WorkerPool(context.Background(),jobs,3);done<-err}()\n    for { select {case err:=<-done:if err!=nil{t.Fatal(err)};return;default:}\n        if runtime.NumGoroutine()>baseline+3+4{t.Fatal(\"observed excessive goroutines\")};runtime.Gosched() }\n}\nfunc TestEvalPoolCancel(t *testing.T) {\n    ctx,cancel:=context.WithCancel(context.Background());cancel()\n    if _,err:=WorkerPool(ctx,[]int{1},2);err==nil{t.Fatal(\"cancel ignored\")}\n    if _,err:=WorkerPool(context.Background(),[]int{1},0);err==nil{t.Fatal(\"invalid workers accepted\")}\n}\n"
+      }
+    ],
+    "elapsed_ms": 2390.77
+  },
+  "initial": {
+    "correct": true,
+    "checks": [
+      {
+        "id": "r-values",
+        "status": "pass",
+        "tests": [
+          "TestEvalPoolValues"
+        ]
+      },
+      {
+        "id": "r-bound",
+        "status": "pass",
+        "tests": [
+          "TestEvalPoolBound"
+        ]
+      },
+      {
+        "id": "r-cancel",
+        "status": "pass",
+        "tests": [
+          "TestEvalPoolCancel"
+        ]
+      }
+    ],
+    "reason": "independent_pass",
+    "artifact_hash": "e9625396fae541d6fb9d519e302b6d0dab5c53a1f07e5f806119fe1d226e6124",
+    "scorer_input_hash": "cc02556f014143cd35a2eb4b0663ede8fc0653b09b4d3b8622b68590632cf0ff",
+    "report": {
+      "status": "passed",
+      "go_version": "1.26.2",
+      "stages": [
+        {
+          "stage": "policy",
+          "exit_code": 0,
+          "output": "单包、源码及标准库依赖校验通过",
+          "elapsed_ms": 0.0,
+          "truncated": false
+        },
+        {
+          "stage": "compile",
+          "exit_code": 0,
+          "output": "",
+          "elapsed_ms": 57.0,
+          "truncated": false
+        },
+        {
+          "stage": "vet",
+          "exit_code": 0,
+          "output": "",
+          "elapsed_ms": 1639.0,
+          "truncated": false
+        },
+        {
+          "stage": "test",
+          "exit_code": 0,
+          "output": "{\"Time\":\"2026-10-17T09:02:01.278600925Z\",\"Action\":\"start\",\"Package\":\"airobot.example\"}\n{\"Time\":\"2026-10-17T09:02:01.280377592Z\",\"Action\":\"run\",\"Package\":\"airobot.example\",\"Test\":\"TestEvalPoolValues\"}\n{\"Time\":\"2026-10-17T09:02:01.280388425Z\",\"Action\":\"output\",\"Package\":\"airobot.example\",\"Test\":\"TestEvalPoolValues\",\"Output\":\"=== RUN   TestEvalPoolValues\\n\"}\n{\"Time\":\"2026-10-17T09:02:01.280426008Z\",\"Action\":\"output\",\"Package\":\"airobot.example\",\"Test\":\"TestEvalPoolValues\",\"Output\":\"--- PASS: TestEvalPoolValues (0.00s)\\n\"}\n{\"Time\":\"2026-10-17T09:02:01.280431883Z\",\"Action\":\"pass\",\"Package\":\"airobot.example\",\"Test\":\"TestEvalPoolValues\",\"Elapsed\":0}\n{\"Time\":\"2026-10-17T09:02:01.2804348Z\",\"Action\":\"run\",\"Package\":\"airobot.example\",\"Test\":\"TestEvalPoolBound\"}\n{\"Time\":\"2026-10-17T09:02:01.280435967Z\",\"Action\":\"output\",\"Package\":\"airobot.example\",\"Test\":\"TestEvalPoolBound\",\"Output\":\"=== RUN   TestEvalPoolBound\\n\"}\n{\"Time\":\"2026-10-17T09:02:01.302757175Z\",\"Action\":\"output\",\"Package\":\"airobot.example\",\"Test\":\"TestEvalPoolBound\",\"Output\":\"--- PASS: TestEvalPoolBound (0.02s)\\n\"}\n{\"Time\":\"2026-10-17T09:02:01.302783842Z\",\"Action\":\"pass\",\"Package\":\"airobot.example\",\"Test\":\"TestEvalPoolBound\",\"Elapsed\":0.02}\n{\"Time\":\"2026-10-17T09:02:01.302793883Z\",\"Action\":\"run\",\"Package\":\"airobot.example\",\"Test\":\"TestEvalPoolCancel\"}\n{\"Time\":\"2026-10-17T09:02:01.302796467Z\",\"Action\":\"output\",\"Package\":\"airobot.example\",\"Test\":\"TestEvalPoolCancel\",\"Output\":\"=== RUN   TestEvalPoolCancel\\n\"}\n{\"Time\":\"2026-10-17T09:02:01.302881883Z\",\"Action\":\"output\",\"Package\":\"airobot.example\",\"Test\":\"TestEvalPoolCancel\",\"Output\":\"--- PASS: TestEvalPoolCancel (0.00s)\\n\"}\n{\"Time\":\"2026-10-17T09:02:01.302891467Z\",\"Action\":\"pass\",\"Package\":\"airobot.example\",\"Test\":\"TestEvalPoolCancel\",\"Elapsed\":0}\n{\"Time\":\"2026-10-17T09:02:01.302893717Z\",\"Action\":\"run\",\"Package\":\"airobot.example\",\"Test\":\"TestServerPoolValuesOrderAndInput\"}\n{\"Time\":\"2026-10-17T09:02:01.3028953Z\",\"Action\":\"output\",\"Package\":\"airobot.example\",\"Test\":\"TestServerPoolValuesOrderAndInput\",\"Output\":\"=== RUN   TestServerPoolValuesOrderAndInput\\n\"}\n{\"Time\":\"2026-10-17T09:02:01.30289905Z\",\"Action\":\"output\",\"Package\":\"airobot.example\",\"Test\":\"TestServerPoolValuesOrderAndInput\",\"Output\":\"--- PASS: TestServerPoolValuesOrderAndInput (0.00s)\\n\"}\n{\"Time\":\"2026-10-17T09:02:01.302900883Z\",\"Action\":\"pass\",\"Package\":\"airobot.example\",\"Test\":\"TestServerPoolValuesOrderAndInput\",\"Elapsed\":0}\n{\"Time\":\"2026-10-17T09:02:01.302902467Z\",\"Action\":\"run\",\"Package\":\"airobot.example\",\"Test\":\"TestServerPoolInvalidWorkers\"}\n{\"Time\":\"2026-10-17T09:02:01.302903633Z\",\"Action\":\"output\",\"Package\":\"airobot.example\",\"Test\":\"TestServerPoolInvalidWorkers\",\"Output\":\"=== RUN   TestServerPoolInvalidWorkers\\n\"}\n{\"Time\":\"2026-10-17T09:02:01.302905133Z\",\"Action\":\"output\",\"Package\":\"airobot.example\",\"Test\":\"TestServerPoolInvalidWorkers\",\"Output\":\"--- PASS: TestServerPoolInvalidWorkers (0.00s)\\n\"}\n{\"Time\":\"2026-10-17T09:02:01.302906342Z\",\"Action\":\"pass\",\"Package\":\"airobot.example\",\"Test\":\"TestServerPoolInvalidWorkers\",\"Elapsed\":0}\n{\"Time\":\"2026-10-17T09:02:01.302907758Z\",\"Action\":\"run\",\"Package\":\"airobot.example\",\"Test\":\"TestServerPoolCancelled\"}\n{\"Time\":\"2026-10-17T09:02:01.302908925Z\",\"Action\":\"output\",\"Package\":\"airobot.example\",\"Test\":\"TestServerPoolCancelled\",\"Output\":\"=== RUN   TestServerPoolCancelled\\n\"}\n{\"Time\":\"2026-10-17T09:02:01.302910425Z\",\"Action\":\"output\",\"Package\":\"airobot.example\",\"Test\":\"TestServerPoolCancelled\",\"Output\":\"--- PASS: TestServerPoolCancelled (0.00s)\\n\"}\n{\"Time\":\"2026-10-17T09:02:01.302912592Z\",\"Action\":\"pass\",\"Package\":\"airobot.example\",\"Test\":\"TestServerPoolCancelled\",\"Elapsed\":0}\n{\"Time\":\"2026-10-17T09:02:01.302913758Z\",\"Action\":\"run\",\"Package\":\"airobot.example\",\"Test\":\"TestServerPoolEmpty\"}\n{\"Time\":\"2026-10-17T09:02:01.302914883Z\",\"Action\":\"output\",\"Package\":\"airobot.example\",\"Test\":\"TestServerPoolEmpty\",\"Output\":\"=== RUN   TestServerPoolEmpty\\n\"}\n{\"Time\":\"2026-10-17T09:02:01.302916342Z\",\"Action\":\"output\",\"Package\":\"airobot.example\",\"Test\":\"TestServerPoolEmpty\",\"Output\":\"--- PASS: TestServerPoolEmpty (0.00s)\\n\"}\n{\"Time\":\"2026-10-17T09:02:01.302917592Z\",\"Action\":\"pass\",\"Package\":\"airobot.example\",\"Test\":\"TestServerPoolEmpty\",\"Elapsed\":0}\n{\"Time\":\"2026-10-17T09:02:01.302918717Z\",\"Action\":\"output\",\"Package\":\"airobot.example\",\"Output\":\"PASS\\n\"}\n{\"Time\":\"2026-10-17T09:02:01.303255967Z\",\"Action\":\"output\",\"Package\":\"airobot.example\",\"Output\":\"ok  \\tairobot.example\\t0.024s\\n\"}\n{\"Time\":\"2026-10-17T09:02:01.303268133Z\",\"Action\":\"pass\",\"Package\":\"airobot.example\",\"Elapsed\":0.025}\n",
+          "elapsed_ms": 302.0,
+          "truncated": false
+        }
+      ],
+      "elapsed_ms": 2390.3,
+      "container_removed": true,
+      "artifact_hash": "cc02556f014143cd35a2eb4b0663ede8fc0653b09b4d3b8622b68590632cf0ff",
+      "task_id": null,
+      "artifact_id": null,
+      "round": null
+    },
+    "scorer_files": [
+      {
+        "name": "solution.go",
+        "content": "package example\nimport (\"context\"; \"fmt\"; \"sync\")\n// 固定 worker 数量，索引对应输出位置；不修改输入。\nfunc WorkerPool(ctx context.Context, jobs []int, workers int) ([]int,error) {\n    if workers<=0 { return nil,fmt.Errorf(\"workers 必须大于零\") }\n    if err:=ctx.Err();err!=nil {return nil,err}\n    out:=make([]int,len(jobs));if len(jobs)==0{return out,nil}\n    if workers>len(jobs){workers=len(jobs)}\n    queue:=make(chan int);var wg sync.WaitGroup\n    for n:=0;n<workers;n++ {wg.Add(1);go func(){defer wg.Done()\n        for {select {case <-ctx.Done():return;case i,ok:=<-queue:if !ok{return};out[i]=jobs[i]*2}}\n    }()}\n    send: for i:=range jobs {select {case <-ctx.Done():break send;case queue<-i:}}\n    close(queue);wg.Wait();if err:=ctx.Err();err!=nil{return nil,err};return out,nil\n}\n\n// fixture version 1"
+      },
+      {
+        "name": "server_acceptance_test.go",
+        "content": "package example\nimport (\"context\"; \"reflect\"; \"testing\")\nfunc TestServerPoolValuesOrderAndInput(t *testing.T) {\n    jobs:=[]int{4,-3,0,8,2}; original:=append([]int{},jobs...)\n    out,err:=WorkerPool(context.Background(),jobs,2)\n    if err!=nil||!reflect.DeepEqual(out,[]int{8,-6,0,16,4}){t.Fatalf(\"输出或顺序错误: %v %v\",out,err)}\n    if !reflect.DeepEqual(jobs,original){t.Fatal(\"修改了输入\")}\n}\nfunc TestServerPoolInvalidWorkers(t *testing.T) {\n    for _,n:=range []int{0,-1}{if _,err:=WorkerPool(context.Background(),[]int{1},n);err==nil{t.Fatal(\"非法 workers 必须报错\")}}\n}\nfunc TestServerPoolCancelled(t *testing.T) {\n    ctx,cancel:=context.WithCancel(context.Background());cancel()\n    if _,err:=WorkerPool(ctx,[]int{1,2},2);err==nil{t.Fatal(\"取消必须报错\")}\n}\nfunc TestServerPoolEmpty(t *testing.T) {\n    out,err:=WorkerPool(context.Background(),nil,2)\n    if err!=nil||len(out)!=0{t.Fatal(\"空任务处理错误\")}\n}\n"
+      },
+      {
+        "name": "eval_independent_test.go",
+        "content": "package example\nimport (\"context\";\"reflect\";\"runtime\";\"testing\")\nfunc TestEvalPoolValues(t *testing.T) {\n    jobs:=[]int{13,-7,0,17,-31,2};original:=append([]int{},jobs...)\n    want:=make([]int,len(jobs));for i,x:=range jobs{want[i]=x*2}\n    for _,w:=range []int{1,3,100}{out,err:=WorkerPool(context.Background(),jobs,w)\n        if err!=nil||!reflect.DeepEqual(out,want)||!reflect.DeepEqual(jobs,original){t.Fatal(out,err,jobs)}}\n}\nfunc TestEvalPoolBound(t *testing.T) {\n    baseline:=runtime.NumGoroutine();done:=make(chan error,1)\n    jobs:=make([]int,65536)\n    go func(){_,err:=WorkerPool(context.Background(),jobs,3);done<-err}()\n    for { select {case err:=<-done:if err!=nil{t.Fatal(err)};return;default:}\n        if runtime.NumGoroutine()>baseline+3+4{t.Fatal(\"observed excessive goroutines\")};runtime.Gosched() }\n}\nfunc TestEvalPoolCancel(t *testing.T) {\n    ctx,cancel:=context.WithCancel(context.Background());cancel()\n    if _,err:=WorkerPool(ctx,[]int{1},2);err==nil{t.Fatal(\"cancel ignored\")}\n    if _,err:=WorkerPool(context.Background(),[]int{1},0);err==nil{t.Fatal(\"invalid workers accepted\")}\n}\n"
+      }
+    ],
+    "elapsed_ms": 2390.77
+  }
+}

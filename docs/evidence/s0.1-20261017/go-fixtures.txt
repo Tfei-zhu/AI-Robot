@@ -1,0 +1,10 @@
+context-normal => passed (1 次验证)
+context-behavior-error => passed (2 次验证)
+context-compile-error => passed (2 次验证)
+pool-normal => passed (1 次验证)
+pool-behavior-error => passed (2 次验证)
+pool-compile-error => passed (2 次验证)
+channel-normal => passed (1 次验证)
+channel-behavior-error => passed (2 次验证)
+channel-compile-error => passed (2 次验证)
+报告: /Users/xumanchun/Documents/agent项目/AI-Robot-latest/docs/evidence/s0.1-20261017/go-fixtures-report.json

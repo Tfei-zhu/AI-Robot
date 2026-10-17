@@ -1,0 +1,45 @@
+{
+  "status": "passed",
+  "source_manifest_sha256": "b0a72a1788389b3c883e50a7fa42fe56c5e0be4e13a8bbd947834badb8d77709",
+  "head": "1ea7e6b7abbde3bd1a5963f03cd142fac553685a",
+  "branch": "main",
+  "tracked_diff_sha256": "1c086f2c0ef87478694af8e184602f87122acc5239344bcf6c086cc48df5b89b",
+  "staged_diff_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "source_files": 169,
+  "modified_files": [
+    ".github/workflows/ci.yml",
+    "README.md",
+    "docs/go-validation.md",
+    "docs/multi-agent-acceptance-matrix.md",
+    "docs/multi-agent-execution-prompts.md",
+    "docs/multi-agent-implementation-plan.md"
+  ],
+  "added_files": [
+    "docs/multi-agent-delivery-audit.md",
+    "docs/multi-agent.md",
+    "scripts/check_multi_agent_rollback.py"
+  ],
+  "preserved_evidence_files": 1542,
+  "local_tests": {
+    "passed": 364,
+    "failed": 0,
+    "errors": 0,
+    "skipped": 0
+  },
+  "task_counts": {
+    "完成": 24,
+    "待验证": 2,
+    "阻塞": 2
+  },
+  "acceptance_counts": {
+    "完成": 18
+  },
+  "rollback": "passed_with_actual_environment_false",
+  "rollback_real_docker_validations": 11,
+  "rollback_paid_requests": 0,
+  "remote_ci": "not_run",
+  "real_model": "blocked_not_run",
+  "enablement_passed": false,
+  "task_resume": "not_implemented",
+  "ordinary_chat_auto_delegation": "not_implemented"
+}

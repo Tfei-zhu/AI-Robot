@@ -1,0 +1,5 @@
+socket.getaddrinfo blocked
+socket.getaddrinfo blocked
+socket.getaddrinfo blocked
+socket.getaddrinfo blocked
+socket.getaddrinfo blocked

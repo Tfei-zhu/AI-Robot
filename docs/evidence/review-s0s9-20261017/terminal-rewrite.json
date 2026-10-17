@@ -1,0 +1,7 @@
+{
+  "before": "passed",
+  "after": "cancelled",
+  "stop_reason": "cancelled",
+  "calls": 3,
+  "summary": "符合需求"
+}

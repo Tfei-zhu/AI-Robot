@@ -1,0 +1,10 @@
+{
+  "argv": [
+    "/Users/xumanchun/Documents/agent\u9879\u76ee/AI-Robot-latest/.venv/bin/python",
+    "/Users/xumanchun/Documents/agent\u9879\u76ee/AI-Robot-latest/docs/evidence/review-s0s9-20261017/docker_probe.py"
+  ],
+  "started_utc": "2026-10-17T10:03:04.799752+00:00",
+  "exit_code": 1,
+  "elapsed_seconds": 5.943119042553008,
+  "output_sha256": "765c1aad5d189a7681817ed9a328971d3159f1f60d1e7c2a25aa7168a64b2174"
+}

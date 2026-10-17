@@ -1,0 +1,60 @@
+[
+  {
+    "id": "docker-pytest",
+    "argv": [
+      "/Users/xumanchun/Documents/agent项目/AI-Robot-latest/.venv/bin/python",
+      "-m",
+      "pytest",
+      "tests/test_go_acceptance.py",
+      "tests/test_go_contracts.py",
+      "tests/test_go_runner.py",
+      "tests/test_go_workflow.py",
+      "-q",
+      "-ra",
+      "--junitxml=/Users/xumanchun/Documents/agent项目/AI-Robot-latest/docs/evidence/s0.1-20261017/docker-pytest.xml"
+    ],
+    "cwd": "/Users/xumanchun/Documents/agent项目/AI-Robot-latest",
+    "started_utc": "2026-10-17T03:35:23.298090+00:00",
+    "exit_code": 0,
+    "elapsed_seconds": 67.871,
+    "network_guard": true,
+    "output": "docker-pytest.txt",
+    "output_sha256": "4664c4f9c3fae8f82a1b677c68e081b94a0c947594b569e6f17feb95b88d924f"
+  },
+  {
+    "id": "go-fixtures",
+    "argv": [
+      "/Users/xumanchun/Documents/agent项目/AI-Robot-latest/.venv/bin/python",
+      "eval/run_go_eval.py",
+      "--fixtures",
+      "--output",
+      "/Users/xumanchun/Documents/agent项目/AI-Robot-latest/docs/evidence/s0.1-20261017/go-fixtures-report.json"
+    ],
+    "cwd": "/Users/xumanchun/Documents/agent项目/AI-Robot-latest",
+    "started_utc": "2026-10-17T03:36:31.167366+00:00",
+    "exit_code": 0,
+    "elapsed_seconds": 30.713,
+    "network_guard": true,
+    "output": "go-fixtures.txt",
+    "output_sha256": "fd0f0306c29e3f982bc443048a0325f46babc5005b1fb2b37b09626938e6f5db"
+  },
+  {
+    "id": "docker-containers-after",
+    "argv": [
+      "docker",
+      "ps",
+      "-a",
+      "--filter",
+      "name=airobot-go-",
+      "--format",
+      "{{.Names}} {{.Status}}"
+    ],
+    "cwd": "/Users/xumanchun/Documents/agent项目/AI-Robot-latest",
+    "started_utc": "2026-10-17T03:37:01.879835+00:00",
+    "exit_code": 0,
+    "elapsed_seconds": 0.041,
+    "network_guard": false,
+    "output": "docker-containers-after.txt",
+    "output_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  }
+]

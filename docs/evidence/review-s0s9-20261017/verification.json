@@ -1,0 +1,8 @@
+{
+  "source_unchanged": true,
+  "source_manifest_sha256": "b0a72a1788389b3c883e50a7fa42fe56c5e0be4e13a8bbd947834badb8d77709",
+  "network_attempts": [],
+  "docker_image_id": "sha256:381dd0955d9414dc0debedafb6201a28d4da15b32ce0883310a5e4430fa2d4af",
+  "remaining_labelled_containers": [],
+  "git_diff_check_exit": 0
+}

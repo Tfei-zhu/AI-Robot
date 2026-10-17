@@ -1,0 +1,2 @@
+Could not retrieve status. Is Docker Desktop running?
+You can start Docker Desktop by running 'docker desktop start'.

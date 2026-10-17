@@ -1,0 +1,10 @@
+{
+  "status": "passed",
+  "workflow_yaml": "parsed_and_structurally_checked",
+  "remote_ci": "not_run",
+  "paid_jobs": "absent",
+  "default_multi_enabled": false,
+  "product_source_unchanged": true,
+  "syntax": "passed",
+  "local_links": "passed"
+}

@@ -1,0 +1,23 @@
+PASS browser response replacement; captured service shapes, model + validator substitutes passed
+PASS browser response replacement; captured service shapes, model + validator substitutes repair
+PASS browser response replacement; captured service shapes, model + validator substitutes failed
+PASS browser response replacement; captured service shapes, model + validator substitutes timeout
+PASS browser response replacement; captured service shapes, model + validator substitutes unavailable
+PASS browser response replacement; captured service shapes, model + validator substitutes unknown
+PASS browser response replacement; captured service shapes, model + validator substitutes drop
+PASS browser response replacement; captured service shapes, model + validator substitutes wrong-run
+PASS browser response replacement; captured service shapes, model + validator substitutes nonterminal-done
+PASS browser response replacement; captured service shapes, model + validator substitutes missing-id
+PASS browser response replacement; captured service shapes, model + validator substitutes bad-json
+PASS browser response replacement; captured service shapes, model + validator substitutes suggestion
+PASS browser fetch/ReadableStream replacement intermediate passed never green; old stream/finally cannot overwrite new task or unlock its controls
+PASS browser fetch replacement late historical query cannot overwrite newer run
+PASS browser GET response replacement; historical Docker report file actual historical report shape remains readable
+PASS intentionally tampered browser response; not a valid server artifact code/log/model/issue text renders inert; unknown usage; mobile no horizontal overflow
+PASS browser GET response replacement queried report run_id mismatch rejected
+PASS real backend; fixed models; real Docker passed
+PASS real backend; fixed models; real Docker repair
+PASS real backend; fixed models; real Docker failed
+PASS real browser abort + real backend GET cancel request distinct from server-confirmed cancelled
+PASS real backend; historical sample, no new validation legacy stored JSON through actual GET and browser
+S6 browser checks passed: 22

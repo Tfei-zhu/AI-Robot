@@ -1,0 +1,9 @@
+S0.1 final consistency: PASS
+Source and old repository unchanged; original S0 evidence files unchanged.
+Original execution log preserved as exact prefix and archived snapshot matching S0 manifest.
+All command outputs verified by SHA-256; raw command metadata preserved, public-download guard label corrected in aggregate.
+Independent environment core versions unchanged; real vocabulary expected_hash verified.
+Offline baseline and real Docker test/eval gates exited 0.
+No paid provider calls; Docker test containers removed.
+Command: PYTHONDONTWRITEBYTECODE=1 python3 /private/tmp/airobot_s01_finalize.py
+Exit code: 0

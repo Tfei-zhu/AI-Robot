@@ -1,0 +1,522 @@
+[
+  {
+    "id": "contracts-review-config-1",
+    "argv": [
+      "/Users/xumanchun/Documents/agent项目/AI-Robot-FastAPI-LangChain-RAG-CrewAI-Agent-/.venv/bin/python",
+      "-m",
+      "unittest",
+      "discover",
+      "-s",
+      "tests",
+      "-p",
+      "test_multi_agent_*.py",
+      "-v"
+    ],
+    "cwd": "/Users/xumanchun/Documents/agent项目/AI-Robot-latest",
+    "started_utc": "2026-10-17T03:48:06.772939+00:00",
+    "elapsed_seconds": 0.988,
+    "exit_code": 1,
+    "guarded": true,
+    "output": "contracts-review-config-1.txt",
+    "output_sha256": "627eae0ee15fcf960969e92054f9923c592cfd3416cd0a18e279ee7de09e14b7"
+  },
+  {
+    "id": "syntax",
+    "argv": [
+      "/Library/Frameworks/Python.framework/Versions/3.13/bin/python3",
+      "-m",
+      "compileall",
+      "-q",
+      "app",
+      "tests",
+      "eval",
+      "scripts"
+    ],
+    "cwd": "/Users/xumanchun/Documents/agent项目/AI-Robot-latest",
+    "started_utc": "2026-10-17T03:48:07.761249+00:00",
+    "elapsed_seconds": 0.241,
+    "exit_code": 0,
+    "guarded": true,
+    "output": "syntax.txt",
+    "output_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "id": "import-smoke",
+    "argv": [
+      "/Users/xumanchun/Documents/agent项目/AI-Robot-FastAPI-LangChain-RAG-CrewAI-Agent-/.venv/bin/python",
+      "-c",
+      "import app.main; from app.config import settings; from app.agents.graph import get_agent_graph; print(app.main.__file__); print('routes:',len(app.main.app.routes)); print('multi enabled:',settings.go_multi_agent.enabled); print('nodes:',sorted(get_agent_graph().get_graph().nodes))"
+    ],
+    "cwd": "/Users/xumanchun/Documents/agent项目/AI-Robot-latest",
+    "started_utc": "2026-10-17T03:48:08.002566+00:00",
+    "elapsed_seconds": 3.545,
+    "exit_code": 0,
+    "guarded": true,
+    "output": "import-smoke.txt",
+    "output_sha256": "9b06de71b2c7cbc571113b3b77ea33934e1f7b3a866d5c1deb0be5a955cc6183"
+  },
+  {
+    "id": "regression-stability",
+    "argv": [
+      "/Users/xumanchun/Documents/agent项目/AI-Robot-FastAPI-LangChain-RAG-CrewAI-Agent-/.venv/bin/python",
+      "tests/test_stability.py"
+    ],
+    "cwd": "/Users/xumanchun/Documents/agent项目/AI-Robot-latest",
+    "started_utc": "2026-10-17T03:48:11.547423+00:00",
+    "elapsed_seconds": 1.979,
+    "exit_code": 0,
+    "guarded": true,
+    "output": "regression-stability.txt",
+    "output_sha256": "fbdcf639078863d959e51103a3d77832c7995a9210f8fe39b34f620a3d7ba5ad"
+  },
+  {
+    "id": "regression-integration",
+    "argv": [
+      "/Users/xumanchun/Documents/agent项目/AI-Robot-FastAPI-LangChain-RAG-CrewAI-Agent-/.venv/bin/python",
+      "tests/test_integration.py"
+    ],
+    "cwd": "/Users/xumanchun/Documents/agent项目/AI-Robot-latest",
+    "started_utc": "2026-10-17T03:48:13.526774+00:00",
+    "elapsed_seconds": 2.739,
+    "exit_code": 0,
+    "guarded": true,
+    "output": "regression-integration.txt",
+    "output_sha256": "62993c592a6e2e937f561fe0c976c81ed3e51d4037cfc9bac1dbea5aa8c6aa5b"
+  },
+  {
+    "id": "regression-tracing",
+    "argv": [
+      "/Users/xumanchun/Documents/agent项目/AI-Robot-FastAPI-LangChain-RAG-CrewAI-Agent-/.venv/bin/python",
+      "tests/test_tracing.py"
+    ],
+    "cwd": "/Users/xumanchun/Documents/agent项目/AI-Robot-latest",
+    "started_utc": "2026-10-17T03:48:16.266080+00:00",
+    "elapsed_seconds": 0.077,
+    "exit_code": 0,
+    "guarded": true,
+    "output": "regression-tracing.txt",
+    "output_sha256": "5017a7ef862185be5f24f566c6229e7baeab6524702eb5b3acc4519de88109a9"
+  },
+  {
+    "id": "pytest-go-and-multi",
+    "argv": [
+      "/Users/xumanchun/Documents/agent项目/AI-Robot-FastAPI-LangChain-RAG-CrewAI-Agent-/.venv/bin/python",
+      "-m",
+      "pytest",
+      "tests/test_go_contracts.py",
+      "tests/test_multi_agent_contracts.py",
+      "tests/test_multi_agent_review.py",
+      "tests/test_multi_agent_config.py",
+      "-q"
+    ],
+    "cwd": "/Users/xumanchun/Documents/agent项目/AI-Robot-latest",
+    "started_utc": "2026-10-17T03:48:16.343617+00:00",
+    "elapsed_seconds": 0.02,
+    "exit_code": 1,
+    "guarded": true,
+    "output": "pytest-go-and-multi.txt",
+    "output_sha256": "2d79f012df783682a105d29b86b5c53b57b193c8a0c22df36d48c0013a63b223"
+  },
+  {
+    "id": "pytest-all",
+    "argv": [
+      "/Users/xumanchun/Documents/agent项目/AI-Robot-FastAPI-LangChain-RAG-CrewAI-Agent-/.venv/bin/python",
+      "-m",
+      "pytest",
+      "tests",
+      "-q"
+    ],
+    "cwd": "/Users/xumanchun/Documents/agent项目/AI-Robot-latest",
+    "started_utc": "2026-10-17T03:48:16.364218+00:00",
+    "elapsed_seconds": 0.02,
+    "exit_code": 1,
+    "guarded": true,
+    "output": "pytest-all.txt",
+    "output_sha256": "2d79f012df783682a105d29b86b5c53b57b193c8a0c22df36d48c0013a63b223"
+  },
+  {
+    "id": "docker-version",
+    "argv": [
+      "docker",
+      "version"
+    ],
+    "cwd": "/Users/xumanchun/Documents/agent项目/AI-Robot-latest",
+    "started_utc": "2026-10-17T03:48:16.385310+00:00",
+    "elapsed_seconds": 0.119,
+    "exit_code": 1,
+    "guarded": false,
+    "output": "docker-version.txt",
+    "output_sha256": "c8131fe12d0033a0a55c7b5a8f856749ab29ec11c468aa65e7d63bcbd0567d68"
+  },
+  {
+    "id": "contracts-review-config-2",
+    "argv": [
+      "/Users/xumanchun/Documents/agent项目/AI-Robot-FastAPI-LangChain-RAG-CrewAI-Agent-/.venv/bin/python",
+      "-m",
+      "unittest",
+      "discover",
+      "-s",
+      "tests",
+      "-p",
+      "test_multi_agent_*.py",
+      "-v"
+    ],
+    "cwd": "/Users/xumanchun/Documents/agent项目/AI-Robot-latest",
+    "started_utc": "2026-10-17T03:49:13.237968+00:00",
+    "elapsed_seconds": 0.911,
+    "exit_code": 0,
+    "guarded": true,
+    "output": "contracts-review-config-2.txt",
+    "output_sha256": "34d26ea8361606b0b20ec93b769757e519ee88f29593893369f3e8b63d700d31"
+  },
+  {
+    "id": "contracts-review-config-runner-3",
+    "argv": [
+      "/Users/xumanchun/Documents/agent项目/AI-Robot-FastAPI-LangChain-RAG-CrewAI-Agent-/.venv/bin/python",
+      "-m",
+      "unittest",
+      "discover",
+      "-s",
+      "tests",
+      "-p",
+      "test_multi_agent_*.py",
+      "-v"
+    ],
+    "cwd": "/Users/xumanchun/Documents/agent项目/AI-Robot-latest",
+    "started_utc": "2026-10-17T03:52:46.646675+00:00",
+    "elapsed_seconds": 1.026,
+    "exit_code": 0,
+    "guarded": true,
+    "output": "contracts-review-config-runner-3.txt",
+    "output_sha256": "d848804bb5e693efb6d2ff00e2c1202fe7e9d5b4a490d070e3cf9487fe8afae9",
+    "head": "1ea7e6b7abbde3bd1a5963f03cd142fac553685a",
+    "source_manifest_sha256": "2c66e36d7abe8033b8ed2fb2f505c8ee0e7d8118d31340370c0e2d769c571822",
+    "tracked_diff_sha256": "3330dbe3e79aaf4d7d03be59698a8eeb9e561df2f0f08648112a8bfa570250c9"
+  },
+  {
+    "id": "syntax-final",
+    "argv": [
+      "/Users/xumanchun/Documents/agent项目/AI-Robot-FastAPI-LangChain-RAG-CrewAI-Agent-/.venv/bin/python",
+      "-m",
+      "compileall",
+      "-q",
+      "app",
+      "tests",
+      "eval",
+      "scripts"
+    ],
+    "cwd": "/Users/xumanchun/Documents/agent项目/AI-Robot-latest",
+    "started_utc": "2026-10-17T03:54:19.134602+00:00",
+    "elapsed_seconds": 0.175,
+    "exit_code": 0,
+    "guarded": true,
+    "output": "syntax-final.txt",
+    "output_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "head": "1ea7e6b7abbde3bd1a5963f03cd142fac553685a",
+    "source_manifest_sha256": "2c66e36d7abe8033b8ed2fb2f505c8ee0e7d8118d31340370c0e2d769c571822",
+    "tracked_diff_sha256": "3330dbe3e79aaf4d7d03be59698a8eeb9e561df2f0f08648112a8bfa570250c9"
+  },
+  {
+    "id": "import-smoke-final",
+    "argv": [
+      "/Users/xumanchun/Documents/agent项目/AI-Robot-FastAPI-LangChain-RAG-CrewAI-Agent-/.venv/bin/python",
+      "-c",
+      "import app.main; from app.config import settings; from app.agents.graph import get_agent_graph; import sitecustomize; print(app.main.__file__); print('routes:',len(app.main.app.routes)); print('multi enabled:',settings.go_multi_agent.enabled); print('nodes:',sorted(get_agent_graph().get_graph().nodes)); print('guard:',sitecustomize.__file__)"
+    ],
+    "cwd": "/Users/xumanchun/Documents/agent项目/AI-Robot-latest",
+    "started_utc": "2026-10-17T03:54:19.400550+00:00",
+    "elapsed_seconds": 3.132,
+    "exit_code": 0,
+    "guarded": true,
+    "output": "import-smoke-final.txt",
+    "output_sha256": "25bf1fb81db51d1bd879b5e288ecbf49665c301e39a4a2cc46e2b0f6aa61a38a",
+    "head": "1ea7e6b7abbde3bd1a5963f03cd142fac553685a",
+    "source_manifest_sha256": "2c66e36d7abe8033b8ed2fb2f505c8ee0e7d8118d31340370c0e2d769c571822",
+    "tracked_diff_sha256": "3330dbe3e79aaf4d7d03be59698a8eeb9e561df2f0f08648112a8bfa570250c9"
+  },
+  {
+    "id": "regression-stability-final",
+    "argv": [
+      "/Users/xumanchun/Documents/agent项目/AI-Robot-FastAPI-LangChain-RAG-CrewAI-Agent-/.venv/bin/python",
+      "tests/test_stability.py"
+    ],
+    "cwd": "/Users/xumanchun/Documents/agent项目/AI-Robot-latest",
+    "started_utc": "2026-10-17T03:54:22.602076+00:00",
+    "elapsed_seconds": 1.872,
+    "exit_code": 0,
+    "guarded": true,
+    "output": "regression-stability-final.txt",
+    "output_sha256": "fbdcf639078863d959e51103a3d77832c7995a9210f8fe39b34f620a3d7ba5ad",
+    "head": "1ea7e6b7abbde3bd1a5963f03cd142fac553685a",
+    "source_manifest_sha256": "2c66e36d7abe8033b8ed2fb2f505c8ee0e7d8118d31340370c0e2d769c571822",
+    "tracked_diff_sha256": "3330dbe3e79aaf4d7d03be59698a8eeb9e561df2f0f08648112a8bfa570250c9"
+  },
+  {
+    "id": "regression-integration-final",
+    "argv": [
+      "/Users/xumanchun/Documents/agent项目/AI-Robot-FastAPI-LangChain-RAG-CrewAI-Agent-/.venv/bin/python",
+      "tests/test_integration.py"
+    ],
+    "cwd": "/Users/xumanchun/Documents/agent项目/AI-Robot-latest",
+    "started_utc": "2026-10-17T03:54:24.539647+00:00",
+    "elapsed_seconds": 2.65,
+    "exit_code": 0,
+    "guarded": true,
+    "output": "regression-integration-final.txt",
+    "output_sha256": "62993c592a6e2e937f561fe0c976c81ed3e51d4037cfc9bac1dbea5aa8c6aa5b",
+    "head": "1ea7e6b7abbde3bd1a5963f03cd142fac553685a",
+    "source_manifest_sha256": "2c66e36d7abe8033b8ed2fb2f505c8ee0e7d8118d31340370c0e2d769c571822",
+    "tracked_diff_sha256": "3330dbe3e79aaf4d7d03be59698a8eeb9e561df2f0f08648112a8bfa570250c9"
+  },
+  {
+    "id": "regression-tracing-final",
+    "argv": [
+      "/Users/xumanchun/Documents/agent项目/AI-Robot-FastAPI-LangChain-RAG-CrewAI-Agent-/.venv/bin/python",
+      "tests/test_tracing.py"
+    ],
+    "cwd": "/Users/xumanchun/Documents/agent项目/AI-Robot-latest",
+    "started_utc": "2026-10-17T03:54:27.262003+00:00",
+    "elapsed_seconds": 0.076,
+    "exit_code": 0,
+    "guarded": true,
+    "output": "regression-tracing-final.txt",
+    "output_sha256": "5017a7ef862185be5f24f566c6229e7baeab6524702eb5b3acc4519de88109a9",
+    "head": "1ea7e6b7abbde3bd1a5963f03cd142fac553685a",
+    "source_manifest_sha256": "2c66e36d7abe8033b8ed2fb2f505c8ee0e7d8118d31340370c0e2d769c571822",
+    "tracked_diff_sha256": "3330dbe3e79aaf4d7d03be59698a8eeb9e561df2f0f08648112a8bfa570250c9"
+  },
+  {
+    "id": "diff-check",
+    "argv": [
+      "git",
+      "diff",
+      "--check"
+    ],
+    "cwd": "/Users/xumanchun/Documents/agent项目/AI-Robot-latest",
+    "started_utc": "2026-10-17T03:54:27.402285+00:00",
+    "elapsed_seconds": 0.009,
+    "exit_code": 0,
+    "guarded": true,
+    "output": "diff-check.txt",
+    "output_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "head": "1ea7e6b7abbde3bd1a5963f03cd142fac553685a",
+    "source_manifest_sha256": "2c66e36d7abe8033b8ed2fb2f505c8ee0e7d8118d31340370c0e2d769c571822",
+    "tracked_diff_sha256": "3330dbe3e79aaf4d7d03be59698a8eeb9e561df2f0f08648112a8bfa570250c9"
+  },
+  {
+    "id": "contracts-review-config-runner-final",
+    "argv": [
+      "/Users/xumanchun/Documents/agent项目/AI-Robot-FastAPI-LangChain-RAG-CrewAI-Agent-/.venv/bin/python",
+      "-m",
+      "unittest",
+      "discover",
+      "-s",
+      "tests",
+      "-p",
+      "test_multi_agent_*.py",
+      "-v"
+    ],
+    "cwd": "/Users/xumanchun/Documents/agent项目/AI-Robot-latest",
+    "started_utc": "2026-10-17T03:55:26.146108+00:00",
+    "elapsed_seconds": 1.515,
+    "exit_code": 0,
+    "guarded": true,
+    "output": "contracts-review-config-runner-final.txt",
+    "output_sha256": "9ad8e0e042b63aab82a8ca344f8bcf6733fe2e307db34c906bf4a2b2deda0846",
+    "head": "1ea7e6b7abbde3bd1a5963f03cd142fac553685a",
+    "source_manifest_sha256": "c333b4d3d199dce1e302996402c9dc8d0c55d7c89458b949927f38d111fe7547",
+    "tracked_diff_sha256": "b167408c2ebd60aeacd03ce1b87aea8ff36dfc86b7f2c0fc86cf47cab9a33b10"
+  },
+  {
+    "id": "syntax-delivery",
+    "argv": [
+      "/Users/xumanchun/Documents/agent项目/AI-Robot-FastAPI-LangChain-RAG-CrewAI-Agent-/.venv/bin/python",
+      "-m",
+      "compileall",
+      "-q",
+      "app",
+      "tests",
+      "eval",
+      "scripts"
+    ],
+    "cwd": "/Users/xumanchun/Documents/agent项目/AI-Robot-latest",
+    "started_utc": "2026-10-17T03:55:27.742959+00:00",
+    "elapsed_seconds": 0.133,
+    "exit_code": 0,
+    "guarded": true,
+    "output": "syntax-delivery.txt",
+    "output_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "head": "1ea7e6b7abbde3bd1a5963f03cd142fac553685a",
+    "source_manifest_sha256": "c333b4d3d199dce1e302996402c9dc8d0c55d7c89458b949927f38d111fe7547",
+    "tracked_diff_sha256": "b167408c2ebd60aeacd03ce1b87aea8ff36dfc86b7f2c0fc86cf47cab9a33b10"
+  },
+  {
+    "id": "import-smoke-delivery",
+    "argv": [
+      "/Users/xumanchun/Documents/agent项目/AI-Robot-FastAPI-LangChain-RAG-CrewAI-Agent-/.venv/bin/python",
+      "-c",
+      "import app.main; from app.config import settings; print(app.main.__file__); print('routes:',len(app.main.app.routes)); print('multi enabled:',settings.go_multi_agent.enabled)"
+    ],
+    "cwd": "/Users/xumanchun/Documents/agent项目/AI-Robot-latest",
+    "started_utc": "2026-10-17T03:55:27.940302+00:00",
+    "elapsed_seconds": 2.905,
+    "exit_code": 0,
+    "guarded": true,
+    "output": "import-smoke-delivery.txt",
+    "output_sha256": "4e371d8d9b8f9e33f16bf963a43ce344b38a14cf4af8505ae97ca4a5f2cdbb47",
+    "head": "1ea7e6b7abbde3bd1a5963f03cd142fac553685a",
+    "source_manifest_sha256": "c333b4d3d199dce1e302996402c9dc8d0c55d7c89458b949927f38d111fe7547",
+    "tracked_diff_sha256": "b167408c2ebd60aeacd03ce1b87aea8ff36dfc86b7f2c0fc86cf47cab9a33b10"
+  },
+  {
+    "id": "regression-stability-delivery",
+    "argv": [
+      "/Users/xumanchun/Documents/agent项目/AI-Robot-FastAPI-LangChain-RAG-CrewAI-Agent-/.venv/bin/python",
+      "tests/test_stability.py"
+    ],
+    "cwd": "/Users/xumanchun/Documents/agent项目/AI-Robot-latest",
+    "started_utc": "2026-10-17T03:55:30.910750+00:00",
+    "elapsed_seconds": 1.931,
+    "exit_code": 0,
+    "guarded": true,
+    "output": "regression-stability-delivery.txt",
+    "output_sha256": "fbdcf639078863d959e51103a3d77832c7995a9210f8fe39b34f620a3d7ba5ad",
+    "head": "1ea7e6b7abbde3bd1a5963f03cd142fac553685a",
+    "source_manifest_sha256": "c333b4d3d199dce1e302996402c9dc8d0c55d7c89458b949927f38d111fe7547",
+    "tracked_diff_sha256": "b167408c2ebd60aeacd03ce1b87aea8ff36dfc86b7f2c0fc86cf47cab9a33b10"
+  },
+  {
+    "id": "regression-integration-delivery",
+    "argv": [
+      "/Users/xumanchun/Documents/agent项目/AI-Robot-FastAPI-LangChain-RAG-CrewAI-Agent-/.venv/bin/python",
+      "tests/test_integration.py"
+    ],
+    "cwd": "/Users/xumanchun/Documents/agent项目/AI-Robot-latest",
+    "started_utc": "2026-10-17T03:55:32.905329+00:00",
+    "elapsed_seconds": 2.593,
+    "exit_code": 0,
+    "guarded": true,
+    "output": "regression-integration-delivery.txt",
+    "output_sha256": "62993c592a6e2e937f561fe0c976c81ed3e51d4037cfc9bac1dbea5aa8c6aa5b",
+    "head": "1ea7e6b7abbde3bd1a5963f03cd142fac553685a",
+    "source_manifest_sha256": "c333b4d3d199dce1e302996402c9dc8d0c55d7c89458b949927f38d111fe7547",
+    "tracked_diff_sha256": "b167408c2ebd60aeacd03ce1b87aea8ff36dfc86b7f2c0fc86cf47cab9a33b10"
+  },
+  {
+    "id": "regression-tracing-delivery",
+    "argv": [
+      "/Users/xumanchun/Documents/agent项目/AI-Robot-FastAPI-LangChain-RAG-CrewAI-Agent-/.venv/bin/python",
+      "tests/test_tracing.py"
+    ],
+    "cwd": "/Users/xumanchun/Documents/agent项目/AI-Robot-latest",
+    "started_utc": "2026-10-17T03:55:35.567901+00:00",
+    "elapsed_seconds": 0.074,
+    "exit_code": 0,
+    "guarded": true,
+    "output": "regression-tracing-delivery.txt",
+    "output_sha256": "5017a7ef862185be5f24f566c6229e7baeab6524702eb5b3acc4519de88109a9",
+    "head": "1ea7e6b7abbde3bd1a5963f03cd142fac553685a",
+    "source_manifest_sha256": "c333b4d3d199dce1e302996402c9dc8d0c55d7c89458b949927f38d111fe7547",
+    "tracked_diff_sha256": "b167408c2ebd60aeacd03ce1b87aea8ff36dfc86b7f2c0fc86cf47cab9a33b10"
+  },
+  {
+    "id": "independent-environment",
+    "argv": [
+      "/Users/xumanchun/Documents/agent项目/AI-Robot-latest/.venv/bin/python",
+      "-c",
+      "import sys,pytest,pydantic; print(sys.executable); print(sys.version); print('pytest',pytest.__version__,'pydantic',pydantic.__version__)"
+    ],
+    "cwd": "/Users/xumanchun/Documents/agent项目/AI-Robot-latest",
+    "started_utc": "2026-10-17T04:00:34.531650+00:00",
+    "elapsed_seconds": 0.564,
+    "exit_code": 0,
+    "guarded": true,
+    "output": "independent-environment.txt",
+    "output_sha256": "3b14689b16ef7316057717342a9dfbe52b55dda255eff68c6a8debb8be90bbb2",
+    "head": "1ea7e6b7abbde3bd1a5963f03cd142fac553685a",
+    "source_manifest_sha256": "c333b4d3d199dce1e302996402c9dc8d0c55d7c89458b949927f38d111fe7547",
+    "tracked_diff_sha256": "b167408c2ebd60aeacd03ce1b87aea8ff36dfc86b7f2c0fc86cf47cab9a33b10"
+  },
+  {
+    "id": "independent-pip-check",
+    "argv": [
+      "/Users/xumanchun/Documents/agent项目/AI-Robot-latest/.venv/bin/python",
+      "-m",
+      "pip",
+      "check"
+    ],
+    "cwd": "/Users/xumanchun/Documents/agent项目/AI-Robot-latest",
+    "started_utc": "2026-10-17T04:00:35.186606+00:00",
+    "elapsed_seconds": 0.757,
+    "exit_code": 0,
+    "guarded": true,
+    "output": "independent-pip-check.txt",
+    "output_sha256": "6323c75175d21f6d2b00d1cd199fe71c9cedfb3cd9b18af2394de98269370a51",
+    "head": "1ea7e6b7abbde3bd1a5963f03cd142fac553685a",
+    "source_manifest_sha256": "c333b4d3d199dce1e302996402c9dc8d0c55d7c89458b949927f38d111fe7547",
+    "tracked_diff_sha256": "b167408c2ebd60aeacd03ce1b87aea8ff36dfc86b7f2c0fc86cf47cab9a33b10"
+  },
+  {
+    "id": "independent-unittest",
+    "argv": [
+      "/Users/xumanchun/Documents/agent项目/AI-Robot-latest/.venv/bin/python",
+      "-m",
+      "unittest",
+      "discover",
+      "-s",
+      "tests",
+      "-p",
+      "test_multi_agent_*.py",
+      "-v"
+    ],
+    "cwd": "/Users/xumanchun/Documents/agent项目/AI-Robot-latest",
+    "started_utc": "2026-10-17T04:00:36.004295+00:00",
+    "elapsed_seconds": 1.339,
+    "exit_code": 0,
+    "guarded": true,
+    "output": "independent-unittest.txt",
+    "output_sha256": "8613b7e8cb1114d4ea83edcd7c2faa54e9850e2b80d5e232bb2a6be1a886c785",
+    "head": "1ea7e6b7abbde3bd1a5963f03cd142fac553685a",
+    "source_manifest_sha256": "c333b4d3d199dce1e302996402c9dc8d0c55d7c89458b949927f38d111fe7547",
+    "tracked_diff_sha256": "b167408c2ebd60aeacd03ce1b87aea8ff36dfc86b7f2c0fc86cf47cab9a33b10"
+  },
+  {
+    "id": "full-pytest",
+    "argv": [
+      "/Users/xumanchun/Documents/agent项目/AI-Robot-latest/.venv/bin/python",
+      "-m",
+      "pytest",
+      "tests",
+      "-q",
+      "-ra",
+      "--junitxml=/Users/xumanchun/Documents/agent项目/AI-Robot-latest/docs/evidence/s1-20261017/full-pytest.xml"
+    ],
+    "cwd": "/Users/xumanchun/Documents/agent项目/AI-Robot-latest",
+    "started_utc": "2026-10-17T04:00:37.407756+00:00",
+    "elapsed_seconds": 7.15,
+    "exit_code": 0,
+    "guarded": true,
+    "output": "full-pytest.txt",
+    "output_sha256": "d0287ffd2f2c409ae8135d101ab3354a941db0aaaa87517a76362ba1a2e8d114",
+    "head": "1ea7e6b7abbde3bd1a5963f03cd142fac553685a",
+    "source_manifest_sha256": "c333b4d3d199dce1e302996402c9dc8d0c55d7c89458b949927f38d111fe7547",
+    "tracked_diff_sha256": "b167408c2ebd60aeacd03ce1b87aea8ff36dfc86b7f2c0fc86cf47cab9a33b10"
+  },
+  {
+    "id": "agent-fixtures",
+    "argv": [
+      "/Users/xumanchun/Documents/agent项目/AI-Robot-latest/.venv/bin/python",
+      "eval/run_agent_eval.py"
+    ],
+    "cwd": "/Users/xumanchun/Documents/agent项目/AI-Robot-latest",
+    "started_utc": "2026-10-17T04:00:44.634993+00:00",
+    "elapsed_seconds": 2.949,
+    "exit_code": 0,
+    "guarded": true,
+    "output": "agent-fixtures.txt",
+    "output_sha256": "c01fc4734b5f77d841c545c619ce837d7580cdddf3bb2178a7d8ad790f8ba2c3",
+    "head": "1ea7e6b7abbde3bd1a5963f03cd142fac553685a",
+    "source_manifest_sha256": "c333b4d3d199dce1e302996402c9dc8d0c55d7c89458b949927f38d111fe7547",
+    "tracked_diff_sha256": "b167408c2ebd60aeacd03ce1b87aea8ff36dfc86b7f2c0fc86cf47cab9a33b10"
+  }
+]

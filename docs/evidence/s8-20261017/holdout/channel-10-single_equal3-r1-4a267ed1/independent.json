@@ -1,0 +1,36 @@
+{
+  "final": {
+    "correct": false,
+    "checks": [
+      {
+        "id": "r-refuse",
+        "status": "fail",
+        "tests": [
+          "server_refusal"
+        ]
+      }
+    ],
+    "reason": "infeasible_request_not_rejected",
+    "artifact_hash": "ba6d19f814a5400e08ec2afe0beb469a4162bc9534f741147367098f66a34d56",
+    "scorer_input_hash": null,
+    "report": null,
+    "elapsed_ms": 0.07
+  },
+  "initial": {
+    "correct": false,
+    "checks": [
+      {
+        "id": "r-refuse",
+        "status": "fail",
+        "tests": [
+          "server_refusal"
+        ]
+      }
+    ],
+    "reason": "infeasible_request_not_rejected",
+    "artifact_hash": "ba6d19f814a5400e08ec2afe0beb469a4162bc9534f741147367098f66a34d56",
+    "scorer_input_hash": null,
+    "report": null,
+    "elapsed_ms": 0.07
+  }
+}

@@ -1,0 +1,145 @@
+[
+  {
+    "id": "network-outside-sandbox",
+    "argv": [
+      "/Library/Frameworks/Python.framework/Versions/3.13/bin/python3",
+      "-c",
+      "import socket,ssl,urllib.request,pip._vendor.certifi\nprint(\"CA\",pip._vendor.certifi.where())\nfor host in [\"pypi.org\",\"openaipublic.blob.core.windows.net\"]:\n try: print(\"DNS\",host,sorted({x[4][0] for x in socket.getaddrinfo(host,443)}))\n except Exception as e: print(type(e).__name__,str(e))\nfor url in [\"https://pypi.org/simple/pytest/\",\"https://openaipublic.blob.core.windows.net/encodings/cl100k_base.tiktoken\"]:\n try:\n  with urllib.request.urlopen(url,context=ssl.create_default_context(cafile=pip._vendor.certifi.where()),timeout=30) as r: print(\"TLS\",url,r.status)\n except Exception as e: print(type(e).__name__,str(e))\n"
+    ],
+    "cwd": "/Users/xumanchun/Documents/agent项目/AI-Robot-latest",
+    "started_utc": "2026-10-17T03:28:08.598062+00:00",
+    "exit_code": 0,
+    "elapsed_seconds": 1.267,
+    "output": "network-outside-sandbox.txt",
+    "output_sha256": "97bc9b525c14bd06a2bbc5a491268c61950cce164627a50d31741f3bfc6880f3"
+  },
+  {
+    "id": "create-venv",
+    "argv": [
+      "/Library/Frameworks/Python.framework/Versions/3.13/bin/python3",
+      "-m",
+      "venv",
+      "/Users/xumanchun/Documents/agent项目/AI-Robot-latest/.venv"
+    ],
+    "cwd": "/Users/xumanchun/Documents/agent项目/AI-Robot-latest",
+    "started_utc": "2026-10-17T03:28:09.866145+00:00",
+    "exit_code": 0,
+    "elapsed_seconds": 1.581,
+    "output": "create-venv.txt",
+    "output_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "id": "install-dev",
+    "argv": [
+      "/Users/xumanchun/Documents/agent项目/AI-Robot-latest/.venv/bin/python",
+      "-m",
+      "pip",
+      "--isolated",
+      "install",
+      "--disable-pip-version-check",
+      "--cert",
+      "/Library/Frameworks/Python.framework/Versions/3.13/lib/python3.13/site-packages/pip/_vendor/certifi/cacert.pem",
+      "--index-url",
+      "https://pypi.org/simple",
+      "-r",
+      "requirements-dev.txt",
+      "-c",
+      "/Users/xumanchun/Documents/agent项目/AI-Robot-latest/docs/evidence/s0.1-20261017/s0-constraints.txt",
+      "--report",
+      "/Users/xumanchun/Documents/agent项目/AI-Robot-latest/docs/evidence/s0.1-20261017/pip-install-report.json"
+    ],
+    "cwd": "/Users/xumanchun/Documents/agent项目/AI-Robot-latest",
+    "started_utc": "2026-10-17T03:28:11.459065+00:00",
+    "exit_code": 0,
+    "elapsed_seconds": 18.256,
+    "output": "install-dev.txt",
+    "output_sha256": "135bf8ff56d27623b329897b7cedd93b14cad036ad899c46f83432f175f7f9e4"
+  },
+  {
+    "id": "pip-check",
+    "argv": [
+      "/Users/xumanchun/Documents/agent项目/AI-Robot-latest/.venv/bin/python",
+      "-m",
+      "pip",
+      "check"
+    ],
+    "cwd": "/Users/xumanchun/Documents/agent项目/AI-Robot-latest",
+    "started_utc": "2026-10-17T03:28:29.716034+00:00",
+    "exit_code": 0,
+    "elapsed_seconds": 0.294,
+    "output": "pip-check.txt",
+    "output_sha256": "9261363b733079a641c2e4cc9bc46ffa1d8336945a87f807b6cf68847dbc9b09"
+  },
+  {
+    "id": "packages",
+    "argv": [
+      "/Users/xumanchun/Documents/agent项目/AI-Robot-latest/.venv/bin/python",
+      "-m",
+      "pip",
+      "list",
+      "--format=json"
+    ],
+    "cwd": "/Users/xumanchun/Documents/agent项目/AI-Robot-latest",
+    "started_utc": "2026-10-17T03:28:30.011097+00:00",
+    "exit_code": 0,
+    "elapsed_seconds": 0.183,
+    "output": "packages.txt",
+    "output_sha256": "5b2654d12961583fd5f50338abc9ef3c1f7556492cb8e09e11cedbdcaec612c2"
+  },
+  {
+    "id": "freeze",
+    "argv": [
+      "/Users/xumanchun/Documents/agent项目/AI-Robot-latest/.venv/bin/python",
+      "-m",
+      "pip",
+      "freeze",
+      "--all"
+    ],
+    "cwd": "/Users/xumanchun/Documents/agent项目/AI-Robot-latest",
+    "started_utc": "2026-10-17T03:28:30.194984+00:00",
+    "exit_code": 0,
+    "elapsed_seconds": 0.179,
+    "output": "freeze.txt",
+    "output_sha256": "d5e326fd755c9f648d84b355b5e92e84b9ec2dc5e30852a7d28ede5c1d0b0204"
+  },
+  {
+    "id": "docker-version",
+    "argv": [
+      "docker",
+      "version"
+    ],
+    "cwd": "/Users/xumanchun/Documents/agent项目/AI-Robot-latest",
+    "started_utc": "2026-10-17T03:28:30.374564+00:00",
+    "exit_code": 1,
+    "elapsed_seconds": 0.133,
+    "output": "docker-version.txt",
+    "output_sha256": "e6ca50b64d15bbbb402990dd00452dfeb9d2ebd222fe750ec8ed7ab875465511"
+  },
+  {
+    "id": "docker-desktop-status",
+    "argv": [
+      "docker",
+      "desktop",
+      "status"
+    ],
+    "cwd": "/Users/xumanchun/Documents/agent项目/AI-Robot-latest",
+    "started_utc": "2026-10-17T03:28:30.507800+00:00",
+    "exit_code": 1,
+    "elapsed_seconds": 16.158,
+    "output": "docker-desktop-status.txt",
+    "output_sha256": "ac56c00523d1e789934f4d2fe1e2e09ac3ae557565000bfc053a3ae0cc7eb466"
+  },
+  {
+    "id": "python-version",
+    "argv": [
+      "/Users/xumanchun/Documents/agent项目/AI-Robot-latest/.venv/bin/python",
+      "--version"
+    ],
+    "cwd": "/Users/xumanchun/Documents/agent项目/AI-Robot-latest",
+    "started_utc": "2026-10-17T03:28:46.666581+00:00",
+    "exit_code": 0,
+    "elapsed_seconds": 0.011,
+    "output": "python-version.txt",
+    "output_sha256": "6b64edf0fc8f22e798fb64873acba6b4106df290f0bf458b507e8cb409b63e49"
+  }
+]

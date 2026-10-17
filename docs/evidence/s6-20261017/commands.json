@@ -1,0 +1,380 @@
+[
+  {
+    "label": "fixtures",
+    "argv": [
+      "/Users/xumanchun/Documents/agent项目/AI-Robot-latest/.venv/bin/python",
+      "scripts/multi_agent_dashboard_fixtures.py",
+      "--output",
+      "/Users/xumanchun/Documents/agent项目/AI-Robot-latest/docs/evidence/s6-20261017/ui-fixtures.json"
+    ],
+    "started_utc": "2026-10-17T08:02:22.668014+00:00",
+    "exit_code": 0,
+    "elapsed_seconds": 3.016,
+    "output": "01-fixtures.txt",
+    "output_sha256": "678c58832a727e2acec1a86ab13e57ff706494932fbbd27bd448d507b58dc3e3",
+    "head": "1ea7e6b7abbde3bd1a5963f03cd142fac553685a",
+    "source_manifest_sha256": "566ba48744195312f44b326224095bf36c9a9bf096da38202a14ab2299f38744",
+    "tracked_diff_sha256": "52a6a58c51eb155bdb2e9301e232b125a3651739469637035f077587672a1b72"
+  },
+  {
+    "label": "integration-browser",
+    "argv": [
+      "node",
+      "scripts/test_multi_agent_dashboard.cjs"
+    ],
+    "started_utc": "2026-10-17T08:03:28.203907+00:00",
+    "exit_code": 0,
+    "elapsed_seconds": 30.24,
+    "output": "02-integration-browser.txt",
+    "output_sha256": "b1c3d53f8bb4aa689d72cc701696d624f844d12e7a0facac47e30247169d1c0b",
+    "head": "1ea7e6b7abbde3bd1a5963f03cd142fac553685a",
+    "source_manifest_sha256": "c17355b12b245503bf21318ffb742b27af6ec0416781b9b12c97f59eb0ed1853",
+    "tracked_diff_sha256": "52a6a58c51eb155bdb2e9301e232b125a3651739469637035f077587672a1b72"
+  },
+  {
+    "label": "containers",
+    "argv": [
+      "docker",
+      "ps",
+      "-a",
+      "--filter",
+      "name=airobot-go-",
+      "--format",
+      "{{.Names}} {{.Status}}"
+    ],
+    "started_utc": "2026-10-17T08:03:58.631679+00:00",
+    "exit_code": 0,
+    "elapsed_seconds": 0.095,
+    "output": "03-containers.txt",
+    "output_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "head": "1ea7e6b7abbde3bd1a5963f03cd142fac553685a",
+    "source_manifest_sha256": "c17355b12b245503bf21318ffb742b27af6ec0416781b9b12c97f59eb0ed1853",
+    "tracked_diff_sha256": "52a6a58c51eb155bdb2e9301e232b125a3651739469637035f077587672a1b72"
+  },
+  {
+    "label": "all",
+    "argv": [
+      "/Users/xumanchun/Documents/agent项目/AI-Robot-latest/.venv/bin/python",
+      "-m",
+      "pytest",
+      "tests",
+      "-q",
+      "-ra",
+      "--junitxml=/Users/xumanchun/Documents/agent项目/AI-Robot-latest/docs/evidence/s6-20261017/all-1.xml"
+    ],
+    "started_utc": "2026-10-17T08:05:38.234942+00:00",
+    "exit_code": 0,
+    "elapsed_seconds": 8.863,
+    "output": "04-all.txt",
+    "output_sha256": "561a8b9f42e9908e568962387e5625496161467c7f30ba43e35129b434c70c70",
+    "head": "1ea7e6b7abbde3bd1a5963f03cd142fac553685a",
+    "source_manifest_sha256": "a016abc1fab78fff134d52b2326198a736af6ac5f02d141671793ff0a833ddb4",
+    "tracked_diff_sha256": "a822f097403336ff60262209781b36c57161cae54454e3d7a9947b95c6af66e3"
+  },
+  {
+    "label": "all",
+    "argv": [
+      "/Users/xumanchun/Documents/agent项目/AI-Robot-latest/.venv/bin/python",
+      "-m",
+      "pytest",
+      "tests",
+      "-q",
+      "-ra",
+      "--junitxml=/Users/xumanchun/Documents/agent项目/AI-Robot-latest/docs/evidence/s6-20261017/all-2.xml"
+    ],
+    "started_utc": "2026-10-17T08:06:57.812755+00:00",
+    "exit_code": 0,
+    "elapsed_seconds": 8.745,
+    "output": "05-all.txt",
+    "output_sha256": "0650284fa785d545ce41bb247971a709d6b67e03d18a045d262fe752852c7dfb",
+    "head": "1ea7e6b7abbde3bd1a5963f03cd142fac553685a",
+    "source_manifest_sha256": "6df42b80f10544f137d103ed0dcc5b96cb76dd24f23221fbd624dffda87cf315",
+    "tracked_diff_sha256": "a0d7bd809cead1ed3bc6f7cc5691560fdf3dd3c87b68fbc6bf754929f5aa0ba0",
+    "browser_environment": {
+      "NODE_PATH": "/Users/xumanchun/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/node_modules",
+      "PLAYWRIGHT_CHANNEL": "chrome",
+      "S6_EVIDENCE_DIR": "/Users/xumanchun/Documents/agent项目/AI-Robot-latest/docs/evidence/s6-20261017"
+    }
+  },
+  {
+    "label": "integration-browser",
+    "argv": [
+      "node",
+      "scripts/test_multi_agent_dashboard.cjs"
+    ],
+    "started_utc": "2026-10-17T08:07:35.166821+00:00",
+    "exit_code": 0,
+    "elapsed_seconds": 22.247,
+    "output": "06-integration-browser.txt",
+    "output_sha256": "2ce10b773f557bc2f56d689bfea87df950d6318160cd37fdf2b975338164dbc0",
+    "head": "1ea7e6b7abbde3bd1a5963f03cd142fac553685a",
+    "source_manifest_sha256": "6df42b80f10544f137d103ed0dcc5b96cb76dd24f23221fbd624dffda87cf315",
+    "tracked_diff_sha256": "a0d7bd809cead1ed3bc6f7cc5691560fdf3dd3c87b68fbc6bf754929f5aa0ba0",
+    "browser_environment": {
+      "NODE_PATH": "/Users/xumanchun/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/node_modules",
+      "PLAYWRIGHT_CHANNEL": "chrome",
+      "S6_EVIDENCE_DIR": "/Users/xumanchun/Documents/agent项目/AI-Robot-latest/docs/evidence/s6-20261017",
+      "S6_RUN_DIR": "browser-run-01",
+      "S6_BACKEND_URL": "http://127.0.0.1:8766",
+      "S6_REAL_DOCKER": "1"
+    }
+  },
+  {
+    "label": "containers",
+    "argv": [
+      "docker",
+      "ps",
+      "-a",
+      "--filter",
+      "name=airobot-go-",
+      "--format",
+      "{{.Names}} {{.Status}}"
+    ],
+    "started_utc": "2026-10-17T08:07:57.599259+00:00",
+    "exit_code": 0,
+    "elapsed_seconds": 0.105,
+    "output": "07-containers.txt",
+    "output_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "head": "1ea7e6b7abbde3bd1a5963f03cd142fac553685a",
+    "source_manifest_sha256": "6df42b80f10544f137d103ed0dcc5b96cb76dd24f23221fbd624dffda87cf315",
+    "tracked_diff_sha256": "a0d7bd809cead1ed3bc6f7cc5691560fdf3dd3c87b68fbc6bf754929f5aa0ba0",
+    "browser_environment": {
+      "NODE_PATH": "/Users/xumanchun/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/node_modules",
+      "PLAYWRIGHT_CHANNEL": "chrome",
+      "S6_EVIDENCE_DIR": "/Users/xumanchun/Documents/agent项目/AI-Robot-latest/docs/evidence/s6-20261017",
+      "S6_RUN_DIR": "browser-run-01",
+      "S6_BACKEND_URL": "http://127.0.0.1:8766",
+      "S6_REAL_DOCKER": "1"
+    }
+  },
+  {
+    "label": "legacy-browser",
+    "argv": [
+      "node",
+      "scripts/test_go_dashboard.cjs"
+    ],
+    "started_utc": "2026-10-17T08:08:30.481404+00:00",
+    "exit_code": 0,
+    "elapsed_seconds": 2.783,
+    "output": "08-legacy-browser.txt",
+    "output_sha256": "5c81e162f82d89cad7f78c2a707094649ba1f3fed35842af0a6bfcddd0dbe108",
+    "head": "1ea7e6b7abbde3bd1a5963f03cd142fac553685a",
+    "source_manifest_sha256": "6df42b80f10544f137d103ed0dcc5b96cb76dd24f23221fbd624dffda87cf315",
+    "tracked_diff_sha256": "a0d7bd809cead1ed3bc6f7cc5691560fdf3dd3c87b68fbc6bf754929f5aa0ba0",
+    "browser_environment": {
+      "NODE_PATH": "/Users/xumanchun/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/node_modules",
+      "PLAYWRIGHT_CHANNEL": "chrome",
+      "S6_EVIDENCE_DIR": "/Users/xumanchun/Documents/agent项目/AI-Robot-latest/docs/evidence/s6-20261017",
+      "GO_DASHBOARD_SCREENSHOT": "/Users/xumanchun/Documents/agent项目/AI-Robot-latest/docs/evidence/s6-20261017/legacy-1792224510481396000.png"
+    }
+  },
+  {
+    "label": "fixtures",
+    "argv": [
+      "/Users/xumanchun/Documents/agent项目/AI-Robot-latest/.venv/bin/python",
+      "scripts/multi_agent_dashboard_fixtures.py",
+      "--output",
+      "/Users/xumanchun/Documents/agent项目/AI-Robot-latest/docs/evidence/s6-20261017/ui-fixtures-2.json"
+    ],
+    "started_utc": "2026-10-17T08:10:14.154146+00:00",
+    "exit_code": 0,
+    "elapsed_seconds": 2.746,
+    "output": "09-fixtures.txt",
+    "output_sha256": "678c58832a727e2acec1a86ab13e57ff706494932fbbd27bd448d507b58dc3e3",
+    "head": "1ea7e6b7abbde3bd1a5963f03cd142fac553685a",
+    "source_manifest_sha256": "4b1162f00e22d138b525d0abfb546c6f4e639f4ae7e308505cb4fcf39365a429",
+    "tracked_diff_sha256": "2be76607869053633d5a7ec7b8383b42d64137bf6724405001ee868836b93f1a",
+    "browser_environment": {
+      "NODE_PATH": "/Users/xumanchun/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/node_modules",
+      "PLAYWRIGHT_CHANNEL": "chrome",
+      "S6_EVIDENCE_DIR": "/Users/xumanchun/Documents/agent项目/AI-Robot-latest/docs/evidence/s6-20261017"
+    }
+  },
+  {
+    "label": "all",
+    "argv": [
+      "/Users/xumanchun/Documents/agent项目/AI-Robot-latest/.venv/bin/python",
+      "-m",
+      "pytest",
+      "tests",
+      "-q",
+      "-ra",
+      "--junitxml=/Users/xumanchun/Documents/agent项目/AI-Robot-latest/docs/evidence/s6-20261017/all-3.xml"
+    ],
+    "started_utc": "2026-10-17T08:11:04.817423+00:00",
+    "exit_code": 0,
+    "elapsed_seconds": 8.638,
+    "output": "10-all.txt",
+    "output_sha256": "b78342865383d2968f7681428cc7ebfbfb905cef3b81ef47d4a037598f4fc361",
+    "head": "1ea7e6b7abbde3bd1a5963f03cd142fac553685a",
+    "source_manifest_sha256": "4b1162f00e22d138b525d0abfb546c6f4e639f4ae7e308505cb4fcf39365a429",
+    "tracked_diff_sha256": "2be76607869053633d5a7ec7b8383b42d64137bf6724405001ee868836b93f1a",
+    "browser_environment": {
+      "NODE_PATH": "/Users/xumanchun/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/node_modules",
+      "PLAYWRIGHT_CHANNEL": "chrome",
+      "S6_EVIDENCE_DIR": "/Users/xumanchun/Documents/agent项目/AI-Robot-latest/docs/evidence/s6-20261017"
+    }
+  },
+  {
+    "label": "integration-browser",
+    "argv": [
+      "node",
+      "scripts/test_multi_agent_dashboard.cjs"
+    ],
+    "started_utc": "2026-10-17T08:11:15.308735+00:00",
+    "exit_code": 0,
+    "elapsed_seconds": 19.047,
+    "output": "11-integration-browser.txt",
+    "output_sha256": "f4a6b9147ba00a50f233d9550d84ab9dfa9f20608b4005d87b56c168228bc1e8",
+    "head": "1ea7e6b7abbde3bd1a5963f03cd142fac553685a",
+    "source_manifest_sha256": "4b1162f00e22d138b525d0abfb546c6f4e639f4ae7e308505cb4fcf39365a429",
+    "tracked_diff_sha256": "2be76607869053633d5a7ec7b8383b42d64137bf6724405001ee868836b93f1a",
+    "browser_environment": {
+      "NODE_PATH": "/Users/xumanchun/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/node_modules",
+      "PLAYWRIGHT_CHANNEL": "chrome",
+      "S6_EVIDENCE_DIR": "/Users/xumanchun/Documents/agent项目/AI-Robot-latest/docs/evidence/s6-20261017",
+      "S6_RUN_DIR": "browser-run-02",
+      "S6_BACKEND_URL": "http://127.0.0.1:8766",
+      "S6_REAL_DOCKER": "1",
+      "S6_FIXTURES": "/Users/xumanchun/Documents/agent项目/AI-Robot-latest/docs/evidence/s6-20261017/ui-fixtures-2.json"
+    }
+  },
+  {
+    "label": "containers",
+    "argv": [
+      "docker",
+      "ps",
+      "-a",
+      "--filter",
+      "name=airobot-go-",
+      "--format",
+      "{{.Names}} {{.Status}}"
+    ],
+    "started_utc": "2026-10-17T08:11:34.541170+00:00",
+    "exit_code": 0,
+    "elapsed_seconds": 0.095,
+    "output": "12-containers.txt",
+    "output_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "head": "1ea7e6b7abbde3bd1a5963f03cd142fac553685a",
+    "source_manifest_sha256": "4b1162f00e22d138b525d0abfb546c6f4e639f4ae7e308505cb4fcf39365a429",
+    "tracked_diff_sha256": "2be76607869053633d5a7ec7b8383b42d64137bf6724405001ee868836b93f1a",
+    "browser_environment": {
+      "NODE_PATH": "/Users/xumanchun/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/node_modules",
+      "PLAYWRIGHT_CHANNEL": "chrome",
+      "S6_EVIDENCE_DIR": "/Users/xumanchun/Documents/agent项目/AI-Robot-latest/docs/evidence/s6-20261017",
+      "S6_RUN_DIR": "browser-run-02",
+      "S6_BACKEND_URL": "http://127.0.0.1:8766",
+      "S6_REAL_DOCKER": "1",
+      "S6_FIXTURES": "/Users/xumanchun/Documents/agent项目/AI-Robot-latest/docs/evidence/s6-20261017/ui-fixtures-2.json"
+    }
+  },
+  {
+    "label": "legacy-browser",
+    "argv": [
+      "node",
+      "scripts/test_go_dashboard.cjs"
+    ],
+    "started_utc": "2026-10-17T08:12:46.204814+00:00",
+    "exit_code": 0,
+    "elapsed_seconds": 2.342,
+    "output": "13-legacy-browser.txt",
+    "output_sha256": "5c81e162f82d89cad7f78c2a707094649ba1f3fed35842af0a6bfcddd0dbe108",
+    "head": "1ea7e6b7abbde3bd1a5963f03cd142fac553685a",
+    "source_manifest_sha256": "4b1162f00e22d138b525d0abfb546c6f4e639f4ae7e308505cb4fcf39365a429",
+    "tracked_diff_sha256": "2be76607869053633d5a7ec7b8383b42d64137bf6724405001ee868836b93f1a",
+    "browser_environment": {
+      "NODE_PATH": "/Users/xumanchun/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/node_modules",
+      "PLAYWRIGHT_CHANNEL": "chrome",
+      "S6_EVIDENCE_DIR": "/Users/xumanchun/Documents/agent项目/AI-Robot-latest/docs/evidence/s6-20261017",
+      "GO_DASHBOARD_SCREENSHOT": "/Users/xumanchun/Documents/agent项目/AI-Robot-latest/docs/evidence/s6-20261017/legacy-1792224766204806000.png"
+    }
+  },
+  {
+    "label": "runtime",
+    "argv": [
+      "node",
+      "-e",
+      "console.log(process.version);console.log(\"playwright\",require(\"playwright/package.json\").version)"
+    ],
+    "started_utc": "2026-10-17T08:15:04.870324+00:00",
+    "exit_code": 0,
+    "elapsed_seconds": 0.496,
+    "output": "14-runtime.txt",
+    "output_sha256": "1eb9cfe4224889e39ddd4beb52ae2a2d68c8d05555bfacdb7c53f4c26c391dc6",
+    "head": "1ea7e6b7abbde3bd1a5963f03cd142fac553685a",
+    "source_manifest_sha256": "4b1162f00e22d138b525d0abfb546c6f4e639f4ae7e308505cb4fcf39365a429",
+    "tracked_diff_sha256": "2be76607869053633d5a7ec7b8383b42d64137bf6724405001ee868836b93f1a",
+    "browser_environment": {
+      "NODE_PATH": "/Users/xumanchun/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/node_modules",
+      "PLAYWRIGHT_CHANNEL": "chrome",
+      "S6_EVIDENCE_DIR": "/Users/xumanchun/Documents/agent项目/AI-Robot-latest/docs/evidence/s6-20261017"
+    }
+  },
+  {
+    "label": "diff-check",
+    "argv": [
+      "git",
+      "diff",
+      "--check"
+    ],
+    "started_utc": "2026-10-17T08:15:05.366237+00:00",
+    "exit_code": 0,
+    "elapsed_seconds": 0.067,
+    "output": "15-diff-check.txt",
+    "output_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "head": "1ea7e6b7abbde3bd1a5963f03cd142fac553685a",
+    "source_manifest_sha256": "4b1162f00e22d138b525d0abfb546c6f4e639f4ae7e308505cb4fcf39365a429",
+    "tracked_diff_sha256": "2be76607869053633d5a7ec7b8383b42d64137bf6724405001ee868836b93f1a",
+    "browser_environment": {
+      "NODE_PATH": "/Users/xumanchun/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/node_modules",
+      "PLAYWRIGHT_CHANNEL": "chrome",
+      "S6_EVIDENCE_DIR": "/Users/xumanchun/Documents/agent项目/AI-Robot-latest/docs/evidence/s6-20261017"
+    }
+  },
+  {
+    "label": "docker-version",
+    "argv": [
+      "docker",
+      "version",
+      "--format",
+      "{{.Server.Version}} {{.Server.Os}}/{{.Server.Arch}}"
+    ],
+    "started_utc": "2026-10-17T08:15:09.348273+00:00",
+    "exit_code": 0,
+    "elapsed_seconds": 0.092,
+    "output": "16-docker-version.txt",
+    "output_sha256": "8bb5b4ca3f68c68d4d12c54ee1d39679090ca2945c0019a11076011cb32066bf",
+    "head": "1ea7e6b7abbde3bd1a5963f03cd142fac553685a",
+    "source_manifest_sha256": "4b1162f00e22d138b525d0abfb546c6f4e639f4ae7e308505cb4fcf39365a429",
+    "tracked_diff_sha256": "2be76607869053633d5a7ec7b8383b42d64137bf6724405001ee868836b93f1a",
+    "browser_environment": {
+      "NODE_PATH": "/Users/xumanchun/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/node_modules",
+      "PLAYWRIGHT_CHANNEL": "chrome",
+      "S6_EVIDENCE_DIR": "/Users/xumanchun/Documents/agent项目/AI-Robot-latest/docs/evidence/s6-20261017"
+    }
+  },
+  {
+    "label": "docker-image",
+    "argv": [
+      "docker",
+      "image",
+      "inspect",
+      "airobot-go-validator:1.26.2",
+      "--format",
+      "{{.Id}}"
+    ],
+    "started_utc": "2026-10-17T08:15:09.440506+00:00",
+    "exit_code": 0,
+    "elapsed_seconds": 0.118,
+    "output": "17-docker-image.txt",
+    "output_sha256": "3a77a3e552fff773375ccca6e928e288fc2a589348f49768816bb1d7681f6202",
+    "head": "1ea7e6b7abbde3bd1a5963f03cd142fac553685a",
+    "source_manifest_sha256": "4b1162f00e22d138b525d0abfb546c6f4e639f4ae7e308505cb4fcf39365a429",
+    "tracked_diff_sha256": "2be76607869053633d5a7ec7b8383b42d64137bf6724405001ee868836b93f1a",
+    "browser_environment": {
+      "NODE_PATH": "/Users/xumanchun/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/node_modules",
+      "PLAYWRIGHT_CHANNEL": "chrome",
+      "S6_EVIDENCE_DIR": "/Users/xumanchun/Documents/agent项目/AI-Robot-latest/docs/evidence/s6-20261017"
+    }
+  }
+]

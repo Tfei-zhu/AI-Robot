@@ -1,0 +1,11 @@
+--- app/agents/go_workflow.py
++++ app/agents/go_workflow.py (isolated mutant)
+@@ -211,7 +211,7 @@
+             raise BudgetExceededError("任务截止时间已到", kind="deadline")
+         if self._used[key] + 1 > self._max[key]:
+             raise BudgetExceededError(f"超过 {key} 上限 {self._max[key]}", kind=kind or key)
+-        if total and self._used["model"] + 1 > self._max["model"]:
++        if False and self._used["model"] + 1 > self._max["model"]:
+             raise BudgetExceededError(f"超过总模型调用上限 {self._max['model']}", kind="model")
+         self._used[key] += 1
+         if total:

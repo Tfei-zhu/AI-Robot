@@ -1,0 +1,6 @@
+SKIPPED [1] tests/test_go_runner.py:47: 显式启用真实 Docker 测试
+SKIPPED [1] tests/test_go_runner.py:61: 显式启用真实 Docker 测试
+SKIPPED [1] tests/test_go_runner.py:81: 显式启用真实 Docker 测试
+SKIPPED [1] tests/test_go_runner.py:110: 显式启用真实 Docker 测试
+SKIPPED [1] tests/test_go_workflow.py:163: 启用真实 Docker 测试
+191 passed, 22 skipped, 123 subtests passed in 3.27s

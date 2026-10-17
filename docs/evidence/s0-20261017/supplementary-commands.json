@@ -1,0 +1,31 @@
+[
+  {
+    "id": "dependency-audit",
+    "argv": [
+      "/Users/xumanchun/Documents/agent项目/AI-Robot-FastAPI-LangChain-RAG-CrewAI-Agent-/.venv/bin/python",
+      "docs/evidence/s0-20261017/inspect_dependencies.py"
+    ],
+    "cwd": "/Users/xumanchun/Documents/agent项目/AI-Robot-latest",
+    "started_utc": "2026-10-17T03:15:20.543028+00:00",
+    "exit_code": 0,
+    "elapsed_seconds": 0.373,
+    "network_guard": true,
+    "output": "dependency-audit.txt",
+    "output_sha256": "02bec51dd830cbdbc8ff80c8d7db211206c645cb2ee558d563daef13be974f1f"
+  },
+  {
+    "id": "network-guard-selftest",
+    "argv": [
+      "/Users/xumanchun/Documents/agent项目/AI-Robot-FastAPI-LangChain-RAG-CrewAI-Agent-/.venv/bin/python",
+      "-c",
+      "import os,socket; os.environ['S0_NETWORK_AUDIT']='docs/evidence/s0-20261017/guard-selftest-audit.txt';\ntry: socket.create_connection(('127.0.0.1',1))\nexcept RuntimeError as exc: assert str(exc)=='S0_OFFLINE_NETWORK_BLOCKED'; print('network guard passed')\nelse: raise AssertionError('network guard failed')"
+    ],
+    "cwd": "/Users/xumanchun/Documents/agent项目/AI-Robot-latest",
+    "started_utc": "2026-10-17T03:15:20.915789+00:00",
+    "exit_code": 0,
+    "elapsed_seconds": 0.075,
+    "network_guard": true,
+    "output": "network-guard-selftest.txt",
+    "output_sha256": "2a3389df6f97f1d56a349b532fe776e28ad66913f5c186a6e24eb7435ee6d4f1"
+  }
+]

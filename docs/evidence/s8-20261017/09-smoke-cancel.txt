@@ -1,0 +1,10 @@
+/Users/xumanchun/Documents/agent项目/AI-Robot-latest/.venv/lib/python3.13/site-packages/jieba/__init__.py:44: SyntaxWarning: invalid escape sequence '\.'
+  re_han_default = re.compile("([\u4E00-\u9FD5a-zA-Z0-9+#&\._%\-]+)", re.U)
+/Users/xumanchun/Documents/agent项目/AI-Robot-latest/.venv/lib/python3.13/site-packages/jieba/__init__.py:46: SyntaxWarning: invalid escape sequence '\s'
+  re_skip_default = re.compile("(\r\n|\s)", re.U)
+/Users/xumanchun/Documents/agent项目/AI-Robot-latest/.venv/lib/python3.13/site-packages/jieba/finalseg/__init__.py:78: SyntaxWarning: invalid escape sequence '\.'
+  re_skip = re.compile("([a-zA-Z0-9]+(?:\.\d+)?%?)")
+{"completed": 1, "expected": 4, "case": "worker_pool-06", "arm": "multi_native", "business": "cancelled", "independent": null, "calls": 2}
+{"completed": 2, "expected": 4, "case": "worker_pool-06", "arm": "single_equal3", "business": "cancelled", "independent": null, "calls": 1}
+{"completed": 3, "expected": 4, "case": "worker_pool-06", "arm": "multi_equal3", "business": "cancelled", "independent": null, "calls": 2}
+{"completed": 4, "expected": 4, "case": "worker_pool-06", "arm": "single_native", "business": "cancelled", "independent": null, "calls": 1}

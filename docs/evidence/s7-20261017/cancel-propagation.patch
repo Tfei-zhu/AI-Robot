@@ -1,0 +1,11 @@
+--- app/agents/role_runtime.py
++++ app/agents/role_runtime.py (isolated mutant)
+@@ -139,7 +139,7 @@
+                 self.timeout)
+         except asyncio.CancelledError:
+             self._record(stage, "cancelled")
+-            raise  # 取消必须向上传播，由编排层保存进度并清理。
++            return ""  # S7 isolated mutant: swallow cancellation
+         except TimeoutError as exc:
+             self._record(stage, "failed")
+             raise AgentError(f"超过 {self.timeout}s 角色超时", kind="timeout",

@@ -1,0 +1,7 @@
+Traceback (most recent call last):
+  File "<string>", line 6, in <module>
+    print('graph nodes intact:', sorted(get_agent_graph().nodes) if (from_g := __import__('app.agents.graph', fromlist=['get_agent_graph'])) else None)
+                                        ^^^^^^^^^^^^^^^
+NameError: name 'get_agent_graph' is not defined
+import OK, routes: 14 | multi-agent default enabled: False
+graph nodes intact: ['__start__', 'agent', 'finalize', 'go_finish', 'go_generate', 'go_retrieve', 'go_validate', 'tools']

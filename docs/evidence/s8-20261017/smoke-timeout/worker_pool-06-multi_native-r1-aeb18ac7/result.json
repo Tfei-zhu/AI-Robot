@@ -1,0 +1,114 @@
+{
+  "run_id": "c68f315fc4d14aef825a882fa593a14d",
+  "status": "timeout",
+  "scenario": "worker_pool",
+  "attempts": [],
+  "sources": [],
+  "model_calls": 2,
+  "validation_calls": 0,
+  "elapsed_ms": 167.5,
+  "error": "任务超过总时间预算",
+  "model_source": "fixture",
+  "token_usage": null,
+  "context_stats": {
+    "model_calls": 2,
+    "embedding_calls": 0,
+    "usage_complete": false,
+    "token_usage": null,
+    "known_token_usage": {
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "total_tokens": 0
+    },
+    "unknown_usage_calls": 2,
+    "calls": [
+      {
+        "stage": "go_plan",
+        "model": "s8-scripted-v1",
+        "attempt": 1,
+        "status": "passed",
+        "usage": null,
+        "elapsed_ms": 1.15,
+        "input_estimate": 662
+      },
+      {
+        "stage": "go_generate",
+        "model": "s8-scripted-v1",
+        "attempt": 2,
+        "status": "cancelled",
+        "usage": null,
+        "elapsed_ms": 40.92,
+        "input_estimate": 744
+      }
+    ],
+    "cost_estimate": null,
+    "uncached_cost_estimate": null,
+    "currency": null,
+    "cost_note": "单价、端点或实际用量不完整，金额未知"
+  },
+  "budget": {
+    "limits": {
+      "normal": 7,
+      "retries": 1,
+      "model": 8,
+      "repairs": 2,
+      "validations": 3,
+      "retrievals": 1
+    },
+    "used": {
+      "normal": 2,
+      "retries": 0,
+      "model": 2,
+      "validations": 0,
+      "retrievals": 1,
+      "repairs": 0
+    },
+    "remaining_seconds": 0.0,
+    "task_seconds": 360.0
+  },
+  "validation_scope": "仅验证当前代码、当前测试和固定 Go 工具链；不保证全部行为正确",
+  "workflow_version": "multi-v1",
+  "task_spec": {
+    "task_id": "671d3b7a517d44748eb9cfaf8389b85d",
+    "scenario": "worker_pool",
+    "original_requirement": "任务池最多 workers 个工作协程，输入乘二并按原顺序输出，不修改输入；拒绝非法 workers 并响应取消。",
+    "requirements": [
+      {
+        "requirement_id": "r-base",
+        "text": "任务池最多 workers 个工作协程，输入乘二并按原顺序输出，不修改输入；拒绝非法 workers 并响应取消。",
+        "required": true
+      }
+    ],
+    "acceptance_criteria": [
+      {
+        "criterion_id": "a-r-base",
+        "requirement_id": "r-base",
+        "text": "任务池最多 workers 个工作协程，输入乘二并按原顺序输出，不修改输入；拒绝非法 workers 并响应取消。"
+      }
+    ],
+    "constraints": [
+      "只用标准库，服从固定服务端接口"
+    ],
+    "source_refs": []
+  },
+  "artifacts": [],
+  "reviews": [],
+  "agent_calls": [
+    {
+      "role": "supervisor",
+      "stage": "plan",
+      "model": "s8-scripted-v1",
+      "status": "passed",
+      "token_usage": null
+    },
+    {
+      "role": "code",
+      "stage": "generate",
+      "model": "s8-scripted-v1",
+      "status": "failed",
+      "token_usage": null
+    }
+  ],
+  "stop_reason": "timeout",
+  "final_summary": ""
+}

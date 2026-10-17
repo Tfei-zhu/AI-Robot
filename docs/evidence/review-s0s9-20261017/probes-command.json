@@ -1,0 +1,16 @@
+{
+  "argv": [
+    "/Users/xumanchun/Documents/agent\u9879\u76ee/AI-Robot-latest/.venv/bin/python",
+    "-m",
+    "pytest",
+    "/Users/xumanchun/Documents/agent\u9879\u76ee/AI-Robot-latest/docs/evidence/review-s0s9-20261017/probes.py",
+    "-q",
+    "-ra",
+    "--junitxml=/Users/xumanchun/Documents/agent\u9879\u76ee/AI-Robot-latest/docs/evidence/review-s0s9-20261017/probes.xml",
+    "-s"
+  ],
+  "started_utc": "2026-10-17T10:02:45.930162+00:00",
+  "exit_code": 1,
+  "elapsed_seconds": 5.625492375344038,
+  "output_sha256": "423650f0656cf0c978047172eedcbf18bb5b653d94434ce8efea41d83cab80ba"
+}

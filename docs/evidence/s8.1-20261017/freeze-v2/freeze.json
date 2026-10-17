@@ -1,0 +1,1585 @@
+{
+  "protocol": {
+    "version": "s8-live-candidate-v2",
+    "seed": 20261017,
+    "sample_count": 30,
+    "development_count": 18,
+    "holdout_count": 12,
+    "fixture_repeats": 1,
+    "live_repeats": 3,
+    "arms": {
+      "single_native": {
+        "multi": false,
+        "max_calls": 3,
+        "normal": 3,
+        "retries": 0,
+        "call_seconds": 120,
+        "code_output": 8192,
+        "supervisor_output": 4096
+      },
+      "multi_native": {
+        "multi": true,
+        "max_calls": 8,
+        "normal": 7,
+        "retries": 1,
+        "call_seconds": 120,
+        "code_output": 8192,
+        "supervisor_output": 4096
+      },
+      "single_equal3": {
+        "multi": false,
+        "max_calls": 3,
+        "normal": 3,
+        "retries": 0,
+        "call_seconds": 60,
+        "code_output": 8192,
+        "supervisor_output": 8192
+      },
+      "multi_equal3": {
+        "multi": true,
+        "max_calls": 3,
+        "normal": 3,
+        "retries": 0,
+        "call_seconds": 60,
+        "code_output": 8192,
+        "supervisor_output": 8192
+      }
+    },
+    "task_seconds": 360,
+    "validation_seconds": 90,
+    "cleanup_seconds": 15,
+    "max_validations": 3,
+    "max_repairs": 2,
+    "max_retrievals": 1,
+    "input_tokens": 16000,
+    "fixture_window": 32768,
+    "live_model": {
+      "name": "qwen-plus",
+      "endpoint": "https://dashscope.aliyuncs.com/compatible-mode/v1",
+      "revision": null,
+      "revision_verified": false,
+      "context_window": null,
+      "temperature": 0.2,
+      "sdk_retries": 0
+    },
+    "scoring": {
+      "version": "independent-go-tests-v2-case-probes",
+      "approve_is_label": false,
+      "missing_tests": "unknown",
+      "missing_artifact": "unknown_and_not_success",
+      "infeasible": "only_server_failed_with_clarification_needed_is_correct_refusal",
+      "false_accept_denominator": "business_passed",
+      "false_reject_denominator": "independently_correct",
+      "repair_denominator": "initial_artifact_independently_incorrect",
+      "unknown_usage": "null_not_zero",
+      "percentiles": "linear_interpolation",
+      "wilson95": true
+    },
+    "targets": {
+      "expand_enable_requires_live_holdout": true,
+      "holdout_false_accepts": 0,
+      "quality_drop_allowed": 0,
+      "latency_p95_ceiling_ms": 360000,
+      "live_total_cost_cap": null,
+      "live_cost_target": "must be supplied before live holdout; no cost effectiveness claim without it"
+    },
+    "interpretation": "Fixed models are scripted mechanism probes, not model quality. Native comparison changes resources. Equal3 compares the same ceiling, not equal actual calls. All failures and interruptions remain in denominators; unverified is never success. New corpus: 30 synthetic requirements, 15 caller-pattern families split 9 dev/6 holdout, same three APIs. Dedup/group checks do not establish semantic independence or real-world representativeness. V1 results cannot label this corpus. Two policy conflicts retain the known refusal-path gap.",
+    "dataset_purpose": "grouped-live-candidate-v2",
+    "live_rates": null
+  },
+  "cases": [
+    {
+      "id": "live2-channel-buffered_values-1",
+      "scenario": "channel",
+      "split": "dev",
+      "group_id": "channel/buffered_values",
+      "fixture_profile": "clean",
+      "feasible": true,
+      "marker": null,
+      "values": [
+        13,
+        -7,
+        0,
+        17,
+        -31,
+        2
+      ],
+      "requirement": "累加 channel 数值直到关闭；取消时返回 ctx.Err()，并保留已收到数值的部分和；nil channel 也响应取消。 已关闭的缓冲 channel 包含 [-5, 0, 12] 时须消费全部值并返回总和 7 与 nil 错误。",
+      "checklist": [
+        {
+          "id": "r-values",
+          "text": "关闭后的正确总和",
+          "tests": [
+            "TestEvalChannelValues"
+          ],
+          "required": true
+        },
+        {
+          "id": "r-partial",
+          "text": "取消保留部分和",
+          "tests": [
+            "TestEvalChannelPartialCancel"
+          ],
+          "required": true
+        },
+        {
+          "id": "r-case",
+          "text": "已关闭的缓冲 channel 包含 [-5, 0, 12] 时须消费全部值并返回总和 7 与 nil 错误。",
+          "tests": [
+            "TestEvalCaseChannelBufferedValues1"
+          ],
+          "required": true
+        }
+      ],
+      "family_rationale": "同一 buffered_values 调用结构的两个边界值变体整体分集；接口 channel 仍与其他族相关。",
+      "extra_probe": "package example\nimport (\"context\";\"testing\")\nfunc TestEvalCaseChannelBufferedValues1(t *testing.T) {\nch:=make(chan int,3);for _,x:=range []int{-5,0,12}{ch<-x};close(ch)\n    got,e:=SumChannel(context.Background(),ch);if e!=nil||got!=7{t.Fatal(got,e)}\n}\n"
+    },
+    {
+      "id": "live2-channel-buffered_values-2",
+      "scenario": "channel",
+      "split": "dev",
+      "group_id": "channel/buffered_values",
+      "fixture_profile": "clean",
+      "feasible": true,
+      "marker": null,
+      "values": [
+        13,
+        -7,
+        0,
+        17,
+        -31,
+        2
+      ],
+      "requirement": "累加 channel 数值直到关闭；取消时返回 ctx.Err()，并保留已收到数值的部分和；nil channel 也响应取消。 已关闭的缓冲 channel 包含 [42, -42, 6, 6] 时须消费全部值并返回总和 12 与 nil 错误。",
+      "checklist": [
+        {
+          "id": "r-values",
+          "text": "关闭后的正确总和",
+          "tests": [
+            "TestEvalChannelValues"
+          ],
+          "required": true
+        },
+        {
+          "id": "r-partial",
+          "text": "取消保留部分和",
+          "tests": [
+            "TestEvalChannelPartialCancel"
+          ],
+          "required": true
+        },
+        {
+          "id": "r-case",
+          "text": "已关闭的缓冲 channel 包含 [42, -42, 6, 6] 时须消费全部值并返回总和 12 与 nil 错误。",
+          "tests": [
+            "TestEvalCaseChannelBufferedValues2"
+          ],
+          "required": true
+        }
+      ],
+      "family_rationale": "同一 buffered_values 调用结构的两个边界值变体整体分集；接口 channel 仍与其他族相关。",
+      "extra_probe": "package example\nimport (\"context\";\"testing\")\nfunc TestEvalCaseChannelBufferedValues2(t *testing.T) {\nch:=make(chan int,4);for _,x:=range []int{42,-42,6,6}{ch<-x};close(ch)\n    got,e:=SumChannel(context.Background(),ch);if e!=nil||got!=12{t.Fatal(got,e)}\n}\n"
+    },
+    {
+      "id": "live2-channel-closed_empty-1",
+      "scenario": "channel",
+      "split": "dev",
+      "group_id": "channel/closed_empty",
+      "fixture_profile": "clean",
+      "feasible": true,
+      "marker": null,
+      "values": [
+        13,
+        -7,
+        0,
+        17,
+        -31,
+        2
+      ],
+      "requirement": "累加 channel 数值直到关闭；取消时返回 ctx.Err()，并保留已收到数值的部分和；nil channel 也响应取消。 容量为 0 的空 channel 先关闭再传入，必须返回 0 和 nil 错误，不可将正常关闭当取消。",
+      "checklist": [
+        {
+          "id": "r-values",
+          "text": "关闭后的正确总和",
+          "tests": [
+            "TestEvalChannelValues"
+          ],
+          "required": true
+        },
+        {
+          "id": "r-partial",
+          "text": "取消保留部分和",
+          "tests": [
+            "TestEvalChannelPartialCancel"
+          ],
+          "required": true
+        },
+        {
+          "id": "r-case",
+          "text": "容量为 0 的空 channel 先关闭再传入，必须返回 0 和 nil 错误，不可将正常关闭当取消。",
+          "tests": [
+            "TestEvalCaseChannelClosedEmpty1"
+          ],
+          "required": true
+        }
+      ],
+      "family_rationale": "同一 closed_empty 调用结构的两个边界值变体整体分集；接口 channel 仍与其他族相关。",
+      "extra_probe": "package example\nimport (\"context\";\"testing\")\nfunc TestEvalCaseChannelClosedEmpty1(t *testing.T) {\nch:=make(chan int,0);close(ch);got,e:=SumChannel(context.Background(),ch);if e!=nil||got!=0{t.Fatal(got,e)}\n}\n"
+    },
+    {
+      "id": "live2-channel-closed_empty-2",
+      "scenario": "channel",
+      "split": "dev",
+      "group_id": "channel/closed_empty",
+      "fixture_profile": "clean",
+      "feasible": true,
+      "marker": null,
+      "values": [
+        13,
+        -7,
+        0,
+        17,
+        -31,
+        2
+      ],
+      "requirement": "累加 channel 数值直到关闭；取消时返回 ctx.Err()，并保留已收到数值的部分和；nil channel 也响应取消。 容量为 8 的空 channel 先关闭再传入，必须返回 0 和 nil 错误，不可将正常关闭当取消。",
+      "checklist": [
+        {
+          "id": "r-values",
+          "text": "关闭后的正确总和",
+          "tests": [
+            "TestEvalChannelValues"
+          ],
+          "required": true
+        },
+        {
+          "id": "r-partial",
+          "text": "取消保留部分和",
+          "tests": [
+            "TestEvalChannelPartialCancel"
+          ],
+          "required": true
+        },
+        {
+          "id": "r-case",
+          "text": "容量为 8 的空 channel 先关闭再传入，必须返回 0 和 nil 错误，不可将正常关闭当取消。",
+          "tests": [
+            "TestEvalCaseChannelClosedEmpty2"
+          ],
+          "required": true
+        }
+      ],
+      "family_rationale": "同一 closed_empty 调用结构的两个边界值变体整体分集；接口 channel 仍与其他族相关。",
+      "extra_probe": "package example\nimport (\"context\";\"testing\")\nfunc TestEvalCaseChannelClosedEmpty2(t *testing.T) {\nch:=make(chan int,8);close(ch);got,e:=SumChannel(context.Background(),ch);if e!=nil||got!=0{t.Fatal(got,e)}\n}\n"
+    },
+    {
+      "id": "live2-channel-nil_deadline-1",
+      "scenario": "channel",
+      "split": "holdout",
+      "group_id": "channel/nil_deadline",
+      "fixture_profile": "clean",
+      "feasible": true,
+      "marker": null,
+      "values": [
+        13,
+        -7,
+        0,
+        17,
+        -31,
+        2
+      ],
+      "requirement": "累加 channel 数值直到关闭；取消时返回 ctx.Err()，并保留已收到数值的部分和；nil channel 也响应取消。 nil channel 不会产生值，context 在 3 毫秒后到期时须返回 0 和原始 context.DeadlineExceeded。",
+      "checklist": [
+        {
+          "id": "r-values",
+          "text": "关闭后的正确总和",
+          "tests": [
+            "TestEvalChannelValues"
+          ],
+          "required": true
+        },
+        {
+          "id": "r-partial",
+          "text": "取消保留部分和",
+          "tests": [
+            "TestEvalChannelPartialCancel"
+          ],
+          "required": true
+        },
+        {
+          "id": "r-case",
+          "text": "nil channel 不会产生值，context 在 3 毫秒后到期时须返回 0 和原始 context.DeadlineExceeded。",
+          "tests": [
+            "TestEvalCaseChannelNilDeadline1"
+          ],
+          "required": true
+        }
+      ],
+      "family_rationale": "同一 nil_deadline 调用结构的两个边界值变体整体分集；接口 channel 仍与其他族相关。",
+      "extra_probe": "package example\nimport (\"context\";\"testing\";\"time\")\nfunc TestEvalCaseChannelNilDeadline1(t *testing.T) {\nctx,cancel:=context.WithTimeout(context.Background(),3*time.Millisecond);defer cancel()\n    got,e:=SumChannel(ctx,nil);if got!=0||e!=context.DeadlineExceeded{t.Fatal(got,e)}\n}\n"
+    },
+    {
+      "id": "live2-channel-nil_deadline-2",
+      "scenario": "channel",
+      "split": "holdout",
+      "group_id": "channel/nil_deadline",
+      "fixture_profile": "clean",
+      "feasible": true,
+      "marker": null,
+      "values": [
+        13,
+        -7,
+        0,
+        17,
+        -31,
+        2
+      ],
+      "requirement": "累加 channel 数值直到关闭；取消时返回 ctx.Err()，并保留已收到数值的部分和；nil channel 也响应取消。 nil channel 不会产生值，context 在 15 毫秒后到期时须返回 0 和原始 context.DeadlineExceeded。",
+      "checklist": [
+        {
+          "id": "r-values",
+          "text": "关闭后的正确总和",
+          "tests": [
+            "TestEvalChannelValues"
+          ],
+          "required": true
+        },
+        {
+          "id": "r-partial",
+          "text": "取消保留部分和",
+          "tests": [
+            "TestEvalChannelPartialCancel"
+          ],
+          "required": true
+        },
+        {
+          "id": "r-case",
+          "text": "nil channel 不会产生值，context 在 15 毫秒后到期时须返回 0 和原始 context.DeadlineExceeded。",
+          "tests": [
+            "TestEvalCaseChannelNilDeadline2"
+          ],
+          "required": true
+        }
+      ],
+      "family_rationale": "同一 nil_deadline 调用结构的两个边界值变体整体分集；接口 channel 仍与其他族相关。",
+      "extra_probe": "package example\nimport (\"context\";\"testing\";\"time\")\nfunc TestEvalCaseChannelNilDeadline2(t *testing.T) {\nctx,cancel:=context.WithTimeout(context.Background(),15*time.Millisecond);defer cancel()\n    got,e:=SumChannel(ctx,nil);if got!=0||e!=context.DeadlineExceeded{t.Fatal(got,e)}\n}\n"
+    },
+    {
+      "id": "live2-channel-partial_cancel-1",
+      "scenario": "channel",
+      "split": "holdout",
+      "group_id": "channel/partial_cancel",
+      "fixture_profile": "clean",
+      "feasible": true,
+      "marker": null,
+      "values": [
+        13,
+        -7,
+        0,
+        17,
+        -31,
+        2
+      ],
+      "requirement": "累加 channel 数值直到关闭；取消时返回 ctx.Err()，并保留已收到数值的部分和；nil channel 也响应取消。 无缓冲 channel 成功发送 23 和 -8 后取消，返回已接收部分和 15 及原始 context.Canceled，不可丢弃部分结果。",
+      "checklist": [
+        {
+          "id": "r-values",
+          "text": "关闭后的正确总和",
+          "tests": [
+            "TestEvalChannelValues"
+          ],
+          "required": true
+        },
+        {
+          "id": "r-partial",
+          "text": "取消保留部分和",
+          "tests": [
+            "TestEvalChannelPartialCancel"
+          ],
+          "required": true
+        },
+        {
+          "id": "r-case",
+          "text": "无缓冲 channel 成功发送 23 和 -8 后取消，返回已接收部分和 15 及原始 context.Canceled，不可丢弃部分结果。",
+          "tests": [
+            "TestEvalCaseChannelPartialCancel1"
+          ],
+          "required": true
+        }
+      ],
+      "family_rationale": "同一 partial_cancel 调用结构的两个边界值变体整体分集；接口 channel 仍与其他族相关。",
+      "extra_probe": "package example\nimport (\"context\";\"testing\";\"time\")\nfunc TestEvalCaseChannelPartialCancel1(t *testing.T) {\nctx,cancel:=context.WithCancel(context.Background());defer cancel();ch:=make(chan int)\n    done:=make(chan struct{n int;e error},1);go func(){n,e:=SumChannel(ctx,ch);done<-struct{n int;e error}{n,e}}()\n    ch<-23;ch<--8;cancel();select{case got:=<-done:if got.n!=15||got.e!=context.Canceled{t.Fatal(got)};case <-time.After(time.Second):t.Fatal(\"cancel ignored\")}\n}\n"
+    },
+    {
+      "id": "live2-channel-partial_cancel-2",
+      "scenario": "channel",
+      "split": "holdout",
+      "group_id": "channel/partial_cancel",
+      "fixture_profile": "clean",
+      "feasible": true,
+      "marker": null,
+      "values": [
+        13,
+        -7,
+        0,
+        17,
+        -31,
+        2
+      ],
+      "requirement": "累加 channel 数值直到关闭；取消时返回 ctx.Err()，并保留已收到数值的部分和；nil channel 也响应取消。 无缓冲 channel 成功发送 -19 和 4 后取消，返回已接收部分和 -15 及原始 context.Canceled，不可丢弃部分结果。",
+      "checklist": [
+        {
+          "id": "r-values",
+          "text": "关闭后的正确总和",
+          "tests": [
+            "TestEvalChannelValues"
+          ],
+          "required": true
+        },
+        {
+          "id": "r-partial",
+          "text": "取消保留部分和",
+          "tests": [
+            "TestEvalChannelPartialCancel"
+          ],
+          "required": true
+        },
+        {
+          "id": "r-case",
+          "text": "无缓冲 channel 成功发送 -19 和 4 后取消，返回已接收部分和 -15 及原始 context.Canceled，不可丢弃部分结果。",
+          "tests": [
+            "TestEvalCaseChannelPartialCancel2"
+          ],
+          "required": true
+        }
+      ],
+      "family_rationale": "同一 partial_cancel 调用结构的两个边界值变体整体分集；接口 channel 仍与其他族相关。",
+      "extra_probe": "package example\nimport (\"context\";\"testing\";\"time\")\nfunc TestEvalCaseChannelPartialCancel2(t *testing.T) {\nctx,cancel:=context.WithCancel(context.Background());defer cancel();ch:=make(chan int)\n    done:=make(chan struct{n int;e error},1);go func(){n,e:=SumChannel(ctx,ch);done<-struct{n int;e error}{n,e}}()\n    ch<--19;ch<-4;cancel();select{case got:=<-done:if got.n!=-15||got.e!=context.Canceled{t.Fatal(got)};case <-time.After(time.Second):t.Fatal(\"cancel ignored\")}\n}\n"
+    },
+    {
+      "id": "live2-channel-stream_close-1",
+      "scenario": "channel",
+      "split": "dev",
+      "group_id": "channel/stream_close",
+      "fixture_profile": "clean",
+      "feasible": true,
+      "marker": null,
+      "values": [
+        13,
+        -7,
+        0,
+        17,
+        -31,
+        2
+      ],
+      "requirement": "累加 channel 数值直到关闭；取消时返回 ctx.Err()，并保留已收到数值的部分和；nil channel 也响应取消。 无缓冲 channel 从其他 goroutine 依次发送 1 到 3 后关闭，必须等待并返回完整总和 6。",
+      "checklist": [
+        {
+          "id": "r-values",
+          "text": "关闭后的正确总和",
+          "tests": [
+            "TestEvalChannelValues"
+          ],
+          "required": true
+        },
+        {
+          "id": "r-partial",
+          "text": "取消保留部分和",
+          "tests": [
+            "TestEvalChannelPartialCancel"
+          ],
+          "required": true
+        },
+        {
+          "id": "r-case",
+          "text": "无缓冲 channel 从其他 goroutine 依次发送 1 到 3 后关闭，必须等待并返回完整总和 6。",
+          "tests": [
+            "TestEvalCaseChannelStreamClose1"
+          ],
+          "required": true
+        }
+      ],
+      "family_rationale": "同一 stream_close 调用结构的两个边界值变体整体分集；接口 channel 仍与其他族相关。",
+      "extra_probe": "package example\nimport (\"context\";\"testing\")\nfunc TestEvalCaseChannelStreamClose1(t *testing.T) {\nch:=make(chan int);go func(){defer close(ch);for i:=1;i<=3;i++{ch<-i}}()\n    got,e:=SumChannel(context.Background(),ch);if e!=nil||got!=6{t.Fatal(got,e)}\n}\n"
+    },
+    {
+      "id": "live2-channel-stream_close-2",
+      "scenario": "channel",
+      "split": "dev",
+      "group_id": "channel/stream_close",
+      "fixture_profile": "clean",
+      "feasible": true,
+      "marker": null,
+      "values": [
+        13,
+        -7,
+        0,
+        17,
+        -31,
+        2
+      ],
+      "requirement": "累加 channel 数值直到关闭；取消时返回 ctx.Err()，并保留已收到数值的部分和；nil channel 也响应取消。 无缓冲 channel 从其他 goroutine 依次发送 1 到 19 后关闭，必须等待并返回完整总和 190。",
+      "checklist": [
+        {
+          "id": "r-values",
+          "text": "关闭后的正确总和",
+          "tests": [
+            "TestEvalChannelValues"
+          ],
+          "required": true
+        },
+        {
+          "id": "r-partial",
+          "text": "取消保留部分和",
+          "tests": [
+            "TestEvalChannelPartialCancel"
+          ],
+          "required": true
+        },
+        {
+          "id": "r-case",
+          "text": "无缓冲 channel 从其他 goroutine 依次发送 1 到 19 后关闭，必须等待并返回完整总和 190。",
+          "tests": [
+            "TestEvalCaseChannelStreamClose2"
+          ],
+          "required": true
+        }
+      ],
+      "family_rationale": "同一 stream_close 调用结构的两个边界值变体整体分集；接口 channel 仍与其他族相关。",
+      "extra_probe": "package example\nimport (\"context\";\"testing\")\nfunc TestEvalCaseChannelStreamClose2(t *testing.T) {\nch:=make(chan int);go func(){defer close(ch);for i:=1;i<=19;i++{ch<-i}}()\n    got,e:=SumChannel(context.Background(),ch);if e!=nil||got!=190{t.Fatal(got,e)}\n}\n"
+    },
+    {
+      "id": "live2-context_cancel-broadcast-1",
+      "scenario": "context_cancel",
+      "split": "dev",
+      "group_id": "context_cancel/broadcast",
+      "fixture_profile": "clean",
+      "feasible": true,
+      "marker": null,
+      "values": [
+        13,
+        -7,
+        0,
+        17,
+        -31,
+        2
+      ],
+      "requirement": "等待 context 取消后原样返回 ctx.Err()，取消前不能提前返回；支持 deadline。 同一个 context 由 3 个等待者共享，取消一次后每个调用都必须返回 context.Canceled。",
+      "checklist": [
+        {
+          "id": "r-cancel",
+          "text": "取消及 deadline 错误身份",
+          "tests": [
+            "TestEvalContextIdentity"
+          ],
+          "required": true
+        },
+        {
+          "id": "r-wait",
+          "text": "取消前保持等待",
+          "tests": [
+            "TestEvalContextWait"
+          ],
+          "required": true
+        },
+        {
+          "id": "r-case",
+          "text": "同一个 context 由 3 个等待者共享，取消一次后每个调用都必须返回 context.Canceled。",
+          "tests": [
+            "TestEvalCaseContextCancelBroadcast1"
+          ],
+          "required": true
+        }
+      ],
+      "family_rationale": "同一 broadcast 调用结构的两个边界值变体整体分集；接口 context_cancel 仍与其他族相关。",
+      "extra_probe": "package example\nimport (\"context\";\"testing\";\"time\")\nfunc TestEvalCaseContextCancelBroadcast1(t *testing.T) {\nctx,cancel:=context.WithCancel(context.Background());defer cancel()\n    done:=make(chan error,3);for i:=0;i<3;i++ {go func(){done<-WaitForCancel(ctx)}()};cancel()\n    for i:=0;i<3;i++{select{case e:=<-done:if e!=context.Canceled{t.Fatal(e)};case <-time.After(time.Second):t.Fatal(\"waiter stuck\")}}\n}\n"
+    },
+    {
+      "id": "live2-context_cancel-broadcast-2",
+      "scenario": "context_cancel",
+      "split": "dev",
+      "group_id": "context_cancel/broadcast",
+      "fixture_profile": "clean",
+      "feasible": true,
+      "marker": null,
+      "values": [
+        13,
+        -7,
+        0,
+        17,
+        -31,
+        2
+      ],
+      "requirement": "等待 context 取消后原样返回 ctx.Err()，取消前不能提前返回；支持 deadline。 同一个 context 由 17 个等待者共享，取消一次后每个调用都必须返回 context.Canceled。",
+      "checklist": [
+        {
+          "id": "r-cancel",
+          "text": "取消及 deadline 错误身份",
+          "tests": [
+            "TestEvalContextIdentity"
+          ],
+          "required": true
+        },
+        {
+          "id": "r-wait",
+          "text": "取消前保持等待",
+          "tests": [
+            "TestEvalContextWait"
+          ],
+          "required": true
+        },
+        {
+          "id": "r-case",
+          "text": "同一个 context 由 17 个等待者共享，取消一次后每个调用都必须返回 context.Canceled。",
+          "tests": [
+            "TestEvalCaseContextCancelBroadcast2"
+          ],
+          "required": true
+        }
+      ],
+      "family_rationale": "同一 broadcast 调用结构的两个边界值变体整体分集；接口 context_cancel 仍与其他族相关。",
+      "extra_probe": "package example\nimport (\"context\";\"testing\";\"time\")\nfunc TestEvalCaseContextCancelBroadcast2(t *testing.T) {\nctx,cancel:=context.WithCancel(context.Background());defer cancel()\n    done:=make(chan error,17);for i:=0;i<17;i++ {go func(){done<-WaitForCancel(ctx)}()};cancel()\n    for i:=0;i<17;i++{select{case e:=<-done:if e!=context.Canceled{t.Fatal(e)};case <-time.After(time.Second):t.Fatal(\"waiter stuck\")}}\n}\n"
+    },
+    {
+      "id": "live2-context_cancel-child_isolation-1",
+      "scenario": "context_cancel",
+      "split": "holdout",
+      "group_id": "context_cancel/child_isolation",
+      "fixture_profile": "clean",
+      "feasible": true,
+      "marker": null,
+      "values": [
+        13,
+        -7,
+        0,
+        17,
+        -31,
+        2
+      ],
+      "requirement": "等待 context 取消后原样返回 ctx.Err()，取消前不能提前返回；支持 deadline。 父 context 下创建 1 个独立子 context；取消每个子节点并等待后，父节点仍须未取消。",
+      "checklist": [
+        {
+          "id": "r-cancel",
+          "text": "取消及 deadline 错误身份",
+          "tests": [
+            "TestEvalContextIdentity"
+          ],
+          "required": true
+        },
+        {
+          "id": "r-wait",
+          "text": "取消前保持等待",
+          "tests": [
+            "TestEvalContextWait"
+          ],
+          "required": true
+        },
+        {
+          "id": "r-case",
+          "text": "父 context 下创建 1 个独立子 context；取消每个子节点并等待后，父节点仍须未取消。",
+          "tests": [
+            "TestEvalCaseContextCancelChildIsolation1"
+          ],
+          "required": true
+        }
+      ],
+      "family_rationale": "同一 child_isolation 调用结构的两个边界值变体整体分集；接口 context_cancel 仍与其他族相关。",
+      "extra_probe": "package example\nimport (\"context\";\"testing\")\nfunc TestEvalCaseContextCancelChildIsolation1(t *testing.T) {\nparent,stop:=context.WithCancel(context.Background());defer stop()\n    for i:=0;i<1;i++{child,cancel:=context.WithCancel(parent);cancel();if e:=WaitForCancel(child);e!=context.Canceled{t.Fatal(e)}}\n    if parent.Err()!=nil{t.Fatal(\"parent canceled\")}\n}\n"
+    },
+    {
+      "id": "live2-context_cancel-child_isolation-2",
+      "scenario": "context_cancel",
+      "split": "holdout",
+      "group_id": "context_cancel/child_isolation",
+      "fixture_profile": "clean",
+      "feasible": true,
+      "marker": null,
+      "values": [
+        13,
+        -7,
+        0,
+        17,
+        -31,
+        2
+      ],
+      "requirement": "等待 context 取消后原样返回 ctx.Err()，取消前不能提前返回；支持 deadline。 父 context 下创建 9 个独立子 context；取消每个子节点并等待后，父节点仍须未取消。",
+      "checklist": [
+        {
+          "id": "r-cancel",
+          "text": "取消及 deadline 错误身份",
+          "tests": [
+            "TestEvalContextIdentity"
+          ],
+          "required": true
+        },
+        {
+          "id": "r-wait",
+          "text": "取消前保持等待",
+          "tests": [
+            "TestEvalContextWait"
+          ],
+          "required": true
+        },
+        {
+          "id": "r-case",
+          "text": "父 context 下创建 9 个独立子 context；取消每个子节点并等待后，父节点仍须未取消。",
+          "tests": [
+            "TestEvalCaseContextCancelChildIsolation2"
+          ],
+          "required": true
+        }
+      ],
+      "family_rationale": "同一 child_isolation 调用结构的两个边界值变体整体分集；接口 context_cancel 仍与其他族相关。",
+      "extra_probe": "package example\nimport (\"context\";\"testing\")\nfunc TestEvalCaseContextCancelChildIsolation2(t *testing.T) {\nparent,stop:=context.WithCancel(context.Background());defer stop()\n    for i:=0;i<9;i++{child,cancel:=context.WithCancel(parent);cancel();if e:=WaitForCancel(child);e!=context.Canceled{t.Fatal(e)}}\n    if parent.Err()!=nil{t.Fatal(\"parent canceled\")}\n}\n"
+    },
+    {
+      "id": "live2-context_cancel-expired_deadline-1",
+      "scenario": "context_cancel",
+      "split": "dev",
+      "group_id": "context_cancel/expired_deadline",
+      "fixture_profile": "clean",
+      "feasible": true,
+      "marker": null,
+      "values": [
+        13,
+        -7,
+        0,
+        17,
+        -31,
+        2
+      ],
+      "requirement": "等待 context 取消后原样返回 ctx.Err()，取消前不能提前返回；支持 deadline。 传入已在 2 毫秒前到期的 context，返回的错误必须与该 context.Err() 完全相同。",
+      "checklist": [
+        {
+          "id": "r-cancel",
+          "text": "取消及 deadline 错误身份",
+          "tests": [
+            "TestEvalContextIdentity"
+          ],
+          "required": true
+        },
+        {
+          "id": "r-wait",
+          "text": "取消前保持等待",
+          "tests": [
+            "TestEvalContextWait"
+          ],
+          "required": true
+        },
+        {
+          "id": "r-case",
+          "text": "传入已在 2 毫秒前到期的 context，返回的错误必须与该 context.Err() 完全相同。",
+          "tests": [
+            "TestEvalCaseContextCancelExpiredDeadline1"
+          ],
+          "required": true
+        }
+      ],
+      "family_rationale": "同一 expired_deadline 调用结构的两个边界值变体整体分集；接口 context_cancel 仍与其他族相关。",
+      "extra_probe": "package example\nimport (\"context\";\"testing\";\"time\")\nfunc TestEvalCaseContextCancelExpiredDeadline1(t *testing.T) {\nctx,cancel:=context.WithDeadline(context.Background(),time.Now().Add(-2*time.Millisecond));defer cancel()\n    if e:=WaitForCancel(ctx);e!=ctx.Err()||e!=context.DeadlineExceeded{t.Fatal(e)}\n}\n"
+    },
+    {
+      "id": "live2-context_cancel-expired_deadline-2",
+      "scenario": "context_cancel",
+      "split": "dev",
+      "group_id": "context_cancel/expired_deadline",
+      "fixture_profile": "clean",
+      "feasible": true,
+      "marker": null,
+      "values": [
+        13,
+        -7,
+        0,
+        17,
+        -31,
+        2
+      ],
+      "requirement": "等待 context 取消后原样返回 ctx.Err()，取消前不能提前返回；支持 deadline。 传入已在 20 毫秒前到期的 context，返回的错误必须与该 context.Err() 完全相同。",
+      "checklist": [
+        {
+          "id": "r-cancel",
+          "text": "取消及 deadline 错误身份",
+          "tests": [
+            "TestEvalContextIdentity"
+          ],
+          "required": true
+        },
+        {
+          "id": "r-wait",
+          "text": "取消前保持等待",
+          "tests": [
+            "TestEvalContextWait"
+          ],
+          "required": true
+        },
+        {
+          "id": "r-case",
+          "text": "传入已在 20 毫秒前到期的 context，返回的错误必须与该 context.Err() 完全相同。",
+          "tests": [
+            "TestEvalCaseContextCancelExpiredDeadline2"
+          ],
+          "required": true
+        }
+      ],
+      "family_rationale": "同一 expired_deadline 调用结构的两个边界值变体整体分集；接口 context_cancel 仍与其他族相关。",
+      "extra_probe": "package example\nimport (\"context\";\"testing\";\"time\")\nfunc TestEvalCaseContextCancelExpiredDeadline2(t *testing.T) {\nctx,cancel:=context.WithDeadline(context.Background(),time.Now().Add(-20*time.Millisecond));defer cancel()\n    if e:=WaitForCancel(ctx);e!=ctx.Err()||e!=context.DeadlineExceeded{t.Fatal(e)}\n}\n"
+    },
+    {
+      "id": "live2-context_cancel-parent_tree-1",
+      "scenario": "context_cancel",
+      "split": "dev",
+      "group_id": "context_cancel/parent_tree",
+      "fixture_profile": "clean",
+      "feasible": true,
+      "marker": null,
+      "values": [
+        13,
+        -7,
+        0,
+        17,
+        -31,
+        2
+      ],
+      "requirement": "等待 context 取消后原样返回 ctx.Err()，取消前不能提前返回；支持 deadline。 构造 2 层派生 context，取消根节点后最深节点必须返回 context.Canceled。",
+      "checklist": [
+        {
+          "id": "r-cancel",
+          "text": "取消及 deadline 错误身份",
+          "tests": [
+            "TestEvalContextIdentity"
+          ],
+          "required": true
+        },
+        {
+          "id": "r-wait",
+          "text": "取消前保持等待",
+          "tests": [
+            "TestEvalContextWait"
+          ],
+          "required": true
+        },
+        {
+          "id": "r-case",
+          "text": "构造 2 层派生 context，取消根节点后最深节点必须返回 context.Canceled。",
+          "tests": [
+            "TestEvalCaseContextCancelParentTree1"
+          ],
+          "required": true
+        }
+      ],
+      "family_rationale": "同一 parent_tree 调用结构的两个边界值变体整体分集；接口 context_cancel 仍与其他族相关。",
+      "extra_probe": "package example\nimport (\"context\";\"testing\")\nfunc TestEvalCaseContextCancelParentTree1(t *testing.T) {\nroot,cancel:=context.WithCancel(context.Background());defer cancel();ctx:=root\n    for i:=0;i<2;i++{next,stop:=context.WithCancel(ctx);defer stop();ctx=next};cancel()\n    if e:=WaitForCancel(ctx);e!=context.Canceled{t.Fatal(e)}\n}\n"
+    },
+    {
+      "id": "live2-context_cancel-parent_tree-2",
+      "scenario": "context_cancel",
+      "split": "dev",
+      "group_id": "context_cancel/parent_tree",
+      "fixture_profile": "clean",
+      "feasible": true,
+      "marker": null,
+      "values": [
+        13,
+        -7,
+        0,
+        17,
+        -31,
+        2
+      ],
+      "requirement": "等待 context 取消后原样返回 ctx.Err()，取消前不能提前返回；支持 deadline。 构造 7 层派生 context，取消根节点后最深节点必须返回 context.Canceled。",
+      "checklist": [
+        {
+          "id": "r-cancel",
+          "text": "取消及 deadline 错误身份",
+          "tests": [
+            "TestEvalContextIdentity"
+          ],
+          "required": true
+        },
+        {
+          "id": "r-wait",
+          "text": "取消前保持等待",
+          "tests": [
+            "TestEvalContextWait"
+          ],
+          "required": true
+        },
+        {
+          "id": "r-case",
+          "text": "构造 7 层派生 context，取消根节点后最深节点必须返回 context.Canceled。",
+          "tests": [
+            "TestEvalCaseContextCancelParentTree2"
+          ],
+          "required": true
+        }
+      ],
+      "family_rationale": "同一 parent_tree 调用结构的两个边界值变体整体分集；接口 context_cancel 仍与其他族相关。",
+      "extra_probe": "package example\nimport (\"context\";\"testing\")\nfunc TestEvalCaseContextCancelParentTree2(t *testing.T) {\nroot,cancel:=context.WithCancel(context.Background());defer cancel();ctx:=root\n    for i:=0;i<7;i++{next,stop:=context.WithCancel(ctx);defer stop();ctx=next};cancel()\n    if e:=WaitForCancel(ctx);e!=context.Canceled{t.Fatal(e)}\n}\n"
+    },
+    {
+      "id": "live2-context_cancel-value_wrappers-1",
+      "scenario": "context_cancel",
+      "split": "holdout",
+      "group_id": "context_cancel/value_wrappers",
+      "fixture_profile": "clean",
+      "feasible": true,
+      "marker": null,
+      "values": [
+        13,
+        -7,
+        0,
+        17,
+        -31,
+        2
+      ],
+      "requirement": "等待 context 取消后原样返回 ctx.Err()，取消前不能提前返回；支持 deadline。 取消信号必须穿透 1 层 WithValue 包装；调用后仍能读取最外层键值。",
+      "checklist": [
+        {
+          "id": "r-cancel",
+          "text": "取消及 deadline 错误身份",
+          "tests": [
+            "TestEvalContextIdentity"
+          ],
+          "required": true
+        },
+        {
+          "id": "r-wait",
+          "text": "取消前保持等待",
+          "tests": [
+            "TestEvalContextWait"
+          ],
+          "required": true
+        },
+        {
+          "id": "r-case",
+          "text": "取消信号必须穿透 1 层 WithValue 包装；调用后仍能读取最外层键值。",
+          "tests": [
+            "TestEvalCaseContextCancelValueWrappers1"
+          ],
+          "required": true
+        }
+      ],
+      "family_rationale": "同一 value_wrappers 调用结构的两个边界值变体整体分集；接口 context_cancel 仍与其他族相关。",
+      "extra_probe": "package example\nimport (\"context\";\"testing\")\nfunc TestEvalCaseContextCancelValueWrappers1(t *testing.T) {\nctx,cancel:=context.WithCancel(context.Background());defer cancel()\n    for i:=0;i<1;i++{ctx=context.WithValue(ctx,i,i+10)};cancel()\n    if e:=WaitForCancel(ctx);e!=context.Canceled{t.Fatal(e)}\n    if ctx.Value(1-1)!=1+9{t.Fatal(\"value changed\")}\n}\n"
+    },
+    {
+      "id": "live2-context_cancel-value_wrappers-2",
+      "scenario": "context_cancel",
+      "split": "holdout",
+      "group_id": "context_cancel/value_wrappers",
+      "fixture_profile": "clean",
+      "feasible": true,
+      "marker": null,
+      "values": [
+        13,
+        -7,
+        0,
+        17,
+        -31,
+        2
+      ],
+      "requirement": "等待 context 取消后原样返回 ctx.Err()，取消前不能提前返回；支持 deadline。 取消信号必须穿透 11 层 WithValue 包装；调用后仍能读取最外层键值。",
+      "checklist": [
+        {
+          "id": "r-cancel",
+          "text": "取消及 deadline 错误身份",
+          "tests": [
+            "TestEvalContextIdentity"
+          ],
+          "required": true
+        },
+        {
+          "id": "r-wait",
+          "text": "取消前保持等待",
+          "tests": [
+            "TestEvalContextWait"
+          ],
+          "required": true
+        },
+        {
+          "id": "r-case",
+          "text": "取消信号必须穿透 11 层 WithValue 包装；调用后仍能读取最外层键值。",
+          "tests": [
+            "TestEvalCaseContextCancelValueWrappers2"
+          ],
+          "required": true
+        }
+      ],
+      "family_rationale": "同一 value_wrappers 调用结构的两个边界值变体整体分集；接口 context_cancel 仍与其他族相关。",
+      "extra_probe": "package example\nimport (\"context\";\"testing\")\nfunc TestEvalCaseContextCancelValueWrappers2(t *testing.T) {\nctx,cancel:=context.WithCancel(context.Background());defer cancel()\n    for i:=0;i<11;i++{ctx=context.WithValue(ctx,i,i+10)};cancel()\n    if e:=WaitForCancel(ctx);e!=context.Canceled{t.Fatal(e)}\n    if ctx.Value(11-1)!=11+9{t.Fatal(\"value changed\")}\n}\n"
+    },
+    {
+      "id": "live2-worker_pool-empty_input-1",
+      "scenario": "worker_pool",
+      "split": "dev",
+      "group_id": "worker_pool/empty_input",
+      "fixture_profile": "clean",
+      "feasible": true,
+      "marker": null,
+      "values": [
+        13,
+        -7,
+        0,
+        17,
+        -31,
+        2
+      ],
+      "requirement": "任务池最多 workers 个工作协程，输入乘二并按原顺序输出，不修改输入；拒绝非法 workers 并响应取消。 空输入、workers=1 时返回零长度结果和 nil 错误，不能等待不存在的任务。",
+      "checklist": [
+        {
+          "id": "r-values",
+          "text": "结果顺序及输入不变",
+          "tests": [
+            "TestEvalPoolValues"
+          ],
+          "required": true
+        },
+        {
+          "id": "r-bound",
+          "text": "工作协程上限的运行期观测",
+          "tests": [
+            "TestEvalPoolBound"
+          ],
+          "required": true
+        },
+        {
+          "id": "r-cancel",
+          "text": "取消及非法 workers",
+          "tests": [
+            "TestEvalPoolCancel"
+          ],
+          "required": true
+        },
+        {
+          "id": "r-case",
+          "text": "空输入、workers=1 时返回零长度结果和 nil 错误，不能等待不存在的任务。",
+          "tests": [
+            "TestEvalCaseWorkerPoolEmptyInput1"
+          ],
+          "required": true
+        }
+      ],
+      "family_rationale": "同一 empty_input 调用结构的两个边界值变体整体分集；接口 worker_pool 仍与其他族相关。",
+      "extra_probe": "package example\nimport (\"context\";\"testing\")\nfunc TestEvalCaseWorkerPoolEmptyInput1(t *testing.T) {\ngot,e:=WorkerPool(context.Background(),[]int{},1);if e!=nil||len(got)!=0{t.Fatal(got,e)}\n}\n"
+    },
+    {
+      "id": "live2-worker_pool-empty_input-2",
+      "scenario": "worker_pool",
+      "split": "dev",
+      "group_id": "worker_pool/empty_input",
+      "fixture_profile": "clean",
+      "feasible": true,
+      "marker": null,
+      "values": [
+        13,
+        -7,
+        0,
+        17,
+        -31,
+        2
+      ],
+      "requirement": "任务池最多 workers 个工作协程，输入乘二并按原顺序输出，不修改输入；拒绝非法 workers 并响应取消。 空输入、workers=32 时返回零长度结果和 nil 错误，不能等待不存在的任务。",
+      "checklist": [
+        {
+          "id": "r-values",
+          "text": "结果顺序及输入不变",
+          "tests": [
+            "TestEvalPoolValues"
+          ],
+          "required": true
+        },
+        {
+          "id": "r-bound",
+          "text": "工作协程上限的运行期观测",
+          "tests": [
+            "TestEvalPoolBound"
+          ],
+          "required": true
+        },
+        {
+          "id": "r-cancel",
+          "text": "取消及非法 workers",
+          "tests": [
+            "TestEvalPoolCancel"
+          ],
+          "required": true
+        },
+        {
+          "id": "r-case",
+          "text": "空输入、workers=32 时返回零长度结果和 nil 错误，不能等待不存在的任务。",
+          "tests": [
+            "TestEvalCaseWorkerPoolEmptyInput2"
+          ],
+          "required": true
+        }
+      ],
+      "family_rationale": "同一 empty_input 调用结构的两个边界值变体整体分集；接口 worker_pool 仍与其他族相关。",
+      "extra_probe": "package example\nimport (\"context\";\"testing\")\nfunc TestEvalCaseWorkerPoolEmptyInput2(t *testing.T) {\ngot,e:=WorkerPool(context.Background(),[]int{},32);if e!=nil||len(got)!=0{t.Fatal(got,e)}\n}\n"
+    },
+    {
+      "id": "live2-worker_pool-invalid_workers-1",
+      "scenario": "worker_pool",
+      "split": "holdout",
+      "group_id": "worker_pool/invalid_workers",
+      "fixture_profile": "clean",
+      "feasible": true,
+      "marker": null,
+      "values": [
+        13,
+        -7,
+        0,
+        17,
+        -31,
+        2
+      ],
+      "requirement": "任务池最多 workers 个工作协程，输入乘二并按原顺序输出，不修改输入；拒绝非法 workers 并响应取消。 即使输入为空，workers=0 也必须返回非 nil 错误，不能因空输入提前报告成功。",
+      "checklist": [
+        {
+          "id": "r-values",
+          "text": "结果顺序及输入不变",
+          "tests": [
+            "TestEvalPoolValues"
+          ],
+          "required": true
+        },
+        {
+          "id": "r-bound",
+          "text": "工作协程上限的运行期观测",
+          "tests": [
+            "TestEvalPoolBound"
+          ],
+          "required": true
+        },
+        {
+          "id": "r-cancel",
+          "text": "取消及非法 workers",
+          "tests": [
+            "TestEvalPoolCancel"
+          ],
+          "required": true
+        },
+        {
+          "id": "r-case",
+          "text": "即使输入为空，workers=0 也必须返回非 nil 错误，不能因空输入提前报告成功。",
+          "tests": [
+            "TestEvalCaseWorkerPoolInvalidWorkers1"
+          ],
+          "required": true
+        }
+      ],
+      "family_rationale": "同一 invalid_workers 调用结构的两个边界值变体整体分集；接口 worker_pool 仍与其他族相关。",
+      "extra_probe": "package example\nimport (\"context\";\"testing\")\nfunc TestEvalCaseWorkerPoolInvalidWorkers1(t *testing.T) {\n_,e:=WorkerPool(context.Background(),nil,0);if e==nil{t.Fatal(\"invalid workers accepted on empty jobs\")}\n}\n"
+    },
+    {
+      "id": "live2-worker_pool-invalid_workers-2",
+      "scenario": "worker_pool",
+      "split": "holdout",
+      "group_id": "worker_pool/invalid_workers",
+      "fixture_profile": "clean",
+      "feasible": true,
+      "marker": null,
+      "values": [
+        13,
+        -7,
+        0,
+        17,
+        -31,
+        2
+      ],
+      "requirement": "任务池最多 workers 个工作协程，输入乘二并按原顺序输出，不修改输入；拒绝非法 workers 并响应取消。 即使输入为空，workers=-7 也必须返回非 nil 错误，不能因空输入提前报告成功。",
+      "checklist": [
+        {
+          "id": "r-values",
+          "text": "结果顺序及输入不变",
+          "tests": [
+            "TestEvalPoolValues"
+          ],
+          "required": true
+        },
+        {
+          "id": "r-bound",
+          "text": "工作协程上限的运行期观测",
+          "tests": [
+            "TestEvalPoolBound"
+          ],
+          "required": true
+        },
+        {
+          "id": "r-cancel",
+          "text": "取消及非法 workers",
+          "tests": [
+            "TestEvalPoolCancel"
+          ],
+          "required": true
+        },
+        {
+          "id": "r-case",
+          "text": "即使输入为空，workers=-7 也必须返回非 nil 错误，不能因空输入提前报告成功。",
+          "tests": [
+            "TestEvalCaseWorkerPoolInvalidWorkers2"
+          ],
+          "required": true
+        }
+      ],
+      "family_rationale": "同一 invalid_workers 调用结构的两个边界值变体整体分集；接口 worker_pool 仍与其他族相关。",
+      "extra_probe": "package example\nimport (\"context\";\"testing\")\nfunc TestEvalCaseWorkerPoolInvalidWorkers2(t *testing.T) {\n_,e:=WorkerPool(context.Background(),nil,-7);if e==nil{t.Fatal(\"invalid workers accepted on empty jobs\")}\n}\n"
+    },
+    {
+      "id": "live2-worker_pool-ordered_edges-1",
+      "scenario": "worker_pool",
+      "split": "dev",
+      "group_id": "worker_pool/ordered_edges",
+      "fixture_profile": "clean",
+      "feasible": true,
+      "marker": null,
+      "values": [
+        13,
+        -7,
+        0,
+        17,
+        -31,
+        2
+      ],
+      "requirement": "任务池最多 workers 个工作协程，输入乘二并按原顺序输出，不修改输入；拒绝非法 workers 并响应取消。 输入为 [0, -3, 8]、workers=1 时，逐项乘二且重复值保留原位置；调用前后的输入必须相同。",
+      "checklist": [
+        {
+          "id": "r-values",
+          "text": "结果顺序及输入不变",
+          "tests": [
+            "TestEvalPoolValues"
+          ],
+          "required": true
+        },
+        {
+          "id": "r-bound",
+          "text": "工作协程上限的运行期观测",
+          "tests": [
+            "TestEvalPoolBound"
+          ],
+          "required": true
+        },
+        {
+          "id": "r-cancel",
+          "text": "取消及非法 workers",
+          "tests": [
+            "TestEvalPoolCancel"
+          ],
+          "required": true
+        },
+        {
+          "id": "r-case",
+          "text": "输入为 [0, -3, 8]、workers=1 时，逐项乘二且重复值保留原位置；调用前后的输入必须相同。",
+          "tests": [
+            "TestEvalCaseWorkerPoolOrderedEdges1"
+          ],
+          "required": true
+        }
+      ],
+      "family_rationale": "同一 ordered_edges 调用结构的两个边界值变体整体分集；接口 worker_pool 仍与其他族相关。",
+      "extra_probe": "package example\nimport (\"context\";\"testing\";\"reflect\")\nfunc TestEvalCaseWorkerPoolOrderedEdges1(t *testing.T) {\njobs:=[]int{0,-3,8};before:=append([]int{},jobs...)\n    got,e:=WorkerPool(context.Background(),jobs,1);if e!=nil||!reflect.DeepEqual(got,[]int{0,-6,16})||!reflect.DeepEqual(jobs,before){t.Fatal(got,e,jobs)}\n}\n"
+    },
+    {
+      "id": "live2-worker_pool-ordered_edges-2",
+      "scenario": "worker_pool",
+      "split": "dev",
+      "group_id": "worker_pool/ordered_edges",
+      "fixture_profile": "clean",
+      "feasible": true,
+      "marker": null,
+      "values": [
+        13,
+        -7,
+        0,
+        17,
+        -31,
+        2
+      ],
+      "requirement": "任务池最多 workers 个工作协程，输入乘二并按原顺序输出，不修改输入；拒绝非法 workers 并响应取消。 输入为 [21, 21, -9, 0, 4]、workers=2 时，逐项乘二且重复值保留原位置；调用前后的输入必须相同。",
+      "checklist": [
+        {
+          "id": "r-values",
+          "text": "结果顺序及输入不变",
+          "tests": [
+            "TestEvalPoolValues"
+          ],
+          "required": true
+        },
+        {
+          "id": "r-bound",
+          "text": "工作协程上限的运行期观测",
+          "tests": [
+            "TestEvalPoolBound"
+          ],
+          "required": true
+        },
+        {
+          "id": "r-cancel",
+          "text": "取消及非法 workers",
+          "tests": [
+            "TestEvalPoolCancel"
+          ],
+          "required": true
+        },
+        {
+          "id": "r-case",
+          "text": "输入为 [21, 21, -9, 0, 4]、workers=2 时，逐项乘二且重复值保留原位置；调用前后的输入必须相同。",
+          "tests": [
+            "TestEvalCaseWorkerPoolOrderedEdges2"
+          ],
+          "required": true
+        }
+      ],
+      "family_rationale": "同一 ordered_edges 调用结构的两个边界值变体整体分集；接口 worker_pool 仍与其他族相关。",
+      "extra_probe": "package example\nimport (\"context\";\"testing\";\"reflect\")\nfunc TestEvalCaseWorkerPoolOrderedEdges2(t *testing.T) {\njobs:=[]int{21,21,-9,0,4};before:=append([]int{},jobs...)\n    got,e:=WorkerPool(context.Background(),jobs,2);if e!=nil||!reflect.DeepEqual(got,[]int{42,42,-18,0,8})||!reflect.DeepEqual(jobs,before){t.Fatal(got,e,jobs)}\n}\n"
+    },
+    {
+      "id": "live2-worker_pool-policy_conflict-1",
+      "scenario": "worker_pool",
+      "split": "holdout",
+      "group_id": "worker_pool/policy_conflict",
+      "fixture_profile": "clean",
+      "feasible": false,
+      "marker": null,
+      "values": [
+        13,
+        -7,
+        0,
+        17,
+        -31,
+        2
+      ],
+      "requirement": "任务池最多 workers 个工作协程，输入乘二并按原顺序输出，不修改输入；拒绝非法 workers 并响应取消。 还必须实际导入并使用第三方模块 github.com/s8/externalpool。这与固定标准库限制冲突，不能满足时必须明确拒绝并返回 clarification_needed，不能悄悄忽略。",
+      "checklist": [
+        {
+          "id": "r-refuse",
+          "text": "服务端明确拒绝标准库政策冲突",
+          "tests": [
+            "server_refusal"
+          ],
+          "required": true
+        }
+      ],
+      "family_rationale": "同一 policy_conflict 调用结构的两个边界值变体整体分集；接口 worker_pool 仍与其他族相关。",
+      "extra_probe": null
+    },
+    {
+      "id": "live2-worker_pool-policy_conflict-2",
+      "scenario": "worker_pool",
+      "split": "holdout",
+      "group_id": "worker_pool/policy_conflict",
+      "fixture_profile": "clean",
+      "feasible": false,
+      "marker": null,
+      "values": [
+        13,
+        -7,
+        0,
+        17,
+        -31,
+        2
+      ],
+      "requirement": "任务池最多 workers 个工作协程，输入乘二并按原顺序输出，不修改输入；拒绝非法 workers 并响应取消。 还必须实际导入并使用第三方模块 golang.org/x/sync/errgroup。这与固定标准库限制冲突，不能满足时必须明确拒绝并返回 clarification_needed，不能悄悄忽略。",
+      "checklist": [
+        {
+          "id": "r-refuse",
+          "text": "服务端明确拒绝标准库政策冲突",
+          "tests": [
+            "server_refusal"
+          ],
+          "required": true
+        }
+      ],
+      "family_rationale": "同一 policy_conflict 调用结构的两个边界值变体整体分集；接口 worker_pool 仍与其他族相关。",
+      "extra_probe": null
+    },
+    {
+      "id": "live2-worker_pool-reuse-1",
+      "scenario": "worker_pool",
+      "split": "dev",
+      "group_id": "worker_pool/reuse",
+      "fixture_profile": "clean",
+      "feasible": true,
+      "marker": null,
+      "values": [
+        13,
+        -7,
+        0,
+        17,
+        -31,
+        2
+      ],
+      "requirement": "任务池最多 workers 个工作协程，输入乘二并按原顺序输出，不修改输入；拒绝非法 workers 并响应取消。 连续调用 3 次，每次只处理本次单元素输入，不能复用上一次结果或保留旧任务。",
+      "checklist": [
+        {
+          "id": "r-values",
+          "text": "结果顺序及输入不变",
+          "tests": [
+            "TestEvalPoolValues"
+          ],
+          "required": true
+        },
+        {
+          "id": "r-bound",
+          "text": "工作协程上限的运行期观测",
+          "tests": [
+            "TestEvalPoolBound"
+          ],
+          "required": true
+        },
+        {
+          "id": "r-cancel",
+          "text": "取消及非法 workers",
+          "tests": [
+            "TestEvalPoolCancel"
+          ],
+          "required": true
+        },
+        {
+          "id": "r-case",
+          "text": "连续调用 3 次，每次只处理本次单元素输入，不能复用上一次结果或保留旧任务。",
+          "tests": [
+            "TestEvalCaseWorkerPoolReuse1"
+          ],
+          "required": true
+        }
+      ],
+      "family_rationale": "同一 reuse 调用结构的两个边界值变体整体分集；接口 worker_pool 仍与其他族相关。",
+      "extra_probe": "package example\nimport (\"context\";\"testing\")\nfunc TestEvalCaseWorkerPoolReuse1(t *testing.T) {\nfor i:=0;i<3;i++{got,e:=WorkerPool(context.Background(),[]int{i-5},2);if e!=nil||len(got)!=1||got[0]!=2*(i-5){t.Fatal(got,e)}}\n}\n"
+    },
+    {
+      "id": "live2-worker_pool-reuse-2",
+      "scenario": "worker_pool",
+      "split": "dev",
+      "group_id": "worker_pool/reuse",
+      "fixture_profile": "clean",
+      "feasible": true,
+      "marker": null,
+      "values": [
+        13,
+        -7,
+        0,
+        17,
+        -31,
+        2
+      ],
+      "requirement": "任务池最多 workers 个工作协程，输入乘二并按原顺序输出，不修改输入；拒绝非法 workers 并响应取消。 连续调用 12 次，每次只处理本次单元素输入，不能复用上一次结果或保留旧任务。",
+      "checklist": [
+        {
+          "id": "r-values",
+          "text": "结果顺序及输入不变",
+          "tests": [
+            "TestEvalPoolValues"
+          ],
+          "required": true
+        },
+        {
+          "id": "r-bound",
+          "text": "工作协程上限的运行期观测",
+          "tests": [
+            "TestEvalPoolBound"
+          ],
+          "required": true
+        },
+        {
+          "id": "r-cancel",
+          "text": "取消及非法 workers",
+          "tests": [
+            "TestEvalPoolCancel"
+          ],
+          "required": true
+        },
+        {
+          "id": "r-case",
+          "text": "连续调用 12 次，每次只处理本次单元素输入，不能复用上一次结果或保留旧任务。",
+          "tests": [
+            "TestEvalCaseWorkerPoolReuse2"
+          ],
+          "required": true
+        }
+      ],
+      "family_rationale": "同一 reuse 调用结构的两个边界值变体整体分集；接口 worker_pool 仍与其他族相关。",
+      "extra_probe": "package example\nimport (\"context\";\"testing\")\nfunc TestEvalCaseWorkerPoolReuse2(t *testing.T) {\nfor i:=0;i<12;i++{got,e:=WorkerPool(context.Background(),[]int{i-5},2);if e!=nil||len(got)!=1||got[0]!=2*(i-5){t.Fatal(got,e)}}\n}\n"
+    }
+  ],
+  "source_hashes": {
+    "app/__init__.py": "b42f2099187886def637d6aa840022266e05cb6c987a9394e708e23cd505eb46",
+    "app/agents/__init__.py": "b42f2099187886def637d6aa840022266e05cb6c987a9394e708e23cd505eb46",
+    "app/agents/code_agent.py": "23b97d766a5c958906c86e5856291b289101faae024e8154dbd11ba82b8b897c",
+    "app/agents/go_workflow.py": "da85c5b36b32eb5d03689c9a764769c686e836ab732b50adf38bcac108466312",
+    "app/agents/graph.py": "47d71ffd4472c22e152f5b5dec54d5144e3cfc4e612bf24a4a6cbf0bd734e6a9",
+    "app/agents/role_runtime.py": "6828a732fe63371461cdf8ad97c4284fa2d2e4e3151c004ab308314856fe22a5",
+    "app/agents/supervisor.py": "0c354beee2df327d13c4c3d486f3463264f95efe511c9c50d819461326d317f9",
+    "app/agents/tools.py": "6c3ccfed58fda07e10892ae412a42feccbe2fc7a00a9f70758a6dc7216b57f58",
+    "app/config.py": "3ef902e3c5a9cdefcdaf87a701e18604adc1c3a84f7643fcabdf3719794fed11",
+    "app/context/__init__.py": "e4dbf96cfc33003d1b295b0bc4f1bf767c2c0bde333e77e78505bd31a4124a7f",
+    "app/context/budget.py": "2678a43a6d0bb603c2c4d7be817904b4dff605a2b836ad2e98e04254ea9010ef",
+    "app/context/builder.py": "7259d3210837724aed4cc349f5e08321a535d72897fcbfb1e1764dbc9b4c051c",
+    "app/context/contracts.py": "f8fbe7b8cc0f5210b38af7d443f8607e485423b90a3f6837c7ae977dbe25431e",
+    "app/context/evidence.py": "9b7433ffc3cce5dc011d7c737fa565a3b2038b06a307b4dc9cf372453d37db0d",
+    "app/context/go_adapter.py": "f442897ee56c6b04f9c19460dc9519e6b4266fe1359d37cf962c7b56c24a2bfd",
+    "app/context/pricing.py": "bce6e21e153376d63774a0cc31e17bf5e5fafb6c12d041be99a5d5475cffcfca",
+    "app/context/session.py": "028913c0836467ed3785e9518b5091194c272ac2f6c98be34097be701d00163c",
+    "app/context/store.py": "763eb87b5151f68bcec9d0a8e81c798a1a69bdbc064225d357f04fb8ea1738e9",
+    "app/context/summary.py": "846d2f0051d57c7a7fcede627ca009d09d24204643ad4051c5f7435c03c641e5",
+    "app/context/token_counter.py": "fca039c1458ea6a6c3363d60ab82fe22264aea0a46549efecd5f27cbfd0bb791",
+    "app/context/tool_projection.py": "05990e52b17c46fe891264452abe2c611ced3a466cfe9fec234c0afb38b1efce",
+    "app/context/usage.py": "305011d5cfbda4c95ae855708bb3781681f120b66d948faa77f94412a4cbebe0",
+    "app/go_validation/__init__.py": "7a7bbe26841da275fcf487e045cba104d980383f9e964c5962a10cd0e9888030",
+    "app/go_validation/contracts.py": "711af2a30f3318aed4b98f8ac945278084c6b2dfdadef44789a1c1b342c032c6",
+    "app/go_validation/fixtures.py": "f605b550e03c0cd5e66d6dff5073a9bccd452e16a8dd1a1981eb426a5a7dffd5",
+    "app/go_validation/nodes.py": "68f399925e35c94878f20552d04f04112a9eafb0f5bdee995dfa9daeb88759cd",
+    "app/go_validation/runner.py": "4814def925d633bba71a77e585348481115a79b060b645073a25a89a8a4308f2",
+    "app/go_validation/service.py": "e448c3ed15a5d9ecf75fdd59a8abf121153756c74809405e234a6fb6a49ba168",
+    "app/go_validation/store.py": "12f4864837f9384c4e5ec92e6d65fba234a4102524b0bc32439a8786ef9edba7",
+    "app/go_validation/tools.py": "0749cfd86ad87f5f964e051eea6e3def3457f16bc9fea6ea381070a2cb732fa9",
+    "app/main.py": "ec8c6ec184ed39d910ac6633e01125f354288d6bbf01f3365ca1cd584da21523",
+    "app/rag/__init__.py": "b42f2099187886def637d6aa840022266e05cb6c987a9394e708e23cd505eb46",
+    "app/rag/fusion.py": "3204108c7e5c20d26704ff85c800c1183da12746b17e08c4b28d612cb4b343b4",
+    "app/rag/lexical.py": "cf99f6022ccaedab51efca79316e92be10b0c5f6ea95252995b84f214b461494",
+    "app/rag/loader.py": "ab5714572712b0b9202288b70e2347b8d05a8ed81cf3572a6b41fd779f06dfaf",
+    "app/rag/reranker.py": "278310fd2e92cc0d0800110895090b0190c9f1e770ce776e088bfd1a17ce5efe",
+    "app/rag/retriever.py": "82d39b15ff05573ece17274a26a75a710dd320451a8444b996900d6763f571a8",
+    "app/schemas.py": "237ebb166b4b2a956c3db77c268608bdd200343f47d75d72fd218f21fd08a1d9",
+    "app/services/__init__.py": "b42f2099187886def637d6aa840022266e05cb6c987a9394e708e23cd505eb46",
+    "app/services/article_consumer.py": "43353a53c5d36feaf7f3b4c17125c0bd154ad0192f9e9d92ad178a0f01fe50aa",
+    "app/services/chat.py": "5d75eb6cc72cf6796e2c3199c84abfdc6a8fdcf54ff252047d3cf265389c86aa",
+    "app/services/concurrency.py": "fb04adb4338c3b17c1dd42377ad45ff7c2e3424688e11feec1d4695339f0a5f1",
+    "app/services/go_client.py": "bc773f15503f9bf9d772009e485a302723204af25a2a3682fc6710e824782e3f",
+    "app/services/memory.py": "1453139f0380711e3169ca44a9a0064d435e7cd69ea04b4bfebfae27323f94c2",
+    "app/services/ratelimit.py": "4f0fe10c1bbe1975dcafb4ddc37c060943baeeac9374bcf2faa2d224665500e3",
+    "app/services/resilience.py": "f86eac914213c405d5eecb9fb16970920932181b533cf95b64dcb11f377e5d1e",
+    "app/services/security.py": "c91a89ee085d6ea39cd8764ddb38ed1d80e62dbcb7b5b7733aae6258cc5a15b2",
+    "app/services/semantic_cache.py": "44c09f3a97390a542a806f0b76450e3fa88c2a78ea6c1b39b82ba0ea12aa3b64",
+    "app/services/tracing.py": "a6433fc32502f5a327a21da7b7e48ee2df5a376ab0e48804993ae5bcd728c02b",
+    "eval/__init__.py": "8b084a9f378124b2b1a51563bf3c22444eb7ff33692017da28b2136ae56987ed",
+    "eval/compare_context_eval.py": "2ba4780792273d4702d1db2729478ddb3d84153b972ae6417519ef52ba608b48",
+    "eval/context_cases.jsonl": "42958f1213da7e91166cf6418977e1f332e01ca4b6991545660ed9c4f838e3c2",
+    "eval/context_cases_v1.jsonl": "5af14fb88fd7ee355fd6ef3e2a044dce9041e93304e110d12ee59f9448aa0a9d",
+    "eval/context_cases_v2.jsonl": "01e53c45f8d293dedeae197bb15a0743ac8e5ffaf539e6b8ed8e1f8925101c28",
+    "eval/context_prices.example.json": "f11f7c722f943055bebc8d5efb6d27399544480774876277da92d992047e68d8",
+    "eval/dataset/qa.jsonl": "64fec7c4277e9d1630da97099e4fd0d8d7e967d87f80d8be25736fba340a1c14",
+    "eval/go_cases.json": "dff408ece356b987910d9b47901b56c2ae15e5f461be3193098837c76b9768c1",
+    "eval/go_fixtures.py": "8d75441b945016db23427927d9d8fe0e5dcb5994a05429b3ce6d1e2b0675042b",
+    "eval/merge_context_resume.py": "184722bd2a494ae869788668ff7454a566ad525f7d2ef8e32da690d1f678f95f",
+    "eval/multi_agent_cases.jsonl": "7f3f8c99523d86c39c0e97a5f6bc1eb54c92c4dc615126c8e131ab34c2fc5b44",
+    "eval/multi_agent_fixtures.py": "f593a4c601778d34bcdad1532c15c0b94459929e0806f000f04d2054bc7a691f",
+    "eval/multi_agent_live_cases.jsonl": "f5957608666189e8fdd4d2df3aad23d87818460336d233b7760a9ff4e29b8b8c",
+    "eval/multi_agent_live_model.example.json": "c42a7ecac19287e02716e46bb7ac18caee2ddae4e693e7a8ed9826d501de5d99",
+    "eval/multi_agent_live_protocol.json": "413a13c1f6432ad209f62f8932444ccf9d0ad364ea46c83686fbcd7e6711c40c",
+    "eval/multi_agent_pricebook.example.json": "aac32b8a9aab9a93068aac8b74d32b4fb5fb7fecd6cb33a74d2c0c5bfc19bdac",
+    "eval/multi_agent_protocol.json": "5e62d32dd858cb8b337fc0b9b205d6cdfe8d011f35659a4876993effe3e4ee79",
+    "eval/multi_agent_protocol.py": "b7def05404167d265c121a15be3a2931db5d9b59e05f5e4e439260346242f6fc",
+    "eval/multi_agent_scoring.py": "4d70f5cdce4d11d9829f440470bffb6d547a847c2ee1ac7f9064c52af051e5a5",
+    "eval/resume_context_eval.py": "92660e9bd701734b85a66d3552b583af76ca9d821447511dc33f19bf85f8d604",
+    "eval/run_agent_eval.py": "49f9e9f486063d3632ccc833153087d0c25cc6bfb303c0196f33e9b04d5054ce",
+    "eval/run_context_eval.py": "d0edb9b92b1603099f34015376a9ba76aed2ae2c6823ac80eab918d0feb80cc8",
+    "eval/run_context_stress.py": "be00b8827a3daff74ae25b859875fafb412142b692f94f0da5dcc9835f9029da",
+    "eval/run_eval.py": "486e5f08ea94aa092521212624edc1c2215c07027fb5daedbebd081254eb7832",
+    "eval/run_go_eval.py": "dc7031a2d886ecc86ef02900dba777a6a264016085279d4dc1ede1f99bbac994",
+    "eval/run_multi_agent_eval.py": "30dfdac24e92f10b4de14f8c12e2c3e41c6dab00fd352b0dff4c1a5837cc32cb",
+    "sandbox/go/entrypoint.sh": "18078ce5a43d634e33a20b40d33ef4cfb1167913449474b066a6591bcfe24930",
+    "sandbox/go/runner.go": "6475da3650fdc27c4b186977fcb16375f7566a74e2ea2b3dec39dc9e26657e7c"
+  },
+  "docker_image_id": "sha256:381dd0955d9414dc0debedafb6201a28d4da15b32ce0883310a5e4430fa2d4af",
+  "freeze_hash": "dc6d7fb7446004fd87c1dd3e862b3bad29a05e4a428c89b2b4044983144e514e"
+}

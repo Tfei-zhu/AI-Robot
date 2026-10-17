@@ -1,0 +1,27 @@
+CLEANUP_BUDGET {"configured": 0.001, "timeouts_used": [90.001, 90, 0.001], "status": "unavailable"}
+ENTRY {"enabled": true, "workflow": "multi-v1", "status": "generation_error", "reviews": 0, "model_calls": 2}
+ROLE_LEDGERS {"agent_calls": 3, "context_model_calls": 3, "aggregate_tokens": {"input_tokens": 36, "output_tokens": 102, "total_tokens": 138}, "context_tokens": {"input_tokens": 36, "output_tokens": 102, "total_tokens": 138}}
+PARTIAL_USAGE None
+INPUT_BUDGET {"limit": 1, "actual_first_prompt_estimate": 0, "model_sends": 0, "status": "budget_exceeded"}
+UNKNOWN_USAGE {"per_call": [null, null, null], "aggregate": null, "context_complete": false, "unknown_calls": 3}
+VALIDATION_TIMEOUT {"status": "timeout", "error": "\u4efb\u52a1\u8d85\u8fc7\u603b\u65f6\u95f4\u9884\u7b97", "validation_calls": 1, "reserved": 1, "attempts": 1, "supervisor_sends": 1}
+/Users/xumanchun/Documents/agent项目/AI-Robot-latest/.venv/lib/python3.13/site-packages/jieba/__init__.py:44: SyntaxWarning: invalid escape sequence '\.'
+  re_han_default = re.compile("([\u4E00-\u9FD5a-zA-Z0-9+#&\._%\-]+)", re.U)
+/Users/xumanchun/Documents/agent项目/AI-Robot-latest/.venv/lib/python3.13/site-packages/jieba/__init__.py:46: SyntaxWarning: invalid escape sequence '\s'
+  re_skip_default = re.compile("(\r\n|\s)", re.U)
+/Users/xumanchun/Documents/agent项目/AI-Robot-latest/.venv/lib/python3.13/site-packages/jieba/finalseg/__init__.py:78: SyntaxWarning: invalid escape sequence '\.'
+  re_skip = re.compile("([a-zA-Z0-9]+(?:\.\d+)?%?)")
+test_configured_cleanup_budget_reaches_docker_adapter (__main__.ReviewProbes.test_configured_cleanup_budget_reaches_docker_adapter) ... ok
+test_enabled_switch_selects_multi_workflow (__main__.ReviewProbes.test_enabled_switch_selects_multi_workflow) ... Executing <Task pending name='Task-10' coro=<ReviewProbes.test_enabled_switch_selects_multi_workflow() running at /Users/xumanchun/Documents/agent项目/AI-Robot-latest/docs/evidence/review-s2s4-20261017/probes.py:53> wait_for=<Future pending cb=[Task.task_wakeup()] created at /Library/Frameworks/Python.framework/Versions/3.13/lib/python3.13/asyncio/base_events.py:459> cb=[_run_until_complete_cb() at /Library/Frameworks/Python.framework/Versions/3.13/lib/python3.13/asyncio/base_events.py:181] created at /Library/Frameworks/Python.framework/Versions/3.13/lib/python3.13/asyncio/runners.py:100> took 0.260 seconds
+ok
+test_injected_role_usage_is_in_task_ledger (__main__.ReviewProbes.test_injected_role_usage_is_in_task_ledger) ... ok
+test_json_surrounded_by_prose_can_be_parsed (__main__.ReviewProbes.test_json_surrounded_by_prose_can_be_parsed) ... ok
+test_partial_provider_usage_stays_unknown (__main__.ReviewProbes.test_partial_provider_usage_stays_unknown) ... ok
+test_role_input_budget_blocks_before_model_send (__main__.ReviewProbes.test_role_input_budget_blocks_before_model_send) ... ok
+test_unknown_usage_is_not_reported_as_known_zero (__main__.ReviewProbes.test_unknown_usage_is_not_reported_as_known_zero) ... ok
+test_validation_stage_timeout_is_retained_as_timeout (__main__.ReviewProbes.test_validation_stage_timeout_is_retained_as_timeout) ... ok
+
+----------------------------------------------------------------------
+Ran 8 tests in 0.404s
+
+OK

@@ -1,0 +1,1 @@
+Sandbox probe: DNS pypi.org and openaipublic.blob.core.windows.net -> gaierror [Errno 8]; TLS urllib probes -> same DNS failure before TLS handshake. Python pip-vendored certifi CA configured. Tool command exit 0 (errors individually caught); no certificate failure reached.

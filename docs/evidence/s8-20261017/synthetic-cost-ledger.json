@@ -1,0 +1,22 @@
+{
+  "identity": {
+    "cap": "1",
+    "currency": "TEST",
+    "rates": {
+      "input_ceiling_per_million": "1",
+      "output_ceiling_per_million": "1"
+    },
+    "model_identity": "synthetic-model"
+  },
+  "requests": [
+    {
+      "ticket": "6e9056ea0fc24f93a4aa27df2b5bf766",
+      "trial_id": "process-proof",
+      "charged_reserve": "1",
+      "reserved_ceiling": "1",
+      "status": "unknown",
+      "actual_estimate": null
+    }
+  ],
+  "blocked": false
+}

@@ -1,0 +1,86 @@
+{
+  "version": "s8-protocol-v1",
+  "seed": 20261017,
+  "sample_count": 30,
+  "development_count": 18,
+  "holdout_count": 12,
+  "fixture_repeats": 1,
+  "live_repeats": 3,
+  "arms": {
+    "single_native": {
+      "multi": false,
+      "max_calls": 3,
+      "normal": 3,
+      "retries": 0,
+      "call_seconds": 120,
+      "code_output": 8192,
+      "supervisor_output": 4096
+    },
+    "multi_native": {
+      "multi": true,
+      "max_calls": 8,
+      "normal": 7,
+      "retries": 1,
+      "call_seconds": 120,
+      "code_output": 8192,
+      "supervisor_output": 4096
+    },
+    "single_equal3": {
+      "multi": false,
+      "max_calls": 3,
+      "normal": 3,
+      "retries": 0,
+      "call_seconds": 60,
+      "code_output": 8192,
+      "supervisor_output": 8192
+    },
+    "multi_equal3": {
+      "multi": true,
+      "max_calls": 3,
+      "normal": 3,
+      "retries": 0,
+      "call_seconds": 60,
+      "code_output": 8192,
+      "supervisor_output": 8192
+    }
+  },
+  "task_seconds": 360,
+  "validation_seconds": 90,
+  "cleanup_seconds": 15,
+  "max_validations": 3,
+  "max_repairs": 2,
+  "max_retrievals": 1,
+  "input_tokens": 16000,
+  "fixture_window": 32768,
+  "live_model": {
+    "name": "qwen-plus",
+    "endpoint": "https://dashscope.aliyuncs.com/compatible-mode/v1",
+    "revision": null,
+    "revision_verified": false,
+    "context_window": null,
+    "temperature": 0.2,
+    "sdk_retries": 0
+  },
+  "scoring": {
+    "version": "independent-go-tests-v1",
+    "approve_is_label": false,
+    "missing_tests": "unknown",
+    "missing_artifact": "unknown_and_not_success",
+    "infeasible": "only_server_failed_with_clarification_needed_is_correct_refusal",
+    "false_accept_denominator": "business_passed",
+    "false_reject_denominator": "independently_correct",
+    "repair_denominator": "initial_artifact_independently_incorrect",
+    "unknown_usage": "null_not_zero",
+    "percentiles": "linear_interpolation",
+    "wilson95": true
+  },
+  "targets": {
+    "expand_enable_requires_live_holdout": true,
+    "holdout_false_accepts": 0,
+    "quality_drop_allowed": 0,
+    "latency_p95_ceiling_ms": 360000,
+    "live_total_cost_cap": null,
+    "live_cost_target": "must be supplied before live holdout; no cost effectiveness claim without it"
+  },
+  "interpretation": "Fixed models are scripted mechanism probes, not model quality. Native comparison changes resources. Equal3 compares the same ceiling, not equal actual calls. All failures and interruptions remain in denominators; unverified is never success."
+}

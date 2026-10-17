@@ -1,0 +1,131 @@
+{
+  "freeze_hash": "f60fe4f9fe10d781aa646268c468b983a975843da2b1043c744f6f804c64b333",
+  "frozen_conditions": 30,
+  "unique_public_requirements": 12,
+  "cross_split_public_requirement_groups": 3,
+  "cross_split_groups": [
+    {
+      "public_requirement_hash": "b6f82c292b82343f7f442cfa54ada893ca32d7d919ad5ca7624a37a1a04e038f",
+      "cases": [
+        {
+          "id": "context_cancel-01",
+          "split": "dev",
+          "fixture_profile": "clean"
+        },
+        {
+          "id": "context_cancel-02",
+          "split": "dev",
+          "fixture_profile": "compile_repair"
+        },
+        {
+          "id": "context_cancel-03",
+          "split": "dev",
+          "fixture_profile": "behavior_repair"
+        },
+        {
+          "id": "context_cancel-04",
+          "split": "dev",
+          "fixture_profile": "weak_model_tests"
+        },
+        {
+          "id": "context_cancel-06",
+          "split": "dev",
+          "fixture_profile": "provider_failure"
+        },
+        {
+          "id": "context_cancel-07",
+          "split": "holdout",
+          "fixture_profile": "clean_holdout"
+        },
+        {
+          "id": "context_cancel-08",
+          "split": "holdout",
+          "fixture_profile": "persistent_failure"
+        }
+      ]
+    },
+    {
+      "public_requirement_hash": "a7e1ed8b4a8b30708c8c33faf81ac098254554de32976be55ba4c2be2f7a8773",
+      "cases": [
+        {
+          "id": "worker_pool-01",
+          "split": "dev",
+          "fixture_profile": "clean"
+        },
+        {
+          "id": "worker_pool-02",
+          "split": "dev",
+          "fixture_profile": "compile_repair"
+        },
+        {
+          "id": "worker_pool-03",
+          "split": "dev",
+          "fixture_profile": "behavior_repair"
+        },
+        {
+          "id": "worker_pool-04",
+          "split": "dev",
+          "fixture_profile": "weak_model_tests"
+        },
+        {
+          "id": "worker_pool-06",
+          "split": "dev",
+          "fixture_profile": "provider_failure"
+        },
+        {
+          "id": "worker_pool-07",
+          "split": "holdout",
+          "fixture_profile": "clean_holdout"
+        },
+        {
+          "id": "worker_pool-08",
+          "split": "holdout",
+          "fixture_profile": "persistent_failure"
+        }
+      ]
+    },
+    {
+      "public_requirement_hash": "429b2644f98bf7b7bced6a6457af24b4d96c264e259211f58952c80261f60d1e",
+      "cases": [
+        {
+          "id": "channel-01",
+          "split": "dev",
+          "fixture_profile": "clean"
+        },
+        {
+          "id": "channel-02",
+          "split": "dev",
+          "fixture_profile": "compile_repair"
+        },
+        {
+          "id": "channel-03",
+          "split": "dev",
+          "fixture_profile": "behavior_repair"
+        },
+        {
+          "id": "channel-04",
+          "split": "dev",
+          "fixture_profile": "weak_model_tests"
+        },
+        {
+          "id": "channel-06",
+          "split": "dev",
+          "fixture_profile": "provider_failure"
+        },
+        {
+          "id": "channel-07",
+          "split": "holdout",
+          "fixture_profile": "clean_holdout"
+        },
+        {
+          "id": "channel-08",
+          "split": "holdout",
+          "fixture_profile": "persistent_failure"
+        }
+      ]
+    }
+  ],
+  "inference_eligible": false,
+  "reason": "Fixed-output fault-condition holdout only; repeated public tasks and correlated templates do not provide independent task-generalization evidence.",
+  "live_quality_prerequisite": "Create a new deduplicated/grouped real-task protocol before any generalization or quality-improvement claim; do not silently relabel this run."
+}

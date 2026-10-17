@@ -1,0 +1,32 @@
+[
+  {
+    "id": "docker-image-ready",
+    "argv": [
+      "docker",
+      "image",
+      "inspect",
+      "airobot-go-validator:1.26.2"
+    ],
+    "cwd": "/Users/xumanchun/Documents/agent项目/AI-Robot-latest",
+    "started_utc": "2026-10-17T03:35:20.851664+00:00",
+    "exit_code": 0,
+    "elapsed_seconds": 0.074,
+    "network_guard": false,
+    "output": "docker-image-ready.txt",
+    "output_sha256": "e6093e0271adcc53d0dddb5d783b57a4f5016f78bdb80ba09b82bc76438cd950"
+  },
+  {
+    "id": "docker-version-ready",
+    "argv": [
+      "docker",
+      "version"
+    ],
+    "cwd": "/Users/xumanchun/Documents/agent项目/AI-Robot-latest",
+    "started_utc": "2026-10-17T03:35:20.926026+00:00",
+    "exit_code": 0,
+    "elapsed_seconds": 0.039,
+    "network_guard": false,
+    "output": "docker-version-ready.txt",
+    "output_sha256": "1dfc935ad289e35847bb71a278a92a1779c690ad54f15112ed86757c19947995"
+  }
+]

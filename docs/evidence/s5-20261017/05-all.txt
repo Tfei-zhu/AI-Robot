@@ -1,0 +1,34 @@
+........................................................................ [ 25%]
+.....ssssssss...........ssssssssssss.s..........s....................... [ 50%]
+................................................................................ssss............s... [ 86%]
+............................ss.........            [100%]
+=============================== warnings summary ===============================
+.venv/lib/python3.13/site-packages/jieba/__init__.py:44
+  /Users/xumanchun/Documents/agent项目/AI-Robot-latest/.venv/lib/python3.13/site-packages/jieba/__init__.py:44: SyntaxWarning: invalid escape sequence '\.'
+    re_han_default = re.compile("([\u4E00-\u9FD5a-zA-Z0-9+#&\._%\-]+)", re.U)
+
+.venv/lib/python3.13/site-packages/jieba/__init__.py:46
+  /Users/xumanchun/Documents/agent项目/AI-Robot-latest/.venv/lib/python3.13/site-packages/jieba/__init__.py:46: SyntaxWarning: invalid escape sequence '\s'
+    re_skip_default = re.compile("(\r\n|\s)", re.U)
+
+.venv/lib/python3.13/site-packages/jieba/finalseg/__init__.py:78
+  /Users/xumanchun/Documents/agent项目/AI-Robot-latest/.venv/lib/python3.13/site-packages/jieba/finalseg/__init__.py:78: SyntaxWarning: invalid escape sequence '\.'
+    re_skip = re.compile("([a-zA-Z0-9]+(?:\.\d+)?%?)")
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ============================
+SKIPPED [3] tests/test_go_acceptance.py:26: 显式启用真实 Docker 测试
+SKIPPED [3] tests/test_go_acceptance.py:36: 显式启用真实 Docker 测试
+SKIPPED [1] tests/test_go_acceptance.py:55: 显式启用真实 Docker 测试
+SKIPPED [1] tests/test_go_acceptance.py:78: 显式启用真实 Docker 测试
+SKIPPED [9] tests/test_go_runner.py:28: 显式启用真实 Docker 测试
+SKIPPED [1] tests/test_go_runner.py:47: 显式启用真实 Docker 测试
+SKIPPED [1] tests/test_go_runner.py:61: 显式启用真实 Docker 测试
+SKIPPED [1] tests/test_go_runner.py:81: 显式启用真实 Docker 测试
+SKIPPED [1] tests/test_go_runner.py:110: 显式启用真实 Docker 测试
+SKIPPED [1] tests/test_go_workflow.py:163: 启用真实 Docker 测试
+SKIPPED [4] tests/test_multi_agent_http.py:482: 显式启用 S5 真实 Docker 中断验收
+SKIPPED [1] tests/test_multi_agent_regressions.py:220: 启用真实 Docker 服务入口测试
+SKIPPED [1] tests/test_multi_agent_workflow.py:314: 启用真实 Docker 测试
+SKIPPED [1] tests/test_multi_agent_workflow.py:326: 启用真实 Docker 测试
+254 passed, 29 skipped, 3 warnings, 138 subtests passed in 6.88s

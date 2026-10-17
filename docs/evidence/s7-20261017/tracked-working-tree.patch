@@ -1,0 +1,1203 @@
+diff --git a/.env.example b/.env.example
+index e026b51..4019c4e 100644
+--- a/.env.example
++++ b/.env.example
+@@ -26,6 +26,33 @@ AIROBOT_EMBEDDING_MODEL=text-embedding-v4
+ # ============ LangGraph Agent 与 RAG ============
+ # 单次 Agent Run 最多进行的工具调用轮次，避免模型异常循环
+ AIROBOT_AGENT_MAX_TOOL_ROUNDS=4
++# S1 定义配置；主图选择在 S3 接入前仍使用原 Go 流程。
++# 只影响 Go 任务，不开启普通聊天自动委派；不依赖 CONTEXT_MODE 开关。
++AIROBOT_GO_MULTI_AGENT_ENABLED=false
++# 留空继承 AIROBOT_LLM_MODEL；两个角色可分别指定，使用现有模型端点和凭据。
++AIROBOT_GO_MULTI_AGENT_SUPERVISOR_MODEL=
++AIROBOT_GO_MULTI_AGENT_CODE_MODEL=
++AIROBOT_GO_MULTI_AGENT_MAX_REPAIRS=2
++AIROBOT_GO_MULTI_AGENT_MAX_NORMAL_CALLS=7
++# 全任务共享异常重试，包含于总调用数，不能给每个角色分别加额度。
++AIROBOT_GO_MULTI_AGENT_MAX_RETRIES=1
++AIROBOT_GO_MULTI_AGENT_MAX_MODEL_CALLS=8
++AIROBOT_GO_MULTI_AGENT_MAX_VALIDATIONS=3
++AIROBOT_GO_MULTI_AGENT_MAX_RETRIEVALS=1
++AIROBOT_GO_MULTI_AGENT_TASK_TIMEOUT=360
++AIROBOT_GO_MULTI_AGENT_CODE_TIMEOUT=120
++AIROBOT_GO_MULTI_AGENT_SUPERVISOR_TIMEOUT=60
++AIROBOT_GO_MULTI_AGENT_VALIDATION_TIMEOUT=90
++AIROBOT_GO_MULTI_AGENT_CLEANUP_TIMEOUT=15
++# 启用前必须填真实模型窗口；0 表示未知，enabled=true 时启动拒绝。
++# 与实验性上下文管理独立；词表未校准时不能声称精确 Token 硬上限。
++AIROBOT_GO_MULTI_AGENT_SUPERVISOR_WINDOW=0
++AIROBOT_GO_MULTI_AGENT_CODE_WINDOW=0
++AIROBOT_GO_MULTI_AGENT_SUPERVISOR_INPUT_TOKENS=16000
++AIROBOT_GO_MULTI_AGENT_CODE_INPUT_TOKENS=16000
++AIROBOT_GO_MULTI_AGENT_SUPERVISOR_OUTPUT_TOKENS=4096
++AIROBOT_GO_MULTI_AGENT_CODE_OUTPUT_TOKENS=8192
++AIROBOT_GO_MULTI_AGENT_SAFETY_TOKENS=2048
+ # 向量召回条数
+ AIROBOT_TOP_K=5
+ # 文档分块大小与重叠
+diff --git a/app/agents/graph.py b/app/agents/graph.py
+index 988748f..8505886 100644
+--- a/app/agents/graph.py
++++ b/app/agents/graph.py
+@@ -72,6 +72,12 @@ class AgentState(TypedDict, total=False):
+     go_runner: Any
+     go_retrieve: Any
+     go_usage: dict
++    go_result: dict
++    go_result_ref: Any
++    go_multi_config: Any
++    go_deadline: float
++    go_supervisor_model: Any
++    go_code_model: Any
+ 
+ 
+ _llm_cache: dict[tuple, ChatOpenAI] = {}
+@@ -79,12 +85,16 @@ _tools_by_name = {item.name: item for item in AGENT_TOOLS}
+ _graph = None
+ 
+ 
+-def get_llm(*, max_retries: int | None = None) -> ChatOpenAI:
+-    """复用 OpenAI 兼容 LLM 客户端，避免每个 Agent Run 新建连接。"""
+-    key = (settings.llm_model, settings.llm_base_url, settings.llm_api_key, max_retries)
++def get_llm(*, max_retries: int | None = None, model: str | None = None) -> ChatOpenAI:
++    """复用 OpenAI 兼容 LLM 客户端，避免每个 Agent Run 新建连接。
++
++    model 用于多 Agent 角色分别指定模型；默认沿用全局模型。
++    """
++    name = model or settings.llm_model
++    key = (name, settings.llm_base_url, settings.llm_api_key, max_retries)
+     if key not in _llm_cache:
+         _llm_cache[key] = ChatOpenAI(
+-            model=settings.llm_model,
++            model=name,
+             api_key=settings.llm_api_key or "sk-placeholder-not-configured",
+             base_url=settings.llm_base_url,
+             temperature=0.2,
+@@ -268,12 +278,20 @@ def get_agent_graph():
+         builder.add_node("tools", _tools_node)
+         builder.add_node("finalize", _finalize_node)
+         from app.go_validation import nodes as go_nodes
++        from app.agents.go_workflow import run_in_graph
++        builder.add_node("go_multi", run_in_graph)
+         builder.add_node("go_retrieve", go_nodes.retrieve)
+         builder.add_node("go_generate", go_nodes.generate)
+         builder.add_node("go_validate", go_nodes.validate)
+         builder.add_node("go_finish", go_nodes.finish)
+-        builder.add_conditional_edges(START, lambda state: "go_retrieve" if state.get("go_request") else "agent",
+-                                      {"go_retrieve": "go_retrieve", "agent": "agent"})
++        def entry(state):
++            if not state.get("go_request"):
++                return "agent"
++            cfg = state.get("go_multi_config") or settings.go_multi_agent
++            return "go_multi" if cfg.enabled else "go_retrieve"
++        builder.add_conditional_edges(START, entry,
++                                      {"go_multi": "go_multi", "go_retrieve": "go_retrieve", "agent": "agent"})
++        builder.add_edge("go_multi", END)
+         builder.add_conditional_edges("go_retrieve", go_nodes.after_retrieve)
+         builder.add_conditional_edges("go_generate", go_nodes.after_generate)
+         builder.add_conditional_edges("go_validate", go_nodes.after_validate)
+diff --git a/app/config.py b/app/config.py
+index f19a1b7..2e640ef 100644
+--- a/app/config.py
++++ b/app/config.py
+@@ -2,6 +2,9 @@
+ """全局配置：全部从环境变量 / .env 读取，密钥不落盘。"""
+ import os
+ from pathlib import Path
++from typing import Annotated
++
++from pydantic import BaseModel, ConfigDict, Field, StringConstraints, TypeAdapter, model_validator
+ 
+ try:
+     from dotenv import load_dotenv
+@@ -18,7 +21,92 @@ def _env(key: str, default: str = "") -> str:
+     return (val if val is not None else default).strip()
+ 
+ 
++ModelName = Annotated[str, StringConstraints(strict=True, strip_whitespace=True, min_length=1, max_length=256,
++                                           pattern=r"^\S+$")]
++
++
++class GoMultiAgentSettings(BaseModel):
++    """Validated first-version limits; runtime reservations are implemented in S4."""
++    model_config = ConfigDict(extra="forbid", frozen=True, allow_inf_nan=False)
++    enabled: bool = Field(default=False, strict=True)
++    supervisor_model: ModelName | None = None
++    code_model: ModelName | None = None
++    max_repairs: int = Field(default=2, ge=0, le=2, strict=True)
++    max_normal_calls: int = Field(default=7, ge=1, le=7, strict=True)
++    max_retries: int = Field(default=1, ge=0, le=1, strict=True)
++    max_model_calls: int = Field(default=8, ge=1, le=8, strict=True)
++    max_validations: int = Field(default=3, ge=1, le=3, strict=True)
++    max_retrievals: int = Field(default=1, ge=0, le=1, strict=True)
++    task_timeout: float = Field(default=360, gt=0, le=360, strict=True)
++    code_timeout: float = Field(default=120, gt=0, le=120, strict=True)
++    supervisor_timeout: float = Field(default=60, gt=0, le=60, strict=True)
++    validation_timeout: float = Field(default=90, gt=0, le=90, strict=True)
++    cleanup_timeout: float = Field(default=15, gt=0, le=15, strict=True)
++    supervisor_window: int = Field(default=0, ge=0, strict=True)
++    code_window: int = Field(default=0, ge=0, strict=True)
++    supervisor_input_tokens: int = Field(default=16000, gt=0, strict=True)
++    code_input_tokens: int = Field(default=16000, gt=0, strict=True)
++    supervisor_output_tokens: int = Field(default=4096, gt=0, strict=True)
++    code_output_tokens: int = Field(default=8192, gt=0, strict=True)
++    safety_tokens: int = Field(default=2048, gt=0, strict=True)
++
++    @model_validator(mode="after")
++    def coherent_limits(self):
++        if not self.max_normal_calls <= self.max_model_calls <= self.max_normal_calls + self.max_retries:
++            raise ValueError("总模型额度必须覆盖正常额度，且不能超过正常额度与共享重试之和")
++        for stage in ("code_timeout", "supervisor_timeout", "validation_timeout", "cleanup_timeout"):
++            if getattr(self, stage) > self.task_timeout:
++                raise ValueError(f"{stage} 不能超过任务总时间")
++        for role in ("supervisor", "code"):
++            window = getattr(self, role + "_window")
++            reserved = (getattr(self, role + "_input_tokens") + getattr(self, role + "_output_tokens")
++                        + self.safety_tokens)
++            if (self.enabled and window == 0) or (window and window < reserved):
++                raise ValueError(f"{role} 模型窗口未知或不足以容纳输入、输出与安全额度")
++        return self
++
++    @classmethod
++    def from_environment(cls, environ=None):
++        environ = os.environ if environ is None else environ
++        allowed = {"AIROBOT_GO_MULTI_AGENT_" + name.upper() for name in cls.model_fields}
++        unknown = {key for key in environ if key.startswith("AIROBOT_GO_MULTI_AGENT_")} - allowed
++        if unknown:
++            raise ValueError("未知多 Agent 配置项: " + ", ".join(sorted(unknown)))
++        values = {}
++        for name in cls.model_fields:
++            key = "AIROBOT_GO_MULTI_AGENT_" + name.upper()
++            if key not in environ:
++                continue
++            raw = environ[key].strip()
++            if name == "enabled":
++                if raw.lower() not in {"true", "false"}:
++                    raise ValueError(f"{key} 必须是 true 或 false")
++                values[name] = raw.lower() == "true"
++            elif name in {"supervisor_model", "code_model"}:
++                # Empty means inherit the existing default model, never an empty model request.
++                values[name] = raw or None
++            elif name.endswith("_timeout"):
++                values[name] = float(raw)
++            else:
++                if not raw.isascii() or not raw.isdecimal():
++                    raise ValueError(f"{key} 必须是非负整数")
++                values[name] = int(raw)
++        return cls.model_validate(values)
++
++    def role_model(self, role: str, default_model: str) -> str:
++        if role not in {"supervisor", "code"}:
++            raise ValueError("未知 Agent 角色")
++        return getattr(self, role + "_model") or TypeAdapter(ModelName).validate_python(default_model)
++
++
+ class Settings:
++    def __init__(self):
++        # Invalid new settings fail during application import, before startup I/O.
++        self.go_multi_agent = GoMultiAgentSettings.from_environment()
++        if self.go_multi_agent.enabled:
++            for role in ("supervisor", "code"):
++                self.go_multi_agent.role_model(role, self.llm_model)
++
+     # 大模型（OpenAI 兼容协议）
+     llm_base_url: str = _env("AIROBOT_LLM_BASE_URL", "https://dashscope.aliyuncs.com/compatible-mode/v1")
+     llm_api_key: str = _env("AIROBOT_LLM_API_KEY")
+diff --git a/app/context/usage.py b/app/context/usage.py
+index 42cd2cc..4194c52 100644
+--- a/app/context/usage.py
++++ b/app/context/usage.py
+@@ -68,7 +68,11 @@ class UsageLedger:
+     def finish(self, call, response, started, status="passed"):
+         usage = getattr(response, "usage_metadata", None) if response is not None else None
+         call.update(status=status, elapsed_ms=round((time.perf_counter()-started)*1000, 2))
+-        if usage and all(k in usage for k in ("input_tokens", "output_tokens", "total_tokens")):
++        if isinstance(usage, dict):
++            call["reported_usage"] = {k: usage[k] for k in ("input_tokens", "output_tokens", "total_tokens")
++                                      if type(usage.get(k)) is int and usage[k] >= 0}
++        if isinstance(usage, dict) and all(type(usage.get(k)) is int and usage[k] >= 0
++                                          for k in ("input_tokens", "output_tokens", "total_tokens")):
+             # Token 来自服务商；缓存细目原样保留，不把流事件数当作 Token。
+             call["usage"] = {k: usage[k] for k in ("input_tokens", "output_tokens", "total_tokens",
+                                "input_token_details", "output_token_details") if k in usage}
+@@ -76,7 +80,8 @@ class UsageLedger:
+     def report(self):
+         known = [c["usage"] for c in self.calls if c["usage"] is not None]
+         complete = len(known) == len(self.calls)
+-        totals = {k: sum(u[k] for u in known) for k in ("input_tokens", "output_tokens", "total_tokens")}
++        totals = {k: sum(c.get("reported_usage", c["usage"] or {}).get(k, 0) for c in self.calls)
++                  for k in ("input_tokens", "output_tokens", "total_tokens")}
+         from app.context.pricing import estimate
+         cost,uncached,currency=estimate(self.calls)
+         return {"model_calls": sum(c["stage"]!="embedding" for c in self.calls),
+diff --git a/app/go_validation/contracts.py b/app/go_validation/contracts.py
+index ec3a3db..54e545b 100644
+--- a/app/go_validation/contracts.py
++++ b/app/go_validation/contracts.py
+@@ -1,12 +1,23 @@
+ """第一版契约：固定工具链、单包源码、三个场景与最多两次修复。"""
++import hashlib
++import json
+ import re
+-from typing import Literal
++import uuid
++from typing import Annotated, Literal
+ 
+-from pydantic import BaseModel, ConfigDict, Field, model_validator
++from pydantic import BaseModel, ConfigDict, Field, StringConstraints, model_validator
+ 
+ GO_VERSION = "1.26.2"
+ MAX_REPAIRS = 2
+ MAX_SOURCE_BYTES = 65536
++ContractId = Annotated[str, StringConstraints(strict=True, min_length=1, max_length=128,
++                                             pattern=r"^[A-Za-z0-9][A-Za-z0-9_.:-]*$")]
++ArtifactHash = Annotated[str, StringConstraints(strict=True, pattern=r"^[a-f0-9]{64}$")]
++ContractText = Annotated[str, StringConstraints(strict=True, strip_whitespace=True, min_length=1, max_length=8000)]
++StopReason = Literal["completed", "validation_failed", "requirements_failed", "review_revision",
++                     "review_error", "validation_report_error", "artifact_error", "repair_limit",
++                     "no_progress", "budget_exceeded", "cancelled", "timeout", "unavailable",
++                     "clarification_needed", "generation_error"]
+ Scenario = Literal["context_cancel", "worker_pool", "channel"]
+ SCENARIO_SPECS = {
+     "context_cancel": "package example；实现 WaitForCancel(ctx context.Context) error，等待取消后返回 ctx.Err()。",
+@@ -71,6 +82,11 @@ class ValidationReport(BaseModel):
+     stages: list[StageReport] = Field(default_factory=list)
+     elapsed_ms: float = 0
+     container_removed: bool = False
++    # Historical reports remain readable; the multi-agent gate requires all bindings.
++    artifact_hash: ArtifactHash | None = None
++    task_id: ContractId | None = None
++    artifact_id: ContractId | None = None
++    round: int | None = Field(default=None, ge=0, le=MAX_REPAIRS, strict=True)
+ 
+ 
+ class Attempt(BaseModel):
+@@ -80,6 +96,236 @@ class Attempt(BaseModel):
+     change_summary: str = ""
+ 
+ 
++class GeneratedCode(BaseModel):
++    model_config = ConfigDict(extra="forbid")
++    bundle: CodeBundle
++    change_summary: str = Field(default="", max_length=2000)
++
++
++class FrozenContract(BaseModel):
++    model_config = ConfigDict(extra="forbid", frozen=True, revalidate_instances="always")
++
++
++class Requirement(FrozenContract):
++    requirement_id: ContractId
++    text: ContractText
++    required: bool = Field(default=True, strict=True)
++
++
++class AcceptanceCriterion(FrozenContract):
++    criterion_id: ContractId
++    requirement_id: ContractId
++    text: ContractText
++
++
++class TaskSpec(FrozenContract):
++    task_id: ContractId
++    scenario: Scenario
++    original_requirement: ContractText
++    requirements: tuple[Requirement, ...] = Field(min_length=1, max_length=128)
++    acceptance_criteria: tuple[AcceptanceCriterion, ...] = Field(min_length=1, max_length=128)
++    constraints: tuple[ContractText, ...] = Field(default=(), max_length=128)
++    source_refs: tuple[ContractText, ...] = Field(default=(), max_length=20)
++
++    @property
++    def server_contract(self) -> str:
++        return SCENARIO_SPECS[self.scenario]
++
++    @model_validator(mode="after")
++    def consistent_requirements(self):
++        ids = [r.requirement_id for r in self.requirements]
++        criteria = [c.criterion_id for c in self.acceptance_criteria]
++        if len(ids) != len(set(ids)) or len(criteria) != len(set(criteria)):
++            raise ValueError("需求或验收条件 ID 重复")
++        linked = {c.requirement_id for c in self.acceptance_criteria}
++        if not linked <= set(ids):
++            raise ValueError("验收条件引用未知需求")
++        required = {r.requirement_id for r in self.requirements if r.required}
++        if not required or not required <= linked:
++            raise ValueError("必须有必要需求且每条均有验收条件")
++        return self
++
++
++class ArtifactFile(SourceFile):
++    model_config = ConfigDict(extra="forbid", frozen=True, revalidate_instances="always")
++
++
++def artifact_hash(files) -> str:
++    """Hash the complete final bundle. Preserve exact UTF-8 content, including whitespace."""
++    bundle = CodeBundle.model_validate({"files": [f.model_dump() if isinstance(f, BaseModel) else f for f in files]})
++    payload = [{"name": f.name, "content": f.content} for f in sorted(bundle.files, key=lambda f: f.name)]
++    return hashlib.sha256(json.dumps(payload, ensure_ascii=False, sort_keys=True,
++                                     separators=(",", ":")).encode("utf-8")).hexdigest()
++
++
++class CodeArtifact(FrozenContract):
++    task_id: ContractId
++    artifact_id: ContractId
++    scenario: Scenario
++    round: int = Field(ge=0, le=MAX_REPAIRS, strict=True)
++    files: tuple[ArtifactFile, ...] = Field(min_length=3, max_length=8)
++    artifact_hash: ArtifactHash | None = None
++    change_summary: str = Field(default="", max_length=2000, strict=True)
++    addressed_issue_ids: tuple[ContractId, ...] = Field(default=(), max_length=128)
++
++    @model_validator(mode="after")
++    def final_snapshot(self):
++        from app.go_validation.fixtures import ACCEPTANCE_FILE, ACCEPTANCE_TESTS
++        actual = artifact_hash(self.files)  # Revalidate size, uniqueness and complete bundle.
++        trusted = [f for f in self.files if f.name == ACCEPTANCE_FILE]
++        if len(trusted) != 1 or trusted[0].content != ACCEPTANCE_TESTS[self.scenario]:
++            raise ValueError("最终产物必须包含当前场景原样的服务端验收测试")
++        if self.artifact_hash is not None and self.artifact_hash != actual:
++            raise ValueError("产物 hash 与完整文件不匹配")
++        if len(set(self.addressed_issue_ids)) != len(self.addressed_issue_ids):
++            raise ValueError("修复问题 ID 重复")
++        object.__setattr__(self, "artifact_hash", actual)
++        return self
++
++    def bundle(self) -> CodeBundle:
++        # Return a copy; mutable runner inputs cannot change the frozen snapshot.
++        return CodeBundle(files=[f.model_dump() for f in self.files])
++
++
++def freeze_artifact(task: TaskSpec, bundle: CodeBundle, *, round: int,
++                    artifact_id: str | None = None, change_summary: str = "",
++                    addressed_issue_ids=()) -> CodeArtifact:
++    """Server entry: inject trusted tests BEFORE computing the version."""
++    from app.go_validation.fixtures import with_acceptance_tests
++    task = TaskSpec.model_validate(task.model_dump())
++    final = with_acceptance_tests(CodeBundle.model_validate(bundle.model_dump()), task.scenario)
++    return CodeArtifact(task_id=task.task_id, artifact_id=artifact_id or uuid.uuid4().hex,
++                        scenario=task.scenario, round=round, files=[f.model_dump() for f in final.files],
++                        change_summary=change_summary, addressed_issue_ids=addressed_issue_ids)
++
++
++def bind_validation(report: ValidationReport, artifact: CodeArtifact) -> ValidationReport:
++    """Add task metadata to a validator report already bound to its actual input."""
++    artifact = CodeArtifact.model_validate(artifact.model_dump())
++    data = ValidationReport.model_validate(report.model_dump()).model_dump()
++    if data["artifact_hash"] != artifact.artifact_hash:
++        raise ValueError("验证器未绑定实际输入版本，或版本不匹配；不能重标历史报告")
++    for key in ("artifact_hash", "task_id", "artifact_id", "round"):
++        value = getattr(artifact, key)
++        if data.get(key) is not None and data[key] != value:
++            raise ValueError("拒绝将已有验证报告重新绑定到不同版本")
++        data[key] = value
++    return ValidationReport.model_validate(data)
++
++
++class RequirementCheck(FrozenContract):
++    requirement_id: ContractId
++    status: Literal["pass", "fail", "unknown"]
++    evidence: ContractText
++
++
++class ReviewIssue(FrozenContract):
++    issue_id: ContractId
++    requirement_id: ContractId | None = None
++    severity: Literal["blocking", "suggestion"]
++    file: Annotated[str, StringConstraints(strict=True, max_length=64,
++                                          pattern=r"^[A-Za-z][A-Za-z0-9_]*\.go$")] | None = None
++    line: int | None = Field(default=None, ge=1, strict=True)
++    evidence: ContractText
++    repair_instruction: ContractText
++
++    @model_validator(mode="after")
++    def location(self):
++        if self.line is not None and self.file is None:
++            raise ValueError("行号必须关联源码文件")
++        return self
++
++
++class ReviewReport(FrozenContract):
++    task_id: ContractId
++    artifact_id: ContractId
++    artifact_hash: ArtifactHash
++    round: int = Field(ge=0, le=MAX_REPAIRS, strict=True)
++    verdict: Literal["approve", "revise", "cannot_assess"]
++    requirement_checks: tuple[RequirementCheck, ...] = Field(default=(), max_length=128)
++    issues: tuple[ReviewIssue, ...] = Field(default=(), max_length=128)
++    summary: Annotated[str, StringConstraints(strict=True, strip_whitespace=True, min_length=1, max_length=2000)]
++
++    @model_validator(mode="after")
++    def coherent_review(self):
++        checks = [c.requirement_id for c in self.requirement_checks]
++        issues = [i.issue_id for i in self.issues]
++        if len(checks) != len(set(checks)) or len(issues) != len(set(issues)):
++            raise ValueError("审查条目或问题 ID 重复")
++        if self.verdict == "approve" and any(i.severity == "blocking" for i in self.issues):
++            raise ValueError("approve 不能同时包含 blocking 问题")
++        return self
++
++    def check_context(self, task: TaskSpec, artifact: CodeArtifact):
++        if artifact.task_id != task.task_id or artifact.scenario != task.scenario:
++            raise ValueError("产物不属于当前任务或场景")
++        if any(getattr(self, key) != getattr(artifact, key)
++               for key in ("task_id", "artifact_id", "artifact_hash", "round")):
++            raise ValueError("审查不属于当前代码版本")
++        known = {r.requirement_id for r in task.requirements}
++        if any(c.requirement_id not in known for c in self.requirement_checks):
++            raise ValueError("审查引用未知需求")
++        files = {f.name: f.content for f in artifact.files}
++        for issue in self.issues:
++            if issue.requirement_id is not None and issue.requirement_id not in known:
++                raise ValueError("问题引用未知需求")
++            if issue.file is not None:
++                if issue.file not in files:
++                    raise ValueError("问题引用不存在的文件")
++                if issue.line is not None and issue.line > len(files[issue.file].splitlines()):
++                    raise ValueError("问题行号超出源码")
++
++
++class RemainingBudget(FrozenContract):
++    # A server-produced snapshot, not a model-controlled budget authority.
++    normal_calls: int = Field(default=7, ge=0, le=7, strict=True)
++    retries: int = Field(default=1, ge=0, le=1, strict=True)
++    model_calls: int = Field(default=8, ge=0, le=8, strict=True)
++    validations: int = Field(default=3, ge=0, le=3, strict=True)
++    seconds: float = Field(default=360, ge=0, strict=True, allow_inf_nan=False)
++
++    @model_validator(mode="after")
++    def shared_limit(self):
++        if self.model_calls > self.normal_calls + self.retries:
++            raise ValueError("总剩余调用不能大于正常与共享重试额度之和")
++        return self
++
++
++class RepairRequest(FrozenContract):
++    task_spec: TaskSpec
++    previous_artifact: CodeArtifact
++    validation_report: ValidationReport
++    review_report: ReviewReport
++    remaining_budget: RemainingBudget
++    round: int = Field(ge=1, le=MAX_REPAIRS, strict=True)
++
++    @model_validator(mode="after")
++    def linked_repair(self):
++        artifact = self.previous_artifact
++        self.review_report.check_context(self.task_spec, artifact)
++        if any(getattr(self.validation_report, key) != getattr(artifact, key)
++               for key in ("task_id", "artifact_id", "artifact_hash", "round")):
++            raise ValueError("修复引用不匹配的验证报告")
++        if self.round != artifact.round + 1:
++            raise ValueError("修复轮次必须紧接上一产物")
++        from app.agents.go_workflow import decide_after_review
++        decision = decide_after_review(self.task_spec, artifact, self.validation_report,
++                                       self.review_report, self.remaining_budget)
++        if decision.action != "repair":
++            raise ValueError("服务端判定不允许创建修复任务: " + decision.reason)
++        return self
++
++
++class AgentCall(FrozenContract):
++    role: Literal["supervisor", "code"]
++    stage: Literal["plan", "generate", "review", "repair"]
++    model: ContractText
++    status: Literal["running", "passed", "failed", "cancelled"]
++    # Unknown provider usage remains None, never silently zero.
++    token_usage: dict[Literal["input_tokens", "output_tokens", "total_tokens"],
++                      Annotated[int, Field(ge=0, strict=True)]] | None = None
++
++
+ class GoTaskResult(BaseModel):
+     run_id: str
+     status: Literal["running", "cancelled", "passed", "failed", "timeout", "unavailable", "generation_error", "budget_exceeded"]
+@@ -91,13 +337,31 @@ class GoTaskResult(BaseModel):
+     elapsed_ms: float = 0
+     error: str | None = None
+     model_source: Literal["configured", "fixture"] = "configured"
+-    token_usage: dict[str, int] = Field(default_factory=dict)
++    token_usage: dict[str, int] | None = Field(default_factory=dict)
+     context_stats: dict = Field(default_factory=dict)
+-    # 通过编译和当前测试不能等同于证明任意输入下都正确。
++    budget: dict = Field(default_factory=dict)  # Server ledger snapshot; absent in historical reports.
+     validation_scope: str = "仅验证当前代码、当前测试和固定 Go 工具链；不保证全部行为正确"
++    workflow_version: Literal["single-v1", "multi-v1"] = "single-v1"
++    task_spec: TaskSpec | None = None
++    artifacts: list[CodeArtifact] = Field(default_factory=list)
++    reviews: list[ReviewReport] = Field(default_factory=list)
++    agent_calls: list[AgentCall] = Field(default_factory=list)
++    stop_reason: StopReason | None = None
++    final_summary: str = Field(default="", max_length=8000)
+ 
+-
+-class GeneratedCode(BaseModel):
+-    model_config = ConfigDict(extra="forbid")
+-    bundle: CodeBundle
+-    change_summary: str = Field(default="", max_length=2000)
++    @model_validator(mode="after")
++    def multi_success_requires_evidence(self):
++        if self.workflow_version != "multi-v1" or self.status != "passed":
++            return self
++        from app.agents.go_workflow import decide_after_review
++        if not self.task_spec or not self.artifacts or not self.reviews or not self.attempts:
++            raise ValueError("多 Agent passed 必须保存当前产物、验证和审查证据")
++        artifact, attempt = self.artifacts[-1], self.attempts[-1]
++        if (self.scenario != self.task_spec.scenario or attempt.number != artifact.round
++                or artifact_hash(attempt.bundle.files) != artifact.artifact_hash):
++            raise ValueError("最终尝试与产物版本不匹配")
++        decision = decide_after_review(self.task_spec, artifact, attempt.validation,
++                                       self.reviews[-1], RemainingBudget())
++        if decision.status != "passed":
++            raise ValueError("多 Agent passed 未通过服务端成功条件")
++        return self
+diff --git a/app/go_validation/runner.py b/app/go_validation/runner.py
+index feba28e..0f7a656 100644
+--- a/app/go_validation/runner.py
++++ b/app/go_validation/runner.py
+@@ -4,15 +4,17 @@ import json
+ import time
+ import uuid
+ 
+-from app.go_validation.contracts import CodeBundle, StageReport, ValidationReport
++from app.go_validation.contracts import CodeBundle, StageReport, ValidationReport, artifact_hash
+ 
+ IMAGE = "airobot-go-validator:1.26.2"
+ 
+ 
+ class DockerGoRunner:
+-    def __init__(self, timeout: float = 90, log_limit: int = 80000):
++    def __init__(self, timeout: float = 90, log_limit: int = 80000, cleanup_timeout: float = 15):
+         self.timeout = timeout
+         self.log_limit = log_limit
++        self.cleanup_timeout = cleanup_timeout
++        self.last_report = None
+ 
+     def command(self, name: str) -> list[str]:
+         # 不传宿主路径、环境变量或 Docker socket；镜像只接收源码 JSON。
+@@ -28,9 +30,12 @@ class DockerGoRunner:
+     async def _remove(self, name: str) -> bool:
+         proc = None
+         try:
+-            proc = await asyncio.create_subprocess_exec("docker", "rm", "-f", name,
+-                        stdout=asyncio.subprocess.DEVNULL, stderr=asyncio.subprocess.DEVNULL)
+-            return await asyncio.wait_for(proc.wait(), 15) == 0
++            async def remove():
++                nonlocal proc
++                proc = await asyncio.create_subprocess_exec("docker", "rm", "-f", name,
++                            stdout=asyncio.subprocess.DEVNULL, stderr=asyncio.subprocess.DEVNULL)
++                return await proc.wait() == 0
++            return await asyncio.wait_for(remove(), self.cleanup_timeout)
+         except (OSError, TimeoutError):
+             return False
+         finally:
+@@ -43,8 +48,10 @@ class DockerGoRunner:
+                 await proc.wait()
+ 
+     async def validate(self, bundle: CodeBundle) -> ValidationReport:
++        self.last_report = None  # Never reuse a previous attempt's cleanup evidence.
+         # 即便内部调用者绕过 API，也重新校验完整契约。
+         bundle = CodeBundle.model_validate(bundle.model_dump())
++        submitted_hash = artifact_hash(bundle.files)
+         started = time.perf_counter()
+         name = "airobot-go-" + uuid.uuid4().hex
+         proc = None
+@@ -75,6 +82,8 @@ class DockerGoRunner:
+                         stages=[StageReport(stage="sandbox", exit_code=code,
+                                 output=error.decode("utf-8", "replace")[:2000] or "验证进程异常退出")])
+             parsed = ValidationReport.model_validate(json.loads(output))
++            if parsed.artifact_hash is not None and parsed.artifact_hash != submitted_hash:
++                raise ValueError("沙箱报告与本次提交的源码版本不匹配")
+             expected = ["policy", "compile", "vet", "test"]
+             if parsed.go_version != "1.26.2":
+                 raise ValueError("沙箱工具链版本不匹配")
+@@ -90,6 +99,8 @@ class DockerGoRunner:
+                                       output="验证超过总时间预算")])
+         except asyncio.CancelledError:
+             # shield 保证取消请求也会等待容器清理，再将取消传播给调用者。
++            report = ValidationReport(status="cancelled", stages=[StageReport(
++                stage="sandbox", exit_code=130, output="验证取消，已请求清理")])
+             raise
+         except (OSError, ValueError) as exc:
+             report = ValidationReport(status="unavailable", stages=[StageReport(stage="sandbox", exit_code=1,
+@@ -111,11 +122,14 @@ class DockerGoRunner:
+                     pass
+                 await proc.wait()
+             report.container_removed = removed
++            # Bind even failure/unavailable reports to the exact server-side input copy.
++            report.artifact_hash = submitted_hash
+             report.elapsed_ms = round((time.perf_counter() - started) * 1000, 1)
+             if report.status == "passed" and not removed:
+                 report.status = "unavailable"
+                 report.stages.append(StageReport(stage="sandbox", exit_code=1,
+                                     output="无法确认容器清理完成，验证结果不予通过"))
++            self.last_report = report
+             if interrupted:
+                 raise asyncio.CancelledError
+         return report
+diff --git a/app/go_validation/service.py b/app/go_validation/service.py
+index 7021d7b..4d770c7 100644
+--- a/app/go_validation/service.py
++++ b/app/go_validation/service.py
+@@ -3,27 +3,65 @@ import asyncio
+ import hashlib
+ import time
+ import uuid
+-from contextlib import aclosing
++from contextlib import aclosing, asynccontextmanager
+ from pathlib import Path
+ 
+ from app.go_validation.contracts import GoTaskRequest, GoTaskResult
+ from app.go_validation.store import GoTaskStore
+-from app.services.concurrency import run_blocking
++from app.services.concurrency import run_blocking, finish_cleanup
+ from app.services.tracing import traces
+ from app.context import usage as context_usage
++from app.config import settings
+ 
+ TASK_TIMEOUT = 360  # 围栏格式单次生成 15~60s，3 轮生成加验证在 180s 内放不下（99 样本实测校准）。
+ store = GoTaskStore(str(Path(__file__).resolve().parents[2] / "data" / "go_tasks.sqlite3"))
+ 
+ 
+ class GoTaskService:
+-    def __init__(self, task_store=None, timeout=TASK_TIMEOUT, model=None, runner=None, retrieve=None):
++    def __init__(self, task_store=None, timeout=TASK_TIMEOUT, model=None, runner=None, retrieve=None,
++                 supervisor_model=None, code_model=None):
+         self.store = task_store if task_store is not None else store
+         self.timeout = timeout
+         self.model, self.runner, self.retrieve = model, runner, retrieve
++        self.supervisor_model, self.code_model = supervisor_model, code_model
+         self._semaphore = asyncio.Semaphore(2)
+ 
+-    def result(self, state, started):
++    async def _stop_workflow(self, state):
++        task = state.get("go_result_ref", {}).get("task")
++        if task is not None:
++            if not task.done() and not task.cancelling():
++                task.cancel()
++            try:
++                await task
++            except asyncio.CancelledError:
++                # This is the child task's expected stop, not a swallowed
++                # cancellation of the request (which the caller re-raises).
++                pass
++
++    @asynccontextmanager
++    async def _execution_slot(self, state):
++        async with self._semaphore:
++            try:
++                yield
++            finally:
++                # A stopping sandbox still consumes capacity. Join its cleanup
++                # before admitting another task, including on stream disconnect.
++                await finish_cleanup(self._stop_workflow(state))
++
++    def result(self, state, started, *, latest=False):
++        # The task-local reference retains the final cancellation snapshot even
++        # when graph cancellation prevents draining its remaining stream events.
++        # Normal events persist their own snapshot, never a future version that
++        # the graph has already published while the client is still consuming.
++        snapshot = (state.get("go_result_ref", {}).get("result", state.get("go_result"))
++                    if latest else state.get("go_result"))
++        if snapshot is not None:
++            data = dict(snapshot)
++            data.update(status=state["go_status"], elapsed_ms=round((time.perf_counter()-started)*1000, 1))
++            if state.get("go_error"):
++                reason = state["go_status"] if state["go_status"] != "failed" else "unavailable"
++                data.update(error=state["go_error"], stop_reason=reason)
++            return GoTaskResult.model_validate(data)
+         return GoTaskResult(run_id=state["run_id"], status=state["go_status"],
+                 scenario=state["go_request"]["scenario"], attempts=state.get("go_attempts", []),
+                 sources=state.get("go_sources", []), model_calls=state.get("go_model_calls", 0),
+@@ -36,18 +74,36 @@ class GoTaskService:
+         from app.agents.graph import get_agent_graph
+         owner = hashlib.sha256(principal.encode()).hexdigest()
+         started = time.perf_counter()
++        cfg = settings.go_multi_agent
++        timeout = min(self.timeout, cfg.task_timeout) if cfg.enabled else self.timeout
+         state = {"run_id": uuid.uuid4().hex, "session_id": session_key,
+                  "go_request": request.model_dump(), "go_status": "running",
+                  "go_attempts": [], "go_model_calls": 0, "go_tools": 0, "go_validations": 0,
+-                 "go_model": self.model, "go_runner": self.runner, "go_retrieve": self.retrieve}
+-        yield {"type": "go_start", "run_id": state["run_id"]}
++                 "go_model": self.model, "go_runner": self.runner, "go_retrieve": self.retrieve,
++                 "go_supervisor_model": self.supervisor_model, "go_code_model": self.code_model,
++                 "go_multi_config": cfg, "go_deadline": time.monotonic() + timeout}
++        if cfg.enabled:
++            state["go_result"] = GoTaskResult(run_id=state["run_id"], status="running",
++                scenario=request.scenario, workflow_version="multi-v1").model_dump()
++            state["go_result_ref"] = {"result": state["go_result"]}
+         try:
+-            async with asyncio.timeout(self.timeout):
+-                async with self._semaphore:
++            # Persist and guard even the first yield: a client may close as soon
++            # as go_start arrives, before acquiring the execution semaphore.
++            await run_blocking(self.store.save, state["run_id"], owner,
++                               self.result(state, started).model_dump())
++            yield {"type": "go_start", "run_id": state["run_id"],
++                   "workflow_version": "multi-v1" if cfg.enabled else "single-v1"}
++            async with asyncio.timeout(timeout):
++                async with self._execution_slot(state):
+                     async with aclosing(get_agent_graph().astream(state, stream_mode=["updates", "custom"])) as updates:
+                         async for mode, update in updates:
+                             if mode == "custom":
+-                                if update.get("type") == "go_call":
++                                if update.get("type") == "go_progress":
++                                    state["go_result"] = update["result"]
++                                    state["go_status"] = update["result"]["status"]
++                                    await run_blocking(self.store.save, state["run_id"], owner,
++                                                       self.result(state, started).model_dump())
++                                elif update.get("type") == "go_call":
+                                     for public, internal in (("model_calls", "go_model_calls"),
+                                                              ("tools", "go_tools"), ("validations", "go_validations")):
+                                         if public in update:
+@@ -55,28 +111,39 @@ class GoTaskService:
+                                 elif update.get("type") == "go_usage":
+                                     state["go_usage"] = {k:state.get("go_usage",{}).get(k,0)+v
+                                                          for k,v in update["usage"].items()}
+-                                yield update
++                                yield {**update, "run_id": state["run_id"]}
+                             else:
+                                 for values in update.values():
+                                     state.update(values)
+                                 await run_blocking(self.store.save, state["run_id"], owner,
+                                                    self.result(state, started).model_dump())
+         except TimeoutError:
++            await finish_cleanup(self._stop_workflow(state))
+             state.update(go_status="timeout", go_error="任务超过总时间预算")
+         except (asyncio.CancelledError, GeneratorExit):
+-            state.update(go_status="cancelled", go_error="请求取消，沙箱已请求清理")
+-            await run_blocking(self.store.save, state["run_id"], owner, self.result(state, started).model_dump())
+-            context_usage.discard(state["run_id"])
++            async def cancel_and_save():
++                await self._stop_workflow(state)
++                state.update(go_status="cancelled", go_error="请求取消；清理结果见各轮验证报告")
++                await run_blocking(self.store.save, state["run_id"], owner,
++                                   self.result(state, started, latest=True).model_dump())
++            try:
++                await finish_cleanup(cancel_and_save())
++            finally:
++                context_usage.discard(state["run_id"])
+             raise
+         except Exception:
++            await finish_cleanup(self._stop_workflow(state))
+             state.update(go_status="failed", go_error="任务执行失败，请通过 run_id 查看已有报告")
+-        result = self.result(state, started)
+-        await run_blocking(self.store.save, state["run_id"], owner, result.model_dump())
+-        traces.record({"run_id": result.run_id, "session_id": session_key, "intent": "go_validation",
+-                       "status": 200 if result.status == "passed" else 422,
+-                       "tool_calls": state.get("go_tools", 0), "total_ms": result.elapsed_ms,"context_usage":result.context_stats})
+-        context_usage.discard(state["run_id"])
+-        yield {"type": "go_done", "result": result.model_dump()}
++        result = self.result(state, started, latest=True)
++        try:
++            await finish_cleanup(run_blocking(self.store.save, state["run_id"], owner, result.model_dump()))
++            traces.record({"run_id": result.run_id, "session_id": session_key, "intent": "go_validation",
++                           "status": 200 if result.status == "passed" else 422,
++                           "tool_calls": result.validation_calls if cfg.enabled else state.get("go_tools", 0),
++                           "total_ms": result.elapsed_ms,"context_usage":result.context_stats})
++        finally:
++            context_usage.discard(state["run_id"])
++        yield {"type": "go_done", "run_id": state["run_id"], "result": result.model_dump()}
+ 
+     async def run(self, request, principal, session_key):
+         # 普通响应也消费相同流，避免两个入口各自维护一套修复逻辑。
+diff --git a/app/go_validation/store.py b/app/go_validation/store.py
+index cc8160f..fc51af5 100644
+--- a/app/go_validation/store.py
++++ b/app/go_validation/store.py
+@@ -3,6 +3,7 @@ import json
+ import sqlite3
+ import threading
+ from pathlib import Path
++from app.go_validation.contracts import GoTaskResult
+ 
+ 
+ class GoTaskStore:
+@@ -23,13 +24,19 @@ class GoTaskStore:
+         return self._connection
+ 
+     def save(self, run_id: str, owner: str, result: dict):
++        # Apply the same server success invariant at the persistence boundary.
++        # Defaults keep historical reports readable without a schema migration.
++        report = GoTaskResult.model_validate(result)
++        if report.run_id != run_id:
++            raise ValueError("报告 run_id 与存储键不一致")
++        serialized = report.model_dump_json()
+         with self._lock:
+             db = self._db()
+             existing = db.execute("SELECT owner FROM go_tasks WHERE run_id=?", (run_id,)).fetchone()
+             if existing and existing[0] != owner:
+                 raise ValueError("任务归属不一致")
+             db.execute("INSERT INTO go_tasks VALUES (?, ?, ?) ON CONFLICT(run_id) DO UPDATE SET result=excluded.result",
+-                       (run_id, owner, json.dumps(result, ensure_ascii=False)))
++                       (run_id, owner, serialized))
+             db.commit()
+ 
+     def get(self, run_id: str, owner: str):
+diff --git a/app/services/concurrency.py b/app/services/concurrency.py
+index 6ff22f3..81dd840 100644
+--- a/app/services/concurrency.py
++++ b/app/services/concurrency.py
+@@ -1,5 +1,29 @@
+ """取消请求时等待正在操作文件/数据库的线程退出，再释放资源。"""
+ import asyncio
++from anyio import CancelScope
++
++
++async def finish_cleanup(awaitable):
++    """Finish resource/persistence cleanup before propagating repeated cancellation.
++
++    ASGI disconnect uses level cancellation; a native asyncio caller can also
++    cancel repeatedly. Shield both forms without losing the cancellation signal.
++    The operation itself owns its bounded resource-cleanup policy.
++    """
++    interrupted = False
++    with CancelScope(shield=True):
++        task = asyncio.ensure_future(awaitable)
++        while True:
++            try:
++                result = await asyncio.shield(task)
++                break
++            except asyncio.CancelledError:
++                if task.cancelled():
++                    raise
++                interrupted = True
++    if interrupted:
++        raise asyncio.CancelledError
++    return result
+ 
+ 
+ async def run_blocking(fn, *args, **kwargs):
+diff --git a/app/services/security.py b/app/services/security.py
+index 22cc3f2..cca4ded 100644
+--- a/app/services/security.py
++++ b/app/services/security.py
+@@ -108,4 +108,13 @@ class SessionStreamResponse(StreamingResponse):
+         try:
+             await super().__call__(scope, receive, send)
+         finally:
+-            release_session(self.session_key)
++            # A socket send failure can leave the generator paused at yield.
++            # Closing it triggers cancellation, sandbox cleanup and persistence;
++            # the same session must remain occupied until all three finish.
++            from app.services.concurrency import finish_cleanup
++            try:
++                close = getattr(self.body_iterator, "aclose", None)
++                if close is not None:
++                    await finish_cleanup(close())
++            finally:
++                release_session(self.session_key)
+diff --git a/app/static/dashboard.html b/app/static/dashboard.html
+index d79b707..d22dd59 100644
+--- a/app/static/dashboard.html
++++ b/app/static/dashboard.html
+@@ -104,6 +104,11 @@ tr:hover td{background:#1a2130}
+ .go-report details{margin:10px 0}.go-report summary{cursor:pointer;color:var(--muted);padding:7px}
+ #goProgress{font-size:13px;color:var(--muted);white-space:pre-wrap;margin:12px 0}
+ #goStatus{font-weight:600;margin:10px 0}
++#goTimeline{padding-left:22px;font-size:13px;color:var(--muted);line-height:1.9;overflow-wrap:anywhere}
++.go-report h3{font-size:14px;margin:18px 0 8px}.go-report p{overflow-wrap:anywhere;white-space:pre-wrap}
++.go-report .go-blocking{border-left:3px solid var(--err);padding-left:12px}
++.go-report .go-suggestion{border-left:3px solid var(--warn);padding-left:12px}
++.go-report .go-hash{font:12px/1.6 Consolas,monospace;color:var(--muted)}
+ @media(max-width:900px){.console-grid{grid-template-columns:1fr}}
+ @media(max-width:720px){.cards{grid-template-columns:repeat(2,1fr)}}
+ </style>
+@@ -171,8 +176,9 @@ tr:hover td{background:#1a2130}
+     </div>
+     <div id="goStatus" role="status">就绪</div>
+     <div id="goProgress"></div>
++    <ol id="goTimeline" aria-label="任务实际阶段"></ol>
+     <div class="go-report" id="goReport"></div>
+-    <div class="mono">通过表示当前编译、静态检查与测试通过；报告会保留失败代码、错误和每次修复记录。</div>
++    <div class="mono">仅服务器最终 passed 显示成功。多 Agent 流程还要求当前版本审查通过、必要需求完整且无阻断问题；断流后可按 run_id 查询。</div>
+   </section>
+ 
+ <section>
+@@ -351,18 +357,41 @@ function parseSSE(part){
+   if(!line) return null;
+   try{return JSON.parse(line.slice(5).trim());}catch(e){return null;}
+ }
+-let goController=null;
++let goController=null,goView=null;
+ const GO_LABELS={passed:"验证通过",failed:"验证失败",timeout:"超时",unavailable:"环境或模型不可用",cancelled:"已取消",generation_error:"代码生成失败",budget_exceeded:"达到预算",running:"运行中"};
++const GO_PHASES={planning:"主 Agent · 分解需求",retrieval:"检索参考资料",generate:"主 Agent 委派 → 代码 Agent 生成",generated:"代码产物已冻结",validate:"验证器 · 隔离验证",validated:"机器报告已保存",review:"主 Agent · 审查",reviewed:"审查报告已保存",repair:"主 Agent 返回修复任务 → 代码 Agent 修复",model_result:"角色调用结束",finish:"服务器判定终态",cancelled:"任务取消收尾"};
++const goArray=value=>Array.isArray(value)?value:[];
++const goRunId=value=>typeof value==="string"&&/^[a-f0-9]{32}$/.test(value);
+ function goText(parent,tag,text){
+   // 所有代码与日志均按文本展示，禁止把模型输出作为 HTML 执行。
+-  const el=document.createElement(tag);el.textContent=text;parent.appendChild(el);return el;
++  const el=document.createElement(tag);el.textContent=String(text??"");parent.appendChild(el);return el;
+ }
+-function renderGoAttempt(attempt){
+-  const report=document.getElementById("goReport");
++function goStatus(state,text){
++  const el=document.getElementById("goStatus");el.dataset.state=state;el.textContent=text;
++  el.style.color=state==="passed"?"var(--ok)":state==="running"||state==="loading"?"var(--accent)":state==="unknown"||state==="cancel_requested"||state==="timeout"?"var(--warn)":"var(--err)";
++}
++function goNewView(runId=null){
++  goView?.controller?.abort();
++  const ctx={runId,controller:new AbortController(),finalReceived:false,cancelRequested:false};
++  goView=ctx;document.getElementById("goValidation").dataset.runId=runId||"";
++  document.getElementById("goReport").replaceChildren();document.getElementById("goTimeline").replaceChildren();
++  document.getElementById("goProgress").textContent="";return ctx;
++}
++function goFiles(parent,files){
++  for(const file of goArray(files)){
++    const source=document.createElement("details");parent.appendChild(source);
++    goText(source,"summary",file.name);goText(source,"pre",file.content);
++  }
++}
++function renderGoAttempt(attempt,parent=document.getElementById("goReport"),includeFiles=true){
++  const report=parent,validation=attempt.validation||{};
+   const details=document.createElement("details");details.open=true;report.appendChild(details);
+-  goText(details,"summary",`第 ${attempt.number+1} 次验证 · ${GO_LABELS[attempt.validation.status]||attempt.validation.status} · ${ms(attempt.validation.elapsed_ms)}`);
++  details.dataset.attempt=attempt.number;
++  goText(details,"summary",`第 ${Number(attempt.number)+1} 次验证 · ${GO_LABELS[validation.status]||"未知验证状态"} · ${ms(validation.elapsed_ms)}`);
+   goText(details,"p",attempt.change_summary||"首次生成");
+-  for(const stage of attempt.validation.stages){
++  goText(details,"p",`容器清理：${validation.container_removed===true?"已确认删除":"未确认删除"}`);
++  if(validation.artifact_hash)goText(details,"p","验证版本："+validation.artifact_hash).className="go-hash";
++  for(const stage of goArray(validation.stages)){
+     goText(details,"p",`${stage.stage} · 退出码 ${stage.exit_code} · ${ms(stage.elapsed_ms)}${stage.truncated?' · 日志已截断':''}`);
+     if(stage.output){
+       const log=document.createElement("details");log.open=stage.exit_code!==0;details.appendChild(log);
+@@ -375,66 +404,144 @@ function renderGoAttempt(attempt){
+       }else{goText(log,"pre",stage.output);}
+     }
+   }
+-  for(const file of attempt.bundle.files){
+-    const source=document.createElement("details");details.appendChild(source);
+-    source.open=attempt.validation.status==="passed"&&!file.name.endsWith("_test.go");
+-    goText(source,"summary",file.name);goText(source,"pre",file.content);
++  if(includeFiles)goFiles(details,attempt.bundle?.files);
++}
++function goDiff(before,after){
++  const old=new Map(goArray(before?.files).map(f=>[f.name,f.content]));
++  const now=new Map(goArray(after?.files).map(f=>[f.name,f.content]));const lines=[];
++  for(const name of new Set([...old.keys(),...now.keys()])){
++    if(old.get(name)===now.get(name))continue;
++    const a=old.has(name)?String(old.get(name)).split("\n"):[],b=now.has(name)?String(now.get(name)).split("\n"):[];
++    let start=0,end=0;while(start<a.length&&start<b.length&&a[start]===b[start])start++;
++    while(end<a.length-start&&end<b.length-start&&a[a.length-1-end]===b[b.length-1-end])end++;
++    lines.push(`--- ${old.has(name)?name:"/dev/null"}`,`+++ ${now.has(name)?name:"/dev/null"}`,`@@ 第 ${start+1} 行起 @@`,
++      ...a.slice(start,a.length-end).map(s=>"- "+s),...b.slice(start,b.length-end).map(s=>"+ "+s));
+   }
++  return lines.join("\n")||"文件内容无变化";
+ }
+-function renderGoResult(result){
+-  if(result.context_stats)renderContextStats(result.context_stats);
+-  document.getElementById("goRunId").value=result.run_id;
+-  const status=document.getElementById("goStatus");
+-  status.textContent=`${GO_LABELS[result.status]||result.status} · ${ms(result.elapsed_ms)} · 模型调用 ${result.model_calls} · 验证 ${result.validation_calls}`;
+-  status.style.color=result.status==="passed"?"var(--ok)":"var(--err)";
++function renderGoResult(result,{final=true}={}){
++  if(!result||typeof result!=="object"){goStatus("unknown","未知报告：服务器未返回有效对象");return;}
++  if(goRunId(result.run_id))document.getElementById("goRunId").value=result.run_id;
++  const known=Object.hasOwn(GO_LABELS,result.status);
++  const state=!known?"unknown":!final&&result.status==="passed"?"running":result.status;
++  const label=!known?`未知状态：${String(result.status??"缺失")}（未确认成功）`:!final&&result.status==="passed"?"阶段报告已通过，等待服务器最终报告":GO_LABELS[result.status]+(final&&result.status==="passed"?"（服务器终态）":"");
++  goStatus(state,`${label} · ${ms(result.elapsed_ms)} · 模型调用 ${result.model_calls??"未知"} · 验证 ${result.validation_calls??"未知"}`);
+   const report=document.getElementById("goReport");report.replaceChildren();
++  report.dataset.workflow=result.workflow_version||"single-v1";
+   goText(report,"p",result.model_source==="fixture"?"人工固定模型输出，仅用于流程验收":"使用配置的模型");
+   if(result.error)goText(report,"pre",result.error);
+-  goText(report,"p",result.validation_scope);
+-  goText(report,"p","参考来源："+(result.sources.length?result.sources.join("、"):"无"));
+-  if(Object.keys(result.token_usage||{}).length)goText(report,"p","Token 用量："+JSON.stringify(result.token_usage));
+-  for(const attempt of result.attempts)renderGoAttempt(attempt);
++  goText(report,"p",result.validation_scope||"报告未提供验证范围");
++  goText(report,"p","参考来源："+(goArray(result.sources).join("、")||"无"));
++  const plan=result.task_spec;
++  if(plan){
++    const section=goText(report,"section","");section.dataset.section="plan";goText(section,"h3","主 Agent 任务计划");
++    goText(section,"p",plan.original_requirement);
++    for(const r of goArray(plan.requirements))goText(section,"p",`[${r.requirement_id}] ${r.required?"必要":"可选"}：${r.text}`);
++    for(const c of goArray(plan.acceptance_criteria))goText(section,"p",`验收 [${c.criterion_id}] → ${c.requirement_id}：${c.text}`);
++    for(const c of goArray(plan.constraints))goText(section,"p","约束："+c);
++  }else goText(report,"p",result.workflow_version==="multi-v1"?"任务计划尚未生成":"旧版单流程报告：无主 Agent 计划或审查记录");
++  const usage=result.context_stats||{},budget=result.budget||{};
++  const accounting=goText(report,"section","");accounting.dataset.section="budget";goText(accounting,"h3","预算与角色用量");
++  for(const [key,title] of [["model","模型请求预占"],["normal","正常模型调用预占"],["retries","共享异常重试"],["repairs","业务修复"],["validations","沙箱验证"],["retrievals","检索"]]){
++    goText(accounting,"p",`${title}：${budget.used?.[key]??"未知"} / ${budget.limits?.[key]??"报告未提供上限"}`);
++  }
++  if(Number.isFinite(budget.remaining_seconds))goText(accounting,"p",`服务器快照剩余时间：${budget.remaining_seconds.toFixed(1)}s`);
++  goText(accounting,"p",result.token_usage&&Object.keys(result.token_usage).length?"Token 用量："+JSON.stringify(result.token_usage):"Token 用量：未知");
++  if(usage.usage_complete===false)goText(accounting,"p",`未知用量调用：${usage.unknown_usage_calls??"未知"}；已知小计：${JSON.stringify(usage.known_token_usage||{})}`);
++  goText(accounting,"p",`费用估算：${usage.cost_estimate==null?"未知":usage.cost_estimate+" "+(usage.currency||"")}`);
++  for(const c of goArray(result.agent_calls))goText(accounting,"p",`${c.role} · ${c.stage} · ${c.model} · ${c.status} · Token ${c.token_usage?JSON.stringify(c.token_usage):"未知"}`);
++  const artifacts=goArray(result.artifacts);
++  artifacts.forEach((artifact,index)=>{
++    const section=goText(report,"section","");section.dataset.section="artifact";goText(section,"h3",`第 ${artifact.round} 轮源码`);
++    goText(section,"p","artifact_hash："+artifact.artifact_hash).className="go-hash";
++    goText(section,"p",artifact.change_summary||"未提供修改说明");
++    if(goArray(artifact.addressed_issue_ids).length)goText(section,"p","本轮处理声明："+artifact.addressed_issue_ids.join("、"));
++    if(index){const diff=goText(section,"details","");diff.dataset.diff="true";goText(diff,"summary","与上一版本的文件差异");goText(diff,"pre",goDiff(artifacts[index-1],artifact));}
++    goFiles(section,artifact.files);
++  });
++  for(const attempt of goArray(result.attempts))renderGoAttempt(attempt,report,!artifacts.length);
++  for(const review of goArray(result.reviews)){
++    const section=goText(report,"section","");section.dataset.section="review";
++    goText(section,"h3",`第 ${review.round} 轮主 Agent 审查 · ${review.verdict}`);
++    goText(section,"p","审查版本："+review.artifact_hash).className="go-hash";goText(section,"p",review.summary);
++    for(const check of goArray(review.requirement_checks))goText(section,"p",`需求 [${check.requirement_id}] ${check.status}：${check.evidence}`);
++    for(const severity of ["blocking","suggestion"]){
++      const group=goText(section,"div","");group.className="go-"+severity;goText(group,"h3",severity==="blocking"?"阻断问题":"非阻断建议");
++      const issues=goArray(review.issues).filter(i=>i.severity===severity);
++      if(!issues.length)goText(group,"p","无");
++      for(const issue of issues){goText(group,"p",`[${issue.issue_id}] ${issue.requirement_id||"整体问题"} · ${issue.file||"整体设计"}${issue.line?":"+issue.line:""}`);goText(group,"p","依据："+issue.evidence);goText(group,"p","修复要求："+issue.repair_instruction);}
++    }
++  }
++  const conclusion=goText(report,"section","");conclusion.dataset.section="conclusion";goText(conclusion,"h3",final?"服务器结论":"当前快照（尚非最终结论）");
++  goText(conclusion,"p","停止原因："+(result.stop_reason||"尚未停止 / 旧报告未提供"));goText(conclusion,"p",result.final_summary||"未提供最终说明");
+ }
+ async function startGoTask(){
+-  if(goController)return;
++  if(goController&&!goView?.cancelRequested)return;
+   const requirement=document.getElementById("goRequirement").value.trim();
+-  if(requirement.length<5){document.getElementById("goStatus").textContent="请输入至少 5 字的需求";return;}
+-  goController=new AbortController();
++  if(requirement.length<5){goStatus("unknown","请输入至少 5 字的需求");return;}
++  const ctx=goNewView();goController=ctx.controller;
+   document.getElementById("goStart").disabled=true;document.getElementById("goCancel").disabled=false;document.getElementById("goLoad").disabled=true;
+-  document.getElementById("goRunId").value="";document.getElementById("goReport").replaceChildren();
+-  document.getElementById("goProgress").textContent="";
+-  document.getElementById("goStatus").textContent="正在生成与验证…";document.getElementById("goStatus").style.color="var(--accent)";
+-  let completed=false;
++  document.getElementById("goRunId").value="";goStatus("running","正在等待服务器任务事件…");
+   function consume(part){
+-    const ev=parseSSE(part);if(!ev)return;
+-    if(ev.type==="go_start")document.getElementById("goRunId").value=ev.run_id;
+-    if(ev.type==="go_stage")document.getElementById("goProgress").textContent+=ev.message+"\n";
+-    if(ev.type==="go_attempt")renderGoAttempt(ev.attempt);
+-    if(ev.type==="go_done"){completed=true;renderGoResult(ev.result);}
++    if(goView!==ctx||ctx.cancelRequested||ctx.finalReceived)return;
++    const data=part.split(/\r?\n/).filter(l=>l.startsWith("data:")).map(l=>l.slice(5).trimStart()).join("\n");if(!data)return;
++    let ev;try{ev=JSON.parse(data);}catch{ctx.protocolError=true;goStatus("unknown","未知事件：服务器数据无法解析");return;}
++    if(ev.type==="go_start"){
++      if(!goRunId(ev.run_id)||(ctx.runId&&ev.run_id!==ctx.runId))return;
++      ctx.runId=ev.run_id;ctx.workflow=ev.workflow_version||"single-v1";document.getElementById("goRunId").value=ev.run_id;document.getElementById("goValidation").dataset.runId=ev.run_id;return;
++    }
++    if(!ctx.runId)return;
++    const id=ev.run_id||ev.result?.run_id;
++    if(ctx.workflow!=="single-v1"&&!id){ctx.protocolError=true;goStatus("unknown","未知事件：缺少 run_id，未接受该报告");return;}
++    // Historical single-v1 events without IDs belong only to this bound stream.
++    if(id&&id!==ctx.runId)return;
++    if(ev.result?.run_id&&ev.result.run_id!==ctx.runId)return;
++    if(ev.type==="go_stage"){
++      const legacy={generate:"单流程模型 · 代码生成",repair:"单流程模型 · 代码修复"};
++      const label=ctx.workflow==="single-v1"&&Object.hasOwn(legacy,ev.stage)?legacy[ev.stage]:Object.hasOwn(GO_PHASES,ev.stage)?GO_PHASES[ev.stage]:"未知阶段："+String(ev.stage);
++      const text=`${label}${ev.round!=null?" · 第 "+ev.round+" 轮":""}${ev.message&&ev.message!==ev.stage?" · "+ev.message:""}`;
++      goText(document.getElementById("goTimeline"),"li",text);
++      document.getElementById("goProgress").textContent=text;
++    }
++    if(ev.type==="go_progress"&&ev.result)renderGoResult(ev.result,{final:false});
++    if(ev.type==="go_attempt"&&!document.querySelector(`[data-attempt="${Number(ev.attempt?.number)}"]`))renderGoAttempt(ev.attempt||{});
++    if(ev.type==="go_done"){
++      if(!ev.result||ev.result.run_id!==ctx.runId){ctx.protocolError=true;goStatus("unknown","未知终态：最终报告缺失或版本不匹配");return;}
++      ctx.finalReceived=true;renderGoResult(ev.result,{final:ev.result.status!=="running"});
++      if(ev.result.status==="running")goStatus("unknown","未知终态：running；请按 run_id 查询保存报告");
++    }
+   }
+   try{
+     const response=await apiFetch("/api/v1/go/tasks/stream",{method:"POST",headers:{"Content-Type":"application/json"},
+-      body:JSON.stringify({scenario:document.getElementById("goScenario").value,requirement}),signal:goController.signal});
++      body:JSON.stringify({scenario:document.getElementById("goScenario").value,requirement}),signal:ctx.controller.signal});
+     const reader=response.body.getReader(),decoder=new TextDecoder();let buffer="";
+-    while(true){const {done,value}=await reader.read();if(done)break;
+-      buffer+=decoder.decode(value,{stream:true});const parts=buffer.split("\n\n");buffer=parts.pop();parts.forEach(consume);}
+-    buffer+=decoder.decode();if(buffer)consume(buffer);
+-    // 只有服务端最终报告能决定通过；连接结束不能视为任务成功。
+-    if(!completed)throw new Error("流提前结束，请按 run_id 查询最终报告");
++    try{
++      while(true){const {done,value}=await reader.read();if(done)break;
++        buffer+=decoder.decode(value,{stream:true});const parts=buffer.split(/\r?\n\r?\n/);buffer=parts.pop();parts.forEach(consume);}
++      buffer+=decoder.decode();if(buffer)consume(buffer);
++    }finally{reader.releaseLock();}
++    if(goView===ctx&&!ctx.finalReceived&&!ctx.cancelRequested&&!ctx.protocolError)goStatus("disconnected","任务失败：流提前结束（连接中断，未确认终态），请按 run_id 查询最终报告");
+   }catch(error){
+-    document.getElementById("goStatus").textContent=error.name==="AbortError"?"已请求取消，请按 run_id 查询最终报告":"任务失败："+error.message;
+-    document.getElementById("goStatus").style.color="var(--err)";
++    if(goView===ctx&&!ctx.finalReceived){
++      if(ctx.cancelRequested)goStatus("cancel_requested","已请求取消，服务器终态待查询");
++      else goStatus(ctx.runId?"disconnected":"unknown",(ctx.runId?"连接中断，未确认终态：":"请求失败，未知终态：")+error.message);
++    }
+   }finally{
+-    goController=null;document.getElementById("goStart").disabled=false;document.getElementById("goCancel").disabled=true;document.getElementById("goLoad").disabled=false;
+-    refresh(true);
++    if(goView===ctx){goController=null;document.getElementById("goStart").disabled=false;document.getElementById("goCancel").disabled=true;document.getElementById("goLoad").disabled=false;}
+   }
+ }
+-function cancelGoTask(){if(goController)goController.abort();}
++function cancelGoTask(){if(goController){goView.cancelRequested=true;goController.abort();goStatus("cancel_requested","已请求取消，服务器终态待查询");}}
+ async function loadGoTask(){
+   const runId=document.getElementById("goRunId").value.trim();
+-  if(!/^[a-f0-9]{32}$/.test(runId)){document.getElementById("goStatus").textContent="请输入有效 run_id";return;}
+-  try{renderGoResult(await(await apiFetch("/api/v1/go/tasks/"+runId)).json());}
+-  catch(error){document.getElementById("goStatus").textContent=error.message;}
++  if(!goRunId(runId)){goStatus("unknown","请输入有效 run_id");return;}
++  const ctx=goNewView(runId);goController=null;goStatus("loading","正在查询服务器报告…");
++  try{
++    const result=await(await apiFetch("/api/v1/go/tasks/"+runId,{signal:ctx.controller.signal})).json();
++    if(goView!==ctx)return;
++    if(result.run_id!==runId){goStatus("unknown","未知报告：run_id 不匹配");return;}
++    renderGoResult(result);
++    document.getElementById("goProgress").textContent="已读取服务器保存的报告；本次未执行新任务";
++  }catch(error){if(goView===ctx)goStatus("unknown","报告查询失败："+error.message);}
+ }
+ function handleEvent(ev,bubble){
+   if(ev.type==="stage"){
+diff --git a/docs/go-validation.md b/docs/go-validation.md
+index a42753d..58323c1 100644
+--- a/docs/go-validation.md
++++ b/docs/go-validation.md
+@@ -74,6 +74,24 @@ HTTP 200 表示请求有报告；业务成功由报告的 `status` 判断。可
+ 
+ SSE 事件：`go_start` 携带 run_id；`go_stage` 展示检索、生成、验证和修复；`go_call` 记录预算；`go_usage` 记录服务商返回的 token 用量；`go_attempt` 携带每轮完整报告；`go_done` 携带最终结果。断开流会取消任务并清理容器；界面取消后可用 run_id 查询保存的最终状态。
+ 
++### 可选多 Agent 流程的报告与事件
++
++`AIROBOT_GO_MULTI_AGENT_ENABLED=true` 选择 `multi-v1`；默认关闭，继续使用 `single-v1`。启用前须按 `.env.example` 配置两个角色实际模型窗口；角色模型未分别指定时继承全局模型。两个接口共同消费 `GoTaskService.stream()` 和同一 LangGraph 路径，JSON 不另建修复循环。
++
++多 Agent 报告增加 `task_spec`（原需求、需求 ID 与验收条件）、`artifacts`（每轮完整文件、轮次及服务端 hash）、`reviews`、`agent_calls`、`stop_reason`、`final_summary`。`attempts` 保留每轮机器验证与完整日志。hash 覆盖服务端注入后的可信测试，验证和审查必须绑定同一版本；服务器同时检查机器通过、当前版本审查通过、必要需求覆盖完整和无阻断问题，才返回 `passed`。
++
++多 Agent 保留 `go_start/go_stage/go_call/go_usage/go_attempt/go_done`，并增加 `go_progress` 携带已持久化的完整阶段快照；阶段附加角色与轮次，客户端可忽略新增字段。`go_usage` 只发送完整的已知服务商用量，未知用量在报告 `context_stats.unknown_usage_calls` 中体现：`usage_complete=false`、总 `token_usage=null`，已知部分保留在 `known_token_usage`，不能按零费用解释。
++
++所有 Go SSE 事件携带服务端任务 `run_id`；报告新增兼容默认 `budget`，包含服务器账本 `limits/used`、总时间与快照剩余秒数。界面展示请求预占与实际角色调用，既不自行增加额度，也不以定时器猜测剩余时间；历史报告缺少额度时显示“报告未提供上限”。
++
++控制台根据实际阶段事件显示分解需求、委派、生成、验证、审查及修复，展示必要需求检查、阻断问题与非阻断建议、各轮 hash 和文件差异。中间 passed 快照不能变成绿色成功，只有匹配当前 run_id 的 `go_done.result.status=passed` 或服务器 GET 报告 passed 可显示成功。断流、取消请求、服务器确认 cancelled、timeout 和未知事件/终态分别展示；新请求开始后，旧请求的流事件、查询响应及 finally 都不能改写新任务。
++
++代码、日志、需求、模型说明与审查文本均使用文本节点渲染，不执行其中 HTML。查询历史报告仅展示已保存结果，不虚构一次新执行或实时阶段；旧 single-v1 报告仍可读取源码与实际日志。
++
++接收 `go_start` 后即可查询当前账户的报告。取消、断连或超时会保存已产生的计划、源码、验证、审查及已发生调用，等待活动调用与容器有界清理、最终报告写入后释放会话；是否确认删除容器以 `container_removed` 为准。流正常结束也必须检查 `go_done.result.status`，缺少 `go_done` 时通过 run_id 查询，不能把 HTTP 200、连接关闭或 `go_stage` 当成业务成功。
++
++旧数据库 JSON 无需迁移，新字段及旧验证报告的版本字段读取时提供默认值；旧报告保留 `single-v1`，不会因缺少多 Agent 字段被重新解释为新流程通过。保存新报告时再次执行服务端成功契约，禁止无证据的 `multi-v1/passed` 入库，报告键和账户归属均校验。
++
+ 报告保存在 `data/go_tasks.sqlite3`，包含代码、日志、来源和错误，不包含模型密钥。首次输出后冻结服务端行为测试（模型不能提交同名文件），模型自身测试可随修复更新，行为判定以服务端测试为准。服务进程崩溃前保存的任务可能停留为 `running`，本版不支持断点恢复或后台重启续跑。
+ 
+ ---
+@@ -86,7 +104,8 @@ SSE 事件：`go_start` 携带 run_id；`go_stage` 展示检索、生成、验
+ 
+ | 限制 | 当前值 |
+ | --- | --- |
+-| 首次生成 + 修复 | 最多 3 次模型调用、3 次验证、1 次检索 |
++| 原单流程首次生成 + 修复 | 最多 3 次模型调用、3 次验证、1 次检索 |
++| 可选多 Agent 流程 | 正常模型调用最多 7 次 + 全任务共享重试 1 次，总计最多 8 次；修复最多 2 轮、验证 3 次、检索 1 次 |
+ | 整个任务 | 360 秒，包含等待并发槽位；单次模型生成调用上限 120 秒 |
+ | 同时执行 | 每个 Python 进程最多 2 个任务 |
+ | 单次验证 | 90 秒，结束后等待容器清理 |
+diff --git a/scripts/test_go_dashboard.cjs b/scripts/test_go_dashboard.cjs
+index e7a92fd..8311a68 100644
+--- a/scripts/test_go_dashboard.cjs
++++ b/scripts/test_go_dashboard.cjs
+@@ -39,8 +39,9 @@ const event = value => `data: ${JSON.stringify(value)}\n\n`;
+     assert.match(await page.locator('#goReport').textContent(), /TestServer/);
+     assert.match(await page.locator('#goReport').textContent(), /人工固定模型输出/);
+     assert.equal(await page.locator('#goRunId').inputValue(), result.run_id);
+-    fs.mkdirSync(path.join(root, 'eval/reports/go'), { recursive: true });
+-    await page.locator('#goValidation').screenshot({ path: path.join(root, 'eval/reports/go/dashboard.png') });
++    const screenshot=process.env.GO_DASHBOARD_SCREENSHOT || path.join(root, 'eval/reports/go/dashboard.png');
++    fs.mkdirSync(path.dirname(screenshot), { recursive: true });
++    await page.locator('#goValidation').screenshot({ path: screenshot });
+     await page.locator('#goLoad').click();
+     await page.waitForFunction(() => document.querySelector('#goReport > details') !== null);
+     // 恶意代码、日志、修改说明只能成为文本，不能执行页面脚本。

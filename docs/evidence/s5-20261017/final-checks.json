@@ -1,0 +1,27 @@
+{
+  "head": "1ea7e6b7abbde3bd1a5963f03cd142fac553685a",
+  "source_manifest_sha256": "d70a1763e1b34e4b0928c7c2365005eaecf1afa9db43989c6377095fa33f45af",
+  "tracked_diff_sha256": "907d8a2c27b1e038db0eff4e85ec699ba0047e14256b0a4e674d7c47c57b5d90",
+  "changed_files": [
+    "app/agents/go_workflow.py",
+    "app/go_validation/service.py",
+    "app/go_validation/store.py",
+    "app/services/concurrency.py",
+    "app/services/security.py",
+    "docs/go-validation.md",
+    "tests/test_multi_agent_http.py"
+  ],
+  "old_log_prefix_preserved": true,
+  "execution_log_sha256": "d71c4ba36c511319cefe3d9496cb10593b11fe2c4b1cb0db7fb22721510694c0",
+  "checked_command_outputs": 22,
+  "offline_passed": 257,
+  "offline_skipped": 29,
+  "all_skipped_cases_ran_under_docker": true,
+  "docker_suite_passed": 102,
+  "docker_skipped": 0,
+  "review_regressions_passed": 8,
+  "network_audit_events": 0,
+  "leftover_containers": 0,
+  "git_diff_check": "passed",
+  "paid_model_evaluations": "not_run"
+}

@@ -1,0 +1,11 @@
+--- app/go_validation/contracts.py
++++ app/go_validation/contracts.py (isolated mutant)
+@@ -260,7 +260,7 @@
+         if artifact.task_id != task.task_id or artifact.scenario != task.scenario:
+             raise ValueError("产物不属于当前任务或场景")
+         if any(getattr(self, key) != getattr(artifact, key)
+-               for key in ("task_id", "artifact_id", "artifact_hash", "round")):
++               for key in ("task_id", "artifact_id", "round")):
+             raise ValueError("审查不属于当前代码版本")
+         known = {r.requirement_id for r in task.requirements}
+         if any(c.requirement_id not in known for c in self.requirement_checks):

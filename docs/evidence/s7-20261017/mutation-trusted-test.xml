@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?><testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="1" skipped="0" tests="1" time="0.056" timestamp="2026-10-17T16:24:53.199802+08:00" hostname="EnriciMac.local"><testcase classname="tests.test_multi_agent_contracts.MultiAgentContractsTests" name="test_hash_or_trusted_test_tampering_is_rejected_even_if_rehashed" time="0.001"><failure message="AssertionError: ValidationError not raised">self = &lt;test_multi_agent_contracts.MultiAgentContractsTests testMethod=test_hash_or_trusted_test_tampering_is_rejected_even_if_rehashed&gt;
+
+    def test_hash_or_trusted_test_tampering_is_rejected_even_if_rehashed(self):
+        art = artifact()
+        modified = art.model_dump()
+        modified["files"][0]["content"] += "\n// changed"
+        with self.assertRaises(ValidationError):
+            CodeArtifact.model_validate(modified)
+        modified = json.loads(art.model_dump_json())
+        modified["files"][-1]["content"] = "package example\n"
+        modified["artifact_hash"] = artifact_hash(modified["files"])
+&gt;       with self.assertRaises(ValidationError):
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       AssertionError: ValidationError not raised
+
+tests/test_multi_agent_contracts.py:67: AssertionError</failure></testcase></testsuite></testsuites>

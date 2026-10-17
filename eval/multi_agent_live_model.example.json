@@ -1,0 +1,9 @@
+{
+  "name": "REPLACE_WITH_VERIFIED_PINNED_MODEL_ID",
+  "endpoint": "https://dashscope.aliyuncs.com/compatible-mode/v1",
+  "revision": null,
+  "revision_verified": false,
+  "context_window": null,
+  "temperature": 0.2,
+  "sdk_retries": 0
+}

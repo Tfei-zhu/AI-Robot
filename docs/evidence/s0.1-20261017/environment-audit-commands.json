@@ -1,0 +1,65 @@
+[
+  {
+    "id": "docker-images-before",
+    "argv": [
+      "docker",
+      "image",
+      "ls",
+      "--digests",
+      "--format",
+      "{{.Repository}}:{{.Tag}} {{.Digest}} {{.ID}}"
+    ],
+    "cwd": "/Users/xumanchun/Documents/agent项目/AI-Robot-latest",
+    "started_utc": "2026-10-17T03:32:00.675955+00:00",
+    "exit_code": 0,
+    "elapsed_seconds": 0.129,
+    "network_guard": false,
+    "output": "docker-images-before.txt",
+    "output_sha256": "cf9e3c10ac2dad80219d55ff018cf41965ca5f5e75a52836f7e05f5bfc4759af"
+  },
+  {
+    "id": "playwright-availability",
+    "argv": [
+      "node",
+      "-e",
+      "console.log(require.resolve('playwright'))"
+    ],
+    "cwd": "/Users/xumanchun/Documents/agent项目/AI-Robot-latest",
+    "started_utc": "2026-10-17T03:32:00.805564+00:00",
+    "exit_code": 1,
+    "elapsed_seconds": 0.196,
+    "network_guard": false,
+    "output": "playwright-availability.txt",
+    "output_sha256": "97fb0a86bae03410635d0c6953754a99dfcde6c160653b86e76a19bddb832e78"
+  },
+  {
+    "id": "python311-availability",
+    "argv": [
+      "/Library/Frameworks/Python.framework/Versions/3.13/bin/python3",
+      "-c",
+      "import shutil,json,pathlib; print(json.dumps({\"python3.11\":shutil.which(\"python3.11\"),\"framework_versions\":[p.name for p in pathlib.Path(\"/Library/Frameworks/Python.framework/Versions\").iterdir()]},indent=2))"
+    ],
+    "cwd": "/Users/xumanchun/Documents/agent项目/AI-Robot-latest",
+    "started_utc": "2026-10-17T03:32:01.001628+00:00",
+    "exit_code": 0,
+    "elapsed_seconds": 0.038,
+    "network_guard": false,
+    "output": "python311-availability.txt",
+    "output_sha256": "bd3e16ee0ff17a0928937da9b411c14e1dd09590041d171ac408dcb7c1999a47"
+  },
+  {
+    "id": "registry-network-probe",
+    "argv": [
+      "/Users/xumanchun/Documents/agent项目/AI-Robot-latest/.venv/bin/python",
+      "-c",
+      "import socket,ssl,urllib.request,urllib.error,certifi;\nfor host in [\"registry-1.docker.io\",\"auth.docker.io\"]:\n try: print(\"DNS\",host,socket.getaddrinfo(host,443))\n except Exception as e: print(type(e).__name__,str(e))\nfor url in [\"https://registry-1.docker.io/v2/\",\"https://auth.docker.io/token?service=registry.docker.io&scope=repository:library/golang:pull\"]:\n try:\n  with urllib.request.urlopen(url,context=ssl.create_default_context(cafile=certifi.where()),timeout=20) as r: print(\"TLS\",url,r.status)\n except urllib.error.HTTPError as e: print(\"TLS reached HTTP\",e.code)\n except Exception as e: print(type(e).__name__,str(e))"
+    ],
+    "cwd": "/Users/xumanchun/Documents/agent项目/AI-Robot-latest",
+    "started_utc": "2026-10-17T03:32:01.039991+00:00",
+    "exit_code": 0,
+    "elapsed_seconds": 1.431,
+    "network_guard": false,
+    "output": "registry-network-probe.txt",
+    "output_sha256": "676798b3449baee00dede46b83b150b0b1a7edc765872a8d6291233cb21d50c1"
+  }
+]

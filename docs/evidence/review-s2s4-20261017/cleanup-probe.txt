@@ -1,0 +1,28 @@
+CLEANUP_BUDGET {"configured": 0.001, "timeouts_used": [90, 90, 15], "status": "passed"}
+/Users/xumanchun/Documents/agent项目/AI-Robot-latest/.venv/lib/python3.13/site-packages/jieba/__init__.py:44: SyntaxWarning: invalid escape sequence '\.'
+  re_han_default = re.compile("([\u4E00-\u9FD5a-zA-Z0-9+#&\._%\-]+)", re.U)
+/Users/xumanchun/Documents/agent项目/AI-Robot-latest/.venv/lib/python3.13/site-packages/jieba/__init__.py:46: SyntaxWarning: invalid escape sequence '\s'
+  re_skip_default = re.compile("(\r\n|\s)", re.U)
+/Users/xumanchun/Documents/agent项目/AI-Robot-latest/.venv/lib/python3.13/site-packages/jieba/finalseg/__init__.py:78: SyntaxWarning: invalid escape sequence '\.'
+  re_skip = re.compile("([a-zA-Z0-9]+(?:\.\d+)?%?)")
+test_configured_cleanup_budget_reaches_docker_adapter (__main__.ReviewProbes.test_configured_cleanup_budget_reaches_docker_adapter) ... FAIL
+
+======================================================================
+FAIL: test_configured_cleanup_budget_reaches_docker_adapter (__main__.ReviewProbes.test_configured_cleanup_budget_reaches_docker_adapter)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Library/Frameworks/Python.framework/Versions/3.13/lib/python3.13/asyncio/runners.py", line 118, in run
+    return self._loop.run_until_complete(task)
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^
+  File "/Library/Frameworks/Python.framework/Versions/3.13/lib/python3.13/asyncio/base_events.py", line 725, in run_until_complete
+    return future.result()
+           ~~~~~~~~~~~~~^^
+  File "/Users/xumanchun/Documents/agent项目/AI-Robot-latest/docs/evidence/review-s2s4-20261017/probes.py", line 148, in test_configured_cleanup_budget_reaches_docker_adapter
+    self.assertIn(cfg.cleanup_timeout, observed)
+    ~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: 0.001 not found in [90, 90, 15]
+
+----------------------------------------------------------------------
+Ran 1 test in 0.039s
+
+FAILED (failures=1)

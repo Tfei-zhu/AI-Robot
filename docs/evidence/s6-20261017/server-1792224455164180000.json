@@ -1,0 +1,16 @@
+{
+  "argv": [
+    "/Users/xumanchun/Documents/agent项目/AI-Robot-latest/.venv/bin/python",
+    "scripts/multi_agent_dashboard_server.py",
+    "--db",
+    "/Users/xumanchun/Documents/agent项目/AI-Robot-latest/docs/evidence/s6-20261017/browser.sqlite3",
+    "--port",
+    "8766",
+    "--docker"
+  ],
+  "started_utc": "2026-10-17T08:07:35.163619+00:00",
+  "exit_code": -15,
+  "termination": "test harness stopped after browser checks",
+  "log": "server-1792224455164180000.txt",
+  "log_sha256": "678c58832a727e2acec1a86ab13e57ff706494932fbbd27bd448d507b58dc3e3"
+}

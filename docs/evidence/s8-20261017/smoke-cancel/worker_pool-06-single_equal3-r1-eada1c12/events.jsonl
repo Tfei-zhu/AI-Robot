@@ -1,0 +1,4 @@
+{"type": "go_start", "run_id": "fcb3cc6d2ac4400d91d5e43c0a87fdc8", "workflow_version": "single-v1"}
+{"type": "go_stage", "stage": "retrieval", "message": "正在检索社区参考资料", "run_id": "fcb3cc6d2ac4400d91d5e43c0a87fdc8"}
+{"type": "go_call", "tools": 1, "run_id": "fcb3cc6d2ac4400d91d5e43c0a87fdc8"}
+{"type": "go_stage", "stage": "retrieval", "message": "same frozen empty retrieval for every arm", "sources": [], "run_id": "fcb3cc6d2ac4400d91d5e43c0a87fdc8"}

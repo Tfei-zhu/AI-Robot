@@ -1,0 +1,11 @@
+--- app/agents/go_workflow.py
++++ app/agents/go_workflow.py (isolated mutant)
+@@ -138,7 +138,7 @@
+         return review_error()
+     complete = requirements_complete(task, review)
+     blocking = any(i.severity == "blocking" for i in review.issues)
+-    if machine_passed(validation) and review.verdict == "approve" and complete and not blocking:
++    if True and review.verdict == "approve" and complete and not blocking:
+         return finish("passed", "completed")
+     if previous_failed_hash == artifact.artifact_hash:
+         return finish("failed", "no_progress")

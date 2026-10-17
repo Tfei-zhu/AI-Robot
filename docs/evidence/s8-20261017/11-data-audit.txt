@@ -1,0 +1,1 @@
+{"conditions": 30, "unique_requirements": 12, "cross_split_groups": 3, "inference_eligible": false}

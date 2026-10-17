@@ -1,0 +1,50 @@
+{
+  "final": {
+    "correct": null,
+    "checks": [
+      {
+        "id": "r-values",
+        "status": "unknown",
+        "tests": [
+          "TestEvalChannelValues"
+        ]
+      },
+      {
+        "id": "r-partial",
+        "status": "unknown",
+        "tests": [
+          "TestEvalChannelPartialCancel"
+        ]
+      }
+    ],
+    "reason": "unverified",
+    "artifact_hash": null,
+    "scorer_input_hash": null,
+    "report": null,
+    "elapsed_ms": 0.01
+  },
+  "initial": {
+    "correct": null,
+    "checks": [
+      {
+        "id": "r-values",
+        "status": "unknown",
+        "tests": [
+          "TestEvalChannelValues"
+        ]
+      },
+      {
+        "id": "r-partial",
+        "status": "unknown",
+        "tests": [
+          "TestEvalChannelPartialCancel"
+        ]
+      }
+    ],
+    "reason": "unverified",
+    "artifact_hash": null,
+    "scorer_input_hash": null,
+    "report": null,
+    "elapsed_ms": 0.01
+  }
+}

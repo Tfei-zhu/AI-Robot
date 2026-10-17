@@ -3,6 +3,7 @@ import json
 import sqlite3
 import threading
 from pathlib import Path
+from app.go_validation.contracts import GoTaskResult
 
 
 class GoTaskStore:
@@ -23,13 +24,19 @@ class GoTaskStore:
         return self._connection
 
     def save(self, run_id: str, owner: str, result: dict):
+        # Apply the same server success invariant at the persistence boundary.
+        # Defaults keep historical reports readable without a schema migration.
+        report = GoTaskResult.model_validate(result)
+        if report.run_id != run_id:
+            raise ValueError("报告 run_id 与存储键不一致")
+        serialized = report.model_dump_json()
         with self._lock:
             db = self._db()
             existing = db.execute("SELECT owner FROM go_tasks WHERE run_id=?", (run_id,)).fetchone()
             if existing and existing[0] != owner:
                 raise ValueError("任务归属不一致")
             db.execute("INSERT INTO go_tasks VALUES (?, ?, ?) ON CONFLICT(run_id) DO UPDATE SET result=excluded.result",
-                       (run_id, owner, json.dumps(result, ensure_ascii=False)))
+                       (run_id, owner, serialized))
             db.commit()
 
     def get(self, run_id: str, owner: str):

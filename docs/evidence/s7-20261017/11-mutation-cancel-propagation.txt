@@ -1,0 +1,32 @@
+F                                                                        [100%]
+=================================== FAILURES ===================================
+_____ ClosedLoopTests.test_cancellation_propagates_and_no_further_requests _____
+
+self = <test_multi_agent_workflow.ClosedLoopTests testMethod=test_cancellation_propagates_and_no_further_requests>
+
+    async def test_cancellation_propagates_and_no_further_requests(self):
+        cancelled = asyncio.CancelledError()
+        workflow, sup, code = make(plan_json(),
+                                   code_replies=[cancelled])
+>       with self.assertRaises(asyncio.CancelledError):
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       AssertionError: CancelledError not raised
+
+tests/test_multi_agent_workflow.py:251: AssertionError
+=============================== warnings summary ===============================
+../../../Users/xumanchun/Documents/agent项目/AI-Robot-latest/.venv/lib/python3.13/site-packages/jieba/__init__.py:44
+  /Users/xumanchun/Documents/agent项目/AI-Robot-latest/.venv/lib/python3.13/site-packages/jieba/__init__.py:44: SyntaxWarning: invalid escape sequence '\.'
+    re_han_default = re.compile("([\u4E00-\u9FD5a-zA-Z0-9+#&\._%\-]+)", re.U)
+
+../../../Users/xumanchun/Documents/agent项目/AI-Robot-latest/.venv/lib/python3.13/site-packages/jieba/__init__.py:46
+  /Users/xumanchun/Documents/agent项目/AI-Robot-latest/.venv/lib/python3.13/site-packages/jieba/__init__.py:46: SyntaxWarning: invalid escape sequence '\s'
+    re_skip_default = re.compile("(\r\n|\s)", re.U)
+
+../../../Users/xumanchun/Documents/agent项目/AI-Robot-latest/.venv/lib/python3.13/site-packages/jieba/finalseg/__init__.py:78
+  /Users/xumanchun/Documents/agent项目/AI-Robot-latest/.venv/lib/python3.13/site-packages/jieba/finalseg/__init__.py:78: SyntaxWarning: invalid escape sequence '\.'
+    re_skip = re.compile("([a-zA-Z0-9]+(?:\.\d+)?%?)")
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ============================
+FAILED tests/test_multi_agent_workflow.py::ClosedLoopTests::test_cancellation_propagates_and_no_further_requests
+1 failed, 3 warnings in 1.16s

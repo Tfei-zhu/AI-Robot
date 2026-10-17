@@ -1,0 +1,136 @@
+{
+  "case": {
+    "id": "live2-channel-nil_deadline-2",
+    "scenario": "channel",
+    "split": "holdout",
+    "group_id": "channel/nil_deadline",
+    "fixture_profile": "clean",
+    "feasible": true,
+    "marker": null,
+    "values": [
+      13,
+      -7,
+      0,
+      17,
+      -31,
+      2
+    ],
+    "requirement": "累加 channel 数值直到关闭；取消时返回 ctx.Err()，并保留已收到数值的部分和；nil channel 也响应取消。 nil channel 不会产生值，context 在 15 毫秒后到期时须返回 0 和原始 context.DeadlineExceeded。",
+    "checklist": [
+      {
+        "id": "r-values",
+        "text": "关闭后的正确总和",
+        "tests": [
+          "TestEvalChannelValues"
+        ],
+        "required": true
+      },
+      {
+        "id": "r-partial",
+        "text": "取消保留部分和",
+        "tests": [
+          "TestEvalChannelPartialCancel"
+        ],
+        "required": true
+      },
+      {
+        "id": "r-case",
+        "text": "nil channel 不会产生值，context 在 15 毫秒后到期时须返回 0 和原始 context.DeadlineExceeded。",
+        "tests": [
+          "TestEvalCaseChannelNilDeadline2"
+        ],
+        "required": true
+      }
+    ],
+    "family_rationale": "同一 nil_deadline 调用结构的两个边界值变体整体分集；接口 channel 仍与其他族相关。",
+    "extra_probe": "package example\nimport (\"context\";\"testing\";\"time\")\nfunc TestEvalCaseChannelNilDeadline2(t *testing.T) {\nctx,cancel:=context.WithTimeout(context.Background(),15*time.Millisecond);defer cancel()\n    got,e:=SumChannel(ctx,nil);if got!=0||e!=context.DeadlineExceeded{t.Fatal(got,e)}\n}\n"
+  },
+  "independent": {
+    "correct": true,
+    "checks": [
+      {
+        "id": "r-values",
+        "status": "pass",
+        "tests": [
+          "TestEvalChannelValues"
+        ]
+      },
+      {
+        "id": "r-partial",
+        "status": "pass",
+        "tests": [
+          "TestEvalChannelPartialCancel"
+        ]
+      },
+      {
+        "id": "r-case",
+        "status": "pass",
+        "tests": [
+          "TestEvalCaseChannelNilDeadline2"
+        ]
+      }
+    ],
+    "reason": "independent_pass",
+    "artifact_hash": "f81ea5e020848ec13dbb24d2507276a2b8ca0bc18f53188e337d473c9bb87d19",
+    "scorer_input_hash": "cd00db3a4fbb0b472716a99dde47138a8cf465c8543af50de14b6ed84d18b307",
+    "report": {
+      "status": "passed",
+      "go_version": "1.26.2",
+      "stages": [
+        {
+          "stage": "policy",
+          "exit_code": 0,
+          "output": "单包、源码及标准库依赖校验通过",
+          "elapsed_ms": 0.0,
+          "truncated": false
+        },
+        {
+          "stage": "compile",
+          "exit_code": 0,
+          "output": "",
+          "elapsed_ms": 63.0,
+          "truncated": false
+        },
+        {
+          "stage": "vet",
+          "exit_code": 0,
+          "output": "",
+          "elapsed_ms": 4117.0,
+          "truncated": false
+        },
+        {
+          "stage": "test",
+          "exit_code": 0,
+          "output": "{\"Time\":\"2026-10-17T09:32:09.956253012Z\",\"Action\":\"start\",\"Package\":\"airobot.example\"}\n{\"Time\":\"2026-10-17T09:32:09.959127346Z\",\"Action\":\"run\",\"Package\":\"airobot.example\",\"Test\":\"TestEvalCaseChannelNilDeadline2\"}\n{\"Time\":\"2026-10-17T09:32:09.959146096Z\",\"Action\":\"output\",\"Package\":\"airobot.example\",\"Test\":\"TestEvalCaseChannelNilDeadline2\",\"Output\":\"=== RUN   TestEvalCaseChannelNilDeadline2\\n\"}\n{\"Time\":\"2026-10-17T09:32:09.974450137Z\",\"Action\":\"output\",\"Package\":\"airobot.example\",\"Test\":\"TestEvalCaseChannelNilDeadline2\",\"Output\":\"--- PASS: TestEvalCaseChannelNilDeadline2 (0.02s)\\n\"}\n{\"Time\":\"2026-10-17T09:32:09.974477512Z\",\"Action\":\"pass\",\"Package\":\"airobot.example\",\"Test\":\"TestEvalCaseChannelNilDeadline2\",\"Elapsed\":0.02}\n{\"Time\":\"2026-10-17T09:32:09.974492887Z\",\"Action\":\"run\",\"Package\":\"airobot.example\",\"Test\":\"TestEvalChannelValues\"}\n{\"Time\":\"2026-10-17T09:32:09.974494554Z\",\"Action\":\"output\",\"Package\":\"airobot.example\",\"Test\":\"TestEvalChannelValues\",\"Output\":\"=== RUN   TestEvalChannelValues\\n\"}\n{\"Time\":\"2026-10-17T09:32:09.974496554Z\",\"Action\":\"output\",\"Package\":\"airobot.example\",\"Test\":\"TestEvalChannelValues\",\"Output\":\"--- PASS: TestEvalChannelValues (0.00s)\\n\"}\n{\"Time\":\"2026-10-17T09:32:09.974501304Z\",\"Action\":\"pass\",\"Package\":\"airobot.example\",\"Test\":\"TestEvalChannelValues\",\"Elapsed\":0}\n{\"Time\":\"2026-10-17T09:32:09.974503054Z\",\"Action\":\"run\",\"Package\":\"airobot.example\",\"Test\":\"TestEvalChannelPartialCancel\"}\n{\"Time\":\"2026-10-17T09:32:09.974504179Z\",\"Action\":\"output\",\"Package\":\"airobot.example\",\"Test\":\"TestEvalChannelPartialCancel\",\"Output\":\"=== RUN   TestEvalChannelPartialCancel\\n\"}\n{\"Time\":\"2026-10-17T09:32:09.974510971Z\",\"Action\":\"output\",\"Package\":\"airobot.example\",\"Test\":\"TestEvalChannelPartialCancel\",\"Output\":\"--- PASS: TestEvalChannelPartialCancel (0.00s)\\n\"}\n{\"Time\":\"2026-10-17T09:32:09.974512221Z\",\"Action\":\"pass\",\"Package\":\"airobot.example\",\"Test\":\"TestEvalChannelPartialCancel\",\"Elapsed\":0}\n{\"Time\":\"2026-10-17T09:32:09.974513596Z\",\"Action\":\"run\",\"Package\":\"airobot.example\",\"Test\":\"TestServerChannelSumAndClose\"}\n{\"Time\":\"2026-10-17T09:32:09.974514637Z\",\"Action\":\"output\",\"Package\":\"airobot.example\",\"Test\":\"TestServerChannelSumAndClose\",\"Output\":\"=== RUN   TestServerChannelSumAndClose\\n\"}\n{\"Time\":\"2026-10-17T09:32:09.974516054Z\",\"Action\":\"output\",\"Package\":\"airobot.example\",\"Test\":\"TestServerChannelSumAndClose\",\"Output\":\"--- PASS: TestServerChannelSumAndClose (0.00s)\\n\"}\n{\"Time\":\"2026-10-17T09:32:09.974517179Z\",\"Action\":\"pass\",\"Package\":\"airobot.example\",\"Test\":\"TestServerChannelSumAndClose\",\"Elapsed\":0}\n{\"Time\":\"2026-10-17T09:32:09.974518346Z\",\"Action\":\"run\",\"Package\":\"airobot.example\",\"Test\":\"TestServerNilChannelCancellation\"}\n{\"Time\":\"2026-10-17T09:32:09.974519387Z\",\"Action\":\"output\",\"Package\":\"airobot.example\",\"Test\":\"TestServerNilChannelCancellation\",\"Output\":\"=== RUN   TestServerNilChannelCancellation\\n\"}\n{\"Time\":\"2026-10-17T09:32:10.004724012Z\",\"Action\":\"output\",\"Package\":\"airobot.example\",\"Test\":\"TestServerNilChannelCancellation\",\"Output\":\"--- PASS: TestServerNilChannelCancellation (0.03s)\\n\"}\n{\"Time\":\"2026-10-17T09:32:10.004754346Z\",\"Action\":\"pass\",\"Package\":\"airobot.example\",\"Test\":\"TestServerNilChannelCancellation\",\"Elapsed\":0.03}\n{\"Time\":\"2026-10-17T09:32:10.004758637Z\",\"Action\":\"run\",\"Package\":\"airobot.example\",\"Test\":\"TestServerChannelCancellation\"}\n{\"Time\":\"2026-10-17T09:32:10.004760054Z\",\"Action\":\"output\",\"Package\":\"airobot.example\",\"Test\":\"TestServerChannelCancellation\",\"Output\":\"=== RUN   TestServerChannelCancellation\\n\"}\n{\"Time\":\"2026-10-17T09:32:10.004763596Z\",\"Action\":\"output\",\"Package\":\"airobot.example\",\"Test\":\"TestServerChannelCancellation\",\"Output\":\"--- PASS: TestServerChannelCancellation (0.00s)\\n\"}\n{\"Time\":\"2026-10-17T09:32:10.004764887Z\",\"Action\":\"pass\",\"Package\":\"airobot.example\",\"Test\":\"TestServerChannelCancellation\",\"Elapsed\":0}\n{\"Time\":\"2026-10-17T09:32:10.004768346Z\",\"Action\":\"output\",\"Package\":\"airobot.example\",\"Output\":\"PASS\\n\"}\n{\"Time\":\"2026-10-17T09:32:10.005125971Z\",\"Action\":\"output\",\"Package\":\"airobot.example\",\"Output\":\"ok  \\tairobot.example\\t0.048s\\n\"}\n{\"Time\":\"2026-10-17T09:32:10.005138512Z\",\"Action\":\"pass\",\"Package\":\"airobot.example\",\"Elapsed\":0.049}\n",
+          "elapsed_ms": 449.0,
+          "truncated": false
+        }
+      ],
+      "elapsed_ms": 5244.4,
+      "container_removed": true,
+      "artifact_hash": "cd00db3a4fbb0b472716a99dde47138a8cf465c8543af50de14b6ed84d18b307",
+      "task_id": null,
+      "artifact_id": null,
+      "round": null
+    },
+    "scorer_files": [
+      {
+        "name": "solution.go",
+        "content": "package example\nimport \"context\"\n// nil channel 禁用读分支，取消仍可唤醒 select。\nfunc SumChannel(ctx context.Context,input <-chan int)(int,error){\n    sum:=0\n    for {if err:=ctx.Err();err!=nil{return sum,err}\n        select {case <-ctx.Done():return sum,ctx.Err()\n        case v,ok:=<-input:if !ok{return sum,nil};sum+=v}\n    }\n}\n"
+      },
+      {
+        "name": "server_acceptance_test.go",
+        "content": "package example\nimport (\"context\"; \"errors\"; \"testing\"; \"time\")\nfunc TestServerChannelSumAndClose(t *testing.T) {\n    ch:=make(chan int,4);for _,v:=range []int{3,-1,0,8}{ch<-v};close(ch)\n    sum,err:=SumChannel(context.Background(),ch)\n    if err!=nil||sum!=10{t.Fatalf(\"求和错误: %v %v\",sum,err)}\n    empty:=make(chan int);close(empty)\n    sum,err=SumChannel(context.Background(),empty)\n    if err!=nil||sum!=0{t.Fatal(\"空 channel 错误\")}\n}\nfunc TestServerNilChannelCancellation(t *testing.T) {\n    ctx,cancel:=context.WithTimeout(context.Background(),30*time.Millisecond);defer cancel()\n    if _,err:=SumChannel(ctx,nil);!errors.Is(err,context.DeadlineExceeded){t.Fatal(\"nil channel 必须响应取消\")}\n}\nfunc TestServerChannelCancellation(t *testing.T) {\n    ctx,cancel:=context.WithCancel(context.Background());cancel()\n    if _,err:=SumChannel(ctx,make(chan int));!errors.Is(err,context.Canceled){t.Fatal(\"必须传播取消错误\")}\n}\n"
+      },
+      {
+        "name": "eval_independent_test.go",
+        "content": "package example\nimport (\"context\";\"testing\";\"time\")\nfunc TestEvalChannelValues(t *testing.T) {\n    values:=[]int{13,-7,0,17,-31,2};ch:=make(chan int,len(values));want:=0\n    for _,x:=range values{ch<-x;want+=x};close(ch)\n    got,err:=SumChannel(context.Background(),ch);if err!=nil||got!=want{t.Fatal(got,err,want)}\n}\nfunc TestEvalChannelPartialCancel(t *testing.T) {\n    ctx,cancel:=context.WithCancel(context.Background());defer cancel()\n    ch:=make(chan int);done:=make(chan struct{n int;err error},1)\n    go func(){n,e:=SumChannel(ctx,ch);done<-struct{n int;err error}{n,e}}()\n    ch<-17;ch<-(-4);cancel()\n    select {case got:=<-done:if got.n!=13||got.err!=context.Canceled{t.Fatal(got)};case <-time.After(time.Second):t.Fatal(\"cancel ignored\")}\n}\n"
+      },
+      {
+        "name": "eval_case_test.go",
+        "content": "package example\nimport (\"context\";\"testing\";\"time\")\nfunc TestEvalCaseChannelNilDeadline2(t *testing.T) {\nctx,cancel:=context.WithTimeout(context.Background(),15*time.Millisecond);defer cancel()\n    got,e:=SumChannel(ctx,nil);if got!=0||e!=context.DeadlineExceeded{t.Fatal(got,e)}\n}\n"
+      }
+    ],
+    "elapsed_ms": 5245.16
+  }
+}

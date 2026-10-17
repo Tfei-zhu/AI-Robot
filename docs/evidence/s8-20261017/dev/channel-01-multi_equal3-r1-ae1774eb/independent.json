@@ -1,0 +1,156 @@
+{
+  "final": {
+    "correct": true,
+    "checks": [
+      {
+        "id": "r-values",
+        "status": "pass",
+        "tests": [
+          "TestEvalChannelValues"
+        ]
+      },
+      {
+        "id": "r-partial",
+        "status": "pass",
+        "tests": [
+          "TestEvalChannelPartialCancel"
+        ]
+      }
+    ],
+    "reason": "independent_pass",
+    "artifact_hash": "ba6d19f814a5400e08ec2afe0beb469a4162bc9534f741147367098f66a34d56",
+    "scorer_input_hash": "59a93e9842bdac11f2fd92e2f360751ab6f611930a91d0491e98847a95b925ce",
+    "report": {
+      "status": "passed",
+      "go_version": "1.26.2",
+      "stages": [
+        {
+          "stage": "policy",
+          "exit_code": 0,
+          "output": "单包、源码及标准库依赖校验通过",
+          "elapsed_ms": 0.0,
+          "truncated": false
+        },
+        {
+          "stage": "compile",
+          "exit_code": 0,
+          "output": "",
+          "elapsed_ms": 35.0,
+          "truncated": false
+        },
+        {
+          "stage": "vet",
+          "exit_code": 0,
+          "output": "",
+          "elapsed_ms": 1584.0,
+          "truncated": false
+        },
+        {
+          "stage": "test",
+          "exit_code": 0,
+          "output": "{\"Time\":\"2026-10-17T09:02:44.497432084Z\",\"Action\":\"start\",\"Package\":\"airobot.example\"}\n{\"Time\":\"2026-10-17T09:02:44.498977875Z\",\"Action\":\"run\",\"Package\":\"airobot.example\",\"Test\":\"TestEvalChannelValues\"}\n{\"Time\":\"2026-10-17T09:02:44.498988667Z\",\"Action\":\"output\",\"Package\":\"airobot.example\",\"Test\":\"TestEvalChannelValues\",\"Output\":\"=== RUN   TestEvalChannelValues\\n\"}\n{\"Time\":\"2026-10-17T09:02:44.499013667Z\",\"Action\":\"output\",\"Package\":\"airobot.example\",\"Test\":\"TestEvalChannelValues\",\"Output\":\"--- PASS: TestEvalChannelValues (0.00s)\\n\"}\n{\"Time\":\"2026-10-17T09:02:44.499015459Z\",\"Action\":\"pass\",\"Package\":\"airobot.example\",\"Test\":\"TestEvalChannelValues\",\"Elapsed\":0}\n{\"Time\":\"2026-10-17T09:02:44.499018292Z\",\"Action\":\"run\",\"Package\":\"airobot.example\",\"Test\":\"TestEvalChannelPartialCancel\"}\n{\"Time\":\"2026-10-17T09:02:44.499019459Z\",\"Action\":\"output\",\"Package\":\"airobot.example\",\"Test\":\"TestEvalChannelPartialCancel\",\"Output\":\"=== RUN   TestEvalChannelPartialCancel\\n\"}\n{\"Time\":\"2026-10-17T09:02:44.499022334Z\",\"Action\":\"output\",\"Package\":\"airobot.example\",\"Test\":\"TestEvalChannelPartialCancel\",\"Output\":\"--- PASS: TestEvalChannelPartialCancel (0.00s)\\n\"}\n{\"Time\":\"2026-10-17T09:02:44.499023542Z\",\"Action\":\"pass\",\"Package\":\"airobot.example\",\"Test\":\"TestEvalChannelPartialCancel\",\"Elapsed\":0}\n{\"Time\":\"2026-10-17T09:02:44.499025042Z\",\"Action\":\"run\",\"Package\":\"airobot.example\",\"Test\":\"TestServerChannelSumAndClose\"}\n{\"Time\":\"2026-10-17T09:02:44.499026042Z\",\"Action\":\"output\",\"Package\":\"airobot.example\",\"Test\":\"TestServerChannelSumAndClose\",\"Output\":\"=== RUN   TestServerChannelSumAndClose\\n\"}\n{\"Time\":\"2026-10-17T09:02:44.499028375Z\",\"Action\":\"output\",\"Package\":\"airobot.example\",\"Test\":\"TestServerChannelSumAndClose\",\"Output\":\"--- PASS: TestServerChannelSumAndClose (0.00s)\\n\"}\n{\"Time\":\"2026-10-17T09:02:44.499029542Z\",\"Action\":\"pass\",\"Package\":\"airobot.example\",\"Test\":\"TestServerChannelSumAndClose\",\"Elapsed\":0}\n{\"Time\":\"2026-10-17T09:02:44.499030959Z\",\"Action\":\"run\",\"Package\":\"airobot.example\",\"Test\":\"TestServerNilChannelCancellation\"}\n{\"Time\":\"2026-10-17T09:02:44.499032125Z\",\"Action\":\"output\",\"Package\":\"airobot.example\",\"Test\":\"TestServerNilChannelCancellation\",\"Output\":\"=== RUN   TestServerNilChannelCancellation\\n\"}\n{\"Time\":\"2026-10-17T09:02:44.529339667Z\",\"Action\":\"output\",\"Package\":\"airobot.example\",\"Test\":\"TestServerNilChannelCancellation\",\"Output\":\"--- PASS: TestServerNilChannelCancellation (0.03s)\\n\"}\n{\"Time\":\"2026-10-17T09:02:44.529363459Z\",\"Action\":\"pass\",\"Package\":\"airobot.example\",\"Test\":\"TestServerNilChannelCancellation\",\"Elapsed\":0.03}\n{\"Time\":\"2026-10-17T09:02:44.529382917Z\",\"Action\":\"run\",\"Package\":\"airobot.example\",\"Test\":\"TestServerChannelCancellation\"}\n{\"Time\":\"2026-10-17T09:02:44.529387375Z\",\"Action\":\"output\",\"Package\":\"airobot.example\",\"Test\":\"TestServerChannelCancellation\",\"Output\":\"=== RUN   TestServerChannelCancellation\\n\"}\n{\"Time\":\"2026-10-17T09:02:44.529390709Z\",\"Action\":\"output\",\"Package\":\"airobot.example\",\"Test\":\"TestServerChannelCancellation\",\"Output\":\"--- PASS: TestServerChannelCancellation (0.00s)\\n\"}\n{\"Time\":\"2026-10-17T09:02:44.529392292Z\",\"Action\":\"pass\",\"Package\":\"airobot.example\",\"Test\":\"TestServerChannelCancellation\",\"Elapsed\":0}\n{\"Time\":\"2026-10-17T09:02:44.529394542Z\",\"Action\":\"output\",\"Package\":\"airobot.example\",\"Output\":\"PASS\\n\"}\n{\"Time\":\"2026-10-17T09:02:44.529712667Z\",\"Action\":\"output\",\"Package\":\"airobot.example\",\"Output\":\"ok  \\tairobot.example\\t0.032s\\n\"}\n{\"Time\":\"2026-10-17T09:02:44.529722167Z\",\"Action\":\"pass\",\"Package\":\"airobot.example\",\"Elapsed\":0.032}\n",
+          "elapsed_ms": 256.0,
+          "truncated": false
+        }
+      ],
+      "elapsed_ms": 2201.1,
+      "container_removed": true,
+      "artifact_hash": "59a93e9842bdac11f2fd92e2f360751ab6f611930a91d0491e98847a95b925ce",
+      "task_id": null,
+      "artifact_id": null,
+      "round": null
+    },
+    "scorer_files": [
+      {
+        "name": "solution.go",
+        "content": "package example\nimport \"context\"\n// nil channel 禁用读分支，取消仍可唤醒 select。\nfunc SumChannel(ctx context.Context,input <-chan int)(int,error){\n    sum:=0\n    for {if err:=ctx.Err();err!=nil{return sum,err}\n        select {case <-ctx.Done():return sum,ctx.Err()\n        case v,ok:=<-input:if !ok{return sum,nil};sum+=v}\n    }\n}\n\n// fixture version 1"
+      },
+      {
+        "name": "server_acceptance_test.go",
+        "content": "package example\nimport (\"context\"; \"errors\"; \"testing\"; \"time\")\nfunc TestServerChannelSumAndClose(t *testing.T) {\n    ch:=make(chan int,4);for _,v:=range []int{3,-1,0,8}{ch<-v};close(ch)\n    sum,err:=SumChannel(context.Background(),ch)\n    if err!=nil||sum!=10{t.Fatalf(\"求和错误: %v %v\",sum,err)}\n    empty:=make(chan int);close(empty)\n    sum,err=SumChannel(context.Background(),empty)\n    if err!=nil||sum!=0{t.Fatal(\"空 channel 错误\")}\n}\nfunc TestServerNilChannelCancellation(t *testing.T) {\n    ctx,cancel:=context.WithTimeout(context.Background(),30*time.Millisecond);defer cancel()\n    if _,err:=SumChannel(ctx,nil);!errors.Is(err,context.DeadlineExceeded){t.Fatal(\"nil channel 必须响应取消\")}\n}\nfunc TestServerChannelCancellation(t *testing.T) {\n    ctx,cancel:=context.WithCancel(context.Background());cancel()\n    if _,err:=SumChannel(ctx,make(chan int));!errors.Is(err,context.Canceled){t.Fatal(\"必须传播取消错误\")}\n}\n"
+      },
+      {
+        "name": "eval_independent_test.go",
+        "content": "package example\nimport (\"context\";\"testing\";\"time\")\nfunc TestEvalChannelValues(t *testing.T) {\n    values:=[]int{13,-7,0,17,-31,2};ch:=make(chan int,len(values));want:=0\n    for _,x:=range values{ch<-x;want+=x};close(ch)\n    got,err:=SumChannel(context.Background(),ch);if err!=nil||got!=want{t.Fatal(got,err,want)}\n}\nfunc TestEvalChannelPartialCancel(t *testing.T) {\n    ctx,cancel:=context.WithCancel(context.Background());defer cancel()\n    ch:=make(chan int);done:=make(chan struct{n int;err error},1)\n    go func(){n,e:=SumChannel(ctx,ch);done<-struct{n int;err error}{n,e}}()\n    ch<-17;ch<-(-4);cancel()\n    select {case got:=<-done:if got.n!=13||got.err!=context.Canceled{t.Fatal(got)};case <-time.After(time.Second):t.Fatal(\"cancel ignored\")}\n}\n"
+      }
+    ],
+    "elapsed_ms": 2201.55
+  },
+  "initial": {
+    "correct": true,
+    "checks": [
+      {
+        "id": "r-values",
+        "status": "pass",
+        "tests": [
+          "TestEvalChannelValues"
+        ]
+      },
+      {
+        "id": "r-partial",
+        "status": "pass",
+        "tests": [
+          "TestEvalChannelPartialCancel"
+        ]
+      }
+    ],
+    "reason": "independent_pass",
+    "artifact_hash": "ba6d19f814a5400e08ec2afe0beb469a4162bc9534f741147367098f66a34d56",
+    "scorer_input_hash": "59a93e9842bdac11f2fd92e2f360751ab6f611930a91d0491e98847a95b925ce",
+    "report": {
+      "status": "passed",
+      "go_version": "1.26.2",
+      "stages": [
+        {
+          "stage": "policy",
+          "exit_code": 0,
+          "output": "单包、源码及标准库依赖校验通过",
+          "elapsed_ms": 0.0,
+          "truncated": false
+        },
+        {
+          "stage": "compile",
+          "exit_code": 0,
+          "output": "",
+          "elapsed_ms": 35.0,
+          "truncated": false
+        },
+        {
+          "stage": "vet",
+          "exit_code": 0,
+          "output": "",
+          "elapsed_ms": 1584.0,
+          "truncated": false
+        },
+        {
+          "stage": "test",
+          "exit_code": 0,
+          "output": "{\"Time\":\"2026-10-17T09:02:44.497432084Z\",\"Action\":\"start\",\"Package\":\"airobot.example\"}\n{\"Time\":\"2026-10-17T09:02:44.498977875Z\",\"Action\":\"run\",\"Package\":\"airobot.example\",\"Test\":\"TestEvalChannelValues\"}\n{\"Time\":\"2026-10-17T09:02:44.498988667Z\",\"Action\":\"output\",\"Package\":\"airobot.example\",\"Test\":\"TestEvalChannelValues\",\"Output\":\"=== RUN   TestEvalChannelValues\\n\"}\n{\"Time\":\"2026-10-17T09:02:44.499013667Z\",\"Action\":\"output\",\"Package\":\"airobot.example\",\"Test\":\"TestEvalChannelValues\",\"Output\":\"--- PASS: TestEvalChannelValues (0.00s)\\n\"}\n{\"Time\":\"2026-10-17T09:02:44.499015459Z\",\"Action\":\"pass\",\"Package\":\"airobot.example\",\"Test\":\"TestEvalChannelValues\",\"Elapsed\":0}\n{\"Time\":\"2026-10-17T09:02:44.499018292Z\",\"Action\":\"run\",\"Package\":\"airobot.example\",\"Test\":\"TestEvalChannelPartialCancel\"}\n{\"Time\":\"2026-10-17T09:02:44.499019459Z\",\"Action\":\"output\",\"Package\":\"airobot.example\",\"Test\":\"TestEvalChannelPartialCancel\",\"Output\":\"=== RUN   TestEvalChannelPartialCancel\\n\"}\n{\"Time\":\"2026-10-17T09:02:44.499022334Z\",\"Action\":\"output\",\"Package\":\"airobot.example\",\"Test\":\"TestEvalChannelPartialCancel\",\"Output\":\"--- PASS: TestEvalChannelPartialCancel (0.00s)\\n\"}\n{\"Time\":\"2026-10-17T09:02:44.499023542Z\",\"Action\":\"pass\",\"Package\":\"airobot.example\",\"Test\":\"TestEvalChannelPartialCancel\",\"Elapsed\":0}\n{\"Time\":\"2026-10-17T09:02:44.499025042Z\",\"Action\":\"run\",\"Package\":\"airobot.example\",\"Test\":\"TestServerChannelSumAndClose\"}\n{\"Time\":\"2026-10-17T09:02:44.499026042Z\",\"Action\":\"output\",\"Package\":\"airobot.example\",\"Test\":\"TestServerChannelSumAndClose\",\"Output\":\"=== RUN   TestServerChannelSumAndClose\\n\"}\n{\"Time\":\"2026-10-17T09:02:44.499028375Z\",\"Action\":\"output\",\"Package\":\"airobot.example\",\"Test\":\"TestServerChannelSumAndClose\",\"Output\":\"--- PASS: TestServerChannelSumAndClose (0.00s)\\n\"}\n{\"Time\":\"2026-10-17T09:02:44.499029542Z\",\"Action\":\"pass\",\"Package\":\"airobot.example\",\"Test\":\"TestServerChannelSumAndClose\",\"Elapsed\":0}\n{\"Time\":\"2026-10-17T09:02:44.499030959Z\",\"Action\":\"run\",\"Package\":\"airobot.example\",\"Test\":\"TestServerNilChannelCancellation\"}\n{\"Time\":\"2026-10-17T09:02:44.499032125Z\",\"Action\":\"output\",\"Package\":\"airobot.example\",\"Test\":\"TestServerNilChannelCancellation\",\"Output\":\"=== RUN   TestServerNilChannelCancellation\\n\"}\n{\"Time\":\"2026-10-17T09:02:44.529339667Z\",\"Action\":\"output\",\"Package\":\"airobot.example\",\"Test\":\"TestServerNilChannelCancellation\",\"Output\":\"--- PASS: TestServerNilChannelCancellation (0.03s)\\n\"}\n{\"Time\":\"2026-10-17T09:02:44.529363459Z\",\"Action\":\"pass\",\"Package\":\"airobot.example\",\"Test\":\"TestServerNilChannelCancellation\",\"Elapsed\":0.03}\n{\"Time\":\"2026-10-17T09:02:44.529382917Z\",\"Action\":\"run\",\"Package\":\"airobot.example\",\"Test\":\"TestServerChannelCancellation\"}\n{\"Time\":\"2026-10-17T09:02:44.529387375Z\",\"Action\":\"output\",\"Package\":\"airobot.example\",\"Test\":\"TestServerChannelCancellation\",\"Output\":\"=== RUN   TestServerChannelCancellation\\n\"}\n{\"Time\":\"2026-10-17T09:02:44.529390709Z\",\"Action\":\"output\",\"Package\":\"airobot.example\",\"Test\":\"TestServerChannelCancellation\",\"Output\":\"--- PASS: TestServerChannelCancellation (0.00s)\\n\"}\n{\"Time\":\"2026-10-17T09:02:44.529392292Z\",\"Action\":\"pass\",\"Package\":\"airobot.example\",\"Test\":\"TestServerChannelCancellation\",\"Elapsed\":0}\n{\"Time\":\"2026-10-17T09:02:44.529394542Z\",\"Action\":\"output\",\"Package\":\"airobot.example\",\"Output\":\"PASS\\n\"}\n{\"Time\":\"2026-10-17T09:02:44.529712667Z\",\"Action\":\"output\",\"Package\":\"airobot.example\",\"Output\":\"ok  \\tairobot.example\\t0.032s\\n\"}\n{\"Time\":\"2026-10-17T09:02:44.529722167Z\",\"Action\":\"pass\",\"Package\":\"airobot.example\",\"Elapsed\":0.032}\n",
+          "elapsed_ms": 256.0,
+          "truncated": false
+        }
+      ],
+      "elapsed_ms": 2201.1,
+      "container_removed": true,
+      "artifact_hash": "59a93e9842bdac11f2fd92e2f360751ab6f611930a91d0491e98847a95b925ce",
+      "task_id": null,
+      "artifact_id": null,
+      "round": null
+    },
+    "scorer_files": [
+      {
+        "name": "solution.go",
+        "content": "package example\nimport \"context\"\n// nil channel 禁用读分支，取消仍可唤醒 select。\nfunc SumChannel(ctx context.Context,input <-chan int)(int,error){\n    sum:=0\n    for {if err:=ctx.Err();err!=nil{return sum,err}\n        select {case <-ctx.Done():return sum,ctx.Err()\n        case v,ok:=<-input:if !ok{return sum,nil};sum+=v}\n    }\n}\n\n// fixture version 1"
+      },
+      {
+        "name": "server_acceptance_test.go",
+        "content": "package example\nimport (\"context\"; \"errors\"; \"testing\"; \"time\")\nfunc TestServerChannelSumAndClose(t *testing.T) {\n    ch:=make(chan int,4);for _,v:=range []int{3,-1,0,8}{ch<-v};close(ch)\n    sum,err:=SumChannel(context.Background(),ch)\n    if err!=nil||sum!=10{t.Fatalf(\"求和错误: %v %v\",sum,err)}\n    empty:=make(chan int);close(empty)\n    sum,err=SumChannel(context.Background(),empty)\n    if err!=nil||sum!=0{t.Fatal(\"空 channel 错误\")}\n}\nfunc TestServerNilChannelCancellation(t *testing.T) {\n    ctx,cancel:=context.WithTimeout(context.Background(),30*time.Millisecond);defer cancel()\n    if _,err:=SumChannel(ctx,nil);!errors.Is(err,context.DeadlineExceeded){t.Fatal(\"nil channel 必须响应取消\")}\n}\nfunc TestServerChannelCancellation(t *testing.T) {\n    ctx,cancel:=context.WithCancel(context.Background());cancel()\n    if _,err:=SumChannel(ctx,make(chan int));!errors.Is(err,context.Canceled){t.Fatal(\"必须传播取消错误\")}\n}\n"
+      },
+      {
+        "name": "eval_independent_test.go",
+        "content": "package example\nimport (\"context\";\"testing\";\"time\")\nfunc TestEvalChannelValues(t *testing.T) {\n    values:=[]int{13,-7,0,17,-31,2};ch:=make(chan int,len(values));want:=0\n    for _,x:=range values{ch<-x;want+=x};close(ch)\n    got,err:=SumChannel(context.Background(),ch);if err!=nil||got!=want{t.Fatal(got,err,want)}\n}\nfunc TestEvalChannelPartialCancel(t *testing.T) {\n    ctx,cancel:=context.WithCancel(context.Background());defer cancel()\n    ch:=make(chan int);done:=make(chan struct{n int;err error},1)\n    go func(){n,e:=SumChannel(ctx,ch);done<-struct{n int;err error}{n,e}}()\n    ch<-17;ch<-(-4);cancel()\n    select {case got:=<-done:if got.n!=13||got.err!=context.Canceled{t.Fatal(got)};case <-time.After(time.Second):t.Fatal(\"cancel ignored\")}\n}\n"
+      }
+    ],
+    "elapsed_ms": 2201.55
+  }
+}

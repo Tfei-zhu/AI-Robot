@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?><testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="1" skipped="0" tests="1" time="1.336" timestamp="2026-10-17T16:24:56.660306+08:00" hostname="EnriciMac.local"><testcase classname="tests.test_multi_agent_acceptance.AcceptanceCounterexamples" name="test_total_guard_blocks_retry_with_unused_retry_quota" time="0.091"><failure message="AssertionError: BudgetExceededError not raised">self = &lt;test_multi_agent_acceptance.AcceptanceCounterexamples testMethod=test_total_guard_blocks_retry_with_unused_retry_quota&gt;
+
+    async def test_total_guard_blocks_retry_with_unused_retry_quota(self):
+        budget = SharedBudget(max_normal_calls=2, max_retries=1, max_model_calls=2)
+        client = ScriptedModel("ok", "ok", "MUST NOT SEND")
+        role = RoleRunner("code", client, model_name="fixture", run_id="s7-budget", timeout=1)
+    
+        async def send(retry=False):
+            budget.reserve_model(retry=retry)
+            await role.call([], stage="generate")
+    
+        await send()
+        await send()
+&gt;       with self.assertRaises(BudgetExceededError):
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       AssertionError: BudgetExceededError not raised
+
+tests/test_multi_agent_acceptance.py:30: AssertionError</failure></testcase></testsuite></testsuites>

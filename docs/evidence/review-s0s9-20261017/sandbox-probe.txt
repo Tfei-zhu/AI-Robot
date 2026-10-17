@@ -1,0 +1,24 @@
+{"status": "passed", "tests_run": ["TestOnlyModel"], "container_removed": true}
+/Users/xumanchun/Documents/agent项目/AI-Robot-latest/.venv/lib/python3.13/site-packages/jieba/__init__.py:44: SyntaxWarning: invalid escape sequence '\.'
+  re_han_default = re.compile("([\u4E00-\u9FD5a-zA-Z0-9+#&\._%\-]+)", re.U)
+/Users/xumanchun/Documents/agent项目/AI-Robot-latest/.venv/lib/python3.13/site-packages/jieba/__init__.py:46: SyntaxWarning: invalid escape sequence '\s'
+  re_skip_default = re.compile("(\r\n|\s)", re.U)
+/Users/xumanchun/Documents/agent项目/AI-Robot-latest/.venv/lib/python3.13/site-packages/jieba/finalseg/__init__.py:78: SyntaxWarning: invalid escape sequence '\.'
+  re_skip = re.compile("([a-zA-Z0-9]+(?:\.\d+)?%?)")
+Traceback (most recent call last):
+  File "/Users/xumanchun/Documents/agent项目/AI-Robot-latest/docs/evidence/review-s0s9-20261017/docker_probe.py", line 37, in <module>
+    if __name__=='__main__':asyncio.run(run())
+                            ~~~~~~~~~~~^^^^^^^
+  File "/Library/Frameworks/Python.framework/Versions/3.13/lib/python3.13/asyncio/runners.py", line 195, in run
+    return runner.run(main)
+           ~~~~~~~~~~^^^^^^
+  File "/Library/Frameworks/Python.framework/Versions/3.13/lib/python3.13/asyncio/runners.py", line 118, in run
+    return self._loop.run_until_complete(task)
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^
+  File "/Library/Frameworks/Python.framework/Versions/3.13/lib/python3.13/asyncio/base_events.py", line 725, in run_until_complete
+    return future.result()
+           ~~~~~~~~~~~~~^^
+  File "/Users/xumanchun/Documents/agent项目/AI-Robot-latest/docs/evidence/review-s0s9-20261017/docker_probe.py", line 35, in run
+    assert result.status!='passed', 'Invalid code passed with ZERO trusted server tests executed'
+           ^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: Invalid code passed with ZERO trusted server tests executed

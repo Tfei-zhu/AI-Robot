@@ -1,0 +1,8 @@
+test_conflicting_sandbox_hash_cannot_override_server_version (test_multi_agent_runner_binding.RunnerBindingTests.test_conflicting_sandbox_hash_cannot_override_server_version) ... ok
+test_missing_docker_still_binds_failure_without_host_execution (test_multi_agent_runner_binding.RunnerBindingTests.test_missing_docker_still_binds_failure_without_host_execution) ... ok
+test_report_hash_is_computed_from_exact_submitted_copy (test_multi_agent_runner_binding.RunnerBindingTests.test_report_hash_is_computed_from_exact_submitted_copy) ... ok
+
+----------------------------------------------------------------------
+Ran 44 tests in 0.789s
+
+OK

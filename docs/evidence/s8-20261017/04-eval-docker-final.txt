@@ -1,0 +1,16 @@
+.........................                                                [100%]
+=============================== warnings summary ===============================
+tests/test_multi_agent_eval.py::test_controlled_interrupts_preserve_actual_calls_and_report[cancel]
+  /Users/xumanchun/Documents/agent项目/AI-Robot-latest/.venv/lib/python3.13/site-packages/jieba/__init__.py:44: SyntaxWarning: invalid escape sequence '\.'
+    re_han_default = re.compile("([\u4E00-\u9FD5a-zA-Z0-9+#&\._%\-]+)", re.U)
+
+tests/test_multi_agent_eval.py::test_controlled_interrupts_preserve_actual_calls_and_report[cancel]
+  /Users/xumanchun/Documents/agent项目/AI-Robot-latest/.venv/lib/python3.13/site-packages/jieba/__init__.py:46: SyntaxWarning: invalid escape sequence '\s'
+    re_skip_default = re.compile("(\r\n|\s)", re.U)
+
+tests/test_multi_agent_eval.py::test_controlled_interrupts_preserve_actual_calls_and_report[cancel]
+  /Users/xumanchun/Documents/agent项目/AI-Robot-latest/.venv/lib/python3.13/site-packages/jieba/finalseg/__init__.py:78: SyntaxWarning: invalid escape sequence '\.'
+    re_skip = re.compile("([a-zA-Z0-9]+(?:\.\d+)?%?)")
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+25 passed, 3 warnings in 14.63s

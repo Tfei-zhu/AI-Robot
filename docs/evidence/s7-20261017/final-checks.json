@@ -1,0 +1,32 @@
+{
+  "passed": true,
+  "head": "1ea7e6b7abbde3bd1a5963f03cd142fac553685a",
+  "branch": "main",
+  "source_manifest_sha256": "a921ed45278e3ba7f998c83955be331a0d61afb1845210fc11168bfa1085b7dc",
+  "tracked_diff_sha256": "2be76607869053633d5a7ec7b8383b42d64137bf6724405001ee868836b93f1a",
+  "preexisting_source_preserved": true,
+  "prior_log_and_evidence_preserved": true,
+  "added_source": [
+    "docs/multi-agent-acceptance-matrix.md",
+    "tests/test_multi_agent_acceptance.py",
+    "tests/test_multi_agent_early_interruptions.py"
+  ],
+  "final_validation_bound": true,
+  "expected_mutant_failures": 5,
+  "restored_passes": 5,
+  "all_18_passed": true,
+  "real_docker_unique_nodes": 30,
+  "real_docker_records": 30,
+  "final_junit_suite": [
+    {
+      "name": "pytest",
+      "errors": "0",
+      "failures": "0",
+      "skipped": "0",
+      "tests": "442",
+      "time": "83.271",
+      "timestamp": "2026-10-17T16:29:16.621174+08:00",
+      "hostname": "EnriciMac.local"
+    }
+  ]
+}

@@ -1,0 +1,1061 @@
+{
+  "freeze_hash": "f60fe4f9fe10d781aa646268c468b983a975843da2b1043c744f6f804c64b333",
+  "model_source": "fixed_response_scripts",
+  "docker": "real Go 1.26.2",
+  "development": {
+    "single_native": {
+      "runs": 18,
+      "independent_successes": 15,
+      "independent_success_rate": 0.8333333333333334,
+      "feasible_runs": 18,
+      "feasible_successes": 15,
+      "infeasible_runs": 0,
+      "correct_refusals": 0,
+      "business_pass_rate": 1.0,
+      "success_wilson95": [
+        0.6077750036164076,
+        0.9416352959953425
+      ],
+      "unverified_runs": 0,
+      "requirement_checks": 45,
+      "requirement_pass_rate": 0.9333333333333333,
+      "false_accepts": 3,
+      "false_accept_denominator": 18,
+      "false_accept_unknown": 0,
+      "false_rejects": 0,
+      "false_reject_denominator": 15,
+      "repair_eligible": 12,
+      "repair_success_rate": 0.75,
+      "model_calls": 30,
+      "role_calls": {
+        "single": 30,
+        "supervisor": 0,
+        "code": 0
+      },
+      "known_role_calls": {
+        "single": 30,
+        "supervisor": 0,
+        "code": 0
+      },
+      "role_usage": {
+        "single": {
+          "unknown_usage_calls": 30,
+          "known_tokens": 0
+        },
+        "supervisor": {
+          "unknown_usage_calls": 0,
+          "known_tokens": 0
+        },
+        "code": {
+          "unknown_usage_calls": 0,
+          "known_tokens": 0
+        }
+      },
+      "incomplete_call_count_runs": 0,
+      "model_calls_known_lower_bound": 30,
+      "mean_calls": 1.6666666666666667,
+      "unknown_usage_calls": 30,
+      "known_unknown_usage_calls": 30,
+      "known_token_subtotal": 0,
+      "total_tokens": null,
+      "cost_estimate": 0,
+      "generation_p50_ms": 2786.035,
+      "generation_p95_ms": 5374.351499999999,
+      "scoring_p50_ms": 2721.69,
+      "scoring_p95_ms": 12813.7575,
+      "end_to_end_p50_ms": 5404.275,
+      "end_to_end_p95_ms": 17773.405,
+      "stop_reasons": {
+        "passed": 18
+      }
+    },
+    "multi_native": {
+      "runs": 18,
+      "independent_successes": 18,
+      "independent_success_rate": 1.0,
+      "feasible_runs": 18,
+      "feasible_successes": 18,
+      "infeasible_runs": 0,
+      "correct_refusals": 0,
+      "business_pass_rate": 1.0,
+      "success_wilson95": [
+        0.8241154494176252,
+        1
+      ],
+      "unverified_runs": 0,
+      "requirement_checks": 45,
+      "requirement_pass_rate": 1.0,
+      "false_accepts": 0,
+      "false_accept_denominator": 18,
+      "false_accept_unknown": 0,
+      "false_rejects": 0,
+      "false_reject_denominator": 18,
+      "repair_eligible": 12,
+      "repair_success_rate": 1.0,
+      "model_calls": 81,
+      "role_calls": {
+        "single": 0,
+        "supervisor": 48,
+        "code": 33
+      },
+      "known_role_calls": {
+        "single": 0,
+        "supervisor": 48,
+        "code": 33
+      },
+      "role_usage": {
+        "single": {
+          "unknown_usage_calls": 0,
+          "known_tokens": 0
+        },
+        "supervisor": {
+          "unknown_usage_calls": 48,
+          "known_tokens": 0
+        },
+        "code": {
+          "unknown_usage_calls": 33,
+          "known_tokens": 0
+        }
+      },
+      "incomplete_call_count_runs": 0,
+      "model_calls_known_lower_bound": 81,
+      "mean_calls": 4.5,
+      "unknown_usage_calls": 81,
+      "known_unknown_usage_calls": 81,
+      "known_token_subtotal": 0,
+      "total_tokens": null,
+      "cost_estimate": 0,
+      "generation_p50_ms": 4755.25,
+      "generation_p95_ms": 5173.537499999999,
+      "scoring_p50_ms": 4240.995,
+      "scoring_p95_ms": 12814.169499999998,
+      "end_to_end_p50_ms": 8481.435000000001,
+      "end_to_end_p95_ms": 17723.065,
+      "stop_reasons": {
+        "completed": 18
+      }
+    },
+    "single_equal3": {
+      "runs": 18,
+      "independent_successes": 15,
+      "independent_success_rate": 0.8333333333333334,
+      "feasible_runs": 18,
+      "feasible_successes": 15,
+      "infeasible_runs": 0,
+      "correct_refusals": 0,
+      "business_pass_rate": 1.0,
+      "success_wilson95": [
+        0.6077750036164076,
+        0.9416352959953425
+      ],
+      "unverified_runs": 0,
+      "requirement_checks": 45,
+      "requirement_pass_rate": 0.9333333333333333,
+      "false_accepts": 3,
+      "false_accept_denominator": 18,
+      "false_accept_unknown": 0,
+      "false_rejects": 0,
+      "false_reject_denominator": 15,
+      "repair_eligible": 12,
+      "repair_success_rate": 0.75,
+      "model_calls": 30,
+      "role_calls": {
+        "single": 30,
+        "supervisor": 0,
+        "code": 0
+      },
+      "known_role_calls": {
+        "single": 30,
+        "supervisor": 0,
+        "code": 0
+      },
+      "role_usage": {
+        "single": {
+          "unknown_usage_calls": 30,
+          "known_tokens": 0
+        },
+        "supervisor": {
+          "unknown_usage_calls": 0,
+          "known_tokens": 0
+        },
+        "code": {
+          "unknown_usage_calls": 0,
+          "known_tokens": 0
+        }
+      },
+      "incomplete_call_count_runs": 0,
+      "model_calls_known_lower_bound": 30,
+      "mean_calls": 1.6666666666666667,
+      "unknown_usage_calls": 30,
+      "known_unknown_usage_calls": 30,
+      "known_token_subtotal": 0,
+      "total_tokens": null,
+      "cost_estimate": 0,
+      "generation_p50_ms": 2913.915,
+      "generation_p95_ms": 4993.4175000000005,
+      "scoring_p50_ms": 2778.8999999999996,
+      "scoring_p95_ms": 12774.334499999999,
+      "end_to_end_p50_ms": 5787.79,
+      "end_to_end_p95_ms": 17744.806500000002,
+      "stop_reasons": {
+        "passed": 18
+      }
+    },
+    "multi_equal3": {
+      "runs": 18,
+      "independent_successes": 3,
+      "independent_success_rate": 0.16666666666666666,
+      "feasible_runs": 18,
+      "feasible_successes": 3,
+      "infeasible_runs": 0,
+      "correct_refusals": 0,
+      "business_pass_rate": 0.16666666666666666,
+      "success_wilson95": [
+        0.05836470400465757,
+        0.39222499638359243
+      ],
+      "unverified_runs": 3,
+      "requirement_checks": 45,
+      "requirement_pass_rate": 0.35555555555555557,
+      "false_accepts": 0,
+      "false_accept_denominator": 3,
+      "false_accept_unknown": 0,
+      "false_rejects": 0,
+      "false_reject_denominator": 3,
+      "repair_eligible": 12,
+      "repair_success_rate": 0.0,
+      "model_calls": 51,
+      "role_calls": {
+        "single": 0,
+        "supervisor": 33,
+        "code": 18
+      },
+      "known_role_calls": {
+        "single": 0,
+        "supervisor": 33,
+        "code": 18
+      },
+      "role_usage": {
+        "single": {
+          "unknown_usage_calls": 0,
+          "known_tokens": 0
+        },
+        "supervisor": {
+          "unknown_usage_calls": 33,
+          "known_tokens": 0
+        },
+        "code": {
+          "unknown_usage_calls": 18,
+          "known_tokens": 0
+        }
+      },
+      "incomplete_call_count_runs": 0,
+      "model_calls_known_lower_bound": 51,
+      "mean_calls": 2.8333333333333335,
+      "unknown_usage_calls": 51,
+      "known_unknown_usage_calls": 51,
+      "known_token_subtotal": 0,
+      "total_tokens": null,
+      "cost_estimate": 0,
+      "generation_p50_ms": 2308.565,
+      "generation_p95_ms": 2763.5635,
+      "scoring_p50_ms": 2474.795,
+      "scoring_p95_ms": 10417.1845,
+      "end_to_end_p50_ms": 4794.835,
+      "end_to_end_p95_ms": 12838.159,
+      "stop_reasons": {
+        "budget_exceeded": 15,
+        "completed": 3
+      }
+    }
+  },
+  "holdout": {
+    "single_native": {
+      "runs": 12,
+      "independent_successes": 3,
+      "independent_success_rate": 0.25,
+      "feasible_runs": 9,
+      "feasible_successes": 3,
+      "infeasible_runs": 3,
+      "correct_refusals": 0,
+      "business_pass_rate": 0.75,
+      "success_wilson95": [
+        0.08894003962896138,
+        0.53231033912066
+      ],
+      "unverified_runs": 0,
+      "requirement_checks": 27,
+      "requirement_pass_rate": 0.5555555555555556,
+      "false_accepts": 6,
+      "false_accept_denominator": 9,
+      "false_accept_unknown": 0,
+      "false_rejects": 0,
+      "false_reject_denominator": 3,
+      "repair_eligible": 9,
+      "repair_success_rate": 0.0,
+      "model_calls": 18,
+      "role_calls": {
+        "single": 18,
+        "supervisor": 0,
+        "code": 0
+      },
+      "known_role_calls": {
+        "single": 18,
+        "supervisor": 0,
+        "code": 0
+      },
+      "role_usage": {
+        "single": {
+          "unknown_usage_calls": 18,
+          "known_tokens": 0
+        },
+        "supervisor": {
+          "unknown_usage_calls": 0,
+          "known_tokens": 0
+        },
+        "code": {
+          "unknown_usage_calls": 0,
+          "known_tokens": 0
+        }
+      },
+      "incomplete_call_count_runs": 0,
+      "model_calls_known_lower_bound": 18,
+      "mean_calls": 1.5,
+      "unknown_usage_calls": 18,
+      "known_unknown_usage_calls": 18,
+      "known_token_subtotal": 0,
+      "total_tokens": null,
+      "cost_estimate": 0,
+      "generation_p50_ms": 2622.605,
+      "generation_p95_ms": 7974.019499999999,
+      "scoring_p50_ms": 2598.63,
+      "scoring_p95_ms": 12352.87549999999,
+      "end_to_end_p50_ms": 5139.33,
+      "end_to_end_p95_ms": 20252.98049999999,
+      "stop_reasons": {
+        "failed": 3,
+        "passed": 9
+      }
+    },
+    "multi_native": {
+      "runs": 12,
+      "independent_successes": 3,
+      "independent_success_rate": 0.25,
+      "feasible_runs": 9,
+      "feasible_successes": 3,
+      "infeasible_runs": 3,
+      "correct_refusals": 0,
+      "business_pass_rate": 0.75,
+      "success_wilson95": [
+        0.08894003962896138,
+        0.53231033912066
+      ],
+      "unverified_runs": 0,
+      "requirement_checks": 27,
+      "requirement_pass_rate": 0.5555555555555556,
+      "false_accepts": 6,
+      "false_accept_denominator": 9,
+      "false_accept_unknown": 0,
+      "false_rejects": 0,
+      "false_reject_denominator": 3,
+      "repair_eligible": 9,
+      "repair_success_rate": 0.0,
+      "model_calls": 48,
+      "role_calls": {
+        "single": 0,
+        "supervisor": 30,
+        "code": 18
+      },
+      "known_role_calls": {
+        "single": 0,
+        "supervisor": 30,
+        "code": 18
+      },
+      "role_usage": {
+        "single": {
+          "unknown_usage_calls": 0,
+          "known_tokens": 0
+        },
+        "supervisor": {
+          "unknown_usage_calls": 30,
+          "known_tokens": 0
+        },
+        "code": {
+          "unknown_usage_calls": 18,
+          "known_tokens": 0
+        }
+      },
+      "incomplete_call_count_runs": 0,
+      "model_calls_known_lower_bound": 48,
+      "mean_calls": 4,
+      "unknown_usage_calls": 48,
+      "known_unknown_usage_calls": 48,
+      "known_token_subtotal": 0,
+      "total_tokens": null,
+      "cost_estimate": 0,
+      "generation_p50_ms": 2973.38,
+      "generation_p95_ms": 8240.012,
+      "scoring_p50_ms": 3092.99,
+      "scoring_p95_ms": 12296.382999999989,
+      "end_to_end_p50_ms": 5712.09,
+      "end_to_end_p95_ms": 20194.11849999999,
+      "stop_reasons": {
+        "completed": 9,
+        "repair_limit": 3
+      }
+    },
+    "single_equal3": {
+      "runs": 12,
+      "independent_successes": 3,
+      "independent_success_rate": 0.25,
+      "feasible_runs": 9,
+      "feasible_successes": 3,
+      "infeasible_runs": 3,
+      "correct_refusals": 0,
+      "business_pass_rate": 0.75,
+      "success_wilson95": [
+        0.08894003962896138,
+        0.53231033912066
+      ],
+      "unverified_runs": 0,
+      "requirement_checks": 27,
+      "requirement_pass_rate": 0.5555555555555556,
+      "false_accepts": 6,
+      "false_accept_denominator": 9,
+      "false_accept_unknown": 0,
+      "false_rejects": 0,
+      "false_reject_denominator": 3,
+      "repair_eligible": 9,
+      "repair_success_rate": 0.0,
+      "model_calls": 18,
+      "role_calls": {
+        "single": 18,
+        "supervisor": 0,
+        "code": 0
+      },
+      "known_role_calls": {
+        "single": 18,
+        "supervisor": 0,
+        "code": 0
+      },
+      "role_usage": {
+        "single": {
+          "unknown_usage_calls": 18,
+          "known_tokens": 0
+        },
+        "supervisor": {
+          "unknown_usage_calls": 0,
+          "known_tokens": 0
+        },
+        "code": {
+          "unknown_usage_calls": 0,
+          "known_tokens": 0
+        }
+      },
+      "incomplete_call_count_runs": 0,
+      "model_calls_known_lower_bound": 18,
+      "mean_calls": 1.5,
+      "unknown_usage_calls": 18,
+      "known_unknown_usage_calls": 18,
+      "known_token_subtotal": 0,
+      "total_tokens": null,
+      "cost_estimate": 0,
+      "generation_p50_ms": 2884.53,
+      "generation_p95_ms": 8387.8125,
+      "scoring_p50_ms": 2646.66,
+      "scoring_p95_ms": 13787.76599999999,
+      "end_to_end_p50_ms": 5475.58,
+      "end_to_end_p95_ms": 21276.87449999999,
+      "stop_reasons": {
+        "failed": 3,
+        "passed": 9
+      }
+    },
+    "multi_equal3": {
+      "runs": 12,
+      "independent_successes": 3,
+      "independent_success_rate": 0.25,
+      "feasible_runs": 9,
+      "feasible_successes": 3,
+      "infeasible_runs": 3,
+      "correct_refusals": 0,
+      "business_pass_rate": 0.75,
+      "success_wilson95": [
+        0.08894003962896138,
+        0.53231033912066
+      ],
+      "unverified_runs": 0,
+      "requirement_checks": 27,
+      "requirement_pass_rate": 0.5555555555555556,
+      "false_accepts": 6,
+      "false_accept_denominator": 9,
+      "false_accept_unknown": 0,
+      "false_rejects": 0,
+      "false_reject_denominator": 3,
+      "repair_eligible": 9,
+      "repair_success_rate": 0.0,
+      "model_calls": 36,
+      "role_calls": {
+        "single": 0,
+        "supervisor": 24,
+        "code": 12
+      },
+      "known_role_calls": {
+        "single": 0,
+        "supervisor": 24,
+        "code": 12
+      },
+      "role_usage": {
+        "single": {
+          "unknown_usage_calls": 0,
+          "known_tokens": 0
+        },
+        "supervisor": {
+          "unknown_usage_calls": 24,
+          "known_tokens": 0
+        },
+        "code": {
+          "unknown_usage_calls": 12,
+          "known_tokens": 0
+        }
+      },
+      "incomplete_call_count_runs": 0,
+      "model_calls_known_lower_bound": 36,
+      "mean_calls": 3,
+      "unknown_usage_calls": 36,
+      "known_unknown_usage_calls": 36,
+      "known_token_subtotal": 0,
+      "total_tokens": null,
+      "cost_estimate": 0,
+      "generation_p50_ms": 2708.635,
+      "generation_p95_ms": 3682.9524999999994,
+      "scoring_p50_ms": 2831.41,
+      "scoring_p95_ms": 7548.588999999996,
+      "end_to_end_p50_ms": 5281.764999999999,
+      "end_to_end_p95_ms": 10728.256999999998,
+      "stop_reasons": {
+        "budget_exceeded": 3,
+        "completed": 9
+      }
+    }
+  },
+  "exploratory_combined": {
+    "single_native": {
+      "runs": 30,
+      "independent_successes": 18,
+      "independent_success_rate": 0.6,
+      "feasible_runs": 27,
+      "feasible_successes": 18,
+      "infeasible_runs": 3,
+      "correct_refusals": 0,
+      "business_pass_rate": 0.9,
+      "success_wilson95": [
+        0.42320052498273836,
+        0.7540960567391659
+      ],
+      "unverified_runs": 0,
+      "requirement_checks": 72,
+      "requirement_pass_rate": 0.7916666666666666,
+      "false_accepts": 9,
+      "false_accept_denominator": 27,
+      "false_accept_unknown": 0,
+      "false_rejects": 0,
+      "false_reject_denominator": 18,
+      "repair_eligible": 21,
+      "repair_success_rate": 0.42857142857142855,
+      "model_calls": 48,
+      "role_calls": {
+        "single": 48,
+        "supervisor": 0,
+        "code": 0
+      },
+      "known_role_calls": {
+        "single": 48,
+        "supervisor": 0,
+        "code": 0
+      },
+      "role_usage": {
+        "single": {
+          "unknown_usage_calls": 48,
+          "known_tokens": 0
+        },
+        "supervisor": {
+          "unknown_usage_calls": 0,
+          "known_tokens": 0
+        },
+        "code": {
+          "unknown_usage_calls": 0,
+          "known_tokens": 0
+        }
+      },
+      "incomplete_call_count_runs": 0,
+      "model_calls_known_lower_bound": 48,
+      "mean_calls": 1.6,
+      "unknown_usage_calls": 48,
+      "known_unknown_usage_calls": 48,
+      "known_token_subtotal": 0,
+      "total_tokens": null,
+      "cost_estimate": 0,
+      "generation_p50_ms": 2745.635,
+      "generation_p95_ms": 7710.634499999999,
+      "scoring_p50_ms": 2714.3950000000004,
+      "scoring_p95_ms": 13077.777499999998,
+      "end_to_end_p50_ms": 5302.415,
+      "end_to_end_p95_ms": 18141.364999999998,
+      "stop_reasons": {
+        "failed": 3,
+        "passed": 27
+      }
+    },
+    "multi_native": {
+      "runs": 30,
+      "independent_successes": 21,
+      "independent_success_rate": 0.7,
+      "feasible_runs": 27,
+      "feasible_successes": 21,
+      "infeasible_runs": 3,
+      "correct_refusals": 0,
+      "business_pass_rate": 0.9,
+      "success_wilson95": [
+        0.5212387898833981,
+        0.8333543735604105
+      ],
+      "unverified_runs": 0,
+      "requirement_checks": 72,
+      "requirement_pass_rate": 0.8333333333333334,
+      "false_accepts": 6,
+      "false_accept_denominator": 27,
+      "false_accept_unknown": 0,
+      "false_rejects": 0,
+      "false_reject_denominator": 21,
+      "repair_eligible": 21,
+      "repair_success_rate": 0.5714285714285714,
+      "model_calls": 129,
+      "role_calls": {
+        "single": 0,
+        "supervisor": 78,
+        "code": 51
+      },
+      "known_role_calls": {
+        "single": 0,
+        "supervisor": 78,
+        "code": 51
+      },
+      "role_usage": {
+        "single": {
+          "unknown_usage_calls": 0,
+          "known_tokens": 0
+        },
+        "supervisor": {
+          "unknown_usage_calls": 78,
+          "known_tokens": 0
+        },
+        "code": {
+          "unknown_usage_calls": 51,
+          "known_tokens": 0
+        }
+      },
+      "incomplete_call_count_runs": 0,
+      "model_calls_known_lower_bound": 129,
+      "mean_calls": 4.3,
+      "unknown_usage_calls": 129,
+      "known_unknown_usage_calls": 129,
+      "known_token_subtotal": 0,
+      "total_tokens": null,
+      "cost_estimate": 0,
+      "generation_p50_ms": 3524.205,
+      "generation_p95_ms": 7544.217499999998,
+      "scoring_p50_ms": 3497.33,
+      "scoring_p95_ms": 13204.141499999998,
+      "end_to_end_p50_ms": 6448.5,
+      "end_to_end_p95_ms": 18107.824999999997,
+      "stop_reasons": {
+        "completed": 27,
+        "repair_limit": 3
+      }
+    },
+    "single_equal3": {
+      "runs": 30,
+      "independent_successes": 18,
+      "independent_success_rate": 0.6,
+      "feasible_runs": 27,
+      "feasible_successes": 18,
+      "infeasible_runs": 3,
+      "correct_refusals": 0,
+      "business_pass_rate": 0.9,
+      "success_wilson95": [
+        0.42320052498273836,
+        0.7540960567391659
+      ],
+      "unverified_runs": 0,
+      "requirement_checks": 72,
+      "requirement_pass_rate": 0.7916666666666666,
+      "false_accepts": 9,
+      "false_accept_denominator": 27,
+      "false_accept_unknown": 0,
+      "false_rejects": 0,
+      "false_reject_denominator": 18,
+      "repair_eligible": 21,
+      "repair_success_rate": 0.42857142857142855,
+      "model_calls": 48,
+      "role_calls": {
+        "single": 48,
+        "supervisor": 0,
+        "code": 0
+      },
+      "known_role_calls": {
+        "single": 48,
+        "supervisor": 0,
+        "code": 0
+      },
+      "role_usage": {
+        "single": {
+          "unknown_usage_calls": 48,
+          "known_tokens": 0
+        },
+        "supervisor": {
+          "unknown_usage_calls": 0,
+          "known_tokens": 0
+        },
+        "code": {
+          "unknown_usage_calls": 0,
+          "known_tokens": 0
+        }
+      },
+      "incomplete_call_count_runs": 0,
+      "model_calls_known_lower_bound": 48,
+      "mean_calls": 1.6,
+      "unknown_usage_calls": 48,
+      "known_unknown_usage_calls": 48,
+      "known_token_subtotal": 0,
+      "total_tokens": null,
+      "cost_estimate": 0,
+      "generation_p50_ms": 2884.53,
+      "generation_p95_ms": 7489.108499999998,
+      "scoring_p50_ms": 2735.8999999999996,
+      "scoring_p95_ms": 12817.7065,
+      "end_to_end_p50_ms": 5549.630000000001,
+      "end_to_end_p95_ms": 17750.3705,
+      "stop_reasons": {
+        "failed": 3,
+        "passed": 27
+      }
+    },
+    "multi_equal3": {
+      "runs": 30,
+      "independent_successes": 6,
+      "independent_success_rate": 0.2,
+      "feasible_runs": 27,
+      "feasible_successes": 6,
+      "infeasible_runs": 3,
+      "correct_refusals": 0,
+      "business_pass_rate": 0.4,
+      "success_wilson95": [
+        0.09504978102401235,
+        0.37306047381027446
+      ],
+      "unverified_runs": 3,
+      "requirement_checks": 72,
+      "requirement_pass_rate": 0.4305555555555556,
+      "false_accepts": 6,
+      "false_accept_denominator": 12,
+      "false_accept_unknown": 0,
+      "false_rejects": 0,
+      "false_reject_denominator": 6,
+      "repair_eligible": 21,
+      "repair_success_rate": 0.0,
+      "model_calls": 87,
+      "role_calls": {
+        "single": 0,
+        "supervisor": 57,
+        "code": 30
+      },
+      "known_role_calls": {
+        "single": 0,
+        "supervisor": 57,
+        "code": 30
+      },
+      "role_usage": {
+        "single": {
+          "unknown_usage_calls": 0,
+          "known_tokens": 0
+        },
+        "supervisor": {
+          "unknown_usage_calls": 57,
+          "known_tokens": 0
+        },
+        "code": {
+          "unknown_usage_calls": 30,
+          "known_tokens": 0
+        }
+      },
+      "incomplete_call_count_runs": 0,
+      "model_calls_known_lower_bound": 87,
+      "mean_calls": 2.9,
+      "unknown_usage_calls": 87,
+      "known_unknown_usage_calls": 87,
+      "known_token_subtotal": 0,
+      "total_tokens": null,
+      "cost_estimate": 0,
+      "generation_p50_ms": 2415.425,
+      "generation_p95_ms": 3282.465999999999,
+      "scoring_p50_ms": 2538.6,
+      "scoring_p95_ms": 10477.5965,
+      "end_to_end_p50_ms": 4866.17,
+      "end_to_end_p95_ms": 13042.182999999999,
+      "stop_reasons": {
+        "budget_exceeded": 18,
+        "completed": 12
+      }
+    }
+  },
+  "paired": {
+    "dev": {
+      "native": {
+        "cases": 18,
+        "both_correct": 15,
+        "only_single_correct": 0,
+        "only_multi_correct": 3,
+        "neither_verified_correct": 0
+      },
+      "equal3": {
+        "cases": 18,
+        "both_correct": 3,
+        "only_single_correct": 12,
+        "only_multi_correct": 0,
+        "neither_verified_correct": 3
+      }
+    },
+    "holdout": {
+      "native": {
+        "cases": 12,
+        "both_correct": 3,
+        "only_single_correct": 0,
+        "only_multi_correct": 0,
+        "neither_verified_correct": 9
+      },
+      "equal3": {
+        "cases": 12,
+        "both_correct": 3,
+        "only_single_correct": 0,
+        "only_multi_correct": 0,
+        "neither_verified_correct": 9
+      }
+    }
+  },
+  "total_trials": 120,
+  "total_actual_fixture_invocations": 312,
+  "billable_model_requests": 0,
+  "paid_cost": 0,
+  "provider_usage": "unknown, never substituted with zero tokens",
+  "inference": "No evidence of real model improvement; holdout false accepts block wider enablement.",
+  "source_hashes": {
+    "app/__init__.py": "b42f2099187886def637d6aa840022266e05cb6c987a9394e708e23cd505eb46",
+    "app/agents/__init__.py": "b42f2099187886def637d6aa840022266e05cb6c987a9394e708e23cd505eb46",
+    "app/agents/code_agent.py": "23b97d766a5c958906c86e5856291b289101faae024e8154dbd11ba82b8b897c",
+    "app/agents/go_workflow.py": "da85c5b36b32eb5d03689c9a764769c686e836ab732b50adf38bcac108466312",
+    "app/agents/graph.py": "47d71ffd4472c22e152f5b5dec54d5144e3cfc4e612bf24a4a6cbf0bd734e6a9",
+    "app/agents/role_runtime.py": "6828a732fe63371461cdf8ad97c4284fa2d2e4e3151c004ab308314856fe22a5",
+    "app/agents/supervisor.py": "0c354beee2df327d13c4c3d486f3463264f95efe511c9c50d819461326d317f9",
+    "app/agents/tools.py": "6c3ccfed58fda07e10892ae412a42feccbe2fc7a00a9f70758a6dc7216b57f58",
+    "app/config.py": "3ef902e3c5a9cdefcdaf87a701e18604adc1c3a84f7643fcabdf3719794fed11",
+    "app/context/__init__.py": "e4dbf96cfc33003d1b295b0bc4f1bf767c2c0bde333e77e78505bd31a4124a7f",
+    "app/context/budget.py": "2678a43a6d0bb603c2c4d7be817904b4dff605a2b836ad2e98e04254ea9010ef",
+    "app/context/builder.py": "7259d3210837724aed4cc349f5e08321a535d72897fcbfb1e1764dbc9b4c051c",
+    "app/context/contracts.py": "f8fbe7b8cc0f5210b38af7d443f8607e485423b90a3f6837c7ae977dbe25431e",
+    "app/context/evidence.py": "9b7433ffc3cce5dc011d7c737fa565a3b2038b06a307b4dc9cf372453d37db0d",
+    "app/context/go_adapter.py": "f442897ee56c6b04f9c19460dc9519e6b4266fe1359d37cf962c7b56c24a2bfd",
+    "app/context/pricing.py": "bce6e21e153376d63774a0cc31e17bf5e5fafb6c12d041be99a5d5475cffcfca",
+    "app/context/session.py": "028913c0836467ed3785e9518b5091194c272ac2f6c98be34097be701d00163c",
+    "app/context/store.py": "763eb87b5151f68bcec9d0a8e81c798a1a69bdbc064225d357f04fb8ea1738e9",
+    "app/context/summary.py": "846d2f0051d57c7a7fcede627ca009d09d24204643ad4051c5f7435c03c641e5",
+    "app/context/token_counter.py": "fca039c1458ea6a6c3363d60ab82fe22264aea0a46549efecd5f27cbfd0bb791",
+    "app/context/tool_projection.py": "05990e52b17c46fe891264452abe2c611ced3a466cfe9fec234c0afb38b1efce",
+    "app/context/usage.py": "305011d5cfbda4c95ae855708bb3781681f120b66d948faa77f94412a4cbebe0",
+    "app/go_validation/__init__.py": "7a7bbe26841da275fcf487e045cba104d980383f9e964c5962a10cd0e9888030",
+    "app/go_validation/contracts.py": "711af2a30f3318aed4b98f8ac945278084c6b2dfdadef44789a1c1b342c032c6",
+    "app/go_validation/fixtures.py": "f605b550e03c0cd5e66d6dff5073a9bccd452e16a8dd1a1981eb426a5a7dffd5",
+    "app/go_validation/nodes.py": "68f399925e35c94878f20552d04f04112a9eafb0f5bdee995dfa9daeb88759cd",
+    "app/go_validation/runner.py": "4814def925d633bba71a77e585348481115a79b060b645073a25a89a8a4308f2",
+    "app/go_validation/service.py": "e448c3ed15a5d9ecf75fdd59a8abf121153756c74809405e234a6fb6a49ba168",
+    "app/go_validation/store.py": "12f4864837f9384c4e5ec92e6d65fba234a4102524b0bc32439a8786ef9edba7",
+    "app/go_validation/tools.py": "0749cfd86ad87f5f964e051eea6e3def3457f16bc9fea6ea381070a2cb732fa9",
+    "app/main.py": "ec8c6ec184ed39d910ac6633e01125f354288d6bbf01f3365ca1cd584da21523",
+    "app/rag/__init__.py": "b42f2099187886def637d6aa840022266e05cb6c987a9394e708e23cd505eb46",
+    "app/rag/fusion.py": "3204108c7e5c20d26704ff85c800c1183da12746b17e08c4b28d612cb4b343b4",
+    "app/rag/lexical.py": "cf99f6022ccaedab51efca79316e92be10b0c5f6ea95252995b84f214b461494",
+    "app/rag/loader.py": "ab5714572712b0b9202288b70e2347b8d05a8ed81cf3572a6b41fd779f06dfaf",
+    "app/rag/reranker.py": "278310fd2e92cc0d0800110895090b0190c9f1e770ce776e088bfd1a17ce5efe",
+    "app/rag/retriever.py": "82d39b15ff05573ece17274a26a75a710dd320451a8444b996900d6763f571a8",
+    "app/schemas.py": "237ebb166b4b2a956c3db77c268608bdd200343f47d75d72fd218f21fd08a1d9",
+    "app/services/__init__.py": "b42f2099187886def637d6aa840022266e05cb6c987a9394e708e23cd505eb46",
+    "app/services/article_consumer.py": "43353a53c5d36feaf7f3b4c17125c0bd154ad0192f9e9d92ad178a0f01fe50aa",
+    "app/services/chat.py": "5d75eb6cc72cf6796e2c3199c84abfdc6a8fdcf54ff252047d3cf265389c86aa",
+    "app/services/concurrency.py": "fb04adb4338c3b17c1dd42377ad45ff7c2e3424688e11feec1d4695339f0a5f1",
+    "app/services/go_client.py": "bc773f15503f9bf9d772009e485a302723204af25a2a3682fc6710e824782e3f",
+    "app/services/memory.py": "1453139f0380711e3169ca44a9a0064d435e7cd69ea04b4bfebfae27323f94c2",
+    "app/services/ratelimit.py": "4f0fe10c1bbe1975dcafb4ddc37c060943baeeac9374bcf2faa2d224665500e3",
+    "app/services/resilience.py": "f86eac914213c405d5eecb9fb16970920932181b533cf95b64dcb11f377e5d1e",
+    "app/services/security.py": "c91a89ee085d6ea39cd8764ddb38ed1d80e62dbcb7b5b7733aae6258cc5a15b2",
+    "app/services/semantic_cache.py": "44c09f3a97390a542a806f0b76450e3fa88c2a78ea6c1b39b82ba0ea12aa3b64",
+    "app/services/tracing.py": "a6433fc32502f5a327a21da7b7e48ee2df5a376ab0e48804993ae5bcd728c02b",
+    "eval/__init__.py": "8b084a9f378124b2b1a51563bf3c22444eb7ff33692017da28b2136ae56987ed",
+    "eval/compare_context_eval.py": "2ba4780792273d4702d1db2729478ddb3d84153b972ae6417519ef52ba608b48",
+    "eval/context_cases.jsonl": "42958f1213da7e91166cf6418977e1f332e01ca4b6991545660ed9c4f838e3c2",
+    "eval/context_cases_v1.jsonl": "5af14fb88fd7ee355fd6ef3e2a044dce9041e93304e110d12ee59f9448aa0a9d",
+    "eval/context_cases_v2.jsonl": "01e53c45f8d293dedeae197bb15a0743ac8e5ffaf539e6b8ed8e1f8925101c28",
+    "eval/context_prices.example.json": "f11f7c722f943055bebc8d5efb6d27399544480774876277da92d992047e68d8",
+    "eval/dataset/qa.jsonl": "64fec7c4277e9d1630da97099e4fd0d8d7e967d87f80d8be25736fba340a1c14",
+    "eval/go_cases.json": "dff408ece356b987910d9b47901b56c2ae15e5f461be3193098837c76b9768c1",
+    "eval/go_fixtures.py": "8d75441b945016db23427927d9d8fe0e5dcb5994a05429b3ce6d1e2b0675042b",
+    "eval/merge_context_resume.py": "184722bd2a494ae869788668ff7454a566ad525f7d2ef8e32da690d1f678f95f",
+    "eval/multi_agent_cases.jsonl": "7f3f8c99523d86c39c0e97a5f6bc1eb54c92c4dc615126c8e131ab34c2fc5b44",
+    "eval/multi_agent_fixtures.py": "f593a4c601778d34bcdad1532c15c0b94459929e0806f000f04d2054bc7a691f",
+    "eval/multi_agent_live_model.example.json": "c42a7ecac19287e02716e46bb7ac18caee2ddae4e693e7a8ed9826d501de5d99",
+    "eval/multi_agent_pricebook.example.json": "aac32b8a9aab9a93068aac8b74d32b4fb5fb7fecd6cb33a74d2c0c5bfc19bdac",
+    "eval/multi_agent_protocol.json": "5e62d32dd858cb8b337fc0b9b205d6cdfe8d011f35659a4876993effe3e4ee79",
+    "eval/multi_agent_protocol.py": "6b2db33637db95823e8ca44ff78146e5912d62114726ad84ea0788a939340aa7",
+    "eval/multi_agent_scoring.py": "79e341f832889865ff73d655e823fa90c44926858638299eb679c2e2f26f9eda",
+    "eval/resume_context_eval.py": "92660e9bd701734b85a66d3552b583af76ca9d821447511dc33f19bf85f8d604",
+    "eval/run_agent_eval.py": "49f9e9f486063d3632ccc833153087d0c25cc6bfb303c0196f33e9b04d5054ce",
+    "eval/run_context_eval.py": "d0edb9b92b1603099f34015376a9ba76aed2ae2c6823ac80eab918d0feb80cc8",
+    "eval/run_context_stress.py": "be00b8827a3daff74ae25b859875fafb412142b692f94f0da5dcc9835f9029da",
+    "eval/run_eval.py": "486e5f08ea94aa092521212624edc1c2215c07027fb5daedbebd081254eb7832",
+    "eval/run_go_eval.py": "dc7031a2d886ecc86ef02900dba777a6a264016085279d4dc1ede1f99bbac994",
+    "eval/run_multi_agent_eval.py": "96838eb5e323b658fbc6160cdeb0a1edd63ffc2da94b0dfa43f35bb399acf921",
+    "sandbox/go/entrypoint.sh": "18078ce5a43d634e33a20b40d33ef4cfb1167913449474b066a6591bcfe24930",
+    "sandbox/go/runner.go": "6475da3650fdc27c4b186977fcb16375f7566a74e2ea2b3dec39dc9e26657e7c"
+  },
+  "image_id": "sha256:381dd0955d9414dc0debedafb6201a28d4da15b32ce0883310a5e4430fa2d4af",
+  "data_audit": {
+    "freeze_hash": "f60fe4f9fe10d781aa646268c468b983a975843da2b1043c744f6f804c64b333",
+    "frozen_conditions": 30,
+    "unique_public_requirements": 12,
+    "cross_split_public_requirement_groups": 3,
+    "cross_split_groups": [
+      {
+        "public_requirement_hash": "b6f82c292b82343f7f442cfa54ada893ca32d7d919ad5ca7624a37a1a04e038f",
+        "cases": [
+          {
+            "id": "context_cancel-01",
+            "split": "dev",
+            "fixture_profile": "clean"
+          },
+          {
+            "id": "context_cancel-02",
+            "split": "dev",
+            "fixture_profile": "compile_repair"
+          },
+          {
+            "id": "context_cancel-03",
+            "split": "dev",
+            "fixture_profile": "behavior_repair"
+          },
+          {
+            "id": "context_cancel-04",
+            "split": "dev",
+            "fixture_profile": "weak_model_tests"
+          },
+          {
+            "id": "context_cancel-06",
+            "split": "dev",
+            "fixture_profile": "provider_failure"
+          },
+          {
+            "id": "context_cancel-07",
+            "split": "holdout",
+            "fixture_profile": "clean_holdout"
+          },
+          {
+            "id": "context_cancel-08",
+            "split": "holdout",
+            "fixture_profile": "persistent_failure"
+          }
+        ]
+      },
+      {
+        "public_requirement_hash": "a7e1ed8b4a8b30708c8c33faf81ac098254554de32976be55ba4c2be2f7a8773",
+        "cases": [
+          {
+            "id": "worker_pool-01",
+            "split": "dev",
+            "fixture_profile": "clean"
+          },
+          {
+            "id": "worker_pool-02",
+            "split": "dev",
+            "fixture_profile": "compile_repair"
+          },
+          {
+            "id": "worker_pool-03",
+            "split": "dev",
+            "fixture_profile": "behavior_repair"
+          },
+          {
+            "id": "worker_pool-04",
+            "split": "dev",
+            "fixture_profile": "weak_model_tests"
+          },
+          {
+            "id": "worker_pool-06",
+            "split": "dev",
+            "fixture_profile": "provider_failure"
+          },
+          {
+            "id": "worker_pool-07",
+            "split": "holdout",
+            "fixture_profile": "clean_holdout"
+          },
+          {
+            "id": "worker_pool-08",
+            "split": "holdout",
+            "fixture_profile": "persistent_failure"
+          }
+        ]
+      },
+      {
+        "public_requirement_hash": "429b2644f98bf7b7bced6a6457af24b4d96c264e259211f58952c80261f60d1e",
+        "cases": [
+          {
+            "id": "channel-01",
+            "split": "dev",
+            "fixture_profile": "clean"
+          },
+          {
+            "id": "channel-02",
+            "split": "dev",
+            "fixture_profile": "compile_repair"
+          },
+          {
+            "id": "channel-03",
+            "split": "dev",
+            "fixture_profile": "behavior_repair"
+          },
+          {
+            "id": "channel-04",
+            "split": "dev",
+            "fixture_profile": "weak_model_tests"
+          },
+          {
+            "id": "channel-06",
+            "split": "dev",
+            "fixture_profile": "provider_failure"
+          },
+          {
+            "id": "channel-07",
+            "split": "holdout",
+            "fixture_profile": "clean_holdout"
+          },
+          {
+            "id": "channel-08",
+            "split": "holdout",
+            "fixture_profile": "persistent_failure"
+          }
+        ]
+      }
+    ],
+    "inference_eligible": false,
+    "reason": "Fixed-output fault-condition holdout only; repeated public tasks and correlated templates do not provide independent task-generalization evidence.",
+    "live_quality_prerequisite": "Create a new deduplicated/grouped real-task protocol before any generalization or quality-improvement claim; do not silently relabel this run."
+  }
+}

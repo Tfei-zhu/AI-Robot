@@ -14,3 +14,9 @@ data/uploads/
 .idea/
 .vscode/
 .DS_Store
+
+# Local execution databases and transient evidence locks; retain JSON/XML reports.
+docs/evidence/**/*.sqlite3
+docs/evidence/**/*.sqlite3-wal
+docs/evidence/**/*.sqlite3-shm
+docs/evidence/**/*.lock

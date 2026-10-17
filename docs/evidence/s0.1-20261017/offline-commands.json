@@ -1,0 +1,256 @@
+[
+  {
+    "id": "token-cache-download",
+    "argv": [
+      "/Users/xumanchun/Documents/agent项目/AI-Robot-latest/.venv/bin/python",
+      "-c",
+      "import ast,hashlib,inspect,json,os,pathlib,ssl,urllib.request\nimport certifi,tiktoken,tiktoken_ext.openai_public as defs\nsrc=inspect.getsource(defs.cl100k_base); tree=ast.parse(src)\ncall=next(x for x in ast.walk(tree) if isinstance(x,ast.Call) and getattr(x.func,\"id\",None)==\"load_tiktoken_bpe\")\nurl=ast.literal_eval(call.args[0]); expected=ast.literal_eval(next(k.value for k in call.keywords if k.arg==\"expected_hash\"))\ncache=pathlib.Path(os.environ[\"TIKTOKEN_CACHE_DIR\"]); cache.mkdir(parents=True,exist_ok=True)\nwith urllib.request.urlopen(url,context=ssl.create_default_context(cafile=certifi.where()),timeout=60) as r:\n status=r.status; raw=r.read()\nactual=hashlib.sha256(raw).hexdigest(); assert actual==expected,(actual,expected)\nkey=hashlib.sha1(url.encode()).hexdigest(); target=cache/key; target.write_bytes(raw)\nreport={\"tiktoken_version\":tiktoken.__version__,\"source_url\":url,\"http_status\":status,\"expected_sha256\":expected,\"actual_sha256\":actual,\"cache_key\":key,\"cache_file\":str(target),\"bytes\":len(raw),\"ca_file\":certifi.where(),\"ca_sha256\":hashlib.sha256(pathlib.Path(certifi.where()).read_bytes()).hexdigest(),\"definition_file\":inspect.getfile(defs),\"definition_sha256\":hashlib.sha256(pathlib.Path(inspect.getfile(defs)).read_bytes()).hexdigest()}\nprint(json.dumps(report,ensure_ascii=False,indent=2))\npathlib.Path(\"docs/evidence/s0.1-20261017/token-cache.json\").write_text(json.dumps(report,ensure_ascii=False,indent=2)+\"\\n\")\n"
+    ],
+    "cwd": "/Users/xumanchun/Documents/agent项目/AI-Robot-latest",
+    "started_utc": "2026-10-17T03:30:15.261509+00:00",
+    "exit_code": 0,
+    "elapsed_seconds": 2.839,
+    "network_guard": true,
+    "output": "token-cache-download.txt",
+    "output_sha256": "4fdb36e3b5223122742956914f797a3992d621c5b74f807452c4347cfc5bcbd6"
+  },
+  {
+    "id": "token-cache-offline",
+    "argv": [
+      "/Users/xumanchun/Documents/agent项目/AI-Robot-latest/.venv/bin/python",
+      "-c",
+      "import json,os,sys,tiktoken,urllib.request\nassert \"sitecustomize\" in sys.modules\nenc=tiktoken.get_encoding(\"cl100k_base\")\nexamples=[\"hello world\",\"context cancellation\",\"中文 Token 计量\"]\nrows=[{\"text\":s,\"tokens\":enc.encode(s)} for s in examples]\nassert all(enc.decode(r[\"tokens\"])==r[\"text\"] for r in rows)\nassert enc.n_vocab==100277\nprint(json.dumps({\"encoding\":enc.name,\"n_vocab\":enc.n_vocab,\"examples\":rows,\"network_blocked\":True},ensure_ascii=False,indent=2))\n"
+    ],
+    "cwd": "/Users/xumanchun/Documents/agent项目/AI-Robot-latest",
+    "started_utc": "2026-10-17T03:30:18.100930+00:00",
+    "exit_code": 0,
+    "elapsed_seconds": 0.348,
+    "network_guard": true,
+    "output": "token-cache-offline.txt",
+    "output_sha256": "061318871079dfd4e9a9831b83ac83afea67dc51c00e5bb78c463667c387efc9"
+  },
+  {
+    "id": "guard-selftest",
+    "argv": [
+      "/Users/xumanchun/Documents/agent项目/AI-Robot-latest/.venv/bin/python",
+      "-c",
+      "import socket;\ntry: socket.getaddrinfo(\"pypi.org\",443)\nexcept RuntimeError as e:\n assert str(e)==\"S01_OFFLINE_NETWORK_BLOCKED\"; print(\"PASS expected network rejection\")\nelse: raise AssertionError(\"guard absent\")"
+    ],
+    "cwd": "/Users/xumanchun/Documents/agent项目/AI-Robot-latest",
+    "started_utc": "2026-10-17T03:30:18.449915+00:00",
+    "exit_code": 0,
+    "elapsed_seconds": 0.04,
+    "network_guard": true,
+    "output": "guard-selftest.txt",
+    "output_sha256": "a206003be0869efa771ffcf0640dbe031c56e84312f2f1ed1927d8d89a939235"
+  },
+  {
+    "id": "syntax",
+    "argv": [
+      "/Users/xumanchun/Documents/agent项目/AI-Robot-latest/.venv/bin/python",
+      "-m",
+      "compileall",
+      "-q",
+      "app",
+      "eval",
+      "scripts",
+      "tests"
+    ],
+    "cwd": "/Users/xumanchun/Documents/agent项目/AI-Robot-latest",
+    "started_utc": "2026-10-17T03:30:18.490767+00:00",
+    "exit_code": 0,
+    "elapsed_seconds": 0.131,
+    "network_guard": true,
+    "output": "syntax.txt",
+    "output_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "id": "import-smoke",
+    "argv": [
+      "/Users/xumanchun/Documents/agent项目/AI-Robot-latest/.venv/bin/python",
+      "-c",
+      "import sys,app.main,app.agents.graph; print(sys.executable); print(app.main.__file__); print(app.agents.graph.__file__); print(\"routes:\", len(app.main.app.routes))"
+    ],
+    "cwd": "/Users/xumanchun/Documents/agent项目/AI-Robot-latest",
+    "started_utc": "2026-10-17T03:30:18.622792+00:00",
+    "exit_code": 0,
+    "elapsed_seconds": 4.831,
+    "network_guard": true,
+    "output": "import-smoke.txt",
+    "output_sha256": "0a0ee1241356e5e5939e1c25e1d1db8e4f3bc43f6c6ba0dea5400e26e1db38c8"
+  },
+  {
+    "id": "script-stability",
+    "argv": [
+      "/Users/xumanchun/Documents/agent项目/AI-Robot-latest/.venv/bin/python",
+      "tests/test_stability.py"
+    ],
+    "cwd": "/Users/xumanchun/Documents/agent项目/AI-Robot-latest",
+    "started_utc": "2026-10-17T03:30:23.453998+00:00",
+    "exit_code": 0,
+    "elapsed_seconds": 1.226,
+    "network_guard": true,
+    "output": "script-stability.txt",
+    "output_sha256": "6af39005d6a5374a47269fc6bbeb06ca83ae6383a29a794a3271a9b03a76cbda"
+  },
+  {
+    "id": "script-integration",
+    "argv": [
+      "/Users/xumanchun/Documents/agent项目/AI-Robot-latest/.venv/bin/python",
+      "tests/test_integration.py"
+    ],
+    "cwd": "/Users/xumanchun/Documents/agent项目/AI-Robot-latest",
+    "started_utc": "2026-10-17T03:30:24.680380+00:00",
+    "exit_code": 0,
+    "elapsed_seconds": 1.213,
+    "network_guard": true,
+    "output": "script-integration.txt",
+    "output_sha256": "4f3229e01ba34944bc789b0d5f00d01374c9a74d6383c323d59f3241a3f47490"
+  },
+  {
+    "id": "script-agent",
+    "argv": [
+      "/Users/xumanchun/Documents/agent项目/AI-Robot-latest/.venv/bin/python",
+      "tests/test_agent.py"
+    ],
+    "cwd": "/Users/xumanchun/Documents/agent项目/AI-Robot-latest",
+    "started_utc": "2026-10-17T03:30:25.893524+00:00",
+    "exit_code": 0,
+    "elapsed_seconds": 0.993,
+    "network_guard": true,
+    "output": "script-agent.txt",
+    "output_sha256": "23ab86604400fd57c1c53a3f854baa7a1f4d4764f5a85ae5dbbf4a9ea7ea6e4c"
+  },
+  {
+    "id": "script-tracing",
+    "argv": [
+      "/Users/xumanchun/Documents/agent项目/AI-Robot-latest/.venv/bin/python",
+      "tests/test_tracing.py"
+    ],
+    "cwd": "/Users/xumanchun/Documents/agent项目/AI-Robot-latest",
+    "started_utc": "2026-10-17T03:30:26.887170+00:00",
+    "exit_code": 0,
+    "elapsed_seconds": 0.041,
+    "network_guard": true,
+    "output": "script-tracing.txt",
+    "output_sha256": "5017a7ef862185be5f24f566c6229e7baeab6524702eb5b3acc4519de88109a9"
+  },
+  {
+    "id": "hardening",
+    "argv": [
+      "/Users/xumanchun/Documents/agent项目/AI-Robot-latest/.venv/bin/python",
+      "-m",
+      "unittest",
+      "discover",
+      "-s",
+      "tests",
+      "-p",
+      "test_hardening.py",
+      "-v"
+    ],
+    "cwd": "/Users/xumanchun/Documents/agent项目/AI-Robot-latest",
+    "started_utc": "2026-10-17T03:30:26.928613+00:00",
+    "exit_code": 0,
+    "elapsed_seconds": 1.807,
+    "network_guard": true,
+    "output": "hardening.txt",
+    "output_sha256": "25967f8054d1ecdd45b33959540a8241177e706dc6549f78032cc73f9bc37959"
+  },
+  {
+    "id": "agent-fixtures",
+    "argv": [
+      "/Users/xumanchun/Documents/agent项目/AI-Robot-latest/.venv/bin/python",
+      "eval/run_agent_eval.py"
+    ],
+    "cwd": "/Users/xumanchun/Documents/agent项目/AI-Robot-latest",
+    "started_utc": "2026-10-17T03:30:28.735995+00:00",
+    "exit_code": 0,
+    "elapsed_seconds": 0.944,
+    "network_guard": true,
+    "output": "agent-fixtures.txt",
+    "output_sha256": "6178ed3429cf7e1a585a0a0a58f7a3a71d3e76413d465b6cb4040ae1ce3a3184"
+  },
+  {
+    "id": "go-pytest",
+    "argv": [
+      "/Users/xumanchun/Documents/agent项目/AI-Robot-latest/.venv/bin/python",
+      "-m",
+      "pytest",
+      "tests/test_go_acceptance.py",
+      "tests/test_go_contracts.py",
+      "tests/test_go_runner.py",
+      "tests/test_go_workflow.py",
+      "-q",
+      "-ra",
+      "--junitxml=/Users/xumanchun/Documents/agent项目/AI-Robot-latest/docs/evidence/s0.1-20261017/go-pytest.xml"
+    ],
+    "cwd": "/Users/xumanchun/Documents/agent项目/AI-Robot-latest",
+    "started_utc": "2026-10-17T03:30:29.681045+00:00",
+    "exit_code": 0,
+    "elapsed_seconds": 1.851,
+    "network_guard": true,
+    "output": "go-pytest.txt",
+    "output_sha256": "c65fe72d9fb6e0f2f6f78005e8cb31b80ad39a8a50ab49bfae049e6a458f698d"
+  },
+  {
+    "id": "context-pytest",
+    "argv": [
+      "/Users/xumanchun/Documents/agent项目/AI-Robot-latest/.venv/bin/python",
+      "-m",
+      "pytest",
+      "tests/test_context_builder.py",
+      "tests/test_context_eval.py",
+      "tests/test_context_evidence.py",
+      "tests/test_context_foundation.py",
+      "tests/test_context_go.py",
+      "tests/test_context_http.py",
+      "tests/test_context_resume.py",
+      "tests/test_context_summary.py",
+      "tests/test_context_tools.py",
+      "tests/test_context_usage.py",
+      "-q",
+      "-ra",
+      "--junitxml=/Users/xumanchun/Documents/agent项目/AI-Robot-latest/docs/evidence/s0.1-20261017/context-pytest.xml"
+    ],
+    "cwd": "/Users/xumanchun/Documents/agent项目/AI-Robot-latest",
+    "started_utc": "2026-10-17T03:30:31.532466+00:00",
+    "exit_code": 0,
+    "elapsed_seconds": 2.928,
+    "network_guard": true,
+    "output": "context-pytest.txt",
+    "output_sha256": "1f5309467a22d58f537f9256e32fa365442b668e62b4df06151a25d5e5adb817"
+  },
+  {
+    "id": "full-pytest",
+    "argv": [
+      "/Users/xumanchun/Documents/agent项目/AI-Robot-latest/.venv/bin/python",
+      "-m",
+      "pytest",
+      "tests",
+      "-q",
+      "-ra",
+      "--junitxml=/Users/xumanchun/Documents/agent项目/AI-Robot-latest/docs/evidence/s0.1-20261017/full-pytest.xml"
+    ],
+    "cwd": "/Users/xumanchun/Documents/agent项目/AI-Robot-latest",
+    "started_utc": "2026-10-17T03:30:34.465129+00:00",
+    "exit_code": 0,
+    "elapsed_seconds": 9.908,
+    "network_guard": true,
+    "output": "full-pytest.txt",
+    "output_sha256": "10aadaa75a12c14a794d299df20a6e97e831d7a861f1a805fe77bfb77dd87943"
+  },
+  {
+    "id": "hardening-exception-witness",
+    "argv": [
+      "/Users/xumanchun/Documents/agent项目/AI-Robot-latest/.venv/bin/python",
+      "/Users/xumanchun/Documents/agent项目/AI-Robot-latest/docs/evidence/s0.1-20261017/exception-witness.py"
+    ],
+    "cwd": "/Users/xumanchun/Documents/agent项目/AI-Robot-latest",
+    "started_utc": "2026-10-17T03:30:44.374118+00:00",
+    "exit_code": 1,
+    "elapsed_seconds": 3.436,
+    "network_guard": true,
+    "output": "hardening-exception-witness.txt",
+    "output_sha256": "86e1c7b42885d605899f037d212f7dee086f3f4f0bc457dc55de5ced520472da"
+  }
+]

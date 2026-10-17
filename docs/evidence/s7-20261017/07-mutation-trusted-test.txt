@@ -1,0 +1,23 @@
+F                                                                        [100%]
+=================================== FAILURES ===================================
+_ MultiAgentContractsTests.test_hash_or_trusted_test_tampering_is_rejected_even_if_rehashed _
+
+self = <test_multi_agent_contracts.MultiAgentContractsTests testMethod=test_hash_or_trusted_test_tampering_is_rejected_even_if_rehashed>
+
+    def test_hash_or_trusted_test_tampering_is_rejected_even_if_rehashed(self):
+        art = artifact()
+        modified = art.model_dump()
+        modified["files"][0]["content"] += "\n// changed"
+        with self.assertRaises(ValidationError):
+            CodeArtifact.model_validate(modified)
+        modified = json.loads(art.model_dump_json())
+        modified["files"][-1]["content"] = "package example\n"
+        modified["artifact_hash"] = artifact_hash(modified["files"])
+>       with self.assertRaises(ValidationError):
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       AssertionError: ValidationError not raised
+
+tests/test_multi_agent_contracts.py:67: AssertionError
+=========================== short test summary info ============================
+FAILED tests/test_multi_agent_contracts.py::MultiAgentContractsTests::test_hash_or_trusted_test_tampering_is_rejected_even_if_rehashed
+1 failed in 0.06s

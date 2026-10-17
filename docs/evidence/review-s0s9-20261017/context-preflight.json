@@ -1,0 +1,27 @@
+{
+  "status": "generation_error",
+  "error": "[supervisor.plan/call] context_budget_exceeded: 必须内容超过输入额度",
+  "reported_calls": 2,
+  "actual_calls": 0,
+  "ledger_calls": 0,
+  "budget": {
+    "limits": {
+      "normal": 7,
+      "retries": 1,
+      "model": 8,
+      "repairs": 2,
+      "validations": 3,
+      "retrievals": 1
+    },
+    "used": {
+      "normal": 1,
+      "retries": 1,
+      "model": 2,
+      "validations": 0,
+      "retrievals": 0,
+      "repairs": 0
+    },
+    "remaining_seconds": 359.99476758390665,
+    "task_seconds": 360
+  }
+}

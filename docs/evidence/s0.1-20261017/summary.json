@@ -1,0 +1,95 @@
+{
+  "stage": "S0.1",
+  "completed_at": "2026-10-17T03:38:33.884318+00:00",
+  "root": "/Users/xumanchun/Documents/agent项目/AI-Robot-latest",
+  "head": "1ea7e6b7abbde3bd1a5963f03cd142fac553685a",
+  "source_manifest_sha256": "0821cec6571ed888c3d37f853c3ea736c01687bdd7ae26d73019b5c4921e7c24",
+  "source_unchanged": true,
+  "s0_evidence_unchanged": true,
+  "s0_log_archived_sha256": "51095f407cb581dcdd755ab0eb07538b2b367394d028c2e5fa71a21168b1a989",
+  "old_repository_unchanged": true,
+  "environment": {
+    "python": "3.13.13",
+    "path": "/Users/xumanchun/Documents/agent项目/AI-Robot-latest/.venv",
+    "core_version_changes": [],
+    "added_dev_packages": [
+      {
+        "package": "iniconfig",
+        "version": "2.3.1"
+      },
+      {
+        "package": "pluggy",
+        "version": "1.7.0"
+      },
+      {
+        "package": "pytest",
+        "version": "9.1.1"
+      }
+    ],
+    "venv_config": "home = /Library/Frameworks/Python.framework/Versions/3.13/bin\ninclude-system-site-packages = false\nversion = 3.13.13\nexecutable = /Library/Frameworks/Python.framework/Versions/3.13/bin/python3.13\ncommand = /Library/Frameworks/Python.framework/Versions/3.13/bin/python3 -m venv /Users/xumanchun/Documents/agent项目/AI-Robot-latest/.venv\n"
+  },
+  "pytest": {
+    "go-pytest": {
+      "tests": 46,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 22,
+      "passed": 24
+    },
+    "context-pytest": {
+      "tests": 71,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "passed": 71
+    },
+    "full-pytest": {
+      "tests": 169,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 22,
+      "passed": 147
+    },
+    "docker-pytest": {
+      "tests": 46,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "passed": 46
+    }
+  },
+  "hardening": {
+    "tests_run": 26,
+    "failures": 0,
+    "errors": 0,
+    "skips": 0,
+    "missing": []
+  },
+  "go_fixtures": {
+    "cases": 9,
+    "final_passed": 9,
+    "initial_passed": 3,
+    "validation_calls": 15,
+    "model_calls_fixture_only": 15,
+    "all_containers_removed": true
+  },
+  "image": {
+    "Id": "sha256:381dd0955d9414dc0debedafb6201a28d4da15b32ce0883310a5e4430fa2d4af",
+    "RepoTags": [
+      "airobot-go-validator:1.26.2"
+    ],
+    "RepoDigests": [
+      "airobot-go-validator@sha256:381dd0955d9414dc0debedafb6201a28d4da15b32ce0883310a5e4430fa2d4af"
+    ],
+    "Os": "linux",
+    "Architecture": "arm64"
+  },
+  "paid_model_embedding_ragas_calls": 0,
+  "unverified": [
+    "Playwright Dashboard",
+    "Python 3.11",
+    "remote CI",
+    "live models/Embedding/RAGAS (no cumulative spending cap)"
+  ],
+  "operational_limitation": "Docker daemon direct Docker Hub manifest fetch timed out. Same official locked base successfully fetched with verified host HTTPS and supplied as OCI named context; persistent fixed validator image is ready."
+}

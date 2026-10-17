@@ -1,0 +1,50 @@
+{
+  "final": {
+    "correct": null,
+    "checks": [
+      {
+        "id": "r-cancel",
+        "status": "unknown",
+        "tests": [
+          "TestEvalContextIdentity"
+        ]
+      },
+      {
+        "id": "r-wait",
+        "status": "unknown",
+        "tests": [
+          "TestEvalContextWait"
+        ]
+      }
+    ],
+    "reason": "unverified",
+    "artifact_hash": null,
+    "scorer_input_hash": null,
+    "report": null,
+    "elapsed_ms": 0.02
+  },
+  "initial": {
+    "correct": null,
+    "checks": [
+      {
+        "id": "r-cancel",
+        "status": "unknown",
+        "tests": [
+          "TestEvalContextIdentity"
+        ]
+      },
+      {
+        "id": "r-wait",
+        "status": "unknown",
+        "tests": [
+          "TestEvalContextWait"
+        ]
+      }
+    ],
+    "reason": "unverified",
+    "artifact_hash": null,
+    "scorer_input_hash": null,
+    "report": null,
+    "elapsed_ms": 0.02
+  }
+}

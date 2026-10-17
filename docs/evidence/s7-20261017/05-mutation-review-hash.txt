@@ -1,0 +1,19 @@
+.                                                                [100%]
+=================================== FAILURES ===================================
+_ MultiAgentReviewTests.test_mismatched_hash_missing_binding_and_old_round_never_pass (report='review', key='artifact_hash') _
+
+self = <test_multi_agent_review.MultiAgentReviewTests testMethod=test_mismatched_hash_missing_binding_and_old_round_never_pass>
+
+    def test_mismatched_hash_missing_binding_and_old_round_never_pass(self):
+        art = artifact()
+        for key, value in [("artifact_hash", "0" * 64), ("artifact_id", "other"), ("task_id", "other"), ("round", 1)]:
+            with self.subTest(report="review", key=key):
+>               self.assertEqual(self.decide(audited=review(art).model_copy(update={key: value})).reason, "review_error")
+E               AssertionError: 'completed' != 'review_error'
+E               - completed
+E               + review_error
+
+tests/test_multi_agent_review.py:35: AssertionError
+=========================== short test summary info ============================
+SUBFAILED(report='review', key='artifact_hash') tests/test_multi_agent_review.py::MultiAgentReviewTests::test_mismatched_hash_missing_binding_and_old_round_never_pass
+1 failed, 1 passed, 7 subtests passed in 0.06s

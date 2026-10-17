@@ -1,0 +1,187 @@
+[
+  {
+    "label": "probes-before",
+    "argv": [
+      "/Users/xumanchun/Documents/agent项目/AI-Robot-latest/.venv/bin/python",
+      "/Users/xumanchun/Documents/agent项目/AI-Robot-latest/docs/evidence/review-s2s4-20261017/probes.py"
+    ],
+    "started_utc": "2026-10-17T07:14:01.818795+00:00",
+    "exit_code": 1,
+    "elapsed_seconds": 3.648,
+    "output_sha256": "68d654afa6aca7f9886ed78896dca1b3ffe6fd41a3c3e58fee2235896a7fe5b7",
+    "output": "probes-before.txt",
+    "output_retained": true
+  },
+  {
+    "label": "probes-after",
+    "argv": [
+      "/Users/xumanchun/Documents/agent项目/AI-Robot-latest/.venv/bin/python",
+      "/Users/xumanchun/Documents/agent项目/AI-Robot-latest/docs/evidence/review-s2s4-20261017/probes.py"
+    ],
+    "started_utc": "2026-10-17T07:17:41.725427+00:00",
+    "exit_code": 0,
+    "elapsed_seconds": 3.12,
+    "output_sha256": "d6e9acd6b4d52aaf85bfcfc3b267484f42c7dcb0092de8d9f463105a940855a5",
+    "output": "probes-after.txt",
+    "output_retained": false,
+    "retention_note": "Intermediate output superseded by final same-label review run; final result retained."
+  },
+  {
+    "label": "targeted",
+    "argv": [
+      "/Users/xumanchun/Documents/agent项目/AI-Robot-latest/.venv/bin/python",
+      "-m",
+      "pytest",
+      "tests/test_multi_agent_regressions.py",
+      "tests/test_multi_agent_agents.py",
+      "tests/test_multi_agent_workflow.py",
+      "tests/test_multi_agent_budget.py",
+      "tests/test_multi_agent_runner_binding.py",
+      "tests/test_go_workflow.py",
+      "-q",
+      "-ra"
+    ],
+    "started_utc": "2026-10-17T07:20:43.623244+00:00",
+    "exit_code": 0,
+    "elapsed_seconds": 4.871,
+    "output_sha256": "3367021092ad2b303f3b3fc2f46a02fc96f681e166116f53f0d085d65cabb20e",
+    "output": "targeted.txt",
+    "output_retained": true
+  },
+  {
+    "label": "pytest-final",
+    "argv": [
+      "/Users/xumanchun/Documents/agent项目/AI-Robot-latest/.venv/bin/python",
+      "-m",
+      "pytest",
+      "tests",
+      "-q",
+      "-ra",
+      "--junitxml=/Users/xumanchun/Documents/agent项目/AI-Robot-latest/docs/evidence/fix-s2s4-20261017/pytest.xml"
+    ],
+    "started_utc": "2026-10-17T07:22:03.736708+00:00",
+    "exit_code": 0,
+    "elapsed_seconds": 7.492,
+    "output_sha256": "6aed80508095a0efc84a09cc1a070ec82eb13516b35f1a8a0dde58aa5c67e97b",
+    "output": "pytest-final.txt",
+    "output_retained": true
+  },
+  {
+    "label": "docker-tests",
+    "argv": [
+      "/Users/xumanchun/Documents/agent项目/AI-Robot-latest/.venv/bin/python",
+      "-m",
+      "pytest",
+      "tests/test_go_runner.py",
+      "tests/test_go_acceptance.py",
+      "tests/test_go_workflow.py",
+      "tests/test_multi_agent_workflow.py",
+      "tests/test_multi_agent_regressions.py",
+      "-q",
+      "-ra",
+      "--junitxml=/Users/xumanchun/Documents/agent项目/AI-Robot-latest/docs/evidence/fix-s2s4-20261017/docker.xml"
+    ],
+    "started_utc": "2026-10-17T07:22:18.567914+00:00",
+    "exit_code": 0,
+    "elapsed_seconds": 86.002,
+    "output_sha256": "d30563768c305410ab610e647b2f841480d30381911947dfda465ade012c0d7e",
+    "output": "docker-tests.txt",
+    "output_retained": true
+  },
+  {
+    "label": "docker-containers",
+    "argv": [
+      "docker",
+      "ps",
+      "-a",
+      "--filter",
+      "name=airobot-go-",
+      "--format",
+      "{{.Names}} {{.Status}}"
+    ],
+    "started_utc": "2026-10-17T07:23:44.573865+00:00",
+    "exit_code": 0,
+    "elapsed_seconds": 0.025,
+    "output_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "output": "docker-containers.txt",
+    "output_retained": true
+  },
+  {
+    "label": "probes-after",
+    "argv": [
+      "/Users/xumanchun/Documents/agent项目/AI-Robot-latest/.venv/bin/python",
+      "/Users/xumanchun/Documents/agent项目/AI-Robot-latest/docs/evidence/review-s2s4-20261017/probes.py"
+    ],
+    "started_utc": "2026-10-17T07:24:02.662147+00:00",
+    "exit_code": 0,
+    "elapsed_seconds": 2.951,
+    "output_sha256": "9a3d58c47ddb98a9aceecac0989759a046209a79501dc52f89141497522c0237",
+    "output": "probes-after.txt",
+    "output_retained": true
+  },
+  {
+    "label": "go-fixtures",
+    "argv": [
+      "/Users/xumanchun/Documents/agent项目/AI-Robot-latest/.venv/bin/python",
+      "eval/run_go_eval.py",
+      "--fixtures",
+      "--output",
+      "/Users/xumanchun/Documents/agent项目/AI-Robot-latest/docs/evidence/fix-s2s4-20261017/go-fixtures.json"
+    ],
+    "started_utc": "2026-10-17T07:24:01.543620+00:00",
+    "exit_code": 0,
+    "elapsed_seconds": 34.929,
+    "output_sha256": "f2f108376629e3f47484c72f7e9c18bb01a435ba32097525983c19dd8c0a9f34",
+    "output": "go-fixtures.txt",
+    "output_retained": true
+  },
+  {
+    "label": "docker-containers-final",
+    "argv": [
+      "docker",
+      "ps",
+      "-a",
+      "--filter",
+      "name=airobot-go-",
+      "--format",
+      "{{.Names}} {{.Status}}"
+    ],
+    "started_utc": "2026-10-17T07:26:31.101991+00:00",
+    "exit_code": 0,
+    "elapsed_seconds": 0.035,
+    "output_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "output": "docker-containers-final.txt",
+    "output_retained": true
+  },
+  {
+    "label": "docker-image-final",
+    "argv": [
+      "docker",
+      "image",
+      "inspect",
+      "airobot-go-validator:1.26.2",
+      "--format",
+      "{{.Id}}"
+    ],
+    "started_utc": "2026-10-17T07:26:31.138442+00:00",
+    "exit_code": 0,
+    "elapsed_seconds": 0.044,
+    "output_sha256": "3a77a3e552fff773375ccca6e928e288fc2a589348f49768816bb1d7681f6202",
+    "output": "docker-image-final.txt",
+    "output_retained": true
+  },
+  {
+    "label": "diff-check",
+    "argv": [
+      "git",
+      "diff",
+      "--check"
+    ],
+    "started_utc": "2026-10-17T07:27:09.273267+00:00",
+    "exit_code": 0,
+    "elapsed_seconds": 0.03,
+    "output": "diff-check.txt",
+    "output_retained": true,
+    "output_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  }
+]

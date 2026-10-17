@@ -1,0 +1,19 @@
+S0 final checks: PASS (evidence consistency, not full behavioral acceptance)
+command: python3 docs/evidence/s0-20261017/verify_evidence.py
+exit_code: 0
+Verified command/output records: 24
+Latest HEAD/branch/tracked diff/staged diff/source + original untracked plans: unchanged
+Old HEAD/Git status/declared source manifest: unchanged
+Evidence helpers: AST parse passed; log evidence links present
+Latest final Git status:
+# branch.oid 1ea7e6b7abbde3bd1a5963f03cd142fac553685a
+# branch.head main
+# branch.upstream origin/main
+# branch.ab +0 -0
+? docs/evidence/
+? docs/multi-agent-execution-log.md
+? docs/multi-agent-execution-prompts.md
+? docs/multi-agent-implementation-plan.md
+
+Source hashes exclude ignored files and execution evidence/log; see source-before.json
+Required pytest/wordlist/Docker checks remain blocked; no live model evaluation executed

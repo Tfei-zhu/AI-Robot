@@ -1,0 +1,26 @@
+{
+  "passed": true,
+  "argv": [
+    "/Users/xumanchun/Documents/agent项目/AI-Robot-latest/.venv/bin/python",
+    "-c",
+    "import json,sys\nfrom eval.multi_agent_protocol import CostLedger\nledger=CostLedger(sys.argv[1],\"1\",\"TEST\",dict(input_ceiling_per_million=\"1\",output_ceiling_per_million=\"1\"),\"synthetic-model\")\ntry:\n ticket=ledger.reserve(1000000,0,\"process-proof\")\n print(json.dumps(dict(status=\"reserved\",ticket=ticket)))\nexcept RuntimeError as exc:\n print(json.dumps(dict(status=\"blocked\",error=str(exc))))\n",
+    "/Users/xumanchun/Documents/agent项目/AI-Robot-latest/docs/evidence/s8-20261017/synthetic-cost-ledger.json"
+  ],
+  "competing_processes": [
+    {
+      "status": "blocked",
+      "error": "Cumulative cost budget exhausted; request not sent"
+    },
+    {
+      "status": "reserved",
+      "ticket": "6e9056ea0fc24f93a4aa27df2b5bf766"
+    }
+  ],
+  "restart": {
+    "status": "blocked",
+    "error": "Cumulative cost budget exhausted; request not sent"
+  },
+  "provider_requests_sent": 0,
+  "scope": "synthetic TEST budget units only, not real fees",
+  "unknown_reserve_retained": true
+}

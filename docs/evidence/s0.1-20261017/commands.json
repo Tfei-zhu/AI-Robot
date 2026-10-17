@@ -1,0 +1,735 @@
+[
+  {
+    "id": "network-outside-sandbox",
+    "argv": [
+      "/Library/Frameworks/Python.framework/Versions/3.13/bin/python3",
+      "-c",
+      "import socket,ssl,urllib.request,pip._vendor.certifi\nprint(\"CA\",pip._vendor.certifi.where())\nfor host in [\"pypi.org\",\"openaipublic.blob.core.windows.net\"]:\n try: print(\"DNS\",host,sorted({x[4][0] for x in socket.getaddrinfo(host,443)}))\n except Exception as e: print(type(e).__name__,str(e))\nfor url in [\"https://pypi.org/simple/pytest/\",\"https://openaipublic.blob.core.windows.net/encodings/cl100k_base.tiktoken\"]:\n try:\n  with urllib.request.urlopen(url,context=ssl.create_default_context(cafile=pip._vendor.certifi.where()),timeout=30) as r: print(\"TLS\",url,r.status)\n except Exception as e: print(type(e).__name__,str(e))\n"
+    ],
+    "cwd": "/Users/xumanchun/Documents/agent项目/AI-Robot-latest",
+    "started_utc": "2026-10-17T03:28:08.598062+00:00",
+    "exit_code": 0,
+    "elapsed_seconds": 1.267,
+    "output": "network-outside-sandbox.txt",
+    "output_sha256": "97bc9b525c14bd06a2bbc5a491268c61950cce164627a50d31741f3bfc6880f3",
+    "record_file": "setup-commands.json"
+  },
+  {
+    "id": "create-venv",
+    "argv": [
+      "/Library/Frameworks/Python.framework/Versions/3.13/bin/python3",
+      "-m",
+      "venv",
+      "/Users/xumanchun/Documents/agent项目/AI-Robot-latest/.venv"
+    ],
+    "cwd": "/Users/xumanchun/Documents/agent项目/AI-Robot-latest",
+    "started_utc": "2026-10-17T03:28:09.866145+00:00",
+    "exit_code": 0,
+    "elapsed_seconds": 1.581,
+    "output": "create-venv.txt",
+    "output_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "record_file": "setup-commands.json"
+  },
+  {
+    "id": "install-dev",
+    "argv": [
+      "/Users/xumanchun/Documents/agent项目/AI-Robot-latest/.venv/bin/python",
+      "-m",
+      "pip",
+      "--isolated",
+      "install",
+      "--disable-pip-version-check",
+      "--cert",
+      "/Library/Frameworks/Python.framework/Versions/3.13/lib/python3.13/site-packages/pip/_vendor/certifi/cacert.pem",
+      "--index-url",
+      "https://pypi.org/simple",
+      "-r",
+      "requirements-dev.txt",
+      "-c",
+      "/Users/xumanchun/Documents/agent项目/AI-Robot-latest/docs/evidence/s0.1-20261017/s0-constraints.txt",
+      "--report",
+      "/Users/xumanchun/Documents/agent项目/AI-Robot-latest/docs/evidence/s0.1-20261017/pip-install-report.json"
+    ],
+    "cwd": "/Users/xumanchun/Documents/agent项目/AI-Robot-latest",
+    "started_utc": "2026-10-17T03:28:11.459065+00:00",
+    "exit_code": 0,
+    "elapsed_seconds": 18.256,
+    "output": "install-dev.txt",
+    "output_sha256": "135bf8ff56d27623b329897b7cedd93b14cad036ad899c46f83432f175f7f9e4",
+    "record_file": "setup-commands.json"
+  },
+  {
+    "id": "pip-check",
+    "argv": [
+      "/Users/xumanchun/Documents/agent项目/AI-Robot-latest/.venv/bin/python",
+      "-m",
+      "pip",
+      "check"
+    ],
+    "cwd": "/Users/xumanchun/Documents/agent项目/AI-Robot-latest",
+    "started_utc": "2026-10-17T03:28:29.716034+00:00",
+    "exit_code": 0,
+    "elapsed_seconds": 0.294,
+    "output": "pip-check.txt",
+    "output_sha256": "9261363b733079a641c2e4cc9bc46ffa1d8336945a87f807b6cf68847dbc9b09",
+    "record_file": "setup-commands.json"
+  },
+  {
+    "id": "packages",
+    "argv": [
+      "/Users/xumanchun/Documents/agent项目/AI-Robot-latest/.venv/bin/python",
+      "-m",
+      "pip",
+      "list",
+      "--format=json"
+    ],
+    "cwd": "/Users/xumanchun/Documents/agent项目/AI-Robot-latest",
+    "started_utc": "2026-10-17T03:28:30.011097+00:00",
+    "exit_code": 0,
+    "elapsed_seconds": 0.183,
+    "output": "packages.txt",
+    "output_sha256": "5b2654d12961583fd5f50338abc9ef3c1f7556492cb8e09e11cedbdcaec612c2",
+    "record_file": "setup-commands.json"
+  },
+  {
+    "id": "freeze",
+    "argv": [
+      "/Users/xumanchun/Documents/agent项目/AI-Robot-latest/.venv/bin/python",
+      "-m",
+      "pip",
+      "freeze",
+      "--all"
+    ],
+    "cwd": "/Users/xumanchun/Documents/agent项目/AI-Robot-latest",
+    "started_utc": "2026-10-17T03:28:30.194984+00:00",
+    "exit_code": 0,
+    "elapsed_seconds": 0.179,
+    "output": "freeze.txt",
+    "output_sha256": "d5e326fd755c9f648d84b355b5e92e84b9ec2dc5e30852a7d28ede5c1d0b0204",
+    "record_file": "setup-commands.json"
+  },
+  {
+    "id": "docker-version",
+    "argv": [
+      "docker",
+      "version"
+    ],
+    "cwd": "/Users/xumanchun/Documents/agent项目/AI-Robot-latest",
+    "started_utc": "2026-10-17T03:28:30.374564+00:00",
+    "exit_code": 1,
+    "elapsed_seconds": 0.133,
+    "output": "docker-version.txt",
+    "output_sha256": "e6ca50b64d15bbbb402990dd00452dfeb9d2ebd222fe750ec8ed7ab875465511",
+    "record_file": "setup-commands.json"
+  },
+  {
+    "id": "docker-desktop-status",
+    "argv": [
+      "docker",
+      "desktop",
+      "status"
+    ],
+    "cwd": "/Users/xumanchun/Documents/agent项目/AI-Robot-latest",
+    "started_utc": "2026-10-17T03:28:30.507800+00:00",
+    "exit_code": 1,
+    "elapsed_seconds": 16.158,
+    "output": "docker-desktop-status.txt",
+    "output_sha256": "ac56c00523d1e789934f4d2fe1e2e09ac3ae557565000bfc053a3ae0cc7eb466",
+    "record_file": "setup-commands.json"
+  },
+  {
+    "id": "python-version",
+    "argv": [
+      "/Users/xumanchun/Documents/agent项目/AI-Robot-latest/.venv/bin/python",
+      "--version"
+    ],
+    "cwd": "/Users/xumanchun/Documents/agent项目/AI-Robot-latest",
+    "started_utc": "2026-10-17T03:28:46.666581+00:00",
+    "exit_code": 0,
+    "elapsed_seconds": 0.011,
+    "output": "python-version.txt",
+    "output_sha256": "6b64edf0fc8f22e798fb64873acba6b4106df290f0bf458b507e8cb409b63e49",
+    "record_file": "setup-commands.json"
+  },
+  {
+    "id": "token-cache-download",
+    "argv": [
+      "/Users/xumanchun/Documents/agent项目/AI-Robot-latest/.venv/bin/python",
+      "-c",
+      "import ast,hashlib,inspect,json,os,pathlib,ssl,urllib.request\nimport certifi,tiktoken,tiktoken_ext.openai_public as defs\nsrc=inspect.getsource(defs.cl100k_base); tree=ast.parse(src)\ncall=next(x for x in ast.walk(tree) if isinstance(x,ast.Call) and getattr(x.func,\"id\",None)==\"load_tiktoken_bpe\")\nurl=ast.literal_eval(call.args[0]); expected=ast.literal_eval(next(k.value for k in call.keywords if k.arg==\"expected_hash\"))\ncache=pathlib.Path(os.environ[\"TIKTOKEN_CACHE_DIR\"]); cache.mkdir(parents=True,exist_ok=True)\nwith urllib.request.urlopen(url,context=ssl.create_default_context(cafile=certifi.where()),timeout=60) as r:\n status=r.status; raw=r.read()\nactual=hashlib.sha256(raw).hexdigest(); assert actual==expected,(actual,expected)\nkey=hashlib.sha1(url.encode()).hexdigest(); target=cache/key; target.write_bytes(raw)\nreport={\"tiktoken_version\":tiktoken.__version__,\"source_url\":url,\"http_status\":status,\"expected_sha256\":expected,\"actual_sha256\":actual,\"cache_key\":key,\"cache_file\":str(target),\"bytes\":len(raw),\"ca_file\":certifi.where(),\"ca_sha256\":hashlib.sha256(pathlib.Path(certifi.where()).read_bytes()).hexdigest(),\"definition_file\":inspect.getfile(defs),\"definition_sha256\":hashlib.sha256(pathlib.Path(inspect.getfile(defs)).read_bytes()).hexdigest()}\nprint(json.dumps(report,ensure_ascii=False,indent=2))\npathlib.Path(\"docs/evidence/s0.1-20261017/token-cache.json\").write_text(json.dumps(report,ensure_ascii=False,indent=2)+\"\\n\")\n"
+    ],
+    "cwd": "/Users/xumanchun/Documents/agent项目/AI-Robot-latest",
+    "started_utc": "2026-10-17T03:30:15.261509+00:00",
+    "exit_code": 0,
+    "elapsed_seconds": 2.839,
+    "network_guard": false,
+    "output": "token-cache-download.txt",
+    "output_sha256": "4fdb36e3b5223122742956914f797a3992d621c5b74f807452c4347cfc5bcbd6",
+    "record_file": "offline-commands.json",
+    "metadata_note": "Public resource preparation intentionally used root-only PYTHONPATH. Raw phase row incorrectly labeled guarded=True; no offline guard loaded for this download."
+  },
+  {
+    "id": "token-cache-offline",
+    "argv": [
+      "/Users/xumanchun/Documents/agent项目/AI-Robot-latest/.venv/bin/python",
+      "-c",
+      "import json,os,sys,tiktoken,urllib.request\nassert \"sitecustomize\" in sys.modules\nenc=tiktoken.get_encoding(\"cl100k_base\")\nexamples=[\"hello world\",\"context cancellation\",\"中文 Token 计量\"]\nrows=[{\"text\":s,\"tokens\":enc.encode(s)} for s in examples]\nassert all(enc.decode(r[\"tokens\"])==r[\"text\"] for r in rows)\nassert enc.n_vocab==100277\nprint(json.dumps({\"encoding\":enc.name,\"n_vocab\":enc.n_vocab,\"examples\":rows,\"network_blocked\":True},ensure_ascii=False,indent=2))\n"
+    ],
+    "cwd": "/Users/xumanchun/Documents/agent项目/AI-Robot-latest",
+    "started_utc": "2026-10-17T03:30:18.100930+00:00",
+    "exit_code": 0,
+    "elapsed_seconds": 0.348,
+    "network_guard": true,
+    "output": "token-cache-offline.txt",
+    "output_sha256": "061318871079dfd4e9a9831b83ac83afea67dc51c00e5bb78c463667c387efc9",
+    "record_file": "offline-commands.json"
+  },
+  {
+    "id": "guard-selftest",
+    "argv": [
+      "/Users/xumanchun/Documents/agent项目/AI-Robot-latest/.venv/bin/python",
+      "-c",
+      "import socket;\ntry: socket.getaddrinfo(\"pypi.org\",443)\nexcept RuntimeError as e:\n assert str(e)==\"S01_OFFLINE_NETWORK_BLOCKED\"; print(\"PASS expected network rejection\")\nelse: raise AssertionError(\"guard absent\")"
+    ],
+    "cwd": "/Users/xumanchun/Documents/agent项目/AI-Robot-latest",
+    "started_utc": "2026-10-17T03:30:18.449915+00:00",
+    "exit_code": 0,
+    "elapsed_seconds": 0.04,
+    "network_guard": true,
+    "output": "guard-selftest.txt",
+    "output_sha256": "a206003be0869efa771ffcf0640dbe031c56e84312f2f1ed1927d8d89a939235",
+    "record_file": "offline-commands.json"
+  },
+  {
+    "id": "syntax",
+    "argv": [
+      "/Users/xumanchun/Documents/agent项目/AI-Robot-latest/.venv/bin/python",
+      "-m",
+      "compileall",
+      "-q",
+      "app",
+      "eval",
+      "scripts",
+      "tests"
+    ],
+    "cwd": "/Users/xumanchun/Documents/agent项目/AI-Robot-latest",
+    "started_utc": "2026-10-17T03:30:18.490767+00:00",
+    "exit_code": 0,
+    "elapsed_seconds": 0.131,
+    "network_guard": true,
+    "output": "syntax.txt",
+    "output_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "record_file": "offline-commands.json"
+  },
+  {
+    "id": "import-smoke",
+    "argv": [
+      "/Users/xumanchun/Documents/agent项目/AI-Robot-latest/.venv/bin/python",
+      "-c",
+      "import sys,app.main,app.agents.graph; print(sys.executable); print(app.main.__file__); print(app.agents.graph.__file__); print(\"routes:\", len(app.main.app.routes))"
+    ],
+    "cwd": "/Users/xumanchun/Documents/agent项目/AI-Robot-latest",
+    "started_utc": "2026-10-17T03:30:18.622792+00:00",
+    "exit_code": 0,
+    "elapsed_seconds": 4.831,
+    "network_guard": true,
+    "output": "import-smoke.txt",
+    "output_sha256": "0a0ee1241356e5e5939e1c25e1d1db8e4f3bc43f6c6ba0dea5400e26e1db38c8",
+    "record_file": "offline-commands.json"
+  },
+  {
+    "id": "docker-context",
+    "argv": [
+      "docker",
+      "context",
+      "show"
+    ],
+    "cwd": "/Users/xumanchun/Documents/agent项目/AI-Robot-latest",
+    "started_utc": "2026-10-17T03:30:20.234855+00:00",
+    "exit_code": 0,
+    "elapsed_seconds": 0.239,
+    "network_guard": false,
+    "output": "docker-context.txt",
+    "output_sha256": "75270b95abcf0516180e80ce1a2b6f98e42b13765c38de5239be80925439ba63",
+    "record_file": "docker-prepare-commands.json"
+  },
+  {
+    "id": "docker-desktop-start",
+    "argv": [
+      "docker",
+      "desktop",
+      "start"
+    ],
+    "cwd": "/Users/xumanchun/Documents/agent项目/AI-Robot-latest",
+    "started_utc": "2026-10-17T03:30:20.474507+00:00",
+    "exit_code": 0,
+    "elapsed_seconds": 15.305,
+    "network_guard": false,
+    "output": "docker-desktop-start.txt",
+    "output_sha256": "5f83026ffb6adcef95ed27e8e68d43a0183d524611d0644977de86d6352ad3eb",
+    "record_file": "docker-prepare-commands.json"
+  },
+  {
+    "id": "script-stability",
+    "argv": [
+      "/Users/xumanchun/Documents/agent项目/AI-Robot-latest/.venv/bin/python",
+      "tests/test_stability.py"
+    ],
+    "cwd": "/Users/xumanchun/Documents/agent项目/AI-Robot-latest",
+    "started_utc": "2026-10-17T03:30:23.453998+00:00",
+    "exit_code": 0,
+    "elapsed_seconds": 1.226,
+    "network_guard": true,
+    "output": "script-stability.txt",
+    "output_sha256": "6af39005d6a5374a47269fc6bbeb06ca83ae6383a29a794a3271a9b03a76cbda",
+    "record_file": "offline-commands.json"
+  },
+  {
+    "id": "script-integration",
+    "argv": [
+      "/Users/xumanchun/Documents/agent项目/AI-Robot-latest/.venv/bin/python",
+      "tests/test_integration.py"
+    ],
+    "cwd": "/Users/xumanchun/Documents/agent项目/AI-Robot-latest",
+    "started_utc": "2026-10-17T03:30:24.680380+00:00",
+    "exit_code": 0,
+    "elapsed_seconds": 1.213,
+    "network_guard": true,
+    "output": "script-integration.txt",
+    "output_sha256": "4f3229e01ba34944bc789b0d5f00d01374c9a74d6383c323d59f3241a3f47490",
+    "record_file": "offline-commands.json"
+  },
+  {
+    "id": "script-agent",
+    "argv": [
+      "/Users/xumanchun/Documents/agent项目/AI-Robot-latest/.venv/bin/python",
+      "tests/test_agent.py"
+    ],
+    "cwd": "/Users/xumanchun/Documents/agent项目/AI-Robot-latest",
+    "started_utc": "2026-10-17T03:30:25.893524+00:00",
+    "exit_code": 0,
+    "elapsed_seconds": 0.993,
+    "network_guard": true,
+    "output": "script-agent.txt",
+    "output_sha256": "23ab86604400fd57c1c53a3f854baa7a1f4d4764f5a85ae5dbbf4a9ea7ea6e4c",
+    "record_file": "offline-commands.json"
+  },
+  {
+    "id": "script-tracing",
+    "argv": [
+      "/Users/xumanchun/Documents/agent项目/AI-Robot-latest/.venv/bin/python",
+      "tests/test_tracing.py"
+    ],
+    "cwd": "/Users/xumanchun/Documents/agent项目/AI-Robot-latest",
+    "started_utc": "2026-10-17T03:30:26.887170+00:00",
+    "exit_code": 0,
+    "elapsed_seconds": 0.041,
+    "network_guard": true,
+    "output": "script-tracing.txt",
+    "output_sha256": "5017a7ef862185be5f24f566c6229e7baeab6524702eb5b3acc4519de88109a9",
+    "record_file": "offline-commands.json"
+  },
+  {
+    "id": "hardening",
+    "argv": [
+      "/Users/xumanchun/Documents/agent项目/AI-Robot-latest/.venv/bin/python",
+      "-m",
+      "unittest",
+      "discover",
+      "-s",
+      "tests",
+      "-p",
+      "test_hardening.py",
+      "-v"
+    ],
+    "cwd": "/Users/xumanchun/Documents/agent项目/AI-Robot-latest",
+    "started_utc": "2026-10-17T03:30:26.928613+00:00",
+    "exit_code": 0,
+    "elapsed_seconds": 1.807,
+    "network_guard": true,
+    "output": "hardening.txt",
+    "output_sha256": "25967f8054d1ecdd45b33959540a8241177e706dc6549f78032cc73f9bc37959",
+    "record_file": "offline-commands.json"
+  },
+  {
+    "id": "agent-fixtures",
+    "argv": [
+      "/Users/xumanchun/Documents/agent项目/AI-Robot-latest/.venv/bin/python",
+      "eval/run_agent_eval.py"
+    ],
+    "cwd": "/Users/xumanchun/Documents/agent项目/AI-Robot-latest",
+    "started_utc": "2026-10-17T03:30:28.735995+00:00",
+    "exit_code": 0,
+    "elapsed_seconds": 0.944,
+    "network_guard": true,
+    "output": "agent-fixtures.txt",
+    "output_sha256": "6178ed3429cf7e1a585a0a0a58f7a3a71d3e76413d465b6cb4040ae1ce3a3184",
+    "record_file": "offline-commands.json"
+  },
+  {
+    "id": "go-pytest",
+    "argv": [
+      "/Users/xumanchun/Documents/agent项目/AI-Robot-latest/.venv/bin/python",
+      "-m",
+      "pytest",
+      "tests/test_go_acceptance.py",
+      "tests/test_go_contracts.py",
+      "tests/test_go_runner.py",
+      "tests/test_go_workflow.py",
+      "-q",
+      "-ra",
+      "--junitxml=/Users/xumanchun/Documents/agent项目/AI-Robot-latest/docs/evidence/s0.1-20261017/go-pytest.xml"
+    ],
+    "cwd": "/Users/xumanchun/Documents/agent项目/AI-Robot-latest",
+    "started_utc": "2026-10-17T03:30:29.681045+00:00",
+    "exit_code": 0,
+    "elapsed_seconds": 1.851,
+    "network_guard": true,
+    "output": "go-pytest.txt",
+    "output_sha256": "c65fe72d9fb6e0f2f6f78005e8cb31b80ad39a8a50ab49bfae049e6a458f698d",
+    "record_file": "offline-commands.json"
+  },
+  {
+    "id": "context-pytest",
+    "argv": [
+      "/Users/xumanchun/Documents/agent项目/AI-Robot-latest/.venv/bin/python",
+      "-m",
+      "pytest",
+      "tests/test_context_builder.py",
+      "tests/test_context_eval.py",
+      "tests/test_context_evidence.py",
+      "tests/test_context_foundation.py",
+      "tests/test_context_go.py",
+      "tests/test_context_http.py",
+      "tests/test_context_resume.py",
+      "tests/test_context_summary.py",
+      "tests/test_context_tools.py",
+      "tests/test_context_usage.py",
+      "-q",
+      "-ra",
+      "--junitxml=/Users/xumanchun/Documents/agent项目/AI-Robot-latest/docs/evidence/s0.1-20261017/context-pytest.xml"
+    ],
+    "cwd": "/Users/xumanchun/Documents/agent项目/AI-Robot-latest",
+    "started_utc": "2026-10-17T03:30:31.532466+00:00",
+    "exit_code": 0,
+    "elapsed_seconds": 2.928,
+    "network_guard": true,
+    "output": "context-pytest.txt",
+    "output_sha256": "1f5309467a22d58f537f9256e32fa365442b668e62b4df06151a25d5e5adb817",
+    "record_file": "offline-commands.json"
+  },
+  {
+    "id": "full-pytest",
+    "argv": [
+      "/Users/xumanchun/Documents/agent项目/AI-Robot-latest/.venv/bin/python",
+      "-m",
+      "pytest",
+      "tests",
+      "-q",
+      "-ra",
+      "--junitxml=/Users/xumanchun/Documents/agent项目/AI-Robot-latest/docs/evidence/s0.1-20261017/full-pytest.xml"
+    ],
+    "cwd": "/Users/xumanchun/Documents/agent项目/AI-Robot-latest",
+    "started_utc": "2026-10-17T03:30:34.465129+00:00",
+    "exit_code": 0,
+    "elapsed_seconds": 9.908,
+    "network_guard": true,
+    "output": "full-pytest.txt",
+    "output_sha256": "10aadaa75a12c14a794d299df20a6e97e831d7a861f1a805fe77bfb77dd87943",
+    "record_file": "offline-commands.json"
+  },
+  {
+    "id": "docker-info",
+    "argv": [
+      "docker",
+      "info",
+      "--format",
+      "{{json .}}"
+    ],
+    "cwd": "/Users/xumanchun/Documents/agent项目/AI-Robot-latest",
+    "started_utc": "2026-10-17T03:30:35.783287+00:00",
+    "exit_code": 0,
+    "elapsed_seconds": 5.706,
+    "network_guard": false,
+    "output": "docker-info.txt",
+    "output_sha256": "7b69a8148a868b1b82c8a5ec633d7f62e23f310d3854a4ae63e95ed0a4fcae31",
+    "record_file": "docker-prepare-commands.json"
+  },
+  {
+    "id": "docker-build",
+    "argv": [
+      "docker",
+      "build",
+      "--progress=plain",
+      "-t",
+      "airobot-go-validator:1.26.2",
+      "sandbox/go"
+    ],
+    "cwd": "/Users/xumanchun/Documents/agent项目/AI-Robot-latest",
+    "started_utc": "2026-10-17T03:30:41.491436+00:00",
+    "exit_code": 1,
+    "elapsed_seconds": 121.213,
+    "network_guard": false,
+    "output": "docker-build.txt",
+    "output_sha256": "dbfcb931f49700da72956e31dfc9da411848ea1df59787e128a821524cc9d127",
+    "record_file": "docker-prepare-commands.json"
+  },
+  {
+    "id": "hardening-exception-witness",
+    "argv": [
+      "/Users/xumanchun/Documents/agent项目/AI-Robot-latest/.venv/bin/python",
+      "/Users/xumanchun/Documents/agent项目/AI-Robot-latest/docs/evidence/s0.1-20261017/exception-witness.py"
+    ],
+    "cwd": "/Users/xumanchun/Documents/agent项目/AI-Robot-latest",
+    "started_utc": "2026-10-17T03:30:44.374118+00:00",
+    "exit_code": 1,
+    "elapsed_seconds": 3.436,
+    "network_guard": true,
+    "output": "hardening-exception-witness.txt",
+    "output_sha256": "86e1c7b42885d605899f037d212f7dee086f3f4f0bc457dc55de5ced520472da",
+    "record_file": "offline-commands.json"
+  },
+  {
+    "id": "hardening-exception-witness-v2",
+    "argv": [
+      "/Users/xumanchun/Documents/agent项目/AI-Robot-latest/.venv/bin/python",
+      "/Users/xumanchun/Documents/agent项目/AI-Robot-latest/docs/evidence/s0.1-20261017/exception-witness-v2.py"
+    ],
+    "cwd": "/Users/xumanchun/Documents/agent项目/AI-Robot-latest",
+    "started_utc": "2026-10-17T03:31:23.901315+00:00",
+    "exit_code": 0,
+    "elapsed_seconds": 2.626,
+    "network_guard": true,
+    "output": "hardening-exception-witness-v2.txt",
+    "output_sha256": "9e9029c833c791a7875edcf5892094912bcbdadadb851c7e0445162528f05ac0",
+    "record_file": "witness-v2-commands.json"
+  },
+  {
+    "id": "docker-images-before",
+    "argv": [
+      "docker",
+      "image",
+      "ls",
+      "--digests",
+      "--format",
+      "{{.Repository}}:{{.Tag}} {{.Digest}} {{.ID}}"
+    ],
+    "cwd": "/Users/xumanchun/Documents/agent项目/AI-Robot-latest",
+    "started_utc": "2026-10-17T03:32:00.675955+00:00",
+    "exit_code": 0,
+    "elapsed_seconds": 0.129,
+    "network_guard": false,
+    "output": "docker-images-before.txt",
+    "output_sha256": "cf9e3c10ac2dad80219d55ff018cf41965ca5f5e75a52836f7e05f5bfc4759af",
+    "record_file": "environment-audit-commands.json"
+  },
+  {
+    "id": "playwright-availability",
+    "argv": [
+      "node",
+      "-e",
+      "console.log(require.resolve('playwright'))"
+    ],
+    "cwd": "/Users/xumanchun/Documents/agent项目/AI-Robot-latest",
+    "started_utc": "2026-10-17T03:32:00.805564+00:00",
+    "exit_code": 1,
+    "elapsed_seconds": 0.196,
+    "network_guard": false,
+    "output": "playwright-availability.txt",
+    "output_sha256": "97fb0a86bae03410635d0c6953754a99dfcde6c160653b86e76a19bddb832e78",
+    "record_file": "environment-audit-commands.json"
+  },
+  {
+    "id": "python311-availability",
+    "argv": [
+      "/Library/Frameworks/Python.framework/Versions/3.13/bin/python3",
+      "-c",
+      "import shutil,json,pathlib; print(json.dumps({\"python3.11\":shutil.which(\"python3.11\"),\"framework_versions\":[p.name for p in pathlib.Path(\"/Library/Frameworks/Python.framework/Versions\").iterdir()]},indent=2))"
+    ],
+    "cwd": "/Users/xumanchun/Documents/agent项目/AI-Robot-latest",
+    "started_utc": "2026-10-17T03:32:01.001628+00:00",
+    "exit_code": 0,
+    "elapsed_seconds": 0.038,
+    "network_guard": false,
+    "output": "python311-availability.txt",
+    "output_sha256": "bd3e16ee0ff17a0928937da9b411c14e1dd09590041d171ac408dcb7c1999a47",
+    "record_file": "environment-audit-commands.json"
+  },
+  {
+    "id": "registry-network-probe",
+    "argv": [
+      "/Users/xumanchun/Documents/agent项目/AI-Robot-latest/.venv/bin/python",
+      "-c",
+      "import socket,ssl,urllib.request,urllib.error,certifi;\nfor host in [\"registry-1.docker.io\",\"auth.docker.io\"]:\n try: print(\"DNS\",host,socket.getaddrinfo(host,443))\n except Exception as e: print(type(e).__name__,str(e))\nfor url in [\"https://registry-1.docker.io/v2/\",\"https://auth.docker.io/token?service=registry.docker.io&scope=repository:library/golang:pull\"]:\n try:\n  with urllib.request.urlopen(url,context=ssl.create_default_context(cafile=certifi.where()),timeout=20) as r: print(\"TLS\",url,r.status)\n except urllib.error.HTTPError as e: print(\"TLS reached HTTP\",e.code)\n except Exception as e: print(type(e).__name__,str(e))"
+    ],
+    "cwd": "/Users/xumanchun/Documents/agent项目/AI-Robot-latest",
+    "started_utc": "2026-10-17T03:32:01.039991+00:00",
+    "exit_code": 0,
+    "elapsed_seconds": 1.431,
+    "network_guard": false,
+    "output": "registry-network-probe.txt",
+    "output_sha256": "676798b3449baee00dede46b83b150b0b1a7edc765872a8d6291233cb21d50c1",
+    "record_file": "environment-audit-commands.json"
+  },
+  {
+    "id": "docker-image",
+    "argv": [
+      "docker",
+      "image",
+      "inspect",
+      "airobot-go-validator:1.26.2"
+    ],
+    "cwd": "/Users/xumanchun/Documents/agent项目/AI-Robot-latest",
+    "started_utc": "2026-10-17T03:32:42.702461+00:00",
+    "exit_code": 1,
+    "elapsed_seconds": 0.041,
+    "network_guard": false,
+    "output": "docker-image.txt",
+    "output_sha256": "f38a22688761923d8c5c1263974bd53d6c0be360461eba7dc4409543366d4493",
+    "record_file": "docker-prepare-commands.json"
+  },
+  {
+    "id": "registry-manifest-probe",
+    "argv": [
+      "/Users/xumanchun/Documents/agent项目/AI-Robot-latest/.venv/bin/python",
+      "/Users/xumanchun/Documents/agent项目/AI-Robot-latest/docs/evidence/s0.1-20261017/registry-recovery.py"
+    ],
+    "cwd": "/Users/xumanchun/Documents/agent项目/AI-Robot-latest",
+    "started_utc": "2026-10-17T03:33:26.697360+00:00",
+    "exit_code": 0,
+    "elapsed_seconds": 2.771,
+    "network_guard": false,
+    "output": "registry-manifest-probe.txt",
+    "output_sha256": "c55fa1d0d2b671807ad1a4a496473f7f8a948ac02c200fd313071de0904da68a",
+    "record_file": "registry-recovery-commands.json"
+  },
+  {
+    "id": "oci-download",
+    "argv": [
+      "/Users/xumanchun/Documents/agent项目/AI-Robot-latest/.venv/bin/python",
+      "/Users/xumanchun/Documents/agent项目/AI-Robot-latest/docs/evidence/s0.1-20261017/oci-recovery.py"
+    ],
+    "cwd": "/Users/xumanchun/Documents/agent项目/AI-Robot-latest",
+    "started_utc": "2026-10-17T03:34:27.562666+00:00",
+    "exit_code": 0,
+    "elapsed_seconds": 10.506,
+    "network_guard": false,
+    "output": "oci-download.txt",
+    "output_sha256": "7a1b16c21fe0dacafe559bbcd1414ece42802655e989160978e640680ef89ba2",
+    "record_file": "oci-recovery-commands.json"
+  },
+  {
+    "id": "docker-build-oci",
+    "argv": [
+      "docker",
+      "build",
+      "--progress=plain",
+      "--build-context",
+      "golang:1.26.2-bookworm@sha256:47ce5636e9936b2c5cbf708925578ef386b4f8872aec74a67bd13a627d242b19=oci-layout:///private/tmp/airobot-s01-golang-oci@sha256:3fc85666d679424f406bbe27d9ffb24df50d5d800380f365c9e7cf6778072a75",
+      "-t",
+      "airobot-go-validator:1.26.2",
+      "sandbox/go"
+    ],
+    "cwd": "/Users/xumanchun/Documents/agent项目/AI-Robot-latest",
+    "started_utc": "2026-10-17T03:34:38.068683+00:00",
+    "exit_code": 0,
+    "elapsed_seconds": 21.933,
+    "network_guard": false,
+    "output": "docker-build-oci.txt",
+    "output_sha256": "d670cc1e971b6e362cb758a6df8be77988b9bd844cf5c47b907f1fd22d45056c",
+    "record_file": "oci-recovery-commands.json"
+  },
+  {
+    "id": "docker-image-ready",
+    "argv": [
+      "docker",
+      "image",
+      "inspect",
+      "airobot-go-validator:1.26.2"
+    ],
+    "cwd": "/Users/xumanchun/Documents/agent项目/AI-Robot-latest",
+    "started_utc": "2026-10-17T03:35:20.851664+00:00",
+    "exit_code": 0,
+    "elapsed_seconds": 0.074,
+    "network_guard": false,
+    "output": "docker-image-ready.txt",
+    "output_sha256": "e6093e0271adcc53d0dddb5d783b57a4f5016f78bdb80ba09b82bc76438cd950",
+    "record_file": "image-confirm-commands.json"
+  },
+  {
+    "id": "docker-version-ready",
+    "argv": [
+      "docker",
+      "version"
+    ],
+    "cwd": "/Users/xumanchun/Documents/agent项目/AI-Robot-latest",
+    "started_utc": "2026-10-17T03:35:20.926026+00:00",
+    "exit_code": 0,
+    "elapsed_seconds": 0.039,
+    "network_guard": false,
+    "output": "docker-version-ready.txt",
+    "output_sha256": "1dfc935ad289e35847bb71a278a92a1779c690ad54f15112ed86757c19947995",
+    "record_file": "image-confirm-commands.json"
+  },
+  {
+    "id": "docker-pytest",
+    "argv": [
+      "/Users/xumanchun/Documents/agent项目/AI-Robot-latest/.venv/bin/python",
+      "-m",
+      "pytest",
+      "tests/test_go_acceptance.py",
+      "tests/test_go_contracts.py",
+      "tests/test_go_runner.py",
+      "tests/test_go_workflow.py",
+      "-q",
+      "-ra",
+      "--junitxml=/Users/xumanchun/Documents/agent项目/AI-Robot-latest/docs/evidence/s0.1-20261017/docker-pytest.xml"
+    ],
+    "cwd": "/Users/xumanchun/Documents/agent项目/AI-Robot-latest",
+    "started_utc": "2026-10-17T03:35:23.298090+00:00",
+    "exit_code": 0,
+    "elapsed_seconds": 67.871,
+    "network_guard": true,
+    "output": "docker-pytest.txt",
+    "output_sha256": "4664c4f9c3fae8f82a1b677c68e081b94a0c947594b569e6f17feb95b88d924f",
+    "record_file": "docker-test-commands.json"
+  },
+  {
+    "id": "go-fixtures",
+    "argv": [
+      "/Users/xumanchun/Documents/agent项目/AI-Robot-latest/.venv/bin/python",
+      "eval/run_go_eval.py",
+      "--fixtures",
+      "--output",
+      "/Users/xumanchun/Documents/agent项目/AI-Robot-latest/docs/evidence/s0.1-20261017/go-fixtures-report.json"
+    ],
+    "cwd": "/Users/xumanchun/Documents/agent项目/AI-Robot-latest",
+    "started_utc": "2026-10-17T03:36:31.167366+00:00",
+    "exit_code": 0,
+    "elapsed_seconds": 30.713,
+    "network_guard": true,
+    "output": "go-fixtures.txt",
+    "output_sha256": "fd0f0306c29e3f982bc443048a0325f46babc5005b1fb2b37b09626938e6f5db",
+    "record_file": "docker-test-commands.json"
+  },
+  {
+    "id": "docker-containers-after",
+    "argv": [
+      "docker",
+      "ps",
+      "-a",
+      "--filter",
+      "name=airobot-go-",
+      "--format",
+      "{{.Names}} {{.Status}}"
+    ],
+    "cwd": "/Users/xumanchun/Documents/agent项目/AI-Robot-latest",
+    "started_utc": "2026-10-17T03:37:01.879835+00:00",
+    "exit_code": 0,
+    "elapsed_seconds": 0.041,
+    "network_guard": false,
+    "output": "docker-containers-after.txt",
+    "output_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "record_file": "docker-test-commands.json"
+  }
+]

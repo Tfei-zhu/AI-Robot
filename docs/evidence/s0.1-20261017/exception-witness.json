@@ -1,0 +1,86 @@
+{
+  "expected_runtime_error_sites": {
+    "42": "模拟向量服务失败",
+    "340": "流中断",
+    "249": "临时故障",
+    "279": "Go 文章服务不可用"
+  },
+  "observed": [
+    {
+      "line": 42,
+      "message": "模拟向量服务失败",
+      "count": 1
+    },
+    {
+      "line": 279,
+      "message": "Go 文章服务不可用",
+      "count": 3
+    },
+    {
+      "line": 340,
+      "message": "流中断",
+      "count": 1
+    }
+  ],
+  "missing": [
+    {
+      "line": 249,
+      "message": "临时故障"
+    }
+  ],
+  "stream_failure_events": [
+    {
+      "type": "stage",
+      "stage": "rate_limit",
+      "msg": "限流检查通过，请求进入 Agent",
+      "ok": true
+    },
+    {
+      "type": "stage",
+      "stage": "cache",
+      "msg": "语义缓存未开启或不可用",
+      "ms": 0.0,
+      "ok": true,
+      "skipped": true
+    },
+    {
+      "type": "intent",
+      "intent": "agent"
+    },
+    {
+      "type": "stage",
+      "stage": "agent",
+      "msg": "已完成分析，正在生成答复",
+      "ok": true
+    },
+    {
+      "type": "plan",
+      "status": "answer",
+      "msg": "已完成分析，正在生成答复"
+    },
+    {
+      "type": "stage",
+      "stage": "generate",
+      "msg": "正在生成最终答复",
+      "ok": true
+    },
+    {
+      "type": "token",
+      "content": "部分答案"
+    },
+    {
+      "type": "error",
+      "msg": "Agent 执行失败，请稍后重试。",
+      "code": "agent_error",
+      "run_id": "6ad531cedd3046cb845e76cb62d03921"
+    },
+    {
+      "type": "done",
+      "run_id": "6ad531cedd3046cb845e76cb62d03921"
+    }
+  ],
+  "tests_run": 26,
+  "failures": 0,
+  "errors": 0,
+  "skips": 0
+}

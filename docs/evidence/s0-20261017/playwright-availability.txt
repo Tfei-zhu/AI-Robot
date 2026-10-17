@@ -1,0 +1,22 @@
+node:internal/modules/cjs/loader:1433
+  throw err;
+  ^
+
+Error: Cannot find module 'playwright'
+Require stack:
+- /Users/xumanchun/Documents/agent项目/AI-Robot-latest/[eval]
+    at Function._resolveFilename (node:internal/modules/cjs/loader:1430:15)
+    at Function.resolve (node:internal/modules/helpers:157:19)
+    at [eval]:1:21
+    at runScriptInThisContext (node:internal/vm:209:10)
+    at node:internal/process/execution:446:12
+    at [eval]-wrapper:6:24
+    at runScriptInContext (node:internal/process/execution:444:60)
+    at evalFunction (node:internal/process/execution:279:30)
+    at evalTypeScript (node:internal/process/execution:291:3)
+    at node:internal/main/eval_string:74:3 {
+  code: 'MODULE_NOT_FOUND',
+  requireStack: [ '/Users/xumanchun/Documents/agent项目/AI-Robot-latest/[eval]' ]
+}
+
+Node.js v22.23.1

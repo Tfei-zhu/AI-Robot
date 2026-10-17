@@ -1,0 +1,190 @@
+{
+  "status": "passed",
+  "enabled": false,
+  "configuration_source": "fresh_process_environment",
+  "model_source": "scripted_nonbillable",
+  "docker": "real",
+  "provider_requests": 0,
+  "multi_role_calls": 0,
+  "trials": [
+    {
+      "scenario": "context_cancel",
+      "transport": "json",
+      "status": "passed",
+      "actual_calls": 1,
+      "validation_calls": 1
+    },
+    {
+      "scenario": "context_cancel",
+      "transport": "sse",
+      "status": "passed",
+      "actual_calls": 1,
+      "validation_calls": 1
+    },
+    {
+      "scenario": "worker_pool",
+      "transport": "json",
+      "status": "passed",
+      "actual_calls": 1,
+      "validation_calls": 1
+    },
+    {
+      "scenario": "worker_pool",
+      "transport": "sse",
+      "status": "passed",
+      "actual_calls": 1,
+      "validation_calls": 1
+    },
+    {
+      "scenario": "channel",
+      "transport": "json",
+      "status": "passed",
+      "actual_calls": 1,
+      "validation_calls": 1
+    },
+    {
+      "scenario": "channel",
+      "transport": "sse",
+      "status": "passed",
+      "actual_calls": 1,
+      "validation_calls": 1
+    },
+    {
+      "scenario": "channel",
+      "transport": "json",
+      "variant": "compile_error",
+      "status": "passed",
+      "actual_calls": 2,
+      "validation_calls": 2
+    },
+    {
+      "scenario": "channel",
+      "transport": "json",
+      "variant": "persistent_bad",
+      "status": "failed",
+      "actual_calls": 3,
+      "validation_calls": 3
+    }
+  ],
+  "legacy_reports": 9,
+  "reopened_report_checks": [
+    {
+      "run_id": "2a60287e9f2a4fbbaf9827fc89560ba5",
+      "workflow_version": "single-v1",
+      "status": "passed",
+      "other_account": 404
+    },
+    {
+      "run_id": "cab9b187ebb84680822f1377ded98a84",
+      "workflow_version": "single-v1",
+      "status": "passed",
+      "other_account": 404
+    },
+    {
+      "run_id": "6ac217f2f68a487ca5b3a7e956f05de9",
+      "workflow_version": "single-v1",
+      "status": "passed",
+      "other_account": 404
+    },
+    {
+      "run_id": "16f5dc085f6c48d8955aaf6d16db7db3",
+      "workflow_version": "single-v1",
+      "status": "passed",
+      "other_account": 404
+    },
+    {
+      "run_id": "a374b06139894006b0fdaaf791584f6a",
+      "workflow_version": "single-v1",
+      "status": "passed",
+      "other_account": 404
+    },
+    {
+      "run_id": "f325b0ca2459480cb4fcbd70a0876123",
+      "workflow_version": "single-v1",
+      "status": "passed",
+      "other_account": 404
+    },
+    {
+      "run_id": "23891106bd2b4d9698327e47ffcf34b5",
+      "workflow_version": "single-v1",
+      "status": "passed",
+      "other_account": 404
+    },
+    {
+      "run_id": "3e6e0fc49a23456b83daaafd8f872436",
+      "workflow_version": "single-v1",
+      "status": "passed",
+      "other_account": 404
+    },
+    {
+      "run_id": "5fb5821900fa4756a8259aa69f88d462",
+      "workflow_version": "single-v1",
+      "status": "passed",
+      "other_account": 404
+    },
+    {
+      "run_id": "acac742470234ffbad74aece7954e134",
+      "workflow_version": "multi-v1",
+      "status": "passed",
+      "other_account": 404
+    }
+  ],
+  "ordinary_chat": [
+    {
+      "case": "knowledge",
+      "passed": true,
+      "model_calls": 3,
+      "tool_rounds": 1,
+      "sources": [
+        "guide#0"
+      ]
+    },
+    {
+      "case": "article",
+      "passed": true,
+      "model_calls": 3,
+      "tool_rounds": 1,
+      "sources": [
+        "article:12"
+      ]
+    },
+    {
+      "case": "combined",
+      "passed": true,
+      "model_calls": 3,
+      "tool_rounds": 1,
+      "sources": [
+        "guide#0",
+        "article:12"
+      ]
+    },
+    {
+      "case": "failure",
+      "passed": true,
+      "model_calls": 3,
+      "tool_rounds": 1,
+      "sources": []
+    },
+    {
+      "case": "budget",
+      "passed": true,
+      "model_calls": 3,
+      "tool_rounds": 2,
+      "sources": [
+        "guide#0"
+      ]
+    },
+    {
+      "case": "direct",
+      "passed": true,
+      "model_calls": 2,
+      "tool_rounds": 0,
+      "sources": []
+    }
+  ],
+  "actual_fixture_calls": 11,
+  "retrieval_calls": 8,
+  "model_calls_during_report_reads": 0,
+  "report_reopen": "passed",
+  "task_resume": "not_implemented; reopening only reads stored JSON"
+}

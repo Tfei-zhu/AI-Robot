@@ -1,0 +1,23 @@
+{
+  "passed": true,
+  "argv": [
+    "/Users/xumanchun/Documents/agent项目/AI-Robot-latest/.venv/bin/python",
+    "-O",
+    "eval/run_multi_agent_eval.py",
+    "run",
+    "--freeze",
+    "/Users/xumanchun/Documents/agent项目/AI-Robot-latest/docs/evidence/s8-20261017/freeze-v1",
+    "--mode",
+    "live",
+    "--split",
+    "dev",
+    "--output",
+    "/Users/xumanchun/Documents/agent项目/AI-Robot-latest/docs/evidence/s8-20261017/forbidden-live"
+  ],
+  "inner_exit_code": 2,
+  "stdout": "",
+  "stderr": "ValueError: 缺少明确、有限、正数的累计费用上限; 累计费用目标尚未冻结；不得评测后修改目标; 缺少跨运行持久化费用账本路径; 模型版本未固定/核实，别名不能视为稳定快照; 请求的模型名称必须是已核实的固定版本，不能仍请求可变别名; 缺少已核实且足够的模型上下文窗口; 缺少与模型/端点绑定的冻结单价上界\n",
+  "expected_result": "blocked_before_client_construction",
+  "provider_requests_sent": 0,
+  "output_created": false
+}

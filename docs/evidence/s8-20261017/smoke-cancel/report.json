@@ -1,0 +1,321 @@
+{
+  "freeze_hash": "f60fe4f9fe10d781aa646268c468b983a975843da2b1043c744f6f804c64b333",
+  "mode": "fixtures",
+  "split": "dev",
+  "generated_utc": "2026-10-17T09:15:48.351190+00:00",
+  "expected_runs": 4,
+  "recorded_runs": 4,
+  "complete": false,
+  "metrics": {
+    "single_native": {
+      "runs": 1,
+      "independent_successes": 0,
+      "independent_success_rate": 0.0,
+      "feasible_runs": 1,
+      "feasible_successes": 0,
+      "infeasible_runs": 0,
+      "correct_refusals": 0,
+      "business_pass_rate": 0.0,
+      "success_wilson95": [
+        0,
+        0.7934567085261071
+      ],
+      "unverified_runs": 1,
+      "requirement_checks": 3,
+      "requirement_pass_rate": 0.0,
+      "false_accepts": 0,
+      "false_accept_denominator": 0,
+      "false_accept_unknown": 0,
+      "false_rejects": 0,
+      "false_reject_denominator": 0,
+      "repair_eligible": 0,
+      "repair_success_rate": null,
+      "model_calls": 1,
+      "role_calls": {
+        "single": 1,
+        "supervisor": 0,
+        "code": 0
+      },
+      "known_role_calls": {
+        "single": 1,
+        "supervisor": 0,
+        "code": 0
+      },
+      "role_usage": {
+        "single": {
+          "unknown_usage_calls": 1,
+          "known_tokens": 0
+        },
+        "supervisor": {
+          "unknown_usage_calls": 0,
+          "known_tokens": 0
+        },
+        "code": {
+          "unknown_usage_calls": 0,
+          "known_tokens": 0
+        }
+      },
+      "incomplete_call_count_runs": 0,
+      "model_calls_known_lower_bound": 1,
+      "mean_calls": 1,
+      "unknown_usage_calls": 1,
+      "known_unknown_usage_calls": 1,
+      "known_token_subtotal": 0,
+      "total_tokens": null,
+      "cost_estimate": 0,
+      "generation_p50_ms": 5.98,
+      "generation_p95_ms": 5.98,
+      "scoring_p50_ms": 0.02,
+      "scoring_p95_ms": 0.02,
+      "end_to_end_p50_ms": 6.0,
+      "end_to_end_p95_ms": 6.0,
+      "stop_reasons": {
+        "cancelled": 1
+      }
+    },
+    "multi_native": {
+      "runs": 1,
+      "independent_successes": 0,
+      "independent_success_rate": 0.0,
+      "feasible_runs": 1,
+      "feasible_successes": 0,
+      "infeasible_runs": 0,
+      "correct_refusals": 0,
+      "business_pass_rate": 0.0,
+      "success_wilson95": [
+        0,
+        0.7934567085261071
+      ],
+      "unverified_runs": 1,
+      "requirement_checks": 3,
+      "requirement_pass_rate": 0.0,
+      "false_accepts": 0,
+      "false_accept_denominator": 0,
+      "false_accept_unknown": 0,
+      "false_rejects": 0,
+      "false_reject_denominator": 0,
+      "repair_eligible": 0,
+      "repair_success_rate": null,
+      "model_calls": 2,
+      "role_calls": {
+        "single": 0,
+        "supervisor": 1,
+        "code": 1
+      },
+      "known_role_calls": {
+        "single": 0,
+        "supervisor": 1,
+        "code": 1
+      },
+      "role_usage": {
+        "single": {
+          "unknown_usage_calls": 0,
+          "known_tokens": 0
+        },
+        "supervisor": {
+          "unknown_usage_calls": 1,
+          "known_tokens": 0
+        },
+        "code": {
+          "unknown_usage_calls": 1,
+          "known_tokens": 0
+        }
+      },
+      "incomplete_call_count_runs": 0,
+      "model_calls_known_lower_bound": 2,
+      "mean_calls": 2,
+      "unknown_usage_calls": 2,
+      "known_unknown_usage_calls": 2,
+      "known_token_subtotal": 0,
+      "total_tokens": null,
+      "cost_estimate": 0,
+      "generation_p50_ms": 1523.64,
+      "generation_p95_ms": 1523.64,
+      "scoring_p50_ms": 0.02,
+      "scoring_p95_ms": 0.02,
+      "end_to_end_p50_ms": 1523.66,
+      "end_to_end_p95_ms": 1523.66,
+      "stop_reasons": {
+        "cancelled": 1
+      }
+    },
+    "single_equal3": {
+      "runs": 1,
+      "independent_successes": 0,
+      "independent_success_rate": 0.0,
+      "feasible_runs": 1,
+      "feasible_successes": 0,
+      "infeasible_runs": 0,
+      "correct_refusals": 0,
+      "business_pass_rate": 0.0,
+      "success_wilson95": [
+        0,
+        0.7934567085261071
+      ],
+      "unverified_runs": 1,
+      "requirement_checks": 3,
+      "requirement_pass_rate": 0.0,
+      "false_accepts": 0,
+      "false_accept_denominator": 0,
+      "false_accept_unknown": 0,
+      "false_rejects": 0,
+      "false_reject_denominator": 0,
+      "repair_eligible": 0,
+      "repair_success_rate": null,
+      "model_calls": 1,
+      "role_calls": {
+        "single": 1,
+        "supervisor": 0,
+        "code": 0
+      },
+      "known_role_calls": {
+        "single": 1,
+        "supervisor": 0,
+        "code": 0
+      },
+      "role_usage": {
+        "single": {
+          "unknown_usage_calls": 1,
+          "known_tokens": 0
+        },
+        "supervisor": {
+          "unknown_usage_calls": 0,
+          "known_tokens": 0
+        },
+        "code": {
+          "unknown_usage_calls": 0,
+          "known_tokens": 0
+        }
+      },
+      "incomplete_call_count_runs": 0,
+      "model_calls_known_lower_bound": 1,
+      "mean_calls": 1,
+      "unknown_usage_calls": 1,
+      "known_unknown_usage_calls": 1,
+      "known_token_subtotal": 0,
+      "total_tokens": null,
+      "cost_estimate": 0,
+      "generation_p50_ms": 5.84,
+      "generation_p95_ms": 5.84,
+      "scoring_p50_ms": 0.01,
+      "scoring_p95_ms": 0.01,
+      "end_to_end_p50_ms": 5.85,
+      "end_to_end_p95_ms": 5.85,
+      "stop_reasons": {
+        "cancelled": 1
+      }
+    },
+    "multi_equal3": {
+      "runs": 1,
+      "independent_successes": 0,
+      "independent_success_rate": 0.0,
+      "feasible_runs": 1,
+      "feasible_successes": 0,
+      "infeasible_runs": 0,
+      "correct_refusals": 0,
+      "business_pass_rate": 0.0,
+      "success_wilson95": [
+        0,
+        0.7934567085261071
+      ],
+      "unverified_runs": 1,
+      "requirement_checks": 3,
+      "requirement_pass_rate": 0.0,
+      "false_accepts": 0,
+      "false_accept_denominator": 0,
+      "false_accept_unknown": 0,
+      "false_rejects": 0,
+      "false_reject_denominator": 0,
+      "repair_eligible": 0,
+      "repair_success_rate": null,
+      "model_calls": 2,
+      "role_calls": {
+        "single": 0,
+        "supervisor": 1,
+        "code": 1
+      },
+      "known_role_calls": {
+        "single": 0,
+        "supervisor": 1,
+        "code": 1
+      },
+      "role_usage": {
+        "single": {
+          "unknown_usage_calls": 0,
+          "known_tokens": 0
+        },
+        "supervisor": {
+          "unknown_usage_calls": 1,
+          "known_tokens": 0
+        },
+        "code": {
+          "unknown_usage_calls": 1,
+          "known_tokens": 0
+        }
+      },
+      "incomplete_call_count_runs": 0,
+      "model_calls_known_lower_bound": 2,
+      "mean_calls": 2,
+      "unknown_usage_calls": 2,
+      "known_unknown_usage_calls": 2,
+      "known_token_subtotal": 0,
+      "total_tokens": null,
+      "cost_estimate": 0,
+      "generation_p50_ms": 6.32,
+      "generation_p95_ms": 6.32,
+      "scoring_p50_ms": 0.01,
+      "scoring_p95_ms": 0.01,
+      "end_to_end_p50_ms": 6.33,
+      "end_to_end_p95_ms": 6.33,
+      "stop_reasons": {
+        "cancelled": 1
+      }
+    }
+  },
+  "protocol_violations": [],
+  "currency": null,
+  "not_run": 0,
+  "pending_trial_ids": [],
+  "inference": "No model-quality improvement conclusion from scripted responses. Native resources differ; equal3 only equalizes ceilings.",
+  "failed_or_interrupted_trials": [
+    "worker_pool-06-multi_equal3-r1-6fe3c36c",
+    "worker_pool-06-multi_native-r1-e155aa56",
+    "worker_pool-06-single_equal3-r1-eada1c12",
+    "worker_pool-06-single_native-r1-cd6c78c5"
+  ],
+  "trials": [
+    {
+      "trial_id": "worker_pool-06-multi_equal3-r1-6fe3c36c",
+      "case_id": "worker_pool-06",
+      "arm": "multi_equal3",
+      "repeat": 1,
+      "business_status": "cancelled",
+      "independently_correct": null
+    },
+    {
+      "trial_id": "worker_pool-06-multi_native-r1-e155aa56",
+      "case_id": "worker_pool-06",
+      "arm": "multi_native",
+      "repeat": 1,
+      "business_status": "cancelled",
+      "independently_correct": null
+    },
+    {
+      "trial_id": "worker_pool-06-single_equal3-r1-eada1c12",
+      "case_id": "worker_pool-06",
+      "arm": "single_equal3",
+      "repeat": 1,
+      "business_status": "cancelled",
+      "independently_correct": null
+    },
+    {
+      "trial_id": "worker_pool-06-single_native-r1-cd6c78c5",
+      "case_id": "worker_pool-06",
+      "arm": "single_native",
+      "repeat": 1,
+      "business_status": "cancelled",
+      "independently_correct": null
+    }
+  ],
+  "full_split": false
+}

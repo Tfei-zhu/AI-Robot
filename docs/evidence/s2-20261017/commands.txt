@@ -1,0 +1,27 @@
+S2 verification commands (run 2026-10-17, Asia/Shanghai; cwd = repository root)
+Interpreter: .venv/bin/python (Python 3.13.13, pytest 9.1.1, Pydantic 2.13.5)
+Environment: TIKTOKEN_CACHE_DIR=.venv/tiktoken-cache (S0.1 verified cl100k_base cache;
+no model/Embedding/network calls; ScriptedModel substitutes only)
+
+1  TIKTOKEN_CACHE_DIR=.venv/tiktoken-cache .venv/bin/python -m unittest discover -s tests -p 'test_multi_agent_agents.py' -v
+   -> exit 0, 11 passed (see unittest-multi-agent.txt for combined run)
+2  TIKTOKEN_CACHE_DIR=.venv/tiktoken-cache .venv/bin/python -m unittest discover -s tests -p 'test_multi_agent_*.py' -v
+   -> exit 0, 44 passed, 0 failure/error/skip (unittest-multi-agent.txt)
+3  .venv/bin/python -m compileall -q app tests eval scripts
+   -> exit 0 (syntax.txt)
+4  TIKTOKEN_CACHE_DIR=.venv/tiktoken-cache .venv/bin/python -m pytest tests -q -ra
+   -> exit 0, 191 passed, 22 skipped (pre-existing AIROBOT_TEST_DOCKER gate), 123 subtests passed (full-pytest.txt)
+5  TIKTOKEN_CACHE_DIR=.venv/tiktoken-cache AIROBOT_TEST_DOCKER=1 .venv/bin/python -m pytest tests/test_go_contracts.py tests/test_go_workflow.py tests/test_go_runner.py tests/test_go_acceptance.py tests/test_multi_agent_runner_binding.py -q
+   -> exit 0, 49 passed, real Linux sandbox (docker-pytest.txt); engine 29.7.2, fixed image sha256:381dd095...
+6  Regression scripts: tests/test_stability.py / test_integration.py / test_agent.py / test_tracing.py / eval/run_agent_eval.py
+   -> exit 0 each (6/6 fixture paths passed); see regression-scripts.txt
+7  Import smoke: app.main (14 routes), app.agents.{supervisor,code_agent,role_runtime};
+   settings.go_multi_agent.enabled=False by default; original graph nodes intact
+   (agent/finalize/tools/go_retrieve/go_generate/go_validate/go_finish) (import-smoke.txt)
+8  git diff --check -> exit 0 (tracked diff whitespace)
+
+No pytest self-substitutes, no test weakening, no assertion removal, no live model calls.
+
+Note: the first import-smoke invocation failed with AttributeError because the inline
+check command itself rebound the name `app` (Python name shadowing in the verification
+command, not product code); re-run with explicit aliases, output appended to import-smoke.txt.

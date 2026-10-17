@@ -1,0 +1,218 @@
+{
+  "run_id": "c221bf8ebf8643408dd160599e2835ae",
+  "status": "budget_exceeded",
+  "scenario": "channel",
+  "attempts": [
+    {
+      "number": 0,
+      "bundle": {
+        "files": [
+          {
+            "name": "solution.go",
+            "content": "package example\nimport \"context\"\n// nil channel 禁用读分支，取消仍可唤醒 select。\nfunc SumChannel(ctx context.Context,input <-chan int)(int,error){\n    sum:=0\n    for {if err:=ctx.Err();err!=nil{return sum,err}\n        select {case <-ctx.Done():return sum,ctx.Err()\n        case v,ok:=<-input:if !ok{return sum,nil};sum+=v}\n    }\n}\n\nvar broken = MissingS8CompileIdentifier\n\n// fixture version 1"
+          },
+          {
+            "name": "solution_test.go",
+            "content": "package example\nimport (\"context\";\"testing\")\nfunc TestGeneratedChannel(t *testing.T){ch:=make(chan int,1);ch<-4;close(ch)\n    sum,err:=SumChannel(context.Background(),ch);if err!=nil||sum!=4{t.Fatal(sum,err)}}"
+          },
+          {
+            "name": "server_acceptance_test.go",
+            "content": "package example\nimport (\"context\"; \"errors\"; \"testing\"; \"time\")\nfunc TestServerChannelSumAndClose(t *testing.T) {\n    ch:=make(chan int,4);for _,v:=range []int{3,-1,0,8}{ch<-v};close(ch)\n    sum,err:=SumChannel(context.Background(),ch)\n    if err!=nil||sum!=10{t.Fatalf(\"求和错误: %v %v\",sum,err)}\n    empty:=make(chan int);close(empty)\n    sum,err=SumChannel(context.Background(),empty)\n    if err!=nil||sum!=0{t.Fatal(\"空 channel 错误\")}\n}\nfunc TestServerNilChannelCancellation(t *testing.T) {\n    ctx,cancel:=context.WithTimeout(context.Background(),30*time.Millisecond);defer cancel()\n    if _,err:=SumChannel(ctx,nil);!errors.Is(err,context.DeadlineExceeded){t.Fatal(\"nil channel 必须响应取消\")}\n}\nfunc TestServerChannelCancellation(t *testing.T) {\n    ctx,cancel:=context.WithCancel(context.Background());cancel()\n    if _,err:=SumChannel(ctx,make(chan int));!errors.Is(err,context.Canceled){t.Fatal(\"必须传播取消错误\")}\n}\n"
+          }
+        ]
+      },
+      "validation": {
+        "status": "failed",
+        "go_version": "1.26.2",
+        "stages": [
+          {
+            "stage": "policy",
+            "exit_code": 0,
+            "output": "单包、源码及标准库依赖校验通过",
+            "elapsed_ms": 0.0,
+            "truncated": false
+          },
+          {
+            "stage": "compile",
+            "exit_code": 1,
+            "output": "# airobot.example\n./solution.go:12:14: undefined: MissingS8CompileIdentifier\n",
+            "elapsed_ms": 43.0,
+            "truncated": false
+          }
+        ],
+        "elapsed_ms": 529.9,
+        "container_removed": true,
+        "artifact_hash": "45f5e3aac73b03da15fe0c0bbe1df11f3c1101f9df25811d59bb0926a7bf4e9b",
+        "task_id": "152bd6968885419c950cfa282f4797f2",
+        "artifact_id": "3563d9b1cbb44fb0ba487a731cd1f7c7",
+        "round": 0
+      },
+      "change_summary": "scripted fixture round"
+    }
+  ],
+  "sources": [],
+  "model_calls": 3,
+  "validation_calls": 1,
+  "elapsed_ms": 563.2,
+  "error": "模型或验证预算不足",
+  "model_source": "fixture",
+  "token_usage": null,
+  "context_stats": {
+    "model_calls": 3,
+    "embedding_calls": 0,
+    "usage_complete": false,
+    "token_usage": null,
+    "known_token_usage": {
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "total_tokens": 0
+    },
+    "unknown_usage_calls": 3,
+    "calls": [
+      {
+        "stage": "go_plan",
+        "model": "s8-scripted-v1",
+        "attempt": 1,
+        "status": "passed",
+        "usage": null,
+        "elapsed_ms": 1.2,
+        "input_estimate": 649
+      },
+      {
+        "stage": "go_generate",
+        "model": "s8-scripted-v1",
+        "attempt": 2,
+        "status": "passed",
+        "usage": null,
+        "elapsed_ms": 0.92,
+        "input_estimate": 723
+      },
+      {
+        "stage": "go_review",
+        "model": "s8-scripted-v1",
+        "attempt": 3,
+        "status": "passed",
+        "usage": null,
+        "elapsed_ms": 1.99,
+        "input_estimate": 1595
+      }
+    ],
+    "cost_estimate": null,
+    "uncached_cost_estimate": null,
+    "currency": null,
+    "cost_note": "单价、端点或实际用量不完整，金额未知"
+  },
+  "budget": {
+    "limits": {
+      "normal": 3,
+      "retries": 0,
+      "model": 3,
+      "repairs": 2,
+      "validations": 3,
+      "retrievals": 1
+    },
+    "used": {
+      "normal": 3,
+      "retries": 0,
+      "model": 3,
+      "validations": 1,
+      "retrievals": 1,
+      "repairs": 0
+    },
+    "remaining_seconds": 359.4513448337093,
+    "task_seconds": 360.0
+  },
+  "validation_scope": "仅验证当前代码、当前测试和固定 Go 工具链；不保证全部行为正确",
+  "workflow_version": "multi-v1",
+  "task_spec": {
+    "task_id": "152bd6968885419c950cfa282f4797f2",
+    "scenario": "channel",
+    "original_requirement": "累加 channel 数值直到关闭；取消时返回 ctx.Err()，并保留已收到数值的部分和；nil channel 也响应取消。",
+    "requirements": [
+      {
+        "requirement_id": "r-base",
+        "text": "累加 channel 数值直到关闭；取消时返回 ctx.Err()，并保留已收到数值的部分和；nil channel 也响应取消。",
+        "required": true
+      }
+    ],
+    "acceptance_criteria": [
+      {
+        "criterion_id": "a-r-base",
+        "requirement_id": "r-base",
+        "text": "累加 channel 数值直到关闭；取消时返回 ctx.Err()，并保留已收到数值的部分和；nil channel 也响应取消。"
+      }
+    ],
+    "constraints": [
+      "只用标准库，服从固定服务端接口"
+    ],
+    "source_refs": []
+  },
+  "artifacts": [
+    {
+      "task_id": "152bd6968885419c950cfa282f4797f2",
+      "artifact_id": "3563d9b1cbb44fb0ba487a731cd1f7c7",
+      "scenario": "channel",
+      "round": 0,
+      "files": [
+        {
+          "name": "solution.go",
+          "content": "package example\nimport \"context\"\n// nil channel 禁用读分支，取消仍可唤醒 select。\nfunc SumChannel(ctx context.Context,input <-chan int)(int,error){\n    sum:=0\n    for {if err:=ctx.Err();err!=nil{return sum,err}\n        select {case <-ctx.Done():return sum,ctx.Err()\n        case v,ok:=<-input:if !ok{return sum,nil};sum+=v}\n    }\n}\n\nvar broken = MissingS8CompileIdentifier\n\n// fixture version 1"
+        },
+        {
+          "name": "solution_test.go",
+          "content": "package example\nimport (\"context\";\"testing\")\nfunc TestGeneratedChannel(t *testing.T){ch:=make(chan int,1);ch<-4;close(ch)\n    sum,err:=SumChannel(context.Background(),ch);if err!=nil||sum!=4{t.Fatal(sum,err)}}"
+        },
+        {
+          "name": "server_acceptance_test.go",
+          "content": "package example\nimport (\"context\"; \"errors\"; \"testing\"; \"time\")\nfunc TestServerChannelSumAndClose(t *testing.T) {\n    ch:=make(chan int,4);for _,v:=range []int{3,-1,0,8}{ch<-v};close(ch)\n    sum,err:=SumChannel(context.Background(),ch)\n    if err!=nil||sum!=10{t.Fatalf(\"求和错误: %v %v\",sum,err)}\n    empty:=make(chan int);close(empty)\n    sum,err=SumChannel(context.Background(),empty)\n    if err!=nil||sum!=0{t.Fatal(\"空 channel 错误\")}\n}\nfunc TestServerNilChannelCancellation(t *testing.T) {\n    ctx,cancel:=context.WithTimeout(context.Background(),30*time.Millisecond);defer cancel()\n    if _,err:=SumChannel(ctx,nil);!errors.Is(err,context.DeadlineExceeded){t.Fatal(\"nil channel 必须响应取消\")}\n}\nfunc TestServerChannelCancellation(t *testing.T) {\n    ctx,cancel:=context.WithCancel(context.Background());cancel()\n    if _,err:=SumChannel(ctx,make(chan int));!errors.Is(err,context.Canceled){t.Fatal(\"必须传播取消错误\")}\n}\n"
+        }
+      ],
+      "artifact_hash": "45f5e3aac73b03da15fe0c0bbe1df11f3c1101f9df25811d59bb0926a7bf4e9b",
+      "change_summary": "scripted fixture round",
+      "addressed_issue_ids": []
+    }
+  ],
+  "reviews": [
+    {
+      "task_id": "152bd6968885419c950cfa282f4797f2",
+      "artifact_id": "3563d9b1cbb44fb0ba487a731cd1f7c7",
+      "artifact_hash": "45f5e3aac73b03da15fe0c0bbe1df11f3c1101f9df25811d59bb0926a7bf4e9b",
+      "round": 0,
+      "verdict": "approve",
+      "requirement_checks": [
+        {
+          "requirement_id": "r-base",
+          "status": "pass",
+          "evidence": "fixture source inspected"
+        }
+      ],
+      "issues": [],
+      "summary": "fixed reviewer output, not an independent label"
+    }
+  ],
+  "agent_calls": [
+    {
+      "role": "supervisor",
+      "stage": "plan",
+      "model": "s8-scripted-v1",
+      "status": "passed",
+      "token_usage": null
+    },
+    {
+      "role": "code",
+      "stage": "generate",
+      "model": "s8-scripted-v1",
+      "status": "passed",
+      "token_usage": null
+    },
+    {
+      "role": "supervisor",
+      "stage": "review",
+      "model": "s8-scripted-v1",
+      "status": "passed",
+      "token_usage": null
+    }
+  ],
+  "stop_reason": "budget_exceeded",
+  "final_summary": ""
+}

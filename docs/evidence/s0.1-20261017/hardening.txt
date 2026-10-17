@@ -1,0 +1,86 @@
+test_closing_stream_cancels_graph_without_committing_memory (test_hardening.AsyncTests.test_closing_stream_cancels_graph_without_committing_memory) ... ok
+test_consumer_pending_retry_concurrency_and_event_loop (test_hardening.AsyncTests.test_consumer_pending_retry_concurrency_and_event_loop) ... 文章 1 入库失败，保留正文并等待重试: 临时故障
+ok
+test_consumer_retries_are_bounded_and_back_off (test_hardening.AsyncTests.test_consumer_retries_are_bounded_and_back_off)
+回归：下游宕机时可恢复失败必须有限重投并退避，不能形成高速重投风暴。 ... 抓取文章 7 失败，跳过该消息: Go 文章服务不可用
+抓取文章 7 失败，跳过该消息: Go 文章服务不可用
+抓取文章 7 失败，跳过该消息: Go 文章服务不可用
+文章 7 连续 3 次处理失败，已停止重投并登记待重放（event_id=e-7）
+ok
+test_stream_failure_does_not_commit_partial_answer (test_hardening.AsyncTests.test_stream_failure_does_not_commit_partial_answer) ... Agent 流式运行失败：run_id=d39d21dc988740fdbf8212aba3057a17
+Traceback (most recent call last):
+  File "/Users/xumanchun/Documents/agent项目/AI-Robot-latest/app/services/chat.py", line 265, in stream_chat
+    async for mode, update in updates:
+    ...<13 lines>...
+                final_state = node_update
+  File "/Users/xumanchun/Documents/agent项目/AI-Robot-latest/.venv/lib/python3.13/site-packages/langgraph/pregel/main.py", line 3440, in astream
+    async for _ in runner.atick(
+    ...<16 lines>...
+            yield o
+  File "/Users/xumanchun/Documents/agent项目/AI-Robot-latest/.venv/lib/python3.13/site-packages/langgraph/pregel/_runner.py", line 557, in atick
+    _panic_or_proceed(
+    ~~~~~~~~~~~~~~~~~^
+        futures.done.union(f for f, t in futures.items() if t is not None),
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<3 lines>...
+        handled_futures=handled_futures,
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "/Users/xumanchun/Documents/agent项目/AI-Robot-latest/.venv/lib/python3.13/site-packages/langgraph/pregel/_runner.py", line 687, in _panic_or_proceed
+    raise exc
+  File "/Users/xumanchun/Documents/agent项目/AI-Robot-latest/.venv/lib/python3.13/site-packages/langgraph/pregel/_retry.py", line 744, in arun_with_retry
+    return await task.proc.ainvoke(task.input, config)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/xumanchun/Documents/agent项目/AI-Robot-latest/.venv/lib/python3.13/site-packages/langgraph/_internal/_runnable.py", line 756, in ainvoke
+    input = await asyncio.create_task(
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^
+        step.ainvoke(input, config, **kwargs), context=context
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "/Users/xumanchun/Documents/agent项目/AI-Robot-latest/.venv/lib/python3.13/site-packages/langgraph/_internal/_runnable.py", line 522, in ainvoke
+    ret = await self.afunc(*args, **kwargs)
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/xumanchun/Documents/agent项目/AI-Robot-latest/app/agents/graph.py", line 237, in _finalize_node
+    async for chunk in usage.stream(
+    ...<6 lines>...
+            writer({"type": "token", "content": text})
+  File "/Users/xumanchun/Documents/agent项目/AI-Robot-latest/app/context/usage.py", line 177, in stream
+    async for chunk in model.astream(messages):
+        combined = chunk if combined is None else combined+chunk
+        yield chunk
+  File "/Users/xumanchun/Documents/agent项目/AI-Robot-latest/tests/test_hardening.py", line 340, in astream
+    raise RuntimeError("流中断")
+RuntimeError: 流中断
+During task with name 'finalize' and id '746d9302-bd37-e5e1-cac5-acbc5950696c'
+ok
+test_stream_tokens_arrive_before_final_generation_completes (test_hardening.AsyncTests.test_stream_tokens_arrive_before_final_generation_completes) ... ok
+test_thread_cancellation_waits_before_cleanup (test_hardening.AsyncTests.test_thread_cancellation_waits_before_cleanup) ... ok
+test_cache_hits_write_memory_for_json_and_sse (test_hardening.CacheTests.test_cache_hits_write_memory_for_json_and_sse) ... ok
+test_cache_isolation_and_exact_guard (test_hardening.CacheTests.test_cache_isolation_and_exact_guard) ... ok
+test_cache_lookup_hits_rephrased_question_inside_account (test_hardening.CacheTests.test_cache_lookup_hits_rephrased_question_inside_account)
+改写提问应在同一账户内命中缓存；exact 精确匹配会让语义缓存彻底失去收益。 ... ok
+test_dynamic_failure_and_mixed_tools_never_cached (test_hardening.CacheTests.test_dynamic_failure_and_mixed_tools_never_cached) ... ok
+test_knowledge_tool_returns_raw_evidence_without_llm (test_hardening.CacheTests.test_knowledge_tool_returns_raw_evidence_without_llm) ... ok
+test_accounts_sessions_and_generated_ids_are_isolated (test_hardening.SecurityTests.test_accounts_sessions_and_generated_ids_are_isolated) ... ok
+test_anonymous_and_forged_identity_rejected (test_hardening.SecurityTests.test_anonymous_and_forged_identity_rejected) ... ok
+test_concurrent_same_session_returns_conflict_then_releases (test_hardening.SecurityTests.test_concurrent_same_session_returns_conflict_then_releases) ... ok
+test_gateway_cannot_access_management_and_admin_can (test_hardening.SecurityTests.test_gateway_cannot_access_management_and_admin_can) ... ok
+test_json_body_limit_before_parser (test_hardening.SecurityTests.test_json_body_limit_before_parser)
+回归：非上传类接口的请求体也必须在 Pydantic 解析前限量。 ... ok
+test_stream_session_lock_released_on_completion (test_hardening.SecurityTests.test_stream_session_lock_released_on_completion) ... ok
+test_upload_size_before_parser_and_original_title (test_hardening.SecurityTests.test_upload_size_before_parser_and_original_title) ... ok
+test_bm25_tokenizes_only_new_documents (test_hardening.StorageTests.test_bm25_tokenizes_only_new_documents) ... ok
+test_concurrent_ingest_search_and_duplicate (test_hardening.StorageTests.test_concurrent_ingest_search_and_duplicate) ... ok
+test_incremental_bm25_equals_batch_and_empty_is_safe (test_hardening.StorageTests.test_incremental_bm25_equals_batch_and_empty_is_safe) ... ok
+test_isolated_collections_and_no_constructor_io (test_hardening.StorageTests.test_isolated_collections_and_no_constructor_io) ... ok
+test_milvus_first_insert_then_idempotent_upsert (test_hardening.StorageTests.test_milvus_first_insert_then_idempotent_upsert) ... ok
+test_old_auto_id_collection_is_rejected_without_drop (test_hardening.StorageTests.test_old_auto_id_collection_is_rejected_without_drop) ... ok
+test_persistent_upload_restore_and_idempotency (test_hardening.StorageTests.test_persistent_upload_restore_and_idempotency) ... ok
+test_vector_failure_keeps_local_indexes_atomic_and_recoverable (test_hardening.StorageTests.test_vector_failure_keeps_local_indexes_atomic_and_recoverable) ... ok
+
+----------------------------------------------------------------------
+Ran 26 tests in 0.837s
+
+OK

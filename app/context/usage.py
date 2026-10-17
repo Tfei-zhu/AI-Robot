@@ -68,7 +68,11 @@ class UsageLedger:
     def finish(self, call, response, started, status="passed"):
         usage = getattr(response, "usage_metadata", None) if response is not None else None
         call.update(status=status, elapsed_ms=round((time.perf_counter()-started)*1000, 2))
-        if usage and all(k in usage for k in ("input_tokens", "output_tokens", "total_tokens")):
+        if isinstance(usage, dict):
+            call["reported_usage"] = {k: usage[k] for k in ("input_tokens", "output_tokens", "total_tokens")
+                                      if type(usage.get(k)) is int and usage[k] >= 0}
+        if isinstance(usage, dict) and all(type(usage.get(k)) is int and usage[k] >= 0
+                                          for k in ("input_tokens", "output_tokens", "total_tokens")):
             # Token 来自服务商；缓存细目原样保留，不把流事件数当作 Token。
             call["usage"] = {k: usage[k] for k in ("input_tokens", "output_tokens", "total_tokens",
                                "input_token_details", "output_token_details") if k in usage}
@@ -76,7 +80,8 @@ class UsageLedger:
     def report(self):
         known = [c["usage"] for c in self.calls if c["usage"] is not None]
         complete = len(known) == len(self.calls)
-        totals = {k: sum(u[k] for u in known) for k in ("input_tokens", "output_tokens", "total_tokens")}
+        totals = {k: sum(c.get("reported_usage", c["usage"] or {}).get(k, 0) for c in self.calls)
+                  for k in ("input_tokens", "output_tokens", "total_tokens")}
         from app.context.pricing import estimate
         cost,uncached,currency=estimate(self.calls)
         return {"model_calls": sum(c["stage"]!="embedding" for c in self.calls),

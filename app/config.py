@@ -2,6 +2,9 @@
 """全局配置：全部从环境变量 / .env 读取，密钥不落盘。"""
 import os
 from pathlib import Path
+from typing import Annotated
+
+from pydantic import BaseModel, ConfigDict, Field, StringConstraints, TypeAdapter, model_validator
 
 try:
     from dotenv import load_dotenv
@@ -18,7 +21,92 @@ def _env(key: str, default: str = "") -> str:
     return (val if val is not None else default).strip()
 
 
+ModelName = Annotated[str, StringConstraints(strict=True, strip_whitespace=True, min_length=1, max_length=256,
+                                           pattern=r"^\S+$")]
+
+
+class GoMultiAgentSettings(BaseModel):
+    """Validated first-version limits; runtime reservations are implemented in S4."""
+    model_config = ConfigDict(extra="forbid", frozen=True, allow_inf_nan=False)
+    enabled: bool = Field(default=False, strict=True)
+    supervisor_model: ModelName | None = None
+    code_model: ModelName | None = None
+    max_repairs: int = Field(default=2, ge=0, le=2, strict=True)
+    max_normal_calls: int = Field(default=7, ge=1, le=7, strict=True)
+    max_retries: int = Field(default=1, ge=0, le=1, strict=True)
+    max_model_calls: int = Field(default=8, ge=1, le=8, strict=True)
+    max_validations: int = Field(default=3, ge=1, le=3, strict=True)
+    max_retrievals: int = Field(default=1, ge=0, le=1, strict=True)
+    task_timeout: float = Field(default=360, gt=0, le=360, strict=True)
+    code_timeout: float = Field(default=120, gt=0, le=120, strict=True)
+    supervisor_timeout: float = Field(default=60, gt=0, le=60, strict=True)
+    validation_timeout: float = Field(default=90, gt=0, le=90, strict=True)
+    cleanup_timeout: float = Field(default=15, gt=0, le=15, strict=True)
+    supervisor_window: int = Field(default=0, ge=0, strict=True)
+    code_window: int = Field(default=0, ge=0, strict=True)
+    supervisor_input_tokens: int = Field(default=16000, gt=0, strict=True)
+    code_input_tokens: int = Field(default=16000, gt=0, strict=True)
+    supervisor_output_tokens: int = Field(default=4096, gt=0, strict=True)
+    code_output_tokens: int = Field(default=8192, gt=0, strict=True)
+    safety_tokens: int = Field(default=2048, gt=0, strict=True)
+
+    @model_validator(mode="after")
+    def coherent_limits(self):
+        if not self.max_normal_calls <= self.max_model_calls <= self.max_normal_calls + self.max_retries:
+            raise ValueError("总模型额度必须覆盖正常额度，且不能超过正常额度与共享重试之和")
+        for stage in ("code_timeout", "supervisor_timeout", "validation_timeout", "cleanup_timeout"):
+            if getattr(self, stage) > self.task_timeout:
+                raise ValueError(f"{stage} 不能超过任务总时间")
+        for role in ("supervisor", "code"):
+            window = getattr(self, role + "_window")
+            reserved = (getattr(self, role + "_input_tokens") + getattr(self, role + "_output_tokens")
+                        + self.safety_tokens)
+            if (self.enabled and window == 0) or (window and window < reserved):
+                raise ValueError(f"{role} 模型窗口未知或不足以容纳输入、输出与安全额度")
+        return self
+
+    @classmethod
+    def from_environment(cls, environ=None):
+        environ = os.environ if environ is None else environ
+        allowed = {"AIROBOT_GO_MULTI_AGENT_" + name.upper() for name in cls.model_fields}
+        unknown = {key for key in environ if key.startswith("AIROBOT_GO_MULTI_AGENT_")} - allowed
+        if unknown:
+            raise ValueError("未知多 Agent 配置项: " + ", ".join(sorted(unknown)))
+        values = {}
+        for name in cls.model_fields:
+            key = "AIROBOT_GO_MULTI_AGENT_" + name.upper()
+            if key not in environ:
+                continue
+            raw = environ[key].strip()
+            if name == "enabled":
+                if raw.lower() not in {"true", "false"}:
+                    raise ValueError(f"{key} 必须是 true 或 false")
+                values[name] = raw.lower() == "true"
+            elif name in {"supervisor_model", "code_model"}:
+                # Empty means inherit the existing default model, never an empty model request.
+                values[name] = raw or None
+            elif name.endswith("_timeout"):
+                values[name] = float(raw)
+            else:
+                if not raw.isascii() or not raw.isdecimal():
+                    raise ValueError(f"{key} 必须是非负整数")
+                values[name] = int(raw)
+        return cls.model_validate(values)
+
+    def role_model(self, role: str, default_model: str) -> str:
+        if role not in {"supervisor", "code"}:
+            raise ValueError("未知 Agent 角色")
+        return getattr(self, role + "_model") or TypeAdapter(ModelName).validate_python(default_model)
+
+
 class Settings:
+    def __init__(self):
+        # Invalid new settings fail during application import, before startup I/O.
+        self.go_multi_agent = GoMultiAgentSettings.from_environment()
+        if self.go_multi_agent.enabled:
+            for role in ("supervisor", "code"):
+                self.go_multi_agent.role_model(role, self.llm_model)
+
     # 大模型（OpenAI 兼容协议）
     llm_base_url: str = _env("AIROBOT_LLM_BASE_URL", "https://dashscope.aliyuncs.com/compatible-mode/v1")
     llm_api_key: str = _env("AIROBOT_LLM_API_KEY")

@@ -1,0 +1,31 @@
+{
+  "incidents": [
+    {
+      "kind": "audit_selector_error",
+      "command": ".venv/bin/python docs/evidence/s9-20261017/build_audit.py",
+      "actual_exit_code": 1,
+      "captured_error": "AssertionError: tests/test_multi_agent_agents.py::CodeRepairTests",
+      "origin": "transcribed from this turn's actual tool output; not rerun or reconstructed as a new execution",
+      "cause": "The audit mapping used a nonexistent class name; actual source class is RepairTests.",
+      "fix": "Corrected selector to RepairTests; retained AST existence assertion and JUnit matching requirements."
+    },
+    {
+      "kind": "checker_bom_decode_error",
+      "command_record": "02-configuration.txt",
+      "actual_exit_code": 1,
+      "cause": "Checker passed a decoded U+FEFF to ast.parse; existing Python source has a valid UTF-8 BOM.",
+      "fix": "Read with utf-8-sig, matching Python's source decoding, and check Python 3.11 grammar. Product files unchanged.",
+      "recheck": "03-configuration-final.txt"
+    },
+    {
+      "kind": "strengthened_actual_call_assertion",
+      "initial_records": ["01-rollback.txt", "04-all-docker-final.txt"],
+      "cause": "Self-review found report-read call comparison used a saved summary rather than retained client counters.",
+      "fix": "Retain all eight clients and compare their actual calls before and after GET. Record model_calls_during_report_reads.",
+      "source_changed_during_initial_suite": true,
+      "recheck": "Final rollback and full Docker suite rerun after the last script edit; initial successful run remains intermediate evidence."
+    }
+  ],
+  "product_failure_count_from_these_incidents": 0,
+  "assertions_removed": 0
+}

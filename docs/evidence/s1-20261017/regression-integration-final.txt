@@ -1,0 +1,25 @@
+PASS test_bm25_incremental_alignment
+PASS test_build_article_docs
+PASS test_consumer_ingest_and_dedupe
+PASS test_consumer_not_found_and_invalid_and_skipped
+PASS test_consumer_persistent_dedupe_and_restore
+PASS test_consumer_requeues_recoverable_failure
+PASS test_extract_article_id
+PASS test_format_article
+PASS test_go_client_200_and_404
+PASS test_go_client_500_raises
+PASS test_go_client_disabled
+PASS test_go_client_sync_path
+
+12 tests passed
+/Users/xumanchun/Documents/agent项目/AI-Robot-FastAPI-LangChain-RAG-CrewAI-Agent-/.venv/lib/python3.13/site-packages/jieba/__init__.py:44: SyntaxWarning: invalid escape sequence '\.'
+  re_han_default = re.compile("([\u4E00-\u9FD5a-zA-Z0-9+#&\._%\-]+)", re.U)
+/Users/xumanchun/Documents/agent项目/AI-Robot-FastAPI-LangChain-RAG-CrewAI-Agent-/.venv/lib/python3.13/site-packages/jieba/__init__.py:46: SyntaxWarning: invalid escape sequence '\s'
+  re_skip_default = re.compile("(\r\n|\s)", re.U)
+/Users/xumanchun/Documents/agent项目/AI-Robot-FastAPI-LangChain-RAG-CrewAI-Agent-/.venv/lib/python3.13/site-packages/jieba/finalseg/__init__.py:78: SyntaxWarning: invalid escape sequence '\.'
+  re_skip = re.compile("([a-zA-Z0-9]+(?:\.\d+)?%?)")
+文章 404 不存在（可能已删除），跳过
+文章事件缺少合法 article_id，跳过: 0
+文章事件缺少合法 article_id，跳过: None
+抓取文章 7 失败，跳过该消息: down
+抓取文章 7 失败，跳过该消息: down

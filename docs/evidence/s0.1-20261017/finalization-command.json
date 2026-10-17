@@ -1,0 +1,10 @@
+{
+  "argv": [
+    "/Library/Frameworks/Python.framework/Versions/3.13/bin/python3",
+    "/private/tmp/airobot_s01_finalize.py"
+  ],
+  "cwd": "/Users/xumanchun/Documents/agent项目/AI-Robot-latest",
+  "exit_code": 0,
+  "record_script": "finalize-record.py",
+  "scope": "append execution log; snapshot and artifact checks; no behavior tests repeated"
+}

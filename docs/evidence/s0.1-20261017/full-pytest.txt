@@ -1,0 +1,15 @@
+........................................................................ [ 42%]
+.....ssssssss...........ssssssssssss.s..........s....................... [ 85%]
+.........................                                                [100%]
+=========================== short test summary info ============================
+SKIPPED [3] tests/test_go_acceptance.py:26: 显式启用真实 Docker 测试
+SKIPPED [3] tests/test_go_acceptance.py:36: 显式启用真实 Docker 测试
+SKIPPED [1] tests/test_go_acceptance.py:55: 显式启用真实 Docker 测试
+SKIPPED [1] tests/test_go_acceptance.py:78: 显式启用真实 Docker 测试
+SKIPPED [9] tests/test_go_runner.py:28: 显式启用真实 Docker 测试
+SKIPPED [1] tests/test_go_runner.py:47: 显式启用真实 Docker 测试
+SKIPPED [1] tests/test_go_runner.py:61: 显式启用真实 Docker 测试
+SKIPPED [1] tests/test_go_runner.py:81: 显式启用真实 Docker 测试
+SKIPPED [1] tests/test_go_runner.py:110: 显式启用真实 Docker 测试
+SKIPPED [1] tests/test_go_workflow.py:163: 启用真实 Docker 测试
+147 passed, 22 skipped in 6.83s

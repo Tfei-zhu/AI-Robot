@@ -16,6 +16,7 @@
 | 混合检索 | 向量与关键词召回、排名融合、可选语义重排；支持 PDF、DOCX、Markdown、TXT |
 | 社区集成 | 查询 Go 文章服务的实时详情，通过 RabbitMQ 发布事件自动导入文章 |
 | Go 示例验证 | 支持 context 取消、任务池、channel 三类场景；隔离编译、检查、测试并最多修复两轮 |
+| Go 多 Agent（可选） | Go 专用 JSON/SSE 入口支持主角色委派、代码角色生成/修复和服务端验证审查门禁；默认关闭，普通聊天不自动委派 |
 | 上下文管理（实验） | Token（模型文本计量单位）预算、增量摘要、工具结果精简、证据复用与受限补读；默认关闭 |
 | 运行观测 | Dashboard 展示执行阶段、调用用量、耗时与缓存指标；接口提供近期运行轨迹 |
 
@@ -67,6 +68,8 @@ AIROBOT_RERANK_ENABLED=false
 
 启动会恢复持久化知识；首次空库尝试导入[示例资料](data/knowledge_base.md)。索引恢复依赖 Embedding 服务。Go 代码验证还需要 Docker Linux 引擎及固定验证镜像，见 [Go 验证指南](docs/go-validation.md)。
 
+Go 多 Agent 当前为本地可选能力，默认关闭。报告可重开读取，任务不能恢复执行；真实模型效果和远程 CI 尚未验证。见[交付说明](docs/multi-agent.md)。
+
 ## 主要接口
 
 | 接口 | 用途 |
@@ -98,6 +101,7 @@ AIROBOT_RERANK_ENABLED=false
 | --- | --- |
 | [使用与部署](docs/usage.md) | 本地启动、模型配置、接口、鉴权、Go 集成、持久化、Docker 与常见问题 |
 | [开发与评测](docs/development.md) | 技术架构、执行机制、项目结构、测试、CI 与质量评测 |
+| [多 Agent 交付说明](docs/multi-agent.md) | 配置、实际回退、逐项状态及尚未实现/验证的能力 |
 | [Go 验证指南](docs/go-validation.md) | 固定接口、验证镜像、任务状态与验收方法 |
 | [上下文管理](docs/context-management.md) | 预算、摘要、原文补读、存储与回退 |
 | [上下文验收结果](docs/context-management-final-results.md) | 四组对照数据、失败分析与启用条件 |

@@ -1,0 +1,36 @@
+[
+  {
+    "id": "oci-download",
+    "argv": [
+      "/Users/xumanchun/Documents/agent项目/AI-Robot-latest/.venv/bin/python",
+      "/Users/xumanchun/Documents/agent项目/AI-Robot-latest/docs/evidence/s0.1-20261017/oci-recovery.py"
+    ],
+    "cwd": "/Users/xumanchun/Documents/agent项目/AI-Robot-latest",
+    "started_utc": "2026-10-17T03:34:27.562666+00:00",
+    "exit_code": 0,
+    "elapsed_seconds": 10.506,
+    "network_guard": false,
+    "output": "oci-download.txt",
+    "output_sha256": "7a1b16c21fe0dacafe559bbcd1414ece42802655e989160978e640680ef89ba2"
+  },
+  {
+    "id": "docker-build-oci",
+    "argv": [
+      "docker",
+      "build",
+      "--progress=plain",
+      "--build-context",
+      "golang:1.26.2-bookworm@sha256:47ce5636e9936b2c5cbf708925578ef386b4f8872aec74a67bd13a627d242b19=oci-layout:///private/tmp/airobot-s01-golang-oci@sha256:3fc85666d679424f406bbe27d9ffb24df50d5d800380f365c9e7cf6778072a75",
+      "-t",
+      "airobot-go-validator:1.26.2",
+      "sandbox/go"
+    ],
+    "cwd": "/Users/xumanchun/Documents/agent项目/AI-Robot-latest",
+    "started_utc": "2026-10-17T03:34:38.068683+00:00",
+    "exit_code": 0,
+    "elapsed_seconds": 21.933,
+    "network_guard": false,
+    "output": "docker-build-oci.txt",
+    "output_sha256": "d670cc1e971b6e362cb758a6df8be77988b9bd844cf5c47b907f1fd22d45056c"
+  }
+]

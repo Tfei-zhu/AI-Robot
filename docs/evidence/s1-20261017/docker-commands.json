@@ -1,0 +1,125 @@
+[
+  {
+    "id": "docker-version-restored",
+    "argv": [
+      "docker",
+      "version"
+    ],
+    "cwd": "/Users/xumanchun/Documents/agent项目/AI-Robot-latest",
+    "started_utc": "2026-10-17T04:01:09.494507+00:00",
+    "elapsed_seconds": 0.033,
+    "exit_code": 0,
+    "guarded": false,
+    "output": "docker-version-restored.txt",
+    "output_sha256": "1dfc935ad289e35847bb71a278a92a1779c690ad54f15112ed86757c19947995",
+    "head": "1ea7e6b7abbde3bd1a5963f03cd142fac553685a",
+    "source_manifest_sha256": "c333b4d3d199dce1e302996402c9dc8d0c55d7c89458b949927f38d111fe7547",
+    "tracked_diff_sha256": "b167408c2ebd60aeacd03ce1b87aea8ff36dfc86b7f2c0fc86cf47cab9a33b10"
+  },
+  {
+    "id": "docker-image-restored",
+    "argv": [
+      "docker",
+      "image",
+      "inspect",
+      "airobot-go-validator:1.26.2"
+    ],
+    "cwd": "/Users/xumanchun/Documents/agent项目/AI-Robot-latest",
+    "started_utc": "2026-10-17T04:01:09.617595+00:00",
+    "elapsed_seconds": 0.056,
+    "exit_code": 0,
+    "guarded": false,
+    "output": "docker-image-restored.txt",
+    "output_sha256": "e6093e0271adcc53d0dddb5d783b57a4f5016f78bdb80ba09b82bc76438cd950",
+    "head": "1ea7e6b7abbde3bd1a5963f03cd142fac553685a",
+    "source_manifest_sha256": "c333b4d3d199dce1e302996402c9dc8d0c55d7c89458b949927f38d111fe7547",
+    "tracked_diff_sha256": "b167408c2ebd60aeacd03ce1b87aea8ff36dfc86b7f2c0fc86cf47cab9a33b10"
+  },
+  {
+    "id": "docker-pytest",
+    "argv": [
+      "/Users/xumanchun/Documents/agent项目/AI-Robot-latest/.venv/bin/python",
+      "-m",
+      "pytest",
+      "tests/test_go_contracts.py",
+      "tests/test_go_workflow.py",
+      "tests/test_go_runner.py",
+      "tests/test_go_acceptance.py",
+      "tests/test_multi_agent_runner_binding.py",
+      "-q",
+      "-ra",
+      "--junitxml=/Users/xumanchun/Documents/agent项目/AI-Robot-latest/docs/evidence/s1-20261017/docker-pytest.xml"
+    ],
+    "cwd": "/Users/xumanchun/Documents/agent项目/AI-Robot-latest",
+    "started_utc": "2026-10-17T04:01:09.742077+00:00",
+    "elapsed_seconds": 66.957,
+    "exit_code": 0,
+    "guarded": true,
+    "output": "docker-pytest.txt",
+    "output_sha256": "063666ee9c7872d3331a9af7419c0999b7f244af815c10727476db049a53d255",
+    "head": "1ea7e6b7abbde3bd1a5963f03cd142fac553685a",
+    "source_manifest_sha256": "c333b4d3d199dce1e302996402c9dc8d0c55d7c89458b949927f38d111fe7547",
+    "tracked_diff_sha256": "b167408c2ebd60aeacd03ce1b87aea8ff36dfc86b7f2c0fc86cf47cab9a33b10"
+  },
+  {
+    "id": "docker-containers-after",
+    "argv": [
+      "docker",
+      "ps",
+      "-a",
+      "--filter",
+      "name=airobot-go-",
+      "--format",
+      "{{.Names}} {{.Status}}"
+    ],
+    "cwd": "/Users/xumanchun/Documents/agent项目/AI-Robot-latest",
+    "started_utc": "2026-10-17T04:02:16.800811+00:00",
+    "elapsed_seconds": 0.025,
+    "exit_code": 0,
+    "guarded": false,
+    "output": "docker-containers-after.txt",
+    "output_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "head": "1ea7e6b7abbde3bd1a5963f03cd142fac553685a",
+    "source_manifest_sha256": "c333b4d3d199dce1e302996402c9dc8d0c55d7c89458b949927f38d111fe7547",
+    "tracked_diff_sha256": "b167408c2ebd60aeacd03ce1b87aea8ff36dfc86b7f2c0fc86cf47cab9a33b10"
+  },
+  {
+    "id": "real-gate",
+    "argv": [
+      "/Users/xumanchun/Documents/agent项目/AI-Robot-latest/.venv/bin/python",
+      "/Users/xumanchun/Documents/agent项目/AI-Robot-latest/docs/evidence/s1-20261017/real_gate_probe.py"
+    ],
+    "cwd": "/Users/xumanchun/Documents/agent项目/AI-Robot-latest",
+    "started_utc": "2026-10-17T04:03:27.010383+00:00",
+    "elapsed_seconds": 7.874,
+    "exit_code": 0,
+    "guarded": true,
+    "output": "real-gate.txt",
+    "output_sha256": "d0e8af52e35e581b442521388a29eba793df49c4964efcd87de3665bf95e2250",
+    "head": "1ea7e6b7abbde3bd1a5963f03cd142fac553685a",
+    "source_manifest_sha256": "c333b4d3d199dce1e302996402c9dc8d0c55d7c89458b949927f38d111fe7547",
+    "tracked_diff_sha256": "b167408c2ebd60aeacd03ce1b87aea8ff36dfc86b7f2c0fc86cf47cab9a33b10"
+  },
+  {
+    "id": "docker-containers-final",
+    "argv": [
+      "docker",
+      "ps",
+      "-a",
+      "--filter",
+      "name=airobot-go-",
+      "--format",
+      "{{.Names}} {{.Status}}"
+    ],
+    "cwd": "/Users/xumanchun/Documents/agent项目/AI-Robot-latest",
+    "started_utc": "2026-10-17T04:03:34.983464+00:00",
+    "elapsed_seconds": 0.024,
+    "exit_code": 0,
+    "guarded": false,
+    "output": "docker-containers-final.txt",
+    "output_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "head": "1ea7e6b7abbde3bd1a5963f03cd142fac553685a",
+    "source_manifest_sha256": "c333b4d3d199dce1e302996402c9dc8d0c55d7c89458b949927f38d111fe7547",
+    "tracked_diff_sha256": "b167408c2ebd60aeacd03ce1b87aea8ff36dfc86b7f2c0fc86cf47cab9a33b10"
+  }
+]

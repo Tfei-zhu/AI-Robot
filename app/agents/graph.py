@@ -72,6 +72,12 @@ class AgentState(TypedDict, total=False):
     go_runner: Any
     go_retrieve: Any
     go_usage: dict
+    go_result: dict
+    go_result_ref: Any
+    go_multi_config: Any
+    go_deadline: float
+    go_supervisor_model: Any
+    go_code_model: Any
 
 
 _llm_cache: dict[tuple, ChatOpenAI] = {}
@@ -79,12 +85,16 @@ _tools_by_name = {item.name: item for item in AGENT_TOOLS}
 _graph = None
 
 
-def get_llm(*, max_retries: int | None = None) -> ChatOpenAI:
-    """复用 OpenAI 兼容 LLM 客户端，避免每个 Agent Run 新建连接。"""
-    key = (settings.llm_model, settings.llm_base_url, settings.llm_api_key, max_retries)
+def get_llm(*, max_retries: int | None = None, model: str | None = None) -> ChatOpenAI:
+    """复用 OpenAI 兼容 LLM 客户端，避免每个 Agent Run 新建连接。
+
+    model 用于多 Agent 角色分别指定模型；默认沿用全局模型。
+    """
+    name = model or settings.llm_model
+    key = (name, settings.llm_base_url, settings.llm_api_key, max_retries)
     if key not in _llm_cache:
         _llm_cache[key] = ChatOpenAI(
-            model=settings.llm_model,
+            model=name,
             api_key=settings.llm_api_key or "sk-placeholder-not-configured",
             base_url=settings.llm_base_url,
             temperature=0.2,
@@ -268,12 +278,20 @@ def get_agent_graph():
         builder.add_node("tools", _tools_node)
         builder.add_node("finalize", _finalize_node)
         from app.go_validation import nodes as go_nodes
+        from app.agents.go_workflow import run_in_graph
+        builder.add_node("go_multi", run_in_graph)
         builder.add_node("go_retrieve", go_nodes.retrieve)
         builder.add_node("go_generate", go_nodes.generate)
         builder.add_node("go_validate", go_nodes.validate)
         builder.add_node("go_finish", go_nodes.finish)
-        builder.add_conditional_edges(START, lambda state: "go_retrieve" if state.get("go_request") else "agent",
-                                      {"go_retrieve": "go_retrieve", "agent": "agent"})
+        def entry(state):
+            if not state.get("go_request"):
+                return "agent"
+            cfg = state.get("go_multi_config") or settings.go_multi_agent
+            return "go_multi" if cfg.enabled else "go_retrieve"
+        builder.add_conditional_edges(START, entry,
+                                      {"go_multi": "go_multi", "go_retrieve": "go_retrieve", "agent": "agent"})
+        builder.add_edge("go_multi", END)
         builder.add_conditional_edges("go_retrieve", go_nodes.after_retrieve)
         builder.add_conditional_edges("go_generate", go_nodes.after_generate)
         builder.add_conditional_edges("go_validate", go_nodes.after_validate)

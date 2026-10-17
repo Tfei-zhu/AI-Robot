@@ -1,0 +1,36 @@
+S1 final evidence consistency: PASS
+command: python3 docs/evidence/s1-20261017/verify_evidence.py
+exit_code: 0
+Final 33 unittest tests + 21 regression tests passed on the recorded delivery source
+HEAD: 1ea7e6b7abbde3bd1a5963f03cd142fac553685a
+source_manifest_sha256: c333b4d3d199dce1e302996402c9dc8d0c55d7c89458b949927f38d111fe7547
+tracked_diff_sha256: b167408c2ebd60aeacd03ce1b87aea8ff36dfc86b7f2c0fc86cf47cab9a33b10
+Verified command outputs: 34; tested delivery records: 6
+Independent environment: full pytest 180 passed / 22 Docker skips / 110 subtests passed
+Docker suite: 49 passed / 0 skips (22 actual sandbox cases, 3 new adapter fixtures)
+Actual Docker + fixture review gate probes: correct passed, wrong code + approve rejected
+Original plans, old source/status, S0/S0.1 evidence and complete prior log prefix: unchanged
+Only four authorized pre-existing files modified; staged content unchanged
+No DNS/connection audit events; no live model evaluation
+git diff --check: passed; new Python files AST: passed
+No remaining pytest/Docker blocker; real model quality, Python 3.11, CI and browser not evaluated
+# branch.oid 1ea7e6b7abbde3bd1a5963f03cd142fac553685a
+# branch.head main
+# branch.upstream origin/main
+# branch.ab +0 -0
+1 .M N... 100644 100644 100644 e026b51d75e18a9dbb6a3246ac47ea7d4f8faf77 e026b51d75e18a9dbb6a3246ac47ea7d4f8faf77 .env.example
+1 .M N... 100644 100644 100644 f19a1b739ded7a6dbd5fb322aae88b617586970e f19a1b739ded7a6dbd5fb322aae88b617586970e app/config.py
+1 .M N... 100644 100644 100644 ec3a3dbe5ef251a2313b1f8780f480e473b621f9 ec3a3dbe5ef251a2313b1f8780f480e473b621f9 app/go_validation/contracts.py
+1 .M N... 100644 100644 100644 feba28e346d889cf6147846aa0665eca0cddd118 feba28e346d889cf6147846aa0665eca0cddd118 app/go_validation/runner.py
+? app/agents/go_workflow.py
+? docs/evidence/
+? docs/multi-agent-execution-log.md
+? docs/multi-agent-execution-prompts.md
+? docs/multi-agent-implementation-plan.md
+? docs/multi-agent-state-contract.md
+? tests/multi_agent_fixtures.py
+? tests/test_multi_agent_config.py
+? tests/test_multi_agent_contracts.py
+? tests/test_multi_agent_review.py
+? tests/test_multi_agent_runner_binding.py
+

@@ -1,0 +1,32 @@
+{
+  "encoding": "cl100k_base",
+  "n_vocab": 100277,
+  "examples": [
+    {
+      "text": "hello world",
+      "tokens": [
+        15339,
+        1917
+      ]
+    },
+    {
+      "text": "context cancellation",
+      "tokens": [
+        2196,
+        36935
+      ]
+    },
+    {
+      "text": "中文 Token 计量",
+      "tokens": [
+        16325,
+        17161,
+        9857,
+        34524,
+        94,
+        33857
+      ]
+    }
+  ],
+  "network_blocked": true
+}

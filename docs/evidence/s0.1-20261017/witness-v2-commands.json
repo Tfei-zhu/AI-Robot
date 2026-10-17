@@ -1,0 +1,16 @@
+[
+  {
+    "id": "hardening-exception-witness-v2",
+    "argv": [
+      "/Users/xumanchun/Documents/agent项目/AI-Robot-latest/.venv/bin/python",
+      "/Users/xumanchun/Documents/agent项目/AI-Robot-latest/docs/evidence/s0.1-20261017/exception-witness-v2.py"
+    ],
+    "cwd": "/Users/xumanchun/Documents/agent项目/AI-Robot-latest",
+    "started_utc": "2026-10-17T03:31:23.901315+00:00",
+    "exit_code": 0,
+    "elapsed_seconds": 2.626,
+    "network_guard": true,
+    "output": "hardening-exception-witness-v2.txt",
+    "output_sha256": "9e9029c833c791a7875edcf5892094912bcbdadadb851c7e0445162528f05ac0"
+  }
+]

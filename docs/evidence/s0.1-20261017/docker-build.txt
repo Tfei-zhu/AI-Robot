@@ -1,0 +1,19 @@
+#0 building with "desktop-linux" instance using docker driver
+
+#1 [internal] load build definition from Dockerfile
+#1 transferring dockerfile: 702B 0.0s done
+#1 DONE 0.1s
+
+#2 [internal] load metadata for docker.io/library/golang:1.26.2-bookworm@sha256:47ce5636e9936b2c5cbf708925578ef386b4f8872aec74a67bd13a627d242b19
+#2 ERROR: failed to do request: Head "https://registry-1.docker.io/v2/library/golang/manifests/sha256:47ce5636e9936b2c5cbf708925578ef386b4f8872aec74a67bd13a627d242b19": context deadline exceeded
+------
+ > [internal] load metadata for docker.io/library/golang:1.26.2-bookworm@sha256:47ce5636e9936b2c5cbf708925578ef386b4f8872aec74a67bd13a627d242b19:
+------
+Dockerfile:2
+--------------------
+   1 |     # 工具链版本与 Python 契约保持一致；运行时不拉取新工具链。
+   2 | >>> FROM golang:1.26.2-bookworm@sha256:47ce5636e9936b2c5cbf708925578ef386b4f8872aec74a67bd13a627d242b19
+   3 |     ENV CGO_ENABLED=0 GOTOOLCHAIN=local GOPROXY=off GOSUMDB=off GOMAXPROCS=2 GOCACHE=/opt/go-cache
+   4 |     COPY runner.go /opt/runner.go
+--------------------
+ERROR: failed to build: failed to solve: DeadlineExceeded: golang:1.26.2-bookworm@sha256:47ce5636e9936b2c5cbf708925578ef386b4f8872aec74a67bd13a627d242b19: failed to resolve source metadata for docker.io/library/golang:1.26.2-bookworm@sha256:47ce5636e9936b2c5cbf708925578ef386b4f8872aec74a67bd13a627d242b19: failed to do request: Head "https://registry-1.docker.io/v2/library/golang/manifests/sha256:47ce5636e9936b2c5cbf708925578ef386b4f8872aec74a67bd13a627d242b19": context deadline exceeded

@@ -104,6 +104,11 @@ tr:hover td{background:#1a2130}
 .go-report details{margin:10px 0}.go-report summary{cursor:pointer;color:var(--muted);padding:7px}
 #goProgress{font-size:13px;color:var(--muted);white-space:pre-wrap;margin:12px 0}
 #goStatus{font-weight:600;margin:10px 0}
+#goTimeline{padding-left:22px;font-size:13px;color:var(--muted);line-height:1.9;overflow-wrap:anywhere}
+.go-report h3{font-size:14px;margin:18px 0 8px}.go-report p{overflow-wrap:anywhere;white-space:pre-wrap}
+.go-report .go-blocking{border-left:3px solid var(--err);padding-left:12px}
+.go-report .go-suggestion{border-left:3px solid var(--warn);padding-left:12px}
+.go-report .go-hash{font:12px/1.6 Consolas,monospace;color:var(--muted)}
 @media(max-width:900px){.console-grid{grid-template-columns:1fr}}
 @media(max-width:720px){.cards{grid-template-columns:repeat(2,1fr)}}
 </style>
@@ -171,8 +176,9 @@ tr:hover td{background:#1a2130}
     </div>
     <div id="goStatus" role="status">就绪</div>
     <div id="goProgress"></div>
+    <ol id="goTimeline" aria-label="任务实际阶段"></ol>
     <div class="go-report" id="goReport"></div>
-    <div class="mono">通过表示当前编译、静态检查与测试通过；报告会保留失败代码、错误和每次修复记录。</div>
+    <div class="mono">仅服务器最终 passed 显示成功。多 Agent 流程还要求当前版本审查通过、必要需求完整且无阻断问题；断流后可按 run_id 查询。</div>
   </section>
 
 <section>
@@ -351,18 +357,41 @@ function parseSSE(part){
   if(!line) return null;
   try{return JSON.parse(line.slice(5).trim());}catch(e){return null;}
 }
-let goController=null;
+let goController=null,goView=null;
 const GO_LABELS={passed:"验证通过",failed:"验证失败",timeout:"超时",unavailable:"环境或模型不可用",cancelled:"已取消",generation_error:"代码生成失败",budget_exceeded:"达到预算",running:"运行中"};
+const GO_PHASES={planning:"主 Agent · 分解需求",retrieval:"检索参考资料",generate:"主 Agent 委派 → 代码 Agent 生成",generated:"代码产物已冻结",validate:"验证器 · 隔离验证",validated:"机器报告已保存",review:"主 Agent · 审查",reviewed:"审查报告已保存",repair:"主 Agent 返回修复任务 → 代码 Agent 修复",model_result:"角色调用结束",finish:"服务器判定终态",cancelled:"任务取消收尾"};
+const goArray=value=>Array.isArray(value)?value:[];
+const goRunId=value=>typeof value==="string"&&/^[a-f0-9]{32}$/.test(value);
 function goText(parent,tag,text){
   // 所有代码与日志均按文本展示，禁止把模型输出作为 HTML 执行。
-  const el=document.createElement(tag);el.textContent=text;parent.appendChild(el);return el;
+  const el=document.createElement(tag);el.textContent=String(text??"");parent.appendChild(el);return el;
 }
-function renderGoAttempt(attempt){
-  const report=document.getElementById("goReport");
+function goStatus(state,text){
+  const el=document.getElementById("goStatus");el.dataset.state=state;el.textContent=text;
+  el.style.color=state==="passed"?"var(--ok)":state==="running"||state==="loading"?"var(--accent)":state==="unknown"||state==="cancel_requested"||state==="timeout"?"var(--warn)":"var(--err)";
+}
+function goNewView(runId=null){
+  goView?.controller?.abort();
+  const ctx={runId,controller:new AbortController(),finalReceived:false,cancelRequested:false};
+  goView=ctx;document.getElementById("goValidation").dataset.runId=runId||"";
+  document.getElementById("goReport").replaceChildren();document.getElementById("goTimeline").replaceChildren();
+  document.getElementById("goProgress").textContent="";return ctx;
+}
+function goFiles(parent,files){
+  for(const file of goArray(files)){
+    const source=document.createElement("details");parent.appendChild(source);
+    goText(source,"summary",file.name);goText(source,"pre",file.content);
+  }
+}
+function renderGoAttempt(attempt,parent=document.getElementById("goReport"),includeFiles=true){
+  const report=parent,validation=attempt.validation||{};
   const details=document.createElement("details");details.open=true;report.appendChild(details);
-  goText(details,"summary",`第 ${attempt.number+1} 次验证 · ${GO_LABELS[attempt.validation.status]||attempt.validation.status} · ${ms(attempt.validation.elapsed_ms)}`);
+  details.dataset.attempt=attempt.number;
+  goText(details,"summary",`第 ${Number(attempt.number)+1} 次验证 · ${GO_LABELS[validation.status]||"未知验证状态"} · ${ms(validation.elapsed_ms)}`);
   goText(details,"p",attempt.change_summary||"首次生成");
-  for(const stage of attempt.validation.stages){
+  goText(details,"p",`容器清理：${validation.container_removed===true?"已确认删除":"未确认删除"}`);
+  if(validation.artifact_hash)goText(details,"p","验证版本："+validation.artifact_hash).className="go-hash";
+  for(const stage of goArray(validation.stages)){
     goText(details,"p",`${stage.stage} · 退出码 ${stage.exit_code} · ${ms(stage.elapsed_ms)}${stage.truncated?' · 日志已截断':''}`);
     if(stage.output){
       const log=document.createElement("details");log.open=stage.exit_code!==0;details.appendChild(log);
@@ -375,66 +404,144 @@ function renderGoAttempt(attempt){
       }else{goText(log,"pre",stage.output);}
     }
   }
-  for(const file of attempt.bundle.files){
-    const source=document.createElement("details");details.appendChild(source);
-    source.open=attempt.validation.status==="passed"&&!file.name.endsWith("_test.go");
-    goText(source,"summary",file.name);goText(source,"pre",file.content);
-  }
+  if(includeFiles)goFiles(details,attempt.bundle?.files);
 }
-function renderGoResult(result){
-  if(result.context_stats)renderContextStats(result.context_stats);
-  document.getElementById("goRunId").value=result.run_id;
-  const status=document.getElementById("goStatus");
-  status.textContent=`${GO_LABELS[result.status]||result.status} · ${ms(result.elapsed_ms)} · 模型调用 ${result.model_calls} · 验证 ${result.validation_calls}`;
-  status.style.color=result.status==="passed"?"var(--ok)":"var(--err)";
+function goDiff(before,after){
+  const old=new Map(goArray(before?.files).map(f=>[f.name,f.content]));
+  const now=new Map(goArray(after?.files).map(f=>[f.name,f.content]));const lines=[];
+  for(const name of new Set([...old.keys(),...now.keys()])){
+    if(old.get(name)===now.get(name))continue;
+    const a=old.has(name)?String(old.get(name)).split("\n"):[],b=now.has(name)?String(now.get(name)).split("\n"):[];
+    let start=0,end=0;while(start<a.length&&start<b.length&&a[start]===b[start])start++;
+    while(end<a.length-start&&end<b.length-start&&a[a.length-1-end]===b[b.length-1-end])end++;
+    lines.push(`--- ${old.has(name)?name:"/dev/null"}`,`+++ ${now.has(name)?name:"/dev/null"}`,`@@ 第 ${start+1} 行起 @@`,
+      ...a.slice(start,a.length-end).map(s=>"- "+s),...b.slice(start,b.length-end).map(s=>"+ "+s));
+  }
+  return lines.join("\n")||"文件内容无变化";
+}
+function renderGoResult(result,{final=true}={}){
+  if(!result||typeof result!=="object"){goStatus("unknown","未知报告：服务器未返回有效对象");return;}
+  if(goRunId(result.run_id))document.getElementById("goRunId").value=result.run_id;
+  const known=Object.hasOwn(GO_LABELS,result.status);
+  const state=!known?"unknown":!final&&result.status==="passed"?"running":result.status;
+  const label=!known?`未知状态：${String(result.status??"缺失")}（未确认成功）`:!final&&result.status==="passed"?"阶段报告已通过，等待服务器最终报告":GO_LABELS[result.status]+(final&&result.status==="passed"?"（服务器终态）":"");
+  goStatus(state,`${label} · ${ms(result.elapsed_ms)} · 模型调用 ${result.model_calls??"未知"} · 验证 ${result.validation_calls??"未知"}`);
   const report=document.getElementById("goReport");report.replaceChildren();
+  report.dataset.workflow=result.workflow_version||"single-v1";
   goText(report,"p",result.model_source==="fixture"?"人工固定模型输出，仅用于流程验收":"使用配置的模型");
   if(result.error)goText(report,"pre",result.error);
-  goText(report,"p",result.validation_scope);
-  goText(report,"p","参考来源："+(result.sources.length?result.sources.join("、"):"无"));
-  if(Object.keys(result.token_usage||{}).length)goText(report,"p","Token 用量："+JSON.stringify(result.token_usage));
-  for(const attempt of result.attempts)renderGoAttempt(attempt);
+  goText(report,"p",result.validation_scope||"报告未提供验证范围");
+  goText(report,"p","参考来源："+(goArray(result.sources).join("、")||"无"));
+  const plan=result.task_spec;
+  if(plan){
+    const section=goText(report,"section","");section.dataset.section="plan";goText(section,"h3","主 Agent 任务计划");
+    goText(section,"p",plan.original_requirement);
+    for(const r of goArray(plan.requirements))goText(section,"p",`[${r.requirement_id}] ${r.required?"必要":"可选"}：${r.text}`);
+    for(const c of goArray(plan.acceptance_criteria))goText(section,"p",`验收 [${c.criterion_id}] → ${c.requirement_id}：${c.text}`);
+    for(const c of goArray(plan.constraints))goText(section,"p","约束："+c);
+  }else goText(report,"p",result.workflow_version==="multi-v1"?"任务计划尚未生成":"旧版单流程报告：无主 Agent 计划或审查记录");
+  const usage=result.context_stats||{},budget=result.budget||{};
+  const accounting=goText(report,"section","");accounting.dataset.section="budget";goText(accounting,"h3","预算与角色用量");
+  for(const [key,title] of [["model","模型请求预占"],["normal","正常模型调用预占"],["retries","共享异常重试"],["repairs","业务修复"],["validations","沙箱验证"],["retrievals","检索"]]){
+    goText(accounting,"p",`${title}：${budget.used?.[key]??"未知"} / ${budget.limits?.[key]??"报告未提供上限"}`);
+  }
+  if(Number.isFinite(budget.remaining_seconds))goText(accounting,"p",`服务器快照剩余时间：${budget.remaining_seconds.toFixed(1)}s`);
+  goText(accounting,"p",result.token_usage&&Object.keys(result.token_usage).length?"Token 用量："+JSON.stringify(result.token_usage):"Token 用量：未知");
+  if(usage.usage_complete===false)goText(accounting,"p",`未知用量调用：${usage.unknown_usage_calls??"未知"}；已知小计：${JSON.stringify(usage.known_token_usage||{})}`);
+  goText(accounting,"p",`费用估算：${usage.cost_estimate==null?"未知":usage.cost_estimate+" "+(usage.currency||"")}`);
+  for(const c of goArray(result.agent_calls))goText(accounting,"p",`${c.role} · ${c.stage} · ${c.model} · ${c.status} · Token ${c.token_usage?JSON.stringify(c.token_usage):"未知"}`);
+  const artifacts=goArray(result.artifacts);
+  artifacts.forEach((artifact,index)=>{
+    const section=goText(report,"section","");section.dataset.section="artifact";goText(section,"h3",`第 ${artifact.round} 轮源码`);
+    goText(section,"p","artifact_hash："+artifact.artifact_hash).className="go-hash";
+    goText(section,"p",artifact.change_summary||"未提供修改说明");
+    if(goArray(artifact.addressed_issue_ids).length)goText(section,"p","本轮处理声明："+artifact.addressed_issue_ids.join("、"));
+    if(index){const diff=goText(section,"details","");diff.dataset.diff="true";goText(diff,"summary","与上一版本的文件差异");goText(diff,"pre",goDiff(artifacts[index-1],artifact));}
+    goFiles(section,artifact.files);
+  });
+  for(const attempt of goArray(result.attempts))renderGoAttempt(attempt,report,!artifacts.length);
+  for(const review of goArray(result.reviews)){
+    const section=goText(report,"section","");section.dataset.section="review";
+    goText(section,"h3",`第 ${review.round} 轮主 Agent 审查 · ${review.verdict}`);
+    goText(section,"p","审查版本："+review.artifact_hash).className="go-hash";goText(section,"p",review.summary);
+    for(const check of goArray(review.requirement_checks))goText(section,"p",`需求 [${check.requirement_id}] ${check.status}：${check.evidence}`);
+    for(const severity of ["blocking","suggestion"]){
+      const group=goText(section,"div","");group.className="go-"+severity;goText(group,"h3",severity==="blocking"?"阻断问题":"非阻断建议");
+      const issues=goArray(review.issues).filter(i=>i.severity===severity);
+      if(!issues.length)goText(group,"p","无");
+      for(const issue of issues){goText(group,"p",`[${issue.issue_id}] ${issue.requirement_id||"整体问题"} · ${issue.file||"整体设计"}${issue.line?":"+issue.line:""}`);goText(group,"p","依据："+issue.evidence);goText(group,"p","修复要求："+issue.repair_instruction);}
+    }
+  }
+  const conclusion=goText(report,"section","");conclusion.dataset.section="conclusion";goText(conclusion,"h3",final?"服务器结论":"当前快照（尚非最终结论）");
+  goText(conclusion,"p","停止原因："+(result.stop_reason||"尚未停止 / 旧报告未提供"));goText(conclusion,"p",result.final_summary||"未提供最终说明");
 }
 async function startGoTask(){
-  if(goController)return;
+  if(goController&&!goView?.cancelRequested)return;
   const requirement=document.getElementById("goRequirement").value.trim();
-  if(requirement.length<5){document.getElementById("goStatus").textContent="请输入至少 5 字的需求";return;}
-  goController=new AbortController();
+  if(requirement.length<5){goStatus("unknown","请输入至少 5 字的需求");return;}
+  const ctx=goNewView();goController=ctx.controller;
   document.getElementById("goStart").disabled=true;document.getElementById("goCancel").disabled=false;document.getElementById("goLoad").disabled=true;
-  document.getElementById("goRunId").value="";document.getElementById("goReport").replaceChildren();
-  document.getElementById("goProgress").textContent="";
-  document.getElementById("goStatus").textContent="正在生成与验证…";document.getElementById("goStatus").style.color="var(--accent)";
-  let completed=false;
+  document.getElementById("goRunId").value="";goStatus("running","正在等待服务器任务事件…");
   function consume(part){
-    const ev=parseSSE(part);if(!ev)return;
-    if(ev.type==="go_start")document.getElementById("goRunId").value=ev.run_id;
-    if(ev.type==="go_stage")document.getElementById("goProgress").textContent+=ev.message+"\n";
-    if(ev.type==="go_attempt")renderGoAttempt(ev.attempt);
-    if(ev.type==="go_done"){completed=true;renderGoResult(ev.result);}
+    if(goView!==ctx||ctx.cancelRequested||ctx.finalReceived)return;
+    const data=part.split(/\r?\n/).filter(l=>l.startsWith("data:")).map(l=>l.slice(5).trimStart()).join("\n");if(!data)return;
+    let ev;try{ev=JSON.parse(data);}catch{ctx.protocolError=true;goStatus("unknown","未知事件：服务器数据无法解析");return;}
+    if(ev.type==="go_start"){
+      if(!goRunId(ev.run_id)||(ctx.runId&&ev.run_id!==ctx.runId))return;
+      ctx.runId=ev.run_id;ctx.workflow=ev.workflow_version||"single-v1";document.getElementById("goRunId").value=ev.run_id;document.getElementById("goValidation").dataset.runId=ev.run_id;return;
+    }
+    if(!ctx.runId)return;
+    const id=ev.run_id||ev.result?.run_id;
+    if(ctx.workflow!=="single-v1"&&!id){ctx.protocolError=true;goStatus("unknown","未知事件：缺少 run_id，未接受该报告");return;}
+    // Historical single-v1 events without IDs belong only to this bound stream.
+    if(id&&id!==ctx.runId)return;
+    if(ev.result?.run_id&&ev.result.run_id!==ctx.runId)return;
+    if(ev.type==="go_stage"){
+      const legacy={generate:"单流程模型 · 代码生成",repair:"单流程模型 · 代码修复"};
+      const label=ctx.workflow==="single-v1"&&Object.hasOwn(legacy,ev.stage)?legacy[ev.stage]:Object.hasOwn(GO_PHASES,ev.stage)?GO_PHASES[ev.stage]:"未知阶段："+String(ev.stage);
+      const text=`${label}${ev.round!=null?" · 第 "+ev.round+" 轮":""}${ev.message&&ev.message!==ev.stage?" · "+ev.message:""}`;
+      goText(document.getElementById("goTimeline"),"li",text);
+      document.getElementById("goProgress").textContent=text;
+    }
+    if(ev.type==="go_progress"&&ev.result)renderGoResult(ev.result,{final:false});
+    if(ev.type==="go_attempt"&&!document.querySelector(`[data-attempt="${Number(ev.attempt?.number)}"]`))renderGoAttempt(ev.attempt||{});
+    if(ev.type==="go_done"){
+      if(!ev.result||ev.result.run_id!==ctx.runId){ctx.protocolError=true;goStatus("unknown","未知终态：最终报告缺失或版本不匹配");return;}
+      ctx.finalReceived=true;renderGoResult(ev.result,{final:ev.result.status!=="running"});
+      if(ev.result.status==="running")goStatus("unknown","未知终态：running；请按 run_id 查询保存报告");
+    }
   }
   try{
     const response=await apiFetch("/api/v1/go/tasks/stream",{method:"POST",headers:{"Content-Type":"application/json"},
-      body:JSON.stringify({scenario:document.getElementById("goScenario").value,requirement}),signal:goController.signal});
+      body:JSON.stringify({scenario:document.getElementById("goScenario").value,requirement}),signal:ctx.controller.signal});
     const reader=response.body.getReader(),decoder=new TextDecoder();let buffer="";
-    while(true){const {done,value}=await reader.read();if(done)break;
-      buffer+=decoder.decode(value,{stream:true});const parts=buffer.split("\n\n");buffer=parts.pop();parts.forEach(consume);}
-    buffer+=decoder.decode();if(buffer)consume(buffer);
-    // 只有服务端最终报告能决定通过；连接结束不能视为任务成功。
-    if(!completed)throw new Error("流提前结束，请按 run_id 查询最终报告");
+    try{
+      while(true){const {done,value}=await reader.read();if(done)break;
+        buffer+=decoder.decode(value,{stream:true});const parts=buffer.split(/\r?\n\r?\n/);buffer=parts.pop();parts.forEach(consume);}
+      buffer+=decoder.decode();if(buffer)consume(buffer);
+    }finally{reader.releaseLock();}
+    if(goView===ctx&&!ctx.finalReceived&&!ctx.cancelRequested&&!ctx.protocolError)goStatus("disconnected","任务失败：流提前结束（连接中断，未确认终态），请按 run_id 查询最终报告");
   }catch(error){
-    document.getElementById("goStatus").textContent=error.name==="AbortError"?"已请求取消，请按 run_id 查询最终报告":"任务失败："+error.message;
-    document.getElementById("goStatus").style.color="var(--err)";
+    if(goView===ctx&&!ctx.finalReceived){
+      if(ctx.cancelRequested)goStatus("cancel_requested","已请求取消，服务器终态待查询");
+      else goStatus(ctx.runId?"disconnected":"unknown",(ctx.runId?"连接中断，未确认终态：":"请求失败，未知终态：")+error.message);
+    }
   }finally{
-    goController=null;document.getElementById("goStart").disabled=false;document.getElementById("goCancel").disabled=true;document.getElementById("goLoad").disabled=false;
-    refresh(true);
+    if(goView===ctx){goController=null;document.getElementById("goStart").disabled=false;document.getElementById("goCancel").disabled=true;document.getElementById("goLoad").disabled=false;}
   }
 }
-function cancelGoTask(){if(goController)goController.abort();}
+function cancelGoTask(){if(goController){goView.cancelRequested=true;goController.abort();goStatus("cancel_requested","已请求取消，服务器终态待查询");}}
 async function loadGoTask(){
   const runId=document.getElementById("goRunId").value.trim();
-  if(!/^[a-f0-9]{32}$/.test(runId)){document.getElementById("goStatus").textContent="请输入有效 run_id";return;}
-  try{renderGoResult(await(await apiFetch("/api/v1/go/tasks/"+runId)).json());}
-  catch(error){document.getElementById("goStatus").textContent=error.message;}
+  if(!goRunId(runId)){goStatus("unknown","请输入有效 run_id");return;}
+  const ctx=goNewView(runId);goController=null;goStatus("loading","正在查询服务器报告…");
+  try{
+    const result=await(await apiFetch("/api/v1/go/tasks/"+runId,{signal:ctx.controller.signal})).json();
+    if(goView!==ctx)return;
+    if(result.run_id!==runId){goStatus("unknown","未知报告：run_id 不匹配");return;}
+    renderGoResult(result);
+    document.getElementById("goProgress").textContent="已读取服务器保存的报告；本次未执行新任务";
+  }catch(error){if(goView===ctx)goStatus("unknown","报告查询失败："+error.message);}
 }
 function handleEvent(ev,bubble){
   if(ev.type==="stage"){

@@ -1,0 +1,46 @@
+[
+  {
+    "label": "unit",
+    "argv": [
+      "/Users/xumanchun/Documents/agent项目/AI-Robot-latest/.venv/bin/python",
+      "-m",
+      "pytest",
+      "tests/test_multi_agent_eval.py",
+      "tests/test_multi_agent_eval_candidates.py",
+      "-q",
+      "-ra",
+      "--junitxml=/Users/xumanchun/Documents/agent项目/AI-Robot-latest/docs/evidence/s8.1-20261017/01-unit.xml"
+    ],
+    "exit_code": 0,
+    "started_utc": "2026-10-17T09:29:24.363697+00:00",
+    "elapsed_seconds": 4.103,
+    "output": "01-unit.txt",
+    "output_sha256": "57365ba2cd3f64cc0667cb5c7b083da9cfe33214374e8ed06d4d2867e261c52f",
+    "source_manifest_sha256": "a1ae12f9814a518bedf1ee6fd5ecec885bdd23b8c848de9a98ad60218df83054",
+    "tracked_diff_sha256": "2be76607869053633d5a7ec7b8383b42d64137bf6724405001ee868836b93f1a",
+    "head": "1ea7e6b7abbde3bd1a5963f03cd142fac553685a",
+    "source_unchanged": true,
+    "environment_overrides": {},
+    "added_source_paths": [],
+    "modified_source_paths": []
+  },
+  {
+    "label": "archive-proof",
+    "argv": [
+      "/Users/xumanchun/Documents/agent项目/AI-Robot-latest/.venv/bin/python",
+      "docs/evidence/s8.1-20261017/verify_archive.py"
+    ],
+    "exit_code": 0,
+    "started_utc": "2026-10-17T09:30:33.523425+00:00",
+    "elapsed_seconds": 0.683,
+    "output": "02-archive-proof.txt",
+    "output_sha256": "e334f0a474bf7166a9909a379860b8b26d0dafa3886a004ed2f30217634a9bed",
+    "source_manifest_sha256": "e44ee304591ba18bd0ed44a7136ac56082c7a28b8a4bf29441f32d1bba481fd8",
+    "tracked_diff_sha256": "2be76607869053633d5a7ec7b8383b42d64137bf6724405001ee868836b93f1a",
+    "head": "1ea7e6b7abbde3bd1a5963f03cd142fac553685a",
+    "source_unchanged": true,
+    "environment_overrides": {},
+    "added_source_paths": [],
+    "modified_source_paths": []
+  }
+]

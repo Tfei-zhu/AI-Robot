@@ -1,0 +1,111 @@
+F                                                                        [100%]
+=================================== FAILURES ===================================
+________ test_execution_capacity_is_held_until_sandbox_cleanup_finishes ________
+
+setup = <test_multi_agent_http.RecordingStore object at 0x107f542f0>
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x10c5b0c30>
+
+    def test_execution_capacity_is_held_until_sandbox_cleanup_finishes(setup, monkeypatch):
+        async def run():
+            cleanup_started, cleanup_release = asyncio.Event(), asyncio.Event()
+            class CleanupGate(BlockingSandbox):
+                async def validate(self, bundle):
+                    self.bundles.append(bundle)
+                    self.entered.set()
+                    try:
+                        await asyncio.Event().wait()
+                    finally:
+                        cleanup_started.set()
+                        await cleanup_release.wait()
+                        self.last_report = ValidationReport(status="cancelled", container_removed=True,
+                                                             artifact_hash=artifact_hash(bundle.files))
+                        self.closed.set()
+            runner = CleanupGate()
+            service = install(monkeypatch, setup, runner=runner)
+            key = session_identity("account/1", "cleanup-capacity")[1]
+            exchange = Exchange("/api/v1/go/tasks/stream", {**request().model_dump(), "session_id": "cleanup-capacity"})
+            job = asyncio.create_task(exchange.run())
+            try:
+                await asyncio.wait_for(runner.entered.wait(), 3)
+                exchange.disconnect()
+                await asyncio.wait_for(cleanup_started.wait(), 3)
+                await asyncio.sleep(0)
+                assert service._semaphore._value == 1  # one slot still owned by stopping sandbox
+                assert key in _busy
+                cleanup_release.set()
+                await asyncio.wait_for(job, 3)
+                assert runner.closed.is_set() and service._semaphore._value == 2 and key not in _busy
+                saved = setup.get(setup.saved[-1]["run_id"], OWNER)
+                assert saved["status"] == "cancelled"
+                assert saved["attempts"][0]["validation"]["container_removed"]
+            finally:
+                cleanup_release.set()
+                if not job.done():
+                    job.cancel()
+                    try:
+                        await job
+                    except asyncio.CancelledError:
+                        pass
+>       asyncio.run(run())
+
+tests/test_multi_agent_http.py:484: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+/Library/Frameworks/Python.framework/Versions/3.13/lib/python3.13/asyncio/runners.py:195: in run
+    return runner.run(main)
+           ^^^^^^^^^^^^^^^^
+/Library/Frameworks/Python.framework/Versions/3.13/lib/python3.13/asyncio/runners.py:118: in run
+    return self._loop.run_until_complete(task)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/Library/Frameworks/Python.framework/Versions/3.13/lib/python3.13/asyncio/base_events.py:725: in run_until_complete
+    return future.result()
+           ^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+    async def run():
+        cleanup_started, cleanup_release = asyncio.Event(), asyncio.Event()
+        class CleanupGate(BlockingSandbox):
+            async def validate(self, bundle):
+                self.bundles.append(bundle)
+                self.entered.set()
+                try:
+                    await asyncio.Event().wait()
+                finally:
+                    cleanup_started.set()
+                    await cleanup_release.wait()
+                    self.last_report = ValidationReport(status="cancelled", container_removed=True,
+                                                         artifact_hash=artifact_hash(bundle.files))
+                    self.closed.set()
+        runner = CleanupGate()
+        service = install(monkeypatch, setup, runner=runner)
+        key = session_identity("account/1", "cleanup-capacity")[1]
+        exchange = Exchange("/api/v1/go/tasks/stream", {**request().model_dump(), "session_id": "cleanup-capacity"})
+        job = asyncio.create_task(exchange.run())
+        try:
+            await asyncio.wait_for(runner.entered.wait(), 3)
+            exchange.disconnect()
+            await asyncio.wait_for(cleanup_started.wait(), 3)
+            await asyncio.sleep(0)
+>           assert service._semaphore._value == 1  # one slot still owned by stopping sandbox
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E           assert 2 == 1
+E            +  where 2 = <asyncio.locks.Semaphore object at 0x107f8b750 [unlocked, value:2]>._value
+E            +    where <asyncio.locks.Semaphore object at 0x107f8b750 [unlocked, value:2]> = <app.go_validation.service.GoTaskService object at 0x107f8b610>._semaphore
+
+tests/test_multi_agent_http.py:468: AssertionError
+=============================== warnings summary ===============================
+.venv/lib/python3.13/site-packages/jieba/__init__.py:44
+  /Users/xumanchun/Documents/agent项目/AI-Robot-latest/.venv/lib/python3.13/site-packages/jieba/__init__.py:44: SyntaxWarning: invalid escape sequence '\.'
+    re_han_default = re.compile("([\u4E00-\u9FD5a-zA-Z0-9+#&\._%\-]+)", re.U)
+
+.venv/lib/python3.13/site-packages/jieba/__init__.py:46
+  /Users/xumanchun/Documents/agent项目/AI-Robot-latest/.venv/lib/python3.13/site-packages/jieba/__init__.py:46: SyntaxWarning: invalid escape sequence '\s'
+    re_skip_default = re.compile("(\r\n|\s)", re.U)
+
+.venv/lib/python3.13/site-packages/jieba/finalseg/__init__.py:78
+  /Users/xumanchun/Documents/agent项目/AI-Robot-latest/.venv/lib/python3.13/site-packages/jieba/finalseg/__init__.py:78: SyntaxWarning: invalid escape sequence '\.'
+    re_skip = re.compile("([a-zA-Z0-9]+(?:\.\d+)?%?)")
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ============================
+FAILED tests/test_multi_agent_http.py::test_execution_capacity_is_held_until_sandbox_cleanup_finishes
+1 failed, 3 warnings in 1.84s

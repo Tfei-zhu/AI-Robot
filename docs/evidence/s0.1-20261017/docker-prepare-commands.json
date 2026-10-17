@@ -1,0 +1,82 @@
+[
+  {
+    "id": "docker-context",
+    "argv": [
+      "docker",
+      "context",
+      "show"
+    ],
+    "cwd": "/Users/xumanchun/Documents/agent项目/AI-Robot-latest",
+    "started_utc": "2026-10-17T03:30:20.234855+00:00",
+    "exit_code": 0,
+    "elapsed_seconds": 0.239,
+    "network_guard": false,
+    "output": "docker-context.txt",
+    "output_sha256": "75270b95abcf0516180e80ce1a2b6f98e42b13765c38de5239be80925439ba63"
+  },
+  {
+    "id": "docker-desktop-start",
+    "argv": [
+      "docker",
+      "desktop",
+      "start"
+    ],
+    "cwd": "/Users/xumanchun/Documents/agent项目/AI-Robot-latest",
+    "started_utc": "2026-10-17T03:30:20.474507+00:00",
+    "exit_code": 0,
+    "elapsed_seconds": 15.305,
+    "network_guard": false,
+    "output": "docker-desktop-start.txt",
+    "output_sha256": "5f83026ffb6adcef95ed27e8e68d43a0183d524611d0644977de86d6352ad3eb"
+  },
+  {
+    "id": "docker-info",
+    "argv": [
+      "docker",
+      "info",
+      "--format",
+      "{{json .}}"
+    ],
+    "cwd": "/Users/xumanchun/Documents/agent项目/AI-Robot-latest",
+    "started_utc": "2026-10-17T03:30:35.783287+00:00",
+    "exit_code": 0,
+    "elapsed_seconds": 5.706,
+    "network_guard": false,
+    "output": "docker-info.txt",
+    "output_sha256": "7b69a8148a868b1b82c8a5ec633d7f62e23f310d3854a4ae63e95ed0a4fcae31"
+  },
+  {
+    "id": "docker-build",
+    "argv": [
+      "docker",
+      "build",
+      "--progress=plain",
+      "-t",
+      "airobot-go-validator:1.26.2",
+      "sandbox/go"
+    ],
+    "cwd": "/Users/xumanchun/Documents/agent项目/AI-Robot-latest",
+    "started_utc": "2026-10-17T03:30:41.491436+00:00",
+    "exit_code": 1,
+    "elapsed_seconds": 121.213,
+    "network_guard": false,
+    "output": "docker-build.txt",
+    "output_sha256": "dbfcb931f49700da72956e31dfc9da411848ea1df59787e128a821524cc9d127"
+  },
+  {
+    "id": "docker-image",
+    "argv": [
+      "docker",
+      "image",
+      "inspect",
+      "airobot-go-validator:1.26.2"
+    ],
+    "cwd": "/Users/xumanchun/Documents/agent项目/AI-Robot-latest",
+    "started_utc": "2026-10-17T03:32:42.702461+00:00",
+    "exit_code": 1,
+    "elapsed_seconds": 0.041,
+    "network_guard": false,
+    "output": "docker-image.txt",
+    "output_sha256": "f38a22688761923d8c5c1263974bd53d6c0be360461eba7dc4409543366d4493"
+  }
+]

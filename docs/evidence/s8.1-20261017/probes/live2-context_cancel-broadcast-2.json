@@ -1,0 +1,136 @@
+{
+  "case": {
+    "id": "live2-context_cancel-broadcast-2",
+    "scenario": "context_cancel",
+    "split": "dev",
+    "group_id": "context_cancel/broadcast",
+    "fixture_profile": "clean",
+    "feasible": true,
+    "marker": null,
+    "values": [
+      13,
+      -7,
+      0,
+      17,
+      -31,
+      2
+    ],
+    "requirement": "等待 context 取消后原样返回 ctx.Err()，取消前不能提前返回；支持 deadline。 同一个 context 由 17 个等待者共享，取消一次后每个调用都必须返回 context.Canceled。",
+    "checklist": [
+      {
+        "id": "r-cancel",
+        "text": "取消及 deadline 错误身份",
+        "tests": [
+          "TestEvalContextIdentity"
+        ],
+        "required": true
+      },
+      {
+        "id": "r-wait",
+        "text": "取消前保持等待",
+        "tests": [
+          "TestEvalContextWait"
+        ],
+        "required": true
+      },
+      {
+        "id": "r-case",
+        "text": "同一个 context 由 17 个等待者共享，取消一次后每个调用都必须返回 context.Canceled。",
+        "tests": [
+          "TestEvalCaseContextCancelBroadcast2"
+        ],
+        "required": true
+      }
+    ],
+    "family_rationale": "同一 broadcast 调用结构的两个边界值变体整体分集；接口 context_cancel 仍与其他族相关。",
+    "extra_probe": "package example\nimport (\"context\";\"testing\";\"time\")\nfunc TestEvalCaseContextCancelBroadcast2(t *testing.T) {\nctx,cancel:=context.WithCancel(context.Background());defer cancel()\n    done:=make(chan error,17);for i:=0;i<17;i++ {go func(){done<-WaitForCancel(ctx)}()};cancel()\n    for i:=0;i<17;i++{select{case e:=<-done:if e!=context.Canceled{t.Fatal(e)};case <-time.After(time.Second):t.Fatal(\"waiter stuck\")}}\n}\n"
+  },
+  "independent": {
+    "correct": true,
+    "checks": [
+      {
+        "id": "r-cancel",
+        "status": "pass",
+        "tests": [
+          "TestEvalContextIdentity"
+        ]
+      },
+      {
+        "id": "r-wait",
+        "status": "pass",
+        "tests": [
+          "TestEvalContextWait"
+        ]
+      },
+      {
+        "id": "r-case",
+        "status": "pass",
+        "tests": [
+          "TestEvalCaseContextCancelBroadcast2"
+        ]
+      }
+    ],
+    "reason": "independent_pass",
+    "artifact_hash": "2728357ba3b80ae95de2bb30ed55a0bcb1a9824ff4b71fe07b23cc0c76b05435",
+    "scorer_input_hash": "3ff3a0690428de9dcc003d7f7f2beeded6d4331d31fda983de5f49fdf3ce64f1",
+    "report": {
+      "status": "passed",
+      "go_version": "1.26.2",
+      "stages": [
+        {
+          "stage": "policy",
+          "exit_code": 0,
+          "output": "单包、源码及标准库依赖校验通过",
+          "elapsed_ms": 0.0,
+          "truncated": false
+        },
+        {
+          "stage": "compile",
+          "exit_code": 0,
+          "output": "",
+          "elapsed_ms": 31.0,
+          "truncated": false
+        },
+        {
+          "stage": "vet",
+          "exit_code": 0,
+          "output": "",
+          "elapsed_ms": 1751.0,
+          "truncated": false
+        },
+        {
+          "stage": "test",
+          "exit_code": 0,
+          "output": "{\"Time\":\"2026-10-17T09:32:27.87497809Z\",\"Action\":\"start\",\"Package\":\"airobot.example\"}\n{\"Time\":\"2026-10-17T09:32:27.876575673Z\",\"Action\":\"run\",\"Package\":\"airobot.example\",\"Test\":\"TestEvalCaseContextCancelBroadcast2\"}\n{\"Time\":\"2026-10-17T09:32:27.876586173Z\",\"Action\":\"output\",\"Package\":\"airobot.example\",\"Test\":\"TestEvalCaseContextCancelBroadcast2\",\"Output\":\"=== RUN   TestEvalCaseContextCancelBroadcast2\\n\"}\n{\"Time\":\"2026-10-17T09:32:27.876608632Z\",\"Action\":\"output\",\"Package\":\"airobot.example\",\"Test\":\"TestEvalCaseContextCancelBroadcast2\",\"Output\":\"--- PASS: TestEvalCaseContextCancelBroadcast2 (0.00s)\\n\"}\n{\"Time\":\"2026-10-17T09:32:27.87661159Z\",\"Action\":\"pass\",\"Package\":\"airobot.example\",\"Test\":\"TestEvalCaseContextCancelBroadcast2\",\"Elapsed\":0}\n{\"Time\":\"2026-10-17T09:32:27.876614632Z\",\"Action\":\"run\",\"Package\":\"airobot.example\",\"Test\":\"TestEvalContextIdentity\"}\n{\"Time\":\"2026-10-17T09:32:27.876615882Z\",\"Action\":\"output\",\"Package\":\"airobot.example\",\"Test\":\"TestEvalContextIdentity\",\"Output\":\"=== RUN   TestEvalContextIdentity\\n\"}\n{\"Time\":\"2026-10-17T09:32:27.877779882Z\",\"Action\":\"output\",\"Package\":\"airobot.example\",\"Test\":\"TestEvalContextIdentity\",\"Output\":\"--- PASS: TestEvalContextIdentity (0.00s)\\n\"}\n{\"Time\":\"2026-10-17T09:32:27.87778884Z\",\"Action\":\"pass\",\"Package\":\"airobot.example\",\"Test\":\"TestEvalContextIdentity\",\"Elapsed\":0}\n{\"Time\":\"2026-10-17T09:32:27.877791132Z\",\"Action\":\"run\",\"Package\":\"airobot.example\",\"Test\":\"TestEvalContextWait\"}\n{\"Time\":\"2026-10-17T09:32:27.877792757Z\",\"Action\":\"output\",\"Package\":\"airobot.example\",\"Test\":\"TestEvalContextWait\",\"Output\":\"=== RUN   TestEvalContextWait\\n\"}\n{\"Time\":\"2026-10-17T09:32:27.890297882Z\",\"Action\":\"output\",\"Package\":\"airobot.example\",\"Test\":\"TestEvalContextWait\",\"Output\":\"--- PASS: TestEvalContextWait (0.01s)\\n\"}\n{\"Time\":\"2026-10-17T09:32:27.890319257Z\",\"Action\":\"pass\",\"Package\":\"airobot.example\",\"Test\":\"TestEvalContextWait\",\"Elapsed\":0.01}\n{\"Time\":\"2026-10-17T09:32:27.890323465Z\",\"Action\":\"run\",\"Package\":\"airobot.example\",\"Test\":\"TestServerAlreadyCancelled\"}\n{\"Time\":\"2026-10-17T09:32:27.890325007Z\",\"Action\":\"output\",\"Package\":\"airobot.example\",\"Test\":\"TestServerAlreadyCancelled\",\"Output\":\"=== RUN   TestServerAlreadyCancelled\\n\"}\n{\"Time\":\"2026-10-17T09:32:27.89032684Z\",\"Action\":\"output\",\"Package\":\"airobot.example\",\"Test\":\"TestServerAlreadyCancelled\",\"Output\":\"--- PASS: TestServerAlreadyCancelled (0.00s)\\n\"}\n{\"Time\":\"2026-10-17T09:32:27.890332257Z\",\"Action\":\"pass\",\"Package\":\"airobot.example\",\"Test\":\"TestServerAlreadyCancelled\",\"Elapsed\":0}\n{\"Time\":\"2026-10-17T09:32:27.890334132Z\",\"Action\":\"run\",\"Package\":\"airobot.example\",\"Test\":\"TestServerWaitsThenCancels\"}\n{\"Time\":\"2026-10-17T09:32:27.890335423Z\",\"Action\":\"output\",\"Package\":\"airobot.example\",\"Test\":\"TestServerWaitsThenCancels\",\"Output\":\"=== RUN   TestServerWaitsThenCancels\\n\"}\n{\"Time\":\"2026-10-17T09:32:27.913856382Z\",\"Action\":\"output\",\"Package\":\"airobot.example\",\"Test\":\"TestServerWaitsThenCancels\",\"Output\":\"--- PASS: TestServerWaitsThenCancels (0.02s)\\n\"}\n{\"Time\":\"2026-10-17T09:32:27.913883882Z\",\"Action\":\"pass\",\"Package\":\"airobot.example\",\"Test\":\"TestServerWaitsThenCancels\",\"Elapsed\":0.02}\n{\"Time\":\"2026-10-17T09:32:27.913888715Z\",\"Action\":\"run\",\"Package\":\"airobot.example\",\"Test\":\"TestServerDeadline\"}\n{\"Time\":\"2026-10-17T09:32:27.913895132Z\",\"Action\":\"output\",\"Package\":\"airobot.example\",\"Test\":\"TestServerDeadline\",\"Output\":\"=== RUN   TestServerDeadline\\n\"}\n{\"Time\":\"2026-10-17T09:32:27.934184298Z\",\"Action\":\"output\",\"Package\":\"airobot.example\",\"Test\":\"TestServerDeadline\",\"Output\":\"--- PASS: TestServerDeadline (0.02s)\\n\"}\n{\"Time\":\"2026-10-17T09:32:27.934206757Z\",\"Action\":\"pass\",\"Package\":\"airobot.example\",\"Test\":\"TestServerDeadline\",\"Elapsed\":0.02}\n{\"Time\":\"2026-10-17T09:32:27.934211507Z\",\"Action\":\"output\",\"Package\":\"airobot.example\",\"Output\":\"PASS\\n\"}\n{\"Time\":\"2026-10-17T09:32:27.93462034Z\",\"Action\":\"output\",\"Package\":\"airobot.example\",\"Output\":\"ok  \\tairobot.example\\t0.059s\\n\"}\n{\"Time\":\"2026-10-17T09:32:27.934634298Z\",\"Action\":\"pass\",\"Package\":\"airobot.example\",\"Elapsed\":0.06}\n",
+          "elapsed_ms": 298.0,
+          "truncated": false
+        }
+      ],
+      "elapsed_ms": 2523.7,
+      "container_removed": true,
+      "artifact_hash": "3ff3a0690428de9dcc003d7f7f2beeded6d4331d31fda983de5f49fdf3ce64f1",
+      "task_id": null,
+      "artifact_id": null,
+      "round": null
+    },
+    "scorer_files": [
+      {
+        "name": "solution.go",
+        "content": "package example\nimport \"context\"\n// 等待取消或 deadline 到期，保留具体错误。\nfunc WaitForCancel(ctx context.Context) error { <-ctx.Done(); return ctx.Err() }\n"
+      },
+      {
+        "name": "server_acceptance_test.go",
+        "content": "package example\nimport (\"context\"; \"errors\"; \"testing\"; \"time\")\nfunc TestServerAlreadyCancelled(t *testing.T) {\n    ctx,cancel:=context.WithCancel(context.Background());cancel()\n    if !errors.Is(WaitForCancel(ctx),context.Canceled) {t.Fatal(\"必须返回取消错误\")}\n}\nfunc TestServerWaitsThenCancels(t *testing.T) {\n    ctx,cancel:=context.WithCancel(context.Background());defer cancel()\n    done:=make(chan error,1);go func(){done<-WaitForCancel(ctx)}()\n    select {case <-done:t.Fatal(\"取消前不能提前返回\");case <-time.After(20*time.Millisecond):}\n    cancel()\n    select {case err:=<-done:if !errors.Is(err,context.Canceled){t.Fatal(err)};case <-time.After(time.Second):t.Fatal(\"未响应取消\")}\n}\nfunc TestServerDeadline(t *testing.T) {\n    ctx,cancel:=context.WithTimeout(context.Background(),20*time.Millisecond);defer cancel()\n    if !errors.Is(WaitForCancel(ctx),context.DeadlineExceeded){t.Fatal(\"必须传播超时\")}\n}\n"
+      },
+      {
+        "name": "eval_independent_test.go",
+        "content": "package example\nimport (\"context\";\"testing\";\"time\")\nfunc TestEvalContextIdentity(t *testing.T) {\n    ctx,cancel:=context.WithCancel(context.Background());cancel()\n    if WaitForCancel(ctx)!=ctx.Err(){t.Fatal(\"must return exact ctx.Err, not only errors.Is\")}\n    deadline,stop:=context.WithTimeout(context.Background(),time.Millisecond);defer stop()\n    if WaitForCancel(deadline)!=context.DeadlineExceeded{t.Fatal(\"deadline identity\")}\n}\nfunc TestEvalContextWait(t *testing.T) {\n    ctx,cancel:=context.WithCancel(context.Background());defer cancel()\n    done:=make(chan error,1);go func(){done<-WaitForCancel(ctx)}()\n    select {case <-done:t.Fatal(\"returned before cancellation\");case <-time.After(12*time.Millisecond):}\n    cancel();select {case err:=<-done:if err!=context.Canceled{t.Fatal(err)};case <-time.After(time.Second):t.Fatal(\"cancel ignored\")}\n}\n"
+      },
+      {
+        "name": "eval_case_test.go",
+        "content": "package example\nimport (\"context\";\"testing\";\"time\")\nfunc TestEvalCaseContextCancelBroadcast2(t *testing.T) {\nctx,cancel:=context.WithCancel(context.Background());defer cancel()\n    done:=make(chan error,17);for i:=0;i<17;i++ {go func(){done<-WaitForCancel(ctx)}()};cancel()\n    for i:=0;i<17;i++{select{case e:=<-done:if e!=context.Canceled{t.Fatal(e)};case <-time.After(time.Second):t.Fatal(\"waiter stuck\")}}\n}\n"
+      }
+    ],
+    "elapsed_ms": 2524.35
+  }
+}

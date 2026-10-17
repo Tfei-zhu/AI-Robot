@@ -1,0 +1,36 @@
+S3+S4 verification commands (run 2026-10-17, Asia/Shanghai; cwd = repository root)
+Interpreter: .venv/bin/python (Python 3.13.13, pytest 9.1.1, Pydantic 2.13.5)
+Environment: TIKTOKEN_CACHE_DIR=.venv/tiktoken-cache (S0.1 verified cache)
+Baseline at start: HEAD 1ea7e6b7abbde3bd1a5963f03cd142fac553685a, main; local S0-S2
+changes preserved; no resets/checkouts/stashes; no new commits.
+
+New unit (offline, substitutes only):
+1  .venv/bin/python -m unittest discover -s tests -p 'test_multi_agent_budget.py' -v
+   -> exit 0, 7 passed
+2  TIKTOKEN_CACHE_DIR=... .venv/bin/python -m unittest discover -s tests -p 'test_multi_agent_workflow.py' -v
+   -> exit 0, 16 tests OK (2 skipped: real-Docker gate)
+
+Combined offline:
+3  .venv/bin/python -m compileall -q app tests eval scripts -> exit 0
+4  unittest discover -s tests -p 'test_multi_agent_*.py' -v -> exit 0, 67 tests OK (2 skipped Docker gate)
+5  .venv/bin/python -m pytest tests -q -ra -> exit 0, 212 passed, 24 skipped (all pre-existing
+   AIROBOT_TEST_DOCKER gates), 132 subtests (S2 baseline 191+24 skips -> +21 tests) [full-pytest.txt/.xml]
+
+Real Docker (engine 29.7.2, image sha256:381dd095..., unchanged from S0.1):
+6  TIKTOKEN_CACHE_DIR=... AIROBOT_TEST_DOCKER=1 unittest test_multi_agent_workflow.py
+   -> exit 0, 16 OK incl. 2 real-sandbox closed loops (first pass + repair pass)
+7  AIROBOT_TEST_DOCKER=1 pytest 4 original Go modules + runner binding + multi_agent_workflow
+   -> exit 0, 65 passed, ~72s [docker-pytest.txt]; docker ps -a filter airobot-go- -> 0 leftover containers
+
+Regression / smoke:
+8  tests/test_stability.py, test_integration.py, test_agent.py, test_tracing.py -> exit 0 each
+9  eval/run_agent_eval.py -> exit 0, 6/6 fixed-model paths
+10 import smoke: app.main (14 routes), go_workflow exports SharedBudget/MultiAgentGoWorkflow/
+   BudgetExceededError, default enabled=False, original graph nodes intact [regression-import.txt]
+11 git diff --check -> exit 0
+
+Model substitutes (ScriptedModel/StubRunner) prove actual request counts; real model calls: 0.
+No assertion removal/weakening; intermediate failures kept in history of this session:
+review double-reservation fixed by moving reservation to callers; agent_calls re-ordered via
+per-step drain; plan-failure fixture initially used a valid JSON reply (test bug, corrected);
+tiny-budget test initially violated normal<=total invariant (test bug, corrected).

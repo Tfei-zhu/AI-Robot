@@ -1,0 +1,5 @@
+CA /Library/Frameworks/Python.framework/Versions/3.13/lib/python3.13/site-packages/pip/_vendor/certifi/cacert.pem
+DNS pypi.org ['151.101.0.223', '151.101.128.223', '151.101.192.223', '151.101.64.223', '2a04:4e42:200::223', '2a04:4e42:400::223', '2a04:4e42:600::223', '2a04:4e42::223']
+DNS openaipublic.blob.core.windows.net ['57.150.192.193']
+TLS https://pypi.org/simple/pytest/ 200
+TLS https://openaipublic.blob.core.windows.net/encodings/cl100k_base.tiktoken 200

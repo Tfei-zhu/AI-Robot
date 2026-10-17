@@ -1,0 +1,53 @@
+[
+  {
+    "case": "knowledge",
+    "passed": true,
+    "model_calls": 3,
+    "tool_rounds": 1,
+    "sources": [
+      "guide#0"
+    ]
+  },
+  {
+    "case": "article",
+    "passed": true,
+    "model_calls": 3,
+    "tool_rounds": 1,
+    "sources": [
+      "article:12"
+    ]
+  },
+  {
+    "case": "combined",
+    "passed": true,
+    "model_calls": 3,
+    "tool_rounds": 1,
+    "sources": [
+      "guide#0",
+      "article:12"
+    ]
+  },
+  {
+    "case": "failure",
+    "passed": true,
+    "model_calls": 3,
+    "tool_rounds": 1,
+    "sources": []
+  },
+  {
+    "case": "budget",
+    "passed": true,
+    "model_calls": 3,
+    "tool_rounds": 2,
+    "sources": [
+      "guide#0"
+    ]
+  },
+  {
+    "case": "direct",
+    "passed": true,
+    "model_calls": 2,
+    "tool_rounds": 0,
+    "sources": []
+  }
+]

@@ -1,0 +1,14 @@
+{
+  "tiktoken_version": "0.14.0",
+  "source_url": "https://openaipublic.blob.core.windows.net/encodings/cl100k_base.tiktoken",
+  "http_status": 200,
+  "expected_sha256": "223921b76ee99bde995b7ff738513eef100fb51d18c93597a113bcffe865b2a7",
+  "actual_sha256": "223921b76ee99bde995b7ff738513eef100fb51d18c93597a113bcffe865b2a7",
+  "cache_key": "9b5ad71b2ce5302211f9c61530b329a4922fc6a4",
+  "cache_file": "/Users/xumanchun/Documents/agent项目/AI-Robot-latest/.venv/tiktoken-cache/9b5ad71b2ce5302211f9c61530b329a4922fc6a4",
+  "bytes": 1681126,
+  "ca_file": "/Users/xumanchun/Documents/agent项目/AI-Robot-latest/.venv/lib/python3.13/site-packages/certifi/cacert.pem",
+  "ca_sha256": "9cc2a774b5198dcff14d9be1e66091f538975d867ce029a96bce15a55dfd730f",
+  "definition_file": "/Users/xumanchun/Documents/agent项目/AI-Robot-latest/.venv/lib/python3.13/site-packages/tiktoken_ext/openai_public.py",
+  "definition_sha256": "954392738e60d0fb6dca1dad80872efc47c8e2733babecbbf0a23970ed66c2cb"
+}

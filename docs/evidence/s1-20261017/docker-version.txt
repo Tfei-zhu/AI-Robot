@@ -1,0 +1,9 @@
+Client:
+ Version:           29.7.2
+ API version:       1.55
+ Go version:        go1.26.5
+ Git commit:        a7dcaa6
+ Built:             Wed Aug  5 18:27:50 2026
+ OS/Arch:           darwin/arm64
+ Context:           desktop-linux
+permission denied while trying to connect to the docker API at unix:///Users/xumanchun/.docker/run/docker.sock

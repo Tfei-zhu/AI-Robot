@@ -4,15 +4,17 @@ import json
 import time
 import uuid
 
-from app.go_validation.contracts import CodeBundle, StageReport, ValidationReport
+from app.go_validation.contracts import CodeBundle, StageReport, ValidationReport, artifact_hash
 
 IMAGE = "airobot-go-validator:1.26.2"
 
 
 class DockerGoRunner:
-    def __init__(self, timeout: float = 90, log_limit: int = 80000):
+    def __init__(self, timeout: float = 90, log_limit: int = 80000, cleanup_timeout: float = 15):
         self.timeout = timeout
         self.log_limit = log_limit
+        self.cleanup_timeout = cleanup_timeout
+        self.last_report = None
 
     def command(self, name: str) -> list[str]:
         # 不传宿主路径、环境变量或 Docker socket；镜像只接收源码 JSON。
@@ -28,9 +30,12 @@ class DockerGoRunner:
     async def _remove(self, name: str) -> bool:
         proc = None
         try:
-            proc = await asyncio.create_subprocess_exec("docker", "rm", "-f", name,
-                        stdout=asyncio.subprocess.DEVNULL, stderr=asyncio.subprocess.DEVNULL)
-            return await asyncio.wait_for(proc.wait(), 15) == 0
+            async def remove():
+                nonlocal proc
+                proc = await asyncio.create_subprocess_exec("docker", "rm", "-f", name,
+                            stdout=asyncio.subprocess.DEVNULL, stderr=asyncio.subprocess.DEVNULL)
+                return await proc.wait() == 0
+            return await asyncio.wait_for(remove(), self.cleanup_timeout)
         except (OSError, TimeoutError):
             return False
         finally:
@@ -43,8 +48,10 @@ class DockerGoRunner:
                 await proc.wait()
 
     async def validate(self, bundle: CodeBundle) -> ValidationReport:
+        self.last_report = None  # Never reuse a previous attempt's cleanup evidence.
         # 即便内部调用者绕过 API，也重新校验完整契约。
         bundle = CodeBundle.model_validate(bundle.model_dump())
+        submitted_hash = artifact_hash(bundle.files)
         started = time.perf_counter()
         name = "airobot-go-" + uuid.uuid4().hex
         proc = None
@@ -75,6 +82,8 @@ class DockerGoRunner:
                         stages=[StageReport(stage="sandbox", exit_code=code,
                                 output=error.decode("utf-8", "replace")[:2000] or "验证进程异常退出")])
             parsed = ValidationReport.model_validate(json.loads(output))
+            if parsed.artifact_hash is not None and parsed.artifact_hash != submitted_hash:
+                raise ValueError("沙箱报告与本次提交的源码版本不匹配")
             expected = ["policy", "compile", "vet", "test"]
             if parsed.go_version != "1.26.2":
                 raise ValueError("沙箱工具链版本不匹配")
@@ -90,6 +99,8 @@ class DockerGoRunner:
                                       output="验证超过总时间预算")])
         except asyncio.CancelledError:
             # shield 保证取消请求也会等待容器清理，再将取消传播给调用者。
+            report = ValidationReport(status="cancelled", stages=[StageReport(
+                stage="sandbox", exit_code=130, output="验证取消，已请求清理")])
             raise
         except (OSError, ValueError) as exc:
             report = ValidationReport(status="unavailable", stages=[StageReport(stage="sandbox", exit_code=1,
@@ -111,11 +122,14 @@ class DockerGoRunner:
                     pass
                 await proc.wait()
             report.container_removed = removed
+            # Bind even failure/unavailable reports to the exact server-side input copy.
+            report.artifact_hash = submitted_hash
             report.elapsed_ms = round((time.perf_counter() - started) * 1000, 1)
             if report.status == "passed" and not removed:
                 report.status = "unavailable"
                 report.stages.append(StageReport(stage="sandbox", exit_code=1,
                                     output="无法确认容器清理完成，验证结果不予通过"))
+            self.last_report = report
             if interrupted:
                 raise asyncio.CancelledError
         return report
