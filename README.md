@@ -16,11 +16,24 @@
 | 混合检索 | 向量与关键词召回、排名融合、可选语义重排；支持 PDF、DOCX、Markdown、TXT |
 | 社区集成 | 查询 Go 文章服务的实时详情，通过 RabbitMQ 发布事件自动导入文章 |
 | Go 示例验证 | 支持 context 取消、任务池、channel 三类场景；隔离编译、检查、测试并最多修复两轮 |
-| Go 多 Agent（可选） | Go 专用 JSON/SSE 入口支持主角色委派、代码角色生成/修复和服务端验证审查门禁；默认关闭，普通聊天不自动委派 |
+| Go 多 Agent（可选） | Go 专用入口由服务端顺序编排需求规划、代码生成/修复与验证审查；默认关闭，普通聊天不自动转入 Go 任务 |
 | 上下文管理（实验） | Token（模型文本计量单位）预算、增量摘要、工具结果精简、证据复用与受限补读；默认关闭 |
 | 运行观测 | Dashboard 展示执行阶段、调用用量、耗时与缓存指标；接口提供近期运行轨迹 |
 
-请求流程：身份校验与限流 → Agent 规划 → 只读工具调用 → 最终回答 → 会话记录。
+## 架构与流程
+
+普通聊天、Go 专用任务和知识入库各走独立路径。聊天可直接命中缓存，文件与文章入库直接调用知识库。
+
+![三条业务主线](docs/diagrams/png/01-architecture-01.png)
+
+<details>
+<summary>查看索引与存储边界</summary>
+
+![索引与存储边界](docs/diagrams/png/01-architecture-02.png)
+
+</details>
+
+[完整流程图册与源码说明](docs/diagrams/README.md)
 
 ## 快速开始
 
@@ -68,6 +81,13 @@ AIROBOT_RERANK_ENABLED=false
 
 启动会恢复持久化知识；首次空库尝试导入[示例资料](data/knowledge_base.md)。索引恢复依赖 Embedding 服务。Go 代码验证还需要 Docker Linux 引擎及固定验证镜像，见 [Go 验证指南](docs/go-validation.md)。
 
+<details>
+<summary>查看启动恢复顺序</summary>
+
+![启动恢复已有知识](docs/diagrams/png/04-knowledge-ingestion-03.png)
+
+</details>
+
 Go 多 Agent 当前为本地可选能力，默认关闭。报告可重开读取，任务不能恢复执行；真实模型效果和远程 CI 尚未验证。见[交付说明](docs/multi-agent.md)。
 
 ## 主要接口
@@ -83,6 +103,117 @@ Go 多 Agent 当前为本地可选能力，默认关闭。报告可重开读取�
 
 所有 `/api/*` 接口需要身份凭据；聊天与 Go 任务支持管理员或可信 Go 网关身份。请求示例、流式事件与错误码见[接口说明](docs/usage.md#接口说明)。
 
+### 请求生命周期
+
+受保护接口先完成鉴权、受限读体和限流，再开始请求日志计时。会话占用控制仅用于聊天与 Go 任务的四个 POST 接口。
+
+![请求进入服务](docs/diagrams/png/02-request-lifecycle-01.png)
+
+<details>
+<summary>查看 JSON、SSE 返回与 Go 任务收尾</summary>
+
+JSON 返回前完成业务收尾；SSE 建立后，可捕获的业务错误按接口通过流内事件反馈，不能再改发 JSON 500。断开、取消与清理边界见[生命周期说明](docs/diagrams/notes/02-request-lifecycle.md)。
+
+![普通 JSON 返回](docs/diagrams/png/02-request-lifecycle-02.png)
+
+![SSE 建立与结束](docs/diagrams/png/02-request-lifecycle-03.png)
+
+![Go 任务执行与收尾](docs/diagrams/png/02-request-lifecycle-04.png)
+
+</details>
+
+## 执行机制
+
+### 普通聊天
+
+符合条件的首轮请求先查语义缓存；未命中时加载历史，由单智能体按需调用只读工具，再生成最终回答。
+
+![普通聊天：缓存与智能体](docs/diagrams/png/03-chat-agent-01.png)
+
+<details>
+<summary>查看只读工具调用</summary>
+
+![一轮只读工具调用](docs/diagrams/png/03-chat-agent-02.png)
+
+</details>
+
+### 知识入库
+
+管理员上传文件与后台消费文章事件共用知识库入库流程，不经过智能体。Dashboard 不提供上传界面，文件上传由管理员客户端调用接口。
+
+![管理员上传文件](docs/diagrams/png/04-knowledge-ingestion-01.png)
+
+<details>
+<summary>查看文章事件与索引写入</summary>
+
+![文章发布事件入库](docs/diagrams/png/04-knowledge-ingestion-02.png)
+
+![共享索引写入顺序](docs/diagrams/png/04-knowledge-ingestion-04.png)
+
+</details>
+
+### 知识检索
+
+混合检索结合向量与关键词召回，再做排名融合和可选重排。检索返回原文与来源，最终回答由智能体生成。
+
+![从查询到检索证据](docs/diagrams/png/05-rag-retrieval-01.png)
+
+<details>
+<summary>查看证据如何进入最终回答</summary>
+
+![证据返回与最终生成](docs/diagrams/png/05-rag-retrieval-02.png)
+
+</details>
+
+### Go 专用任务
+
+默认使用固定节点工作流 `single-v1`；显式开启多智能体后使用 `multi-v1`。两条路径共用 Go 验证服务，结果保存为可按账户读取的任务报告。
+
+![Go 专用任务的两条分支](docs/diagrams/png/06-go-orchestration-01.png)
+
+<details>
+<summary>查看多智能体协作与成功判定</summary>
+
+模型负责规划、代码和审查意见，任务是否通过由服务端根据需求与验证证据判定。
+
+![多智能体：两个角色顺序协作](docs/diagrams/png/06-go-orchestration-02.png)
+
+![服务端成功与修复门禁](docs/diagrams/png/06-go-orchestration-03.png)
+
+</details>
+
+### Go 隔离验证
+
+Go 代码在固定 Docker 容器内依次检查策略、编译、静态分析和单元测试；任一步失败即停止后续检查。
+
+![Go 代码进入隔离验证](docs/diagrams/png/07-go-sandbox-01.png)
+
+<details>
+<summary>查看容器内检查与资源清理</summary>
+
+![容器内的四阶段检查](docs/diagrams/png/07-go-sandbox-02.png)
+
+![验证结束后的资源清理](docs/diagrams/png/07-go-sandbox-03.png)
+
+</details>
+
+### 上下文管理（实验）
+
+默认 `off`；`observe` 保持模型输入并记录用量，`enforce` 按配置启用预算、摘要与证据精简。压缩只影响模型视图，归档原文仍保留。配置与限制见[上下文管理](docs/context-management.md)。
+
+![上下文管理的三种模式](docs/diagrams/png/08-context-management-01.png)
+
+<details>
+<summary>查看摘要、证据复用与原文补读</summary>
+
+![摘要与模型输入预算](docs/diagrams/png/08-context-management-02.png)
+
+![工具结果精简与证据复用](docs/diagrams/png/08-context-management-03.png)
+
+![按需补读完整工具结果](docs/diagrams/png/08-context-management-04.png)
+
+</details>
+
 ## 测试与当前状态
 
 ```powershell
@@ -93,6 +224,17 @@ Go 多 Agent 当前为本地可选能力，默认关闭。报告可重开读取�
 
 真实 Docker 验证与真实模型质量评测需要分别配置环境；模型评测会产生调用费用，入口与预算说明见[开发与评测](docs/development.md#测试与-ci)。
 
+![验证机制、集成与真实效果](docs/diagrams/png/09-verification-evaluation-01.png)
+
+<details>
+<summary>查看 Go 与上下文对照评测流程</summary>
+
+![Go 多智能体对照评测](docs/diagrams/png/09-verification-evaluation-02.png)
+
+![上下文四组对照与验收](docs/diagrams/png/09-verification-evaluation-03.png)
+
+</details>
+
 上下文模块已完成 30 条脚本、四组各重复 3 次的 **360 次真实模型对照评测**，综合质量与效率门槛尚未全部通过，当前保持 `AIROBOT_CONTEXT_MODE=off`。[查看完整结果](docs/context-management-final-results.md)。
 
 ## 文档导航
@@ -101,6 +243,7 @@ Go 多 Agent 当前为本地可选能力，默认关闭。报告可重开读取�
 | --- | --- |
 | [使用与部署](docs/usage.md) | 本地启动、模型配置、接口、鉴权、Go 集成、持久化、Docker 与常见问题 |
 | [开发与评测](docs/development.md) | 技术架构、执行机制、项目结构、测试、CI 与质量评测 |
+| [架构与流程图册](docs/diagrams/README.md) | 9 个主题、27 张简版图及完整流程说明 |
 | [多 Agent 交付说明](docs/multi-agent.md) | 配置、实际回退、逐项状态及尚未实现/验证的能力 |
 | [Go 验证指南](docs/go-validation.md) | 固定接口、验证镜像、任务状态与验收方法 |
 | [上下文管理](docs/context-management.md) | 预算、摘要、原文补读、存储与回退 |

@@ -1,0 +1,16 @@
+flowchart LR
+    %% README 简版；完整分支见 notes 文档。
+    evidence["有效验证与审查<br/>结构、版本已校验"]
+    passed-check["成功门禁？<br/>机器 + 审查 + 需求"]
+    passed["passed<br/>通过服务端判定"]
+    repair-check["还能修复？<br/>预算 / 轮次 / 进展"]
+    repair["继续 repair<br/>生成下一版产物"]
+    stop["终止并报告<br/>保留实际失败原因"]
+    evidence --> passed-check
+    passed-check -->|"是"| passed
+    passed-check -->|"否"| repair-check
+    repair-check -->|"是"| repair
+    repair-check -->|"否"| stop
+    classDef default fill:#f9fafb,stroke:#d1d5db,color:#111827;
+    classDef optional fill:#ffffff,stroke:#d1d5db,stroke-dasharray:6 5,color:#111827;
+    linkStyle default stroke:#3b82f6;

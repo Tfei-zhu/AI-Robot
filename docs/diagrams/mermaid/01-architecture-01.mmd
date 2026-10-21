@@ -1,0 +1,20 @@
+flowchart LR
+    %% README 简版；完整分支见 notes 文档。
+    r0c0["普通聊天<br/>JSON / SSE"]
+    r0c1["聊天服务<br/>缓存或单智能体"]
+    r0c2["回答与来源<br/>JSON / SSE 返回"]
+    r1c0["Go 专用任务<br/>JSON / SSE"]
+    r1c1["GoTaskService<br/>生成、验证与修复"]
+    r1c2["任务报告<br/>可按账户重新读取"]
+    r2c0["文件 / 文章<br/>管理员上传或事件"]
+    r2c1["知识库 kb<br/>解析、分块与索引"]
+    r2c2["可检索知识<br/>原文与来源"]
+    r0c0 --> r0c1
+    r0c1 --> r0c2
+    r1c0 --> r1c1
+    r1c1 --> r1c2
+    r2c0 --> r2c1
+    r2c1 --> r2c2
+    classDef default fill:#f9fafb,stroke:#d1d5db,color:#111827;
+    classDef optional fill:#ffffff,stroke:#d1d5db,stroke-dasharray:6 5,color:#111827;
+    linkStyle default stroke:#3b82f6;

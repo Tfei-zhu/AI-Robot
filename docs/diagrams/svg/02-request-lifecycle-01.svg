@@ -1,0 +1,46 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1400" height="660" viewBox="0 0 1400 660" data-generator="fireworks-tech-graph" data-style="4" data-quality-profile="showcase" role="img" aria-labelledby="diagram-title diagram-desc">
+<title id="diagram-title">请求进入服务</title>
+<desc id="diagram-desc">放行主链：限流先于日志；会话占用仅适用于聊天与 Go POST。。README 简版；完整分支和边界保留在对应 notes 文档。</desc>
+<style>text{font-family:"Microsoft YaHei","PingFang SC","Noto Sans CJK SC",Arial,sans-serif}path{stroke-linejoin:round}</style>
+<defs><marker id="arrow" viewBox="0 0 10 8" markerWidth="10" markerHeight="8" refX="9" refY="4" orient="auto" markerUnits="userSpaceOnUse"><path d="M0 0L10 4L0 8Z" fill="#3b82f6"/></marker></defs>
+<rect data-graph-role="background" width="1400" height="660" fill="white"/>
+<g id="heading" data-graph-role="reserved" data-graph-bounds="60 24 1340 123">
+<text x="60" y="64" font-size="34" font-weight="600" fill="#111827" text-anchor="start">请求进入服务</text>
+<text x="60" y="108" font-size="20" font-weight="400" fill="#6b7280" text-anchor="start">放行主链：限流先于日志；会话占用仅适用于聊天与 Go POST。</text>
+</g>
+<g id="n0" data-node-id="n0" data-graph-role="node" data-graph-bounds="100 200 340 300">
+<rect x="100" y="200" width="240" height="100" rx="4" fill="#f9fafb" stroke="#d1d5db" stroke-width="1.4"/>
+<text x="220.0" y="241" font-size="26" font-weight="600" fill="#111827" text-anchor="middle">HTTP 请求</text>
+<text x="220.0" y="274" font-size="19" font-weight="400" fill="#6b7280" text-anchor="middle">进入服务</text>
+</g>
+<g id="n1" data-node-id="n1" data-graph-role="node" data-graph-bounds="580 200 820 300">
+<rect x="580" y="200" width="240" height="100" rx="4" fill="#f9fafb" stroke="#d1d5db" stroke-width="1.4"/>
+<text x="700.0" y="241" font-size="26" font-weight="600" fill="#111827" text-anchor="middle">鉴权与读体</text>
+<text x="700.0" y="274" font-size="19" font-weight="400" fill="#6b7280" text-anchor="middle">仅受保护 API</text>
+</g>
+<g id="n2" data-node-id="n2" data-graph-role="node" data-graph-bounds="1060 200 1300 300">
+<rect x="1060" y="200" width="240" height="100" rx="4" fill="#f9fafb" stroke="#d1d5db" stroke-width="1.4"/>
+<text x="1180.0" y="241" font-size="26" font-weight="600" fill="#111827" text-anchor="middle">限流检查</text>
+<text x="1180.0" y="274" font-size="19" font-weight="400" fill="#6b7280" text-anchor="middle">按 principal</text>
+</g>
+<g id="n3" data-node-id="n3" data-graph-role="node" data-graph-bounds="1060 420 1300 520">
+<rect x="1060" y="420" width="240" height="100" rx="4" fill="#f9fafb" stroke="#d1d5db" stroke-width="1.4"/>
+<text x="1180.0" y="461" font-size="26" font-weight="600" fill="#111827" text-anchor="middle">日志开始计时</text>
+<text x="1180.0" y="494" font-size="19" font-weight="400" fill="#6b7280" text-anchor="middle">await call_next</text>
+</g>
+<g id="n4" data-node-id="n4" data-graph-role="node" data-graph-bounds="580 420 820 520">
+<rect x="580" y="420" width="240" height="100" rx="4" fill="#f9fafb" stroke="#d1d5db" stroke-width="1.4"/>
+<text x="700.0" y="461" font-size="26" font-weight="600" fill="#111827" text-anchor="middle">参数与会话</text>
+<text x="700.0" y="494" font-size="19" font-weight="400" fill="#6b7280" text-anchor="middle">校验后再占用</text>
+</g>
+<g id="n5" data-node-id="n5" data-graph-role="node" data-graph-bounds="100 420 340 520">
+<rect x="100" y="420" width="240" height="100" rx="4" fill="#f9fafb" stroke="#d1d5db" stroke-width="1.4"/>
+<text x="220.0" y="461" font-size="26" font-weight="600" fill="#111827" text-anchor="middle">业务路由</text>
+<text x="220.0" y="494" font-size="19" font-weight="400" fill="#6b7280" text-anchor="middle">JSON 或 SSE</text>
+</g>
+<path id="edge-0" data-graph-role="edge" data-edge-id="edge-0" data-source="n0" data-target="n1" d="M 340 250 L 580 250" fill="none" stroke="#3b82f6" stroke-width="1.9" marker-end="url(#arrow)"/>
+<path id="edge-1" data-graph-role="edge" data-edge-id="edge-1" data-source="n1" data-target="n2" d="M 820 250 L 1060 250" fill="none" stroke="#3b82f6" stroke-width="1.9" marker-end="url(#arrow)"/>
+<path id="edge-2" data-graph-role="edge" data-edge-id="edge-2" data-source="n2" data-target="n3" d="M 1180.0 300 L 1180.0 420" fill="none" stroke="#3b82f6" stroke-width="1.9" marker-end="url(#arrow)"/>
+<path id="edge-3" data-graph-role="edge" data-edge-id="edge-3" data-source="n3" data-target="n4" d="M 1060 470 L 820 470" fill="none" stroke="#3b82f6" stroke-width="1.9" marker-end="url(#arrow)"/>
+<path id="edge-4" data-graph-role="edge" data-edge-id="edge-4" data-source="n4" data-target="n5" d="M 580 470 L 340 470" fill="none" stroke="#3b82f6" stroke-width="1.9" marker-end="url(#arrow)"/>
+</svg>

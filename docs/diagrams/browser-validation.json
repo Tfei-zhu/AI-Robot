@@ -1,0 +1,54 @@
+{
+  "imageCount": 27,
+  "textIssues": [],
+  "filters": [
+    {
+      "topic": 1,
+      "count": 2,
+      "ok": true
+    },
+    {
+      "topic": 2,
+      "count": 4,
+      "ok": true
+    },
+    {
+      "topic": 3,
+      "count": 2,
+      "ok": true
+    },
+    {
+      "topic": 4,
+      "count": 4,
+      "ok": true
+    },
+    {
+      "topic": 5,
+      "count": 2,
+      "ok": true
+    },
+    {
+      "topic": 6,
+      "count": 3,
+      "ok": true
+    },
+    {
+      "topic": 7,
+      "count": 3,
+      "ok": true
+    },
+    {
+      "topic": 8,
+      "count": 4,
+      "ok": true
+    },
+    {
+      "topic": 9,
+      "count": 3,
+      "ok": true
+    }
+  ],
+  "desktopOverflow": false,
+  "mobileOverflow": false,
+  "errors": []
+}

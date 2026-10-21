@@ -1,0 +1,4106 @@
+[
+  {
+    "id": "01-architecture-01",
+    "title": "三条业务主线",
+    "caption": "聊天与 Go 任务分别编排；知识入库直接进入 kb。",
+    "width": 1400,
+    "height": 740,
+    "nodes": [
+      {
+        "id": "r0c0",
+        "title": "普通聊天",
+        "sub": "JSON / SSE",
+        "x": 100,
+        "y": 180,
+        "width": 240,
+        "height": 100,
+        "kind": "rect",
+        "optional": false
+      },
+      {
+        "id": "r0c1",
+        "title": "聊天服务",
+        "sub": "缓存或单智能体",
+        "x": 580,
+        "y": 180,
+        "width": 240,
+        "height": 100,
+        "kind": "rect",
+        "optional": false
+      },
+      {
+        "id": "r0c2",
+        "title": "回答与来源",
+        "sub": "JSON / SSE 返回",
+        "x": 1060,
+        "y": 180,
+        "width": 240,
+        "height": 100,
+        "kind": "rect",
+        "optional": false
+      },
+      {
+        "id": "r1c0",
+        "title": "Go 专用任务",
+        "sub": "JSON / SSE",
+        "x": 100,
+        "y": 360,
+        "width": 240,
+        "height": 100,
+        "kind": "rect",
+        "optional": false
+      },
+      {
+        "id": "r1c1",
+        "title": "GoTaskService",
+        "sub": "生成、验证与修复",
+        "x": 580,
+        "y": 360,
+        "width": 240,
+        "height": 100,
+        "kind": "rect",
+        "optional": false
+      },
+      {
+        "id": "r1c2",
+        "title": "任务报告",
+        "sub": "可按账户重新读取",
+        "x": 1060,
+        "y": 360,
+        "width": 240,
+        "height": 100,
+        "kind": "rect",
+        "optional": false
+      },
+      {
+        "id": "r2c0",
+        "title": "文件 / 文章",
+        "sub": "管理员上传或事件",
+        "x": 100,
+        "y": 540,
+        "width": 240,
+        "height": 100,
+        "kind": "rect",
+        "optional": false
+      },
+      {
+        "id": "r2c1",
+        "title": "知识库 kb",
+        "sub": "解析、分块与索引",
+        "x": 580,
+        "y": 540,
+        "width": 240,
+        "height": 100,
+        "kind": "rect",
+        "optional": false
+      },
+      {
+        "id": "r2c2",
+        "title": "可检索知识",
+        "sub": "原文与来源",
+        "x": 1060,
+        "y": 540,
+        "width": 240,
+        "height": 100,
+        "kind": "rect",
+        "optional": false
+      }
+    ],
+    "edges": [
+      {
+        "source": "r0c0",
+        "target": "r0c1",
+        "points": [
+          [
+            340,
+            230
+          ],
+          [
+            580,
+            230
+          ]
+        ],
+        "label": "",
+        "label_at": null
+      },
+      {
+        "source": "r0c1",
+        "target": "r0c2",
+        "points": [
+          [
+            820,
+            230
+          ],
+          [
+            1060,
+            230
+          ]
+        ],
+        "label": "",
+        "label_at": null
+      },
+      {
+        "source": "r1c0",
+        "target": "r1c1",
+        "points": [
+          [
+            340,
+            410
+          ],
+          [
+            580,
+            410
+          ]
+        ],
+        "label": "",
+        "label_at": null
+      },
+      {
+        "source": "r1c1",
+        "target": "r1c2",
+        "points": [
+          [
+            820,
+            410
+          ],
+          [
+            1060,
+            410
+          ]
+        ],
+        "label": "",
+        "label_at": null
+      },
+      {
+        "source": "r2c0",
+        "target": "r2c1",
+        "points": [
+          [
+            340,
+            590
+          ],
+          [
+            580,
+            590
+          ]
+        ],
+        "label": "",
+        "label_at": null
+      },
+      {
+        "source": "r2c1",
+        "target": "r2c2",
+        "points": [
+          [
+            820,
+            590
+          ],
+          [
+            1060,
+            590
+          ]
+        ],
+        "label": "",
+        "label_at": null
+      }
+    ]
+  },
+  {
+    "id": "01-architecture-02",
+    "title": "索引与存储边界",
+    "caption": "Milvus 只替代内存向量；BM25 始终留在进程内。",
+    "width": 1400,
+    "height": 620,
+    "nodes": [
+      {
+        "id": "services",
+        "title": "业务组件",
+        "sub": "各自维护索引、状态与持久化数据",
+        "x": 60,
+        "y": 180,
+        "width": 1280,
+        "height": 100,
+        "kind": "rect",
+        "optional": false
+      },
+      {
+        "id": "memory",
+        "title": "进程内",
+        "sub": "索引 / 会话 / 缓存",
+        "x": 100,
+        "y": 420,
+        "width": 240,
+        "height": 100,
+        "kind": "rect",
+        "optional": false
+      },
+      {
+        "id": "sqlite",
+        "title": "SQLite",
+        "sub": "分块 / 文章 / Go 报告",
+        "x": 420,
+        "y": 420,
+        "width": 240,
+        "height": 100,
+        "kind": "rect",
+        "optional": false
+      },
+      {
+        "id": "milvus",
+        "title": "Milvus",
+        "sub": "可选向量后端",
+        "x": 740,
+        "y": 420,
+        "width": 240,
+        "height": 100,
+        "kind": "rect",
+        "optional": true
+      },
+      {
+        "id": "context",
+        "title": "上下文库",
+        "sub": "默认 off",
+        "x": 1060,
+        "y": 420,
+        "width": 240,
+        "height": 100,
+        "kind": "rect",
+        "optional": true
+      }
+    ],
+    "edges": [
+      {
+        "source": "services",
+        "target": "memory",
+        "points": [
+          [
+            220,
+            280
+          ],
+          [
+            220,
+            420
+          ]
+        ],
+        "label": "",
+        "label_at": null
+      },
+      {
+        "source": "services",
+        "target": "sqlite",
+        "points": [
+          [
+            540,
+            280
+          ],
+          [
+            540,
+            420
+          ]
+        ],
+        "label": "",
+        "label_at": null
+      },
+      {
+        "source": "services",
+        "target": "milvus",
+        "points": [
+          [
+            860,
+            280
+          ],
+          [
+            860,
+            420
+          ]
+        ],
+        "label": "",
+        "label_at": null
+      },
+      {
+        "source": "services",
+        "target": "context",
+        "points": [
+          [
+            1180,
+            280
+          ],
+          [
+            1180,
+            420
+          ]
+        ],
+        "label": "",
+        "label_at": null
+      }
+    ]
+  },
+  {
+    "id": "02-request-lifecycle-01",
+    "title": "请求进入服务",
+    "caption": "放行主链：限流先于日志；会话占用仅适用于聊天与 Go POST。",
+    "width": 1400,
+    "height": 660,
+    "nodes": [
+      {
+        "id": "n0",
+        "title": "HTTP 请求",
+        "sub": "进入服务",
+        "x": 100,
+        "y": 200,
+        "width": 240,
+        "height": 100,
+        "kind": "rect",
+        "optional": false
+      },
+      {
+        "id": "n1",
+        "title": "鉴权与读体",
+        "sub": "仅受保护 API",
+        "x": 580,
+        "y": 200,
+        "width": 240,
+        "height": 100,
+        "kind": "rect",
+        "optional": false
+      },
+      {
+        "id": "n2",
+        "title": "限流检查",
+        "sub": "按 principal",
+        "x": 1060,
+        "y": 200,
+        "width": 240,
+        "height": 100,
+        "kind": "rect",
+        "optional": false
+      },
+      {
+        "id": "n3",
+        "title": "日志开始计时",
+        "sub": "await call_next",
+        "x": 1060,
+        "y": 420,
+        "width": 240,
+        "height": 100,
+        "kind": "rect",
+        "optional": false
+      },
+      {
+        "id": "n4",
+        "title": "参数与会话",
+        "sub": "校验后再占用",
+        "x": 580,
+        "y": 420,
+        "width": 240,
+        "height": 100,
+        "kind": "rect",
+        "optional": false
+      },
+      {
+        "id": "n5",
+        "title": "业务路由",
+        "sub": "JSON 或 SSE",
+        "x": 100,
+        "y": 420,
+        "width": 240,
+        "height": 100,
+        "kind": "rect",
+        "optional": false
+      }
+    ],
+    "edges": [
+      {
+        "source": "n0",
+        "target": "n1",
+        "points": [
+          [
+            340,
+            250
+          ],
+          [
+            580,
+            250
+          ]
+        ],
+        "label": "",
+        "label_at": null
+      },
+      {
+        "source": "n1",
+        "target": "n2",
+        "points": [
+          [
+            820,
+            250
+          ],
+          [
+            1060,
+            250
+          ]
+        ],
+        "label": "",
+        "label_at": null
+      },
+      {
+        "source": "n2",
+        "target": "n3",
+        "points": [
+          [
+            1180.0,
+            300
+          ],
+          [
+            1180.0,
+            420
+          ]
+        ],
+        "label": "",
+        "label_at": null
+      },
+      {
+        "source": "n3",
+        "target": "n4",
+        "points": [
+          [
+            1060,
+            470
+          ],
+          [
+            820,
+            470
+          ]
+        ],
+        "label": "",
+        "label_at": null
+      },
+      {
+        "source": "n4",
+        "target": "n5",
+        "points": [
+          [
+            580,
+            470
+          ],
+          [
+            340,
+            470
+          ]
+        ],
+        "label": "",
+        "label_at": null
+      }
+    ]
+  },
+  {
+    "id": "02-request-lifecycle-02",
+    "title": "普通 JSON 返回",
+    "caption": "正常与已处理错误的回程；外层 500 和取消边界见说明。",
+    "width": 1400,
+    "height": 650,
+    "nodes": [
+      {
+        "id": "run",
+        "title": "执行业务",
+        "sub": "聊天 / Go / 其他",
+        "x": 100,
+        "y": 200,
+        "width": 240,
+        "height": 100,
+        "kind": "rect",
+        "optional": false
+      },
+      {
+        "id": "release",
+        "title": "路由收尾",
+        "sub": "Chat / Go 释放会话",
+        "x": 580,
+        "y": 200,
+        "width": 240,
+        "height": 100,
+        "kind": "rect",
+        "optional": false
+      },
+      {
+        "id": "json",
+        "title": "JSON 序列化",
+        "sub": "校验输出",
+        "x": 1060,
+        "y": 200,
+        "width": 240,
+        "height": 100,
+        "kind": "rect",
+        "optional": false
+      },
+      {
+        "id": "handled",
+        "title": "已处理异常",
+        "sub": "HTTPException 等",
+        "x": 100,
+        "y": 420,
+        "width": 240,
+        "height": 100,
+        "kind": "rect",
+        "optional": false
+      },
+      {
+        "id": "log",
+        "title": "请求日志",
+        "sub": "状态与耗时头",
+        "x": 580,
+        "y": 420,
+        "width": 240,
+        "height": 100,
+        "kind": "rect",
+        "optional": false
+      },
+      {
+        "id": "send",
+        "title": "发送 JSON",
+        "sub": "返回客户端",
+        "x": 1060,
+        "y": 420,
+        "width": 240,
+        "height": 100,
+        "kind": "rect",
+        "optional": false
+      }
+    ],
+    "edges": [
+      {
+        "source": "run",
+        "target": "release",
+        "points": [
+          [
+            340,
+            250
+          ],
+          [
+            580,
+            250
+          ]
+        ],
+        "label": "",
+        "label_at": null
+      },
+      {
+        "source": "release",
+        "target": "json",
+        "points": [
+          [
+            820,
+            250
+          ],
+          [
+            1060,
+            250
+          ]
+        ],
+        "label": "",
+        "label_at": null
+      },
+      {
+        "source": "release",
+        "target": "handled",
+        "points": [
+          [
+            700,
+            300
+          ],
+          [
+            700,
+            330
+          ],
+          [
+            220,
+            330
+          ],
+          [
+            220,
+            420
+          ]
+        ],
+        "label": "已注册异常",
+        "label_at": [
+          400,
+          367
+        ]
+      },
+      {
+        "source": "handled",
+        "target": "log",
+        "points": [
+          [
+            340,
+            470
+          ],
+          [
+            580,
+            470
+          ]
+        ],
+        "label": "",
+        "label_at": null
+      },
+      {
+        "source": "json",
+        "target": "log",
+        "points": [
+          [
+            1180,
+            300
+          ],
+          [
+            1180,
+            370
+          ],
+          [
+            700,
+            370
+          ],
+          [
+            700,
+            420
+          ]
+        ],
+        "label": "",
+        "label_at": null
+      },
+      {
+        "source": "log",
+        "target": "send",
+        "points": [
+          [
+            820,
+            470
+          ],
+          [
+            1060,
+            470
+          ]
+        ],
+        "label": "",
+        "label_at": null
+      }
+    ]
+  },
+  {
+    "id": "02-request-lifecycle-03",
+    "title": "SSE 建立与结束",
+    "caption": "响应已开始后不改发 JSON 500；内层关闭按接口区分。",
+    "width": 1400,
+    "height": 620,
+    "nodes": [
+      {
+        "id": "n0",
+        "title": "校验与会话",
+        "sub": "路由前置检查",
+        "x": 50.0,
+        "y": 200,
+        "width": 220,
+        "height": 100,
+        "kind": "rect",
+        "optional": false
+      },
+      {
+        "id": "n1",
+        "title": "建立 SSE",
+        "sub": "HTTP 200",
+        "x": 320.0,
+        "y": 200,
+        "width": 220,
+        "height": 100,
+        "kind": "rect",
+        "optional": false
+      },
+      {
+        "id": "n2",
+        "title": "消费业务流",
+        "sub": "持续推送事件",
+        "x": 590.0,
+        "y": 200,
+        "width": 220,
+        "height": 100,
+        "kind": "rect",
+        "optional": false
+      },
+      {
+        "id": "n3",
+        "title": "按接口清理",
+        "sub": "Go / 聊天有差异",
+        "x": 860.0,
+        "y": 200,
+        "width": 220,
+        "height": 100,
+        "kind": "rect",
+        "optional": false
+      },
+      {
+        "id": "n4",
+        "title": "释放会话",
+        "sub": "响应层 finally",
+        "x": 1130.0,
+        "y": 200,
+        "width": 220,
+        "height": 100,
+        "kind": "rect",
+        "optional": false
+      },
+      {
+        "id": "interrupted",
+        "title": "断开 / 异常",
+        "sub": "或实际任务取消",
+        "x": 590,
+        "y": 420,
+        "width": 220,
+        "height": 100,
+        "kind": "rect",
+        "optional": false
+      }
+    ],
+    "edges": [
+      {
+        "source": "n0",
+        "target": "n1",
+        "points": [
+          [
+            270.0,
+            250
+          ],
+          [
+            320.0,
+            250
+          ]
+        ],
+        "label": "",
+        "label_at": null
+      },
+      {
+        "source": "n1",
+        "target": "n2",
+        "points": [
+          [
+            540.0,
+            250
+          ],
+          [
+            590.0,
+            250
+          ]
+        ],
+        "label": "",
+        "label_at": null
+      },
+      {
+        "source": "n2",
+        "target": "n3",
+        "points": [
+          [
+            810.0,
+            250
+          ],
+          [
+            860.0,
+            250
+          ]
+        ],
+        "label": "",
+        "label_at": null
+      },
+      {
+        "source": "n3",
+        "target": "n4",
+        "points": [
+          [
+            1080.0,
+            250
+          ],
+          [
+            1130.0,
+            250
+          ]
+        ],
+        "label": "",
+        "label_at": null
+      },
+      {
+        "source": "n2",
+        "target": "interrupted",
+        "points": [
+          [
+            700,
+            300
+          ],
+          [
+            700,
+            420
+          ]
+        ],
+        "label": "",
+        "label_at": null
+      },
+      {
+        "source": "interrupted",
+        "target": "n3",
+        "points": [
+          [
+            810,
+            470
+          ],
+          [
+            970,
+            470
+          ],
+          [
+            970,
+            300
+          ]
+        ],
+        "label": "",
+        "label_at": null
+      }
+    ]
+  },
+  {
+    "id": "02-request-lifecycle-04",
+    "title": "Go 任务执行与收尾",
+    "caption": "JSON / SSE 共用；保护段内取消保存 cancelled 后重抛。",
+    "width": 1400,
+    "height": 660,
+    "nodes": [
+      {
+        "id": "n0",
+        "title": "初始报告",
+        "sub": "running",
+        "x": 100,
+        "y": 200,
+        "width": 240,
+        "height": 100,
+        "kind": "rect",
+        "optional": false
+      },
+      {
+        "id": "n1",
+        "title": "首次事件",
+        "sub": "go_start",
+        "x": 580,
+        "y": 200,
+        "width": 240,
+        "height": 100,
+        "kind": "rect",
+        "optional": false
+      },
+      {
+        "id": "n2",
+        "title": "排队与执行",
+        "sub": "Semaphore(2)",
+        "x": 1060,
+        "y": 200,
+        "width": 240,
+        "height": 100,
+        "kind": "rect",
+        "optional": false
+      },
+      {
+        "id": "n3",
+        "title": "清理与释放槽",
+        "sub": "取得槽后才适用",
+        "x": 1060,
+        "y": 420,
+        "width": 240,
+        "height": 100,
+        "kind": "rect",
+        "optional": false
+      },
+      {
+        "id": "n4",
+        "title": "保存终态报告",
+        "sub": "成功 / 失败 / 超时",
+        "x": 580,
+        "y": 420,
+        "width": 240,
+        "height": 100,
+        "kind": "rect",
+        "optional": false
+      },
+      {
+        "id": "n5",
+        "title": "记录与返回",
+        "sub": "trace → go_done",
+        "x": 100,
+        "y": 420,
+        "width": 240,
+        "height": 100,
+        "kind": "rect",
+        "optional": false
+      }
+    ],
+    "edges": [
+      {
+        "source": "n0",
+        "target": "n1",
+        "points": [
+          [
+            340,
+            250
+          ],
+          [
+            580,
+            250
+          ]
+        ],
+        "label": "",
+        "label_at": null
+      },
+      {
+        "source": "n1",
+        "target": "n2",
+        "points": [
+          [
+            820,
+            250
+          ],
+          [
+            1060,
+            250
+          ]
+        ],
+        "label": "",
+        "label_at": null
+      },
+      {
+        "source": "n2",
+        "target": "n3",
+        "points": [
+          [
+            1180.0,
+            300
+          ],
+          [
+            1180.0,
+            420
+          ]
+        ],
+        "label": "",
+        "label_at": null
+      },
+      {
+        "source": "n3",
+        "target": "n4",
+        "points": [
+          [
+            1060,
+            470
+          ],
+          [
+            820,
+            470
+          ]
+        ],
+        "label": "",
+        "label_at": null
+      },
+      {
+        "source": "n4",
+        "target": "n5",
+        "points": [
+          [
+            580,
+            470
+          ],
+          [
+            340,
+            470
+          ]
+        ],
+        "label": "",
+        "label_at": null
+      }
+    ]
+  },
+  {
+    "id": "03-chat-agent-01",
+    "title": "普通聊天：缓存与智能体",
+    "caption": "缓存检查先于完整历史加载；规划文本不直接作为最终答复。",
+    "width": 1400,
+    "height": 650,
+    "nodes": [
+      {
+        "id": "input",
+        "title": "输入问题",
+        "sub": "内部会话键",
+        "x": 60,
+        "y": 200,
+        "width": 260,
+        "height": 100,
+        "kind": "rect",
+        "optional": false
+      },
+      {
+        "id": "cache",
+        "title": "首轮缓存",
+        "sub": "满足条件才查询",
+        "x": 400,
+        "y": 200,
+        "width": 260,
+        "height": 100,
+        "kind": "rect",
+        "optional": false
+      },
+      {
+        "id": "history",
+        "title": "加载历史",
+        "sub": "按需准备摘要",
+        "x": 740,
+        "y": 200,
+        "width": 260,
+        "height": 100,
+        "kind": "rect",
+        "optional": false
+      },
+      {
+        "id": "agent",
+        "title": "单智能体循环",
+        "sub": "规划与只读工具",
+        "x": 1080,
+        "y": 200,
+        "width": 260,
+        "height": 100,
+        "kind": "rect",
+        "optional": false
+      },
+      {
+        "id": "cached",
+        "title": "缓存答复",
+        "sub": "不调用生成模型",
+        "x": 400,
+        "y": 420,
+        "width": 260,
+        "height": 100,
+        "kind": "rect",
+        "optional": false
+      },
+      {
+        "id": "final",
+        "title": "finalize 回答",
+        "sub": "独立生成最终答案",
+        "x": 1080,
+        "y": 420,
+        "width": 260,
+        "height": 100,
+        "kind": "rect",
+        "optional": false
+      },
+      {
+        "id": "commit",
+        "title": "提交并返回",
+        "sub": "会话与运行轨迹",
+        "x": 740,
+        "y": 420,
+        "width": 260,
+        "height": 100,
+        "kind": "rect",
+        "optional": false
+      }
+    ],
+    "edges": [
+      {
+        "source": "input",
+        "target": "cache",
+        "points": [
+          [
+            320,
+            250
+          ],
+          [
+            400,
+            250
+          ]
+        ],
+        "label": "",
+        "label_at": null
+      },
+      {
+        "source": "cache",
+        "target": "history",
+        "points": [
+          [
+            660,
+            250
+          ],
+          [
+            740,
+            250
+          ]
+        ],
+        "label": "未命中",
+        "label_at": [
+          700,
+          220
+        ]
+      },
+      {
+        "source": "history",
+        "target": "agent",
+        "points": [
+          [
+            1000,
+            250
+          ],
+          [
+            1080,
+            250
+          ]
+        ],
+        "label": "",
+        "label_at": null
+      },
+      {
+        "source": "agent",
+        "target": "final",
+        "points": [
+          [
+            1210,
+            300
+          ],
+          [
+            1210,
+            420
+          ]
+        ],
+        "label": "",
+        "label_at": null
+      },
+      {
+        "source": "final",
+        "target": "commit",
+        "points": [
+          [
+            1080,
+            470
+          ],
+          [
+            1000,
+            470
+          ]
+        ],
+        "label": "",
+        "label_at": null
+      },
+      {
+        "source": "cache",
+        "target": "cached",
+        "points": [
+          [
+            530,
+            300
+          ],
+          [
+            530,
+            420
+          ]
+        ],
+        "label": "命中",
+        "label_at": [
+          600,
+          365
+        ]
+      },
+      {
+        "source": "cached",
+        "target": "commit",
+        "points": [
+          [
+            660,
+            470
+          ],
+          [
+            740,
+            470
+          ]
+        ],
+        "label": "",
+        "label_at": null
+      }
+    ]
+  },
+  {
+    "id": "03-chat-agent-02",
+    "title": "一轮只读工具调用",
+    "caption": "工具由模型选择，服务端校验后顺序执行；预算异常直接中止。",
+    "width": 1400,
+    "height": 620,
+    "nodes": [
+      {
+        "id": "n0",
+        "title": "tool_calls",
+        "sub": "模型提出调用",
+        "x": 50.0,
+        "y": 200,
+        "width": 220,
+        "height": 100,
+        "kind": "rect",
+        "optional": false
+      },
+      {
+        "id": "n1",
+        "title": "白名单校验",
+        "sub": "工具与参数",
+        "x": 320.0,
+        "y": 200,
+        "width": 220,
+        "height": 100,
+        "kind": "rect",
+        "optional": false
+      },
+      {
+        "id": "n2",
+        "title": "顺序执行",
+        "sub": "检索 / 文章 / 规范",
+        "x": 590.0,
+        "y": 200,
+        "width": 220,
+        "height": 100,
+        "kind": "rect",
+        "optional": false
+      },
+      {
+        "id": "n3",
+        "title": "ToolMessage",
+        "sub": "成功或错误结果",
+        "x": 860.0,
+        "y": 200,
+        "width": 220,
+        "height": 100,
+        "kind": "rect",
+        "optional": false
+      },
+      {
+        "id": "n4",
+        "title": "继续规划",
+        "sub": "仍受轮次限制",
+        "x": 1130.0,
+        "y": 200,
+        "width": 220,
+        "height": 100,
+        "kind": "rect",
+        "optional": false
+      },
+      {
+        "id": "budget",
+        "title": "预算异常",
+        "sub": "中止本轮",
+        "x": 590,
+        "y": 420,
+        "width": 220,
+        "height": 100,
+        "kind": "rect",
+        "optional": false
+      }
+    ],
+    "edges": [
+      {
+        "source": "n0",
+        "target": "n1",
+        "points": [
+          [
+            270.0,
+            250
+          ],
+          [
+            320.0,
+            250
+          ]
+        ],
+        "label": "",
+        "label_at": null
+      },
+      {
+        "source": "n1",
+        "target": "n2",
+        "points": [
+          [
+            540.0,
+            250
+          ],
+          [
+            590.0,
+            250
+          ]
+        ],
+        "label": "",
+        "label_at": null
+      },
+      {
+        "source": "n2",
+        "target": "n3",
+        "points": [
+          [
+            810.0,
+            250
+          ],
+          [
+            860.0,
+            250
+          ]
+        ],
+        "label": "",
+        "label_at": null
+      },
+      {
+        "source": "n3",
+        "target": "n4",
+        "points": [
+          [
+            1080.0,
+            250
+          ],
+          [
+            1130.0,
+            250
+          ]
+        ],
+        "label": "",
+        "label_at": null
+      },
+      {
+        "source": "n2",
+        "target": "budget",
+        "points": [
+          [
+            700,
+            300
+          ],
+          [
+            700,
+            420
+          ]
+        ],
+        "label": "预算不足",
+        "label_at": [
+          805,
+          365
+        ]
+      }
+    ]
+  },
+  {
+    "id": "04-knowledge-ingestion-01",
+    "title": "管理员上传文件",
+    "caption": "支持 PDF、DOCX、Markdown、TXT；入库不经过智能体。",
+    "width": 1400,
+    "height": 460,
+    "nodes": [
+      {
+        "id": "n0",
+        "title": "管理员上传",
+        "sub": "/api/v1/ingest",
+        "x": 50.0,
+        "y": 200,
+        "width": 220,
+        "height": 100,
+        "kind": "rect",
+        "optional": false
+      },
+      {
+        "id": "n1",
+        "title": "校验文件",
+        "sub": "权限 / 大小 / 类型",
+        "x": 320.0,
+        "y": 200,
+        "width": 220,
+        "height": 100,
+        "kind": "rect",
+        "optional": false
+      },
+      {
+        "id": "n2",
+        "title": "解析与分块",
+        "sub": "保留来源元数据",
+        "x": 590.0,
+        "y": 200,
+        "width": 220,
+        "height": 100,
+        "kind": "rect",
+        "optional": false
+      },
+      {
+        "id": "n3",
+        "title": "写入索引",
+        "sub": "共享入库流程",
+        "x": 860.0,
+        "y": 200,
+        "width": 220,
+        "height": 100,
+        "kind": "rect",
+        "optional": false
+      },
+      {
+        "id": "n4",
+        "title": "清理并返回",
+        "sub": "删除临时文件",
+        "x": 1130.0,
+        "y": 200,
+        "width": 220,
+        "height": 100,
+        "kind": "rect",
+        "optional": false
+      }
+    ],
+    "edges": [
+      {
+        "source": "n0",
+        "target": "n1",
+        "points": [
+          [
+            270.0,
+            250
+          ],
+          [
+            320.0,
+            250
+          ]
+        ],
+        "label": "",
+        "label_at": null
+      },
+      {
+        "source": "n1",
+        "target": "n2",
+        "points": [
+          [
+            540.0,
+            250
+          ],
+          [
+            590.0,
+            250
+          ]
+        ],
+        "label": "",
+        "label_at": null
+      },
+      {
+        "source": "n2",
+        "target": "n3",
+        "points": [
+          [
+            810.0,
+            250
+          ],
+          [
+            860.0,
+            250
+          ]
+        ],
+        "label": "",
+        "label_at": null
+      },
+      {
+        "source": "n3",
+        "target": "n4",
+        "points": [
+          [
+            1080.0,
+            250
+          ],
+          [
+            1130.0,
+            250
+          ]
+        ],
+        "label": "",
+        "label_at": null
+      }
+    ]
+  },
+  {
+    "id": "04-knowledge-ingestion-02",
+    "title": "文章发布事件入库",
+    "caption": "正文先落库；失败重投，到达上限后登记并确认。",
+    "width": 1400,
+    "height": 660,
+    "nodes": [
+      {
+        "id": "n0",
+        "title": "接收文章事件",
+        "sub": "RabbitMQ",
+        "x": 100,
+        "y": 200,
+        "width": 240,
+        "height": 100,
+        "kind": "rect",
+        "optional": false
+      },
+      {
+        "id": "n1",
+        "title": "校验与去重",
+        "sub": "article_id",
+        "x": 580,
+        "y": 200,
+        "width": 240,
+        "height": 100,
+        "kind": "rect",
+        "optional": false
+      },
+      {
+        "id": "n2",
+        "title": "取得正文",
+        "sub": "优先使用本地",
+        "x": 1060,
+        "y": 200,
+        "width": 240,
+        "height": 100,
+        "kind": "rect",
+        "optional": false
+      },
+      {
+        "id": "n3",
+        "title": "保存正文",
+        "sub": "pending",
+        "x": 1060,
+        "y": 420,
+        "width": 240,
+        "height": 100,
+        "kind": "rect",
+        "optional": false
+      },
+      {
+        "id": "n4",
+        "title": "分块与索引",
+        "sub": "共享入库流程",
+        "x": 580,
+        "y": 420,
+        "width": 240,
+        "height": 100,
+        "kind": "rect",
+        "optional": false
+      },
+      {
+        "id": "n5",
+        "title": "状态与确认",
+        "sub": "ingested / ACK",
+        "x": 100,
+        "y": 420,
+        "width": 240,
+        "height": 100,
+        "kind": "rect",
+        "optional": false
+      }
+    ],
+    "edges": [
+      {
+        "source": "n0",
+        "target": "n1",
+        "points": [
+          [
+            340,
+            250
+          ],
+          [
+            580,
+            250
+          ]
+        ],
+        "label": "",
+        "label_at": null
+      },
+      {
+        "source": "n1",
+        "target": "n2",
+        "points": [
+          [
+            820,
+            250
+          ],
+          [
+            1060,
+            250
+          ]
+        ],
+        "label": "",
+        "label_at": null
+      },
+      {
+        "source": "n2",
+        "target": "n3",
+        "points": [
+          [
+            1180.0,
+            300
+          ],
+          [
+            1180.0,
+            420
+          ]
+        ],
+        "label": "",
+        "label_at": null
+      },
+      {
+        "source": "n3",
+        "target": "n4",
+        "points": [
+          [
+            1060,
+            470
+          ],
+          [
+            820,
+            470
+          ]
+        ],
+        "label": "",
+        "label_at": null
+      },
+      {
+        "source": "n4",
+        "target": "n5",
+        "points": [
+          [
+            580,
+            470
+          ],
+          [
+            340,
+            470
+          ]
+        ],
+        "label": "",
+        "label_at": null
+      }
+    ]
+  },
+  {
+    "id": "04-knowledge-ingestion-03",
+    "title": "启动恢复已有知识",
+    "caption": "知识分块 → 样例检查 → 文章恢复；就绪不代表依赖全部可用。",
+    "width": 1400,
+    "height": 460,
+    "nodes": [
+      {
+        "id": "n0",
+        "title": "恢复知识分块",
+        "sub": "重建已有索引",
+        "x": 50.0,
+        "y": 200,
+        "width": 220,
+        "height": 100,
+        "kind": "rect",
+        "optional": false
+      },
+      {
+        "id": "n1",
+        "title": "检查空库样例",
+        "sub": "符合条件才导入",
+        "x": 320.0,
+        "y": 200,
+        "width": 220,
+        "height": 100,
+        "kind": "rect",
+        "optional": false
+      },
+      {
+        "id": "n2",
+        "title": "恢复文章",
+        "sub": "本地正文重新分块",
+        "x": 590.0,
+        "y": 200,
+        "width": 220,
+        "height": 100,
+        "kind": "rect",
+        "optional": false
+      },
+      {
+        "id": "n3",
+        "title": "按配置启消费",
+        "sub": "AMQP_URL",
+        "x": 860.0,
+        "y": 200,
+        "width": 220,
+        "height": 100,
+        "kind": "rect",
+        "optional": false
+      },
+      {
+        "id": "n4",
+        "title": "服务就绪",
+        "sub": "开始接收请求",
+        "x": 1130.0,
+        "y": 200,
+        "width": 220,
+        "height": 100,
+        "kind": "rect",
+        "optional": false
+      }
+    ],
+    "edges": [
+      {
+        "source": "n0",
+        "target": "n1",
+        "points": [
+          [
+            270.0,
+            250
+          ],
+          [
+            320.0,
+            250
+          ]
+        ],
+        "label": "",
+        "label_at": null
+      },
+      {
+        "source": "n1",
+        "target": "n2",
+        "points": [
+          [
+            540.0,
+            250
+          ],
+          [
+            590.0,
+            250
+          ]
+        ],
+        "label": "",
+        "label_at": null
+      },
+      {
+        "source": "n2",
+        "target": "n3",
+        "points": [
+          [
+            810.0,
+            250
+          ],
+          [
+            860.0,
+            250
+          ]
+        ],
+        "label": "",
+        "label_at": null
+      },
+      {
+        "source": "n3",
+        "target": "n4",
+        "points": [
+          [
+            1080.0,
+            250
+          ],
+          [
+            1130.0,
+            250
+          ]
+        ],
+        "label": "",
+        "label_at": null
+      }
+    ]
+  },
+  {
+    "id": "04-knowledge-ingestion-04",
+    "title": "共享索引写入顺序",
+    "caption": "恢复已有分块时跳过原文保存；跨存储没有统一事务。",
+    "width": 1400,
+    "height": 460,
+    "nodes": [
+      {
+        "id": "n0",
+        "title": "分块去重",
+        "sub": "正文 + 元数据",
+        "x": 50.0,
+        "y": 200,
+        "width": 220,
+        "height": 100,
+        "kind": "rect",
+        "optional": false
+      },
+      {
+        "id": "n1",
+        "title": "保存分块原文",
+        "sub": "persist=true 时",
+        "x": 320.0,
+        "y": 200,
+        "width": 220,
+        "height": 100,
+        "kind": "rect",
+        "optional": false
+      },
+      {
+        "id": "n2",
+        "title": "向量化与写入",
+        "sub": "内存或 Milvus",
+        "x": 590.0,
+        "y": 200,
+        "width": 220,
+        "height": 100,
+        "kind": "rect",
+        "optional": false
+      },
+      {
+        "id": "n3",
+        "title": "更新 BM25",
+        "sub": "进程内关键词索引",
+        "x": 860.0,
+        "y": 200,
+        "width": 220,
+        "height": 100,
+        "kind": "rect",
+        "optional": false
+      },
+      {
+        "id": "n4",
+        "title": "更新内存状态",
+        "sub": "数量 / ID / revision",
+        "x": 1130.0,
+        "y": 200,
+        "width": 220,
+        "height": 100,
+        "kind": "rect",
+        "optional": false
+      }
+    ],
+    "edges": [
+      {
+        "source": "n0",
+        "target": "n1",
+        "points": [
+          [
+            270.0,
+            250
+          ],
+          [
+            320.0,
+            250
+          ]
+        ],
+        "label": "",
+        "label_at": null
+      },
+      {
+        "source": "n1",
+        "target": "n2",
+        "points": [
+          [
+            540.0,
+            250
+          ],
+          [
+            590.0,
+            250
+          ]
+        ],
+        "label": "",
+        "label_at": null
+      },
+      {
+        "source": "n2",
+        "target": "n3",
+        "points": [
+          [
+            810.0,
+            250
+          ],
+          [
+            860.0,
+            250
+          ]
+        ],
+        "label": "",
+        "label_at": null
+      },
+      {
+        "source": "n3",
+        "target": "n4",
+        "points": [
+          [
+            1080.0,
+            250
+          ],
+          [
+            1130.0,
+            250
+          ]
+        ],
+        "label": "",
+        "label_at": null
+      }
+    ]
+  },
+  {
+    "id": "05-rag-retrieval-01",
+    "title": "从查询到检索证据",
+    "caption": "混合路径顺序执行；重排不可用时保留原排序。",
+    "width": 1400,
+    "height": 520,
+    "nodes": [
+      {
+        "id": "n0",
+        "title": "向量召回",
+        "sub": "混合 15 / 纯向量 5",
+        "x": 50.0,
+        "y": 200,
+        "width": 220,
+        "height": 100,
+        "kind": "rect",
+        "optional": false
+      },
+      {
+        "id": "n1",
+        "title": "关键词召回",
+        "sub": "BM25 · 最多 15",
+        "x": 320.0,
+        "y": 200,
+        "width": 220,
+        "height": 100,
+        "kind": "rect",
+        "optional": false
+      },
+      {
+        "id": "n2",
+        "title": "排名融合",
+        "sub": "RRF · 最多 10",
+        "x": 590.0,
+        "y": 200,
+        "width": 220,
+        "height": 100,
+        "kind": "rect",
+        "optional": false
+      },
+      {
+        "id": "n3",
+        "title": "可选重排",
+        "sub": "不可用则保留排序",
+        "x": 860.0,
+        "y": 200,
+        "width": 220,
+        "height": 100,
+        "kind": "rect",
+        "optional": false
+      },
+      {
+        "id": "n4",
+        "title": "原文证据",
+        "sub": "默认最多 5 条",
+        "x": 1130.0,
+        "y": 200,
+        "width": 220,
+        "height": 100,
+        "kind": "rect",
+        "optional": false
+      }
+    ],
+    "edges": [
+      {
+        "source": "n0",
+        "target": "n1",
+        "points": [
+          [
+            270.0,
+            250
+          ],
+          [
+            320.0,
+            250
+          ]
+        ],
+        "label": "",
+        "label_at": null
+      },
+      {
+        "source": "n1",
+        "target": "n2",
+        "points": [
+          [
+            540.0,
+            250
+          ],
+          [
+            590.0,
+            250
+          ]
+        ],
+        "label": "",
+        "label_at": null
+      },
+      {
+        "source": "n2",
+        "target": "n3",
+        "points": [
+          [
+            810.0,
+            250
+          ],
+          [
+            860.0,
+            250
+          ]
+        ],
+        "label": "",
+        "label_at": null
+      },
+      {
+        "source": "n3",
+        "target": "n4",
+        "points": [
+          [
+            1080.0,
+            250
+          ],
+          [
+            1130.0,
+            250
+          ]
+        ],
+        "label": "",
+        "label_at": null
+      },
+      {
+        "source": "n0",
+        "target": "n3",
+        "points": [
+          [
+            160,
+            300
+          ],
+          [
+            160,
+            410
+          ],
+          [
+            970,
+            410
+          ],
+          [
+            970,
+            300
+          ]
+        ],
+        "label": "混合关闭或 BM25 未就绪：仅向量",
+        "label_at": [
+          585,
+          389
+        ]
+      }
+    ]
+  },
+  {
+    "id": "05-rag-retrieval-02",
+    "title": "证据返回与最终生成",
+    "caption": "检索只提供原文与来源；回答由智能体另行生成。",
+    "width": 1400,
+    "height": 460,
+    "nodes": [
+      {
+        "id": "n0",
+        "title": "知识检索",
+        "sub": "search_knowledge",
+        "x": 50.0,
+        "y": 200,
+        "width": 220,
+        "height": 100,
+        "kind": "rect",
+        "optional": false
+      },
+      {
+        "id": "n1",
+        "title": "原文与来源",
+        "sub": "空结果也可正常返回",
+        "x": 320.0,
+        "y": 200,
+        "width": 220,
+        "height": 100,
+        "kind": "rect",
+        "optional": false
+      },
+      {
+        "id": "n2",
+        "title": "工具消息",
+        "sub": "enforce 可精简",
+        "x": 590.0,
+        "y": 200,
+        "width": 220,
+        "height": 100,
+        "kind": "rect",
+        "optional": false
+      },
+      {
+        "id": "n3",
+        "title": "Agent 规划",
+        "sub": "可继续调用工具",
+        "x": 860.0,
+        "y": 200,
+        "width": 220,
+        "height": 100,
+        "kind": "rect",
+        "optional": false
+      },
+      {
+        "id": "n4",
+        "title": "finalize 回答",
+        "sub": "汇总来源",
+        "x": 1130.0,
+        "y": 200,
+        "width": 220,
+        "height": 100,
+        "kind": "rect",
+        "optional": false
+      }
+    ],
+    "edges": [
+      {
+        "source": "n0",
+        "target": "n1",
+        "points": [
+          [
+            270.0,
+            250
+          ],
+          [
+            320.0,
+            250
+          ]
+        ],
+        "label": "",
+        "label_at": null
+      },
+      {
+        "source": "n1",
+        "target": "n2",
+        "points": [
+          [
+            540.0,
+            250
+          ],
+          [
+            590.0,
+            250
+          ]
+        ],
+        "label": "",
+        "label_at": null
+      },
+      {
+        "source": "n2",
+        "target": "n3",
+        "points": [
+          [
+            810.0,
+            250
+          ],
+          [
+            860.0,
+            250
+          ]
+        ],
+        "label": "",
+        "label_at": null
+      },
+      {
+        "source": "n3",
+        "target": "n4",
+        "points": [
+          [
+            1080.0,
+            250
+          ],
+          [
+            1130.0,
+            250
+          ]
+        ],
+        "label": "",
+        "label_at": null
+      }
+    ]
+  },
+  {
+    "id": "06-go-orchestration-01",
+    "title": "Go 专用任务的两条分支",
+    "caption": "普通聊天不进入此分支；报告可重读，任务不能恢复执行。",
+    "width": 1400,
+    "height": 870,
+    "nodes": [
+      {
+        "id": "service",
+        "title": "GoTaskService",
+        "sub": "任务创建与排队",
+        "x": 580,
+        "y": 150,
+        "width": 240,
+        "height": 100,
+        "kind": "rect",
+        "optional": false
+      },
+      {
+        "id": "switch",
+        "title": "多智能体？",
+        "sub": "默认关闭",
+        "x": 580,
+        "y": 320,
+        "width": 240,
+        "height": 100,
+        "kind": "diamond",
+        "optional": false
+      },
+      {
+        "id": "single",
+        "title": "single-v1",
+        "sub": "生成 → 验证 → 修复",
+        "x": 100,
+        "y": 500,
+        "width": 240,
+        "height": 100,
+        "kind": "rect",
+        "optional": false
+      },
+      {
+        "id": "multi",
+        "title": "multi-v1",
+        "sub": "规划 → 生成 → 审查",
+        "x": 1060,
+        "y": 500,
+        "width": 240,
+        "height": 100,
+        "kind": "rect",
+        "optional": true
+      },
+      {
+        "id": "report",
+        "title": "报告与响应",
+        "sub": "SQLite + JSON / SSE",
+        "x": 580,
+        "y": 680,
+        "width": 240,
+        "height": 100,
+        "kind": "rect",
+        "optional": false
+      }
+    ],
+    "edges": [
+      {
+        "source": "service",
+        "target": "switch",
+        "points": [
+          [
+            700,
+            250
+          ],
+          [
+            700,
+            320
+          ]
+        ],
+        "label": "",
+        "label_at": null
+      },
+      {
+        "source": "switch",
+        "target": "single",
+        "points": [
+          [
+            580,
+            370
+          ],
+          [
+            220,
+            370
+          ],
+          [
+            220,
+            500
+          ]
+        ],
+        "label": "false · 默认",
+        "label_at": [
+          355,
+          347
+        ]
+      },
+      {
+        "source": "switch",
+        "target": "multi",
+        "points": [
+          [
+            820,
+            370
+          ],
+          [
+            1180,
+            370
+          ],
+          [
+            1180,
+            500
+          ]
+        ],
+        "label": "true · 显式启用",
+        "label_at": [
+          1040,
+          347
+        ]
+      },
+      {
+        "source": "single",
+        "target": "report",
+        "points": [
+          [
+            220,
+            600
+          ],
+          [
+            220,
+            730
+          ],
+          [
+            580,
+            730
+          ]
+        ],
+        "label": "",
+        "label_at": null
+      },
+      {
+        "source": "multi",
+        "target": "report",
+        "points": [
+          [
+            1180,
+            600
+          ],
+          [
+            1180,
+            730
+          ],
+          [
+            820,
+            730
+          ]
+        ],
+        "label": "",
+        "label_at": null
+      }
+    ]
+  },
+  {
+    "id": "06-go-orchestration-02",
+    "title": "多智能体：两个角色顺序协作",
+    "caption": "服务端驱动；只有 proceed 评估才进入后续生成。",
+    "width": 1400,
+    "height": 520,
+    "nodes": [
+      {
+        "id": "n0",
+        "title": "需求评估与规划",
+        "sub": "proceed 后按需检索",
+        "x": 50.0,
+        "y": 200,
+        "width": 220,
+        "height": 100,
+        "kind": "rect",
+        "optional": false
+      },
+      {
+        "id": "n1",
+        "title": "CodeAgent",
+        "sub": "生成或修复代码",
+        "x": 320.0,
+        "y": 200,
+        "width": 220,
+        "height": 100,
+        "kind": "rect",
+        "optional": false
+      },
+      {
+        "id": "n2",
+        "title": "Docker 验证",
+        "sub": "代码失败也可审查",
+        "x": 590.0,
+        "y": 200,
+        "width": 220,
+        "height": 100,
+        "kind": "rect",
+        "optional": false
+      },
+      {
+        "id": "n3",
+        "title": "Supervisor 审查",
+        "sub": "需求与验证证据",
+        "x": 860.0,
+        "y": 200,
+        "width": 220,
+        "height": 100,
+        "kind": "rect",
+        "optional": false
+      },
+      {
+        "id": "n4",
+        "title": "服务端判定",
+        "sub": "通过 / 修复 / 终止",
+        "x": 1130.0,
+        "y": 200,
+        "width": 220,
+        "height": 100,
+        "kind": "rect",
+        "optional": false
+      }
+    ],
+    "edges": [
+      {
+        "source": "n0",
+        "target": "n1",
+        "points": [
+          [
+            270.0,
+            250
+          ],
+          [
+            320.0,
+            250
+          ]
+        ],
+        "label": "",
+        "label_at": null
+      },
+      {
+        "source": "n1",
+        "target": "n2",
+        "points": [
+          [
+            540.0,
+            250
+          ],
+          [
+            590.0,
+            250
+          ]
+        ],
+        "label": "",
+        "label_at": null
+      },
+      {
+        "source": "n2",
+        "target": "n3",
+        "points": [
+          [
+            810.0,
+            250
+          ],
+          [
+            860.0,
+            250
+          ]
+        ],
+        "label": "",
+        "label_at": null
+      },
+      {
+        "source": "n3",
+        "target": "n4",
+        "points": [
+          [
+            1080.0,
+            250
+          ],
+          [
+            1130.0,
+            250
+          ]
+        ],
+        "label": "",
+        "label_at": null
+      },
+      {
+        "source": "n4",
+        "target": "n1",
+        "points": [
+          [
+            1240,
+            300
+          ],
+          [
+            1240,
+            410
+          ],
+          [
+            430,
+            410
+          ],
+          [
+            430,
+            300
+          ]
+        ],
+        "label": "允许继续才修复",
+        "label_at": [
+          840,
+          389
+        ]
+      }
+    ]
+  },
+  {
+    "id": "06-go-orchestration-03",
+    "title": "服务端成功与修复门禁",
+    "caption": "这里只展开有效证据后的判定；模型审查不直接设置任务成功。",
+    "width": 1400,
+    "height": 660,
+    "nodes": [
+      {
+        "id": "evidence",
+        "title": "有效验证与审查",
+        "sub": "结构、版本已校验",
+        "x": 100,
+        "y": 200,
+        "width": 240,
+        "height": 100,
+        "kind": "rect",
+        "optional": false
+      },
+      {
+        "id": "passed-check",
+        "title": "成功门禁？",
+        "sub": "机器 + 审查 + 需求",
+        "x": 580,
+        "y": 200,
+        "width": 240,
+        "height": 100,
+        "kind": "diamond",
+        "optional": false
+      },
+      {
+        "id": "passed",
+        "title": "passed",
+        "sub": "通过服务端判定",
+        "x": 1060,
+        "y": 200,
+        "width": 240,
+        "height": 100,
+        "kind": "rect",
+        "optional": false
+      },
+      {
+        "id": "repair-check",
+        "title": "还能修复？",
+        "sub": "预算 / 轮次 / 进展",
+        "x": 580,
+        "y": 440,
+        "width": 240,
+        "height": 100,
+        "kind": "diamond",
+        "optional": false
+      },
+      {
+        "id": "repair",
+        "title": "继续 repair",
+        "sub": "生成下一版产物",
+        "x": 1060,
+        "y": 440,
+        "width": 240,
+        "height": 100,
+        "kind": "rect",
+        "optional": false
+      },
+      {
+        "id": "stop",
+        "title": "终止并报告",
+        "sub": "保留实际失败原因",
+        "x": 100,
+        "y": 440,
+        "width": 240,
+        "height": 100,
+        "kind": "rect",
+        "optional": false
+      }
+    ],
+    "edges": [
+      {
+        "source": "evidence",
+        "target": "passed-check",
+        "points": [
+          [
+            340,
+            250
+          ],
+          [
+            580,
+            250
+          ]
+        ],
+        "label": "",
+        "label_at": null
+      },
+      {
+        "source": "passed-check",
+        "target": "passed",
+        "points": [
+          [
+            820,
+            250
+          ],
+          [
+            1060,
+            250
+          ]
+        ],
+        "label": "是",
+        "label_at": [
+          940,
+          221
+        ]
+      },
+      {
+        "source": "passed-check",
+        "target": "repair-check",
+        "points": [
+          [
+            700,
+            300
+          ],
+          [
+            700,
+            440
+          ]
+        ],
+        "label": "否",
+        "label_at": [
+          770,
+          379
+        ]
+      },
+      {
+        "source": "repair-check",
+        "target": "repair",
+        "points": [
+          [
+            820,
+            490
+          ],
+          [
+            1060,
+            490
+          ]
+        ],
+        "label": "是",
+        "label_at": [
+          940,
+          461
+        ]
+      },
+      {
+        "source": "repair-check",
+        "target": "stop",
+        "points": [
+          [
+            580,
+            490
+          ],
+          [
+            340,
+            490
+          ]
+        ],
+        "label": "否",
+        "label_at": [
+          460,
+          461
+        ]
+      }
+    ]
+  },
+  {
+    "id": "07-go-sandbox-01",
+    "title": "Go 代码进入隔离验证",
+    "caption": "验收测试由编排层注入；源码通过标准输入送入固定容器。",
+    "width": 1400,
+    "height": 460,
+    "nodes": [
+      {
+        "id": "n0",
+        "title": "代码包校验",
+        "sub": "实现与模型测试",
+        "x": 50.0,
+        "y": 200,
+        "width": 220,
+        "height": 100,
+        "kind": "rect",
+        "optional": false
+      },
+      {
+        "id": "n1",
+        "title": "注入验收测试",
+        "sub": "编排层负责",
+        "x": 320.0,
+        "y": 200,
+        "width": 220,
+        "height": 100,
+        "kind": "rect",
+        "optional": false
+      },
+      {
+        "id": "n2",
+        "title": "DockerGoRunner",
+        "sub": "发送代码包",
+        "x": 590.0,
+        "y": 200,
+        "width": 220,
+        "height": 100,
+        "kind": "rect",
+        "optional": false
+      },
+      {
+        "id": "n3",
+        "title": "固定容器",
+        "sub": "禁网 / 只读 / 限额",
+        "x": 860.0,
+        "y": 200,
+        "width": 220,
+        "height": 100,
+        "kind": "rect",
+        "optional": false
+      },
+      {
+        "id": "n4",
+        "title": "验证报告",
+        "sub": "包含清理结果",
+        "x": 1130.0,
+        "y": 200,
+        "width": 220,
+        "height": 100,
+        "kind": "rect",
+        "optional": false
+      }
+    ],
+    "edges": [
+      {
+        "source": "n0",
+        "target": "n1",
+        "points": [
+          [
+            270.0,
+            250
+          ],
+          [
+            320.0,
+            250
+          ]
+        ],
+        "label": "",
+        "label_at": null
+      },
+      {
+        "source": "n1",
+        "target": "n2",
+        "points": [
+          [
+            540.0,
+            250
+          ],
+          [
+            590.0,
+            250
+          ]
+        ],
+        "label": "",
+        "label_at": null
+      },
+      {
+        "source": "n2",
+        "target": "n3",
+        "points": [
+          [
+            810.0,
+            250
+          ],
+          [
+            860.0,
+            250
+          ]
+        ],
+        "label": "",
+        "label_at": null
+      },
+      {
+        "source": "n3",
+        "target": "n4",
+        "points": [
+          [
+            1080.0,
+            250
+          ],
+          [
+            1130.0,
+            250
+          ]
+        ],
+        "label": "",
+        "label_at": null
+      }
+    ]
+  },
+  {
+    "id": "07-go-sandbox-02",
+    "title": "容器内的四阶段检查",
+    "caption": "顺序固定；任一步失败，就停止后续阶段。",
+    "width": 1400,
+    "height": 460,
+    "nodes": [
+      {
+        "id": "n0",
+        "title": "策略检查",
+        "sub": "policy / AST",
+        "x": 50.0,
+        "y": 200,
+        "width": 220,
+        "height": 100,
+        "kind": "rect",
+        "optional": false
+      },
+      {
+        "id": "n1",
+        "title": "编译检查",
+        "sub": "compile",
+        "x": 320.0,
+        "y": 200,
+        "width": 220,
+        "height": 100,
+        "kind": "rect",
+        "optional": false
+      },
+      {
+        "id": "n2",
+        "title": "静态检查",
+        "sub": "go vet",
+        "x": 590.0,
+        "y": 200,
+        "width": 220,
+        "height": 100,
+        "kind": "rect",
+        "optional": false
+      },
+      {
+        "id": "n3",
+        "title": "单元测试",
+        "sub": "go test",
+        "x": 860.0,
+        "y": 200,
+        "width": 220,
+        "height": 100,
+        "kind": "rect",
+        "optional": false
+      },
+      {
+        "id": "n4",
+        "title": "阶段报告",
+        "sub": "状态与日志",
+        "x": 1130.0,
+        "y": 200,
+        "width": 220,
+        "height": 100,
+        "kind": "rect",
+        "optional": false
+      }
+    ],
+    "edges": [
+      {
+        "source": "n0",
+        "target": "n1",
+        "points": [
+          [
+            270.0,
+            250
+          ],
+          [
+            320.0,
+            250
+          ]
+        ],
+        "label": "",
+        "label_at": null
+      },
+      {
+        "source": "n1",
+        "target": "n2",
+        "points": [
+          [
+            540.0,
+            250
+          ],
+          [
+            590.0,
+            250
+          ]
+        ],
+        "label": "",
+        "label_at": null
+      },
+      {
+        "source": "n2",
+        "target": "n3",
+        "points": [
+          [
+            810.0,
+            250
+          ],
+          [
+            860.0,
+            250
+          ]
+        ],
+        "label": "",
+        "label_at": null
+      },
+      {
+        "source": "n3",
+        "target": "n4",
+        "points": [
+          [
+            1080.0,
+            250
+          ],
+          [
+            1130.0,
+            250
+          ]
+        ],
+        "label": "",
+        "label_at": null
+      }
+    ]
+  },
+  {
+    "id": "07-go-sandbox-03",
+    "title": "验证结束后的资源清理",
+    "caption": "成功、失败、超时、实际取消都要尝试清理；不回退到宿主执行。",
+    "width": 1400,
+    "height": 460,
+    "nodes": [
+      {
+        "id": "n0",
+        "title": "执行结束",
+        "sub": "收集实际状态",
+        "x": 50.0,
+        "y": 200,
+        "width": 220,
+        "height": 100,
+        "kind": "rect",
+        "optional": false
+      },
+      {
+        "id": "n1",
+        "title": "删除容器",
+        "sub": "docker rm -f",
+        "x": 320.0,
+        "y": 200,
+        "width": 220,
+        "height": 100,
+        "kind": "rect",
+        "optional": false
+      },
+      {
+        "id": "n2",
+        "title": "回收客户端",
+        "sub": "必要时终止并等待",
+        "x": 590.0,
+        "y": 200,
+        "width": 220,
+        "height": 100,
+        "kind": "rect",
+        "optional": false
+      },
+      {
+        "id": "n3",
+        "title": "确认清理结果",
+        "sub": "未确认不判成功",
+        "x": 860.0,
+        "y": 200,
+        "width": 220,
+        "height": 100,
+        "kind": "rect",
+        "optional": false
+      },
+      {
+        "id": "n4",
+        "title": "返回或继续抛出",
+        "sub": "取消继续传播",
+        "x": 1130.0,
+        "y": 200,
+        "width": 220,
+        "height": 100,
+        "kind": "rect",
+        "optional": false
+      }
+    ],
+    "edges": [
+      {
+        "source": "n0",
+        "target": "n1",
+        "points": [
+          [
+            270.0,
+            250
+          ],
+          [
+            320.0,
+            250
+          ]
+        ],
+        "label": "",
+        "label_at": null
+      },
+      {
+        "source": "n1",
+        "target": "n2",
+        "points": [
+          [
+            540.0,
+            250
+          ],
+          [
+            590.0,
+            250
+          ]
+        ],
+        "label": "",
+        "label_at": null
+      },
+      {
+        "source": "n2",
+        "target": "n3",
+        "points": [
+          [
+            810.0,
+            250
+          ],
+          [
+            860.0,
+            250
+          ]
+        ],
+        "label": "",
+        "label_at": null
+      },
+      {
+        "source": "n3",
+        "target": "n4",
+        "points": [
+          [
+            1080.0,
+            250
+          ],
+          [
+            1130.0,
+            250
+          ]
+        ],
+        "label": "",
+        "label_at": null
+      }
+    ]
+  },
+  {
+    "id": "08-context-management-01",
+    "title": "上下文管理的三种模式",
+    "caption": "实验能力默认 off；enforce 压缩视图，不替代归档原文。",
+    "width": 1400,
+    "height": 800,
+    "nodes": [
+      {
+        "id": "context",
+        "title": "上下文接入",
+        "sub": "CONTEXT_MODE 默认 off",
+        "x": 60,
+        "y": 180,
+        "width": 1280,
+        "height": 100,
+        "kind": "rect",
+        "optional": false
+      },
+      {
+        "id": "off",
+        "title": "off · 默认",
+        "sub": "最近历史，不做压缩",
+        "x": 100,
+        "y": 380,
+        "width": 240,
+        "height": 100,
+        "kind": "rect",
+        "optional": false
+      },
+      {
+        "id": "observe",
+        "title": "observe",
+        "sub": "保持输入并计量",
+        "x": 580,
+        "y": 380,
+        "width": 240,
+        "height": 100,
+        "kind": "rect",
+        "optional": false
+      },
+      {
+        "id": "enforce",
+        "title": "enforce",
+        "sub": "预算 / 摘要 / 证据",
+        "x": 1060,
+        "y": 380,
+        "width": 240,
+        "height": 100,
+        "kind": "rect",
+        "optional": true
+      },
+      {
+        "id": "commit",
+        "title": "执行并成功提交",
+        "sub": "按模式保存记忆或原文",
+        "x": 60,
+        "y": 600,
+        "width": 1280,
+        "height": 100,
+        "kind": "rect",
+        "optional": false
+      }
+    ],
+    "edges": [
+      {
+        "source": "context",
+        "target": "off",
+        "points": [
+          [
+            220,
+            280
+          ],
+          [
+            220,
+            380
+          ]
+        ],
+        "label": "",
+        "label_at": null
+      },
+      {
+        "source": "off",
+        "target": "commit",
+        "points": [
+          [
+            220,
+            480
+          ],
+          [
+            220,
+            600
+          ]
+        ],
+        "label": "",
+        "label_at": null
+      },
+      {
+        "source": "context",
+        "target": "observe",
+        "points": [
+          [
+            700,
+            280
+          ],
+          [
+            700,
+            380
+          ]
+        ],
+        "label": "",
+        "label_at": null
+      },
+      {
+        "source": "observe",
+        "target": "commit",
+        "points": [
+          [
+            700,
+            480
+          ],
+          [
+            700,
+            600
+          ]
+        ],
+        "label": "",
+        "label_at": null
+      },
+      {
+        "source": "context",
+        "target": "enforce",
+        "points": [
+          [
+            1180,
+            280
+          ],
+          [
+            1180,
+            380
+          ]
+        ],
+        "label": "",
+        "label_at": null
+      },
+      {
+        "source": "enforce",
+        "target": "commit",
+        "points": [
+          [
+            1180,
+            480
+          ],
+          [
+            1180,
+            600
+          ]
+        ],
+        "label": "",
+        "label_at": null
+      }
+    ]
+  },
+  {
+    "id": "08-context-management-02",
+    "title": "摘要与模型输入预算",
+    "caption": "enforce：摘要失败保留原文；必要内容超预算时明确中止。",
+    "width": 1400,
+    "height": 460,
+    "nodes": [
+      {
+        "id": "n0",
+        "title": "历史与已有摘要",
+        "sub": "准备本轮上下文",
+        "x": 50.0,
+        "y": 200,
+        "width": 220,
+        "height": 100,
+        "kind": "rect",
+        "optional": false
+      },
+      {
+        "id": "n1",
+        "title": "按需增量摘要",
+        "sub": "成功前保留草稿",
+        "x": 320.0,
+        "y": 200,
+        "width": 220,
+        "height": 100,
+        "kind": "rect",
+        "optional": false
+      },
+      {
+        "id": "n2",
+        "title": "选择完整历史",
+        "sub": "按子开关处理",
+        "x": 590.0,
+        "y": 200,
+        "width": 220,
+        "height": 100,
+        "kind": "rect",
+        "optional": false
+      },
+      {
+        "id": "n3",
+        "title": "检查输入预算",
+        "sub": "必要内容不可硬删",
+        "x": 860.0,
+        "y": 200,
+        "width": 220,
+        "height": 100,
+        "kind": "rect",
+        "optional": false
+      },
+      {
+        "id": "n4",
+        "title": "模型消息视图",
+        "sub": "每次调用前构建",
+        "x": 1130.0,
+        "y": 200,
+        "width": 220,
+        "height": 100,
+        "kind": "rect",
+        "optional": false
+      }
+    ],
+    "edges": [
+      {
+        "source": "n0",
+        "target": "n1",
+        "points": [
+          [
+            270.0,
+            250
+          ],
+          [
+            320.0,
+            250
+          ]
+        ],
+        "label": "",
+        "label_at": null
+      },
+      {
+        "source": "n1",
+        "target": "n2",
+        "points": [
+          [
+            540.0,
+            250
+          ],
+          [
+            590.0,
+            250
+          ]
+        ],
+        "label": "",
+        "label_at": null
+      },
+      {
+        "source": "n2",
+        "target": "n3",
+        "points": [
+          [
+            810.0,
+            250
+          ],
+          [
+            860.0,
+            250
+          ]
+        ],
+        "label": "",
+        "label_at": null
+      },
+      {
+        "source": "n3",
+        "target": "n4",
+        "points": [
+          [
+            1080.0,
+            250
+          ],
+          [
+            1130.0,
+            250
+          ]
+        ],
+        "label": "",
+        "label_at": null
+      }
+    ]
+  },
+  {
+    "id": "08-context-management-03",
+    "title": "工具结果精简与证据复用",
+    "caption": "仅 enforce 精简；原文另存，重复证据只增加引用。",
+    "width": 1400,
+    "height": 520,
+    "nodes": [
+      {
+        "id": "n0",
+        "title": "工具调用",
+        "sub": "进入工具执行层",
+        "x": 50.0,
+        "y": 200,
+        "width": 220,
+        "height": 100,
+        "kind": "rect",
+        "optional": false
+      },
+      {
+        "id": "n1",
+        "title": "复用或执行",
+        "sub": "会话 / 参数 / 版本",
+        "x": 320.0,
+        "y": 200,
+        "width": 220,
+        "height": 100,
+        "kind": "rect",
+        "optional": false
+      },
+      {
+        "id": "n2",
+        "title": "归档完整结果",
+        "sub": "保留 result_id",
+        "x": 590.0,
+        "y": 200,
+        "width": 220,
+        "height": 100,
+        "kind": "rect",
+        "optional": false
+      },
+      {
+        "id": "n3",
+        "title": "精简证据视图",
+        "sub": "正文去重与预算",
+        "x": 860.0,
+        "y": 200,
+        "width": 220,
+        "height": 100,
+        "kind": "rect",
+        "optional": false
+      },
+      {
+        "id": "n4",
+        "title": "ToolMessage",
+        "sub": "回填继续规划",
+        "x": 1130.0,
+        "y": 200,
+        "width": 220,
+        "height": 100,
+        "kind": "rect",
+        "optional": false
+      }
+    ],
+    "edges": [
+      {
+        "source": "n0",
+        "target": "n1",
+        "points": [
+          [
+            270.0,
+            250
+          ],
+          [
+            320.0,
+            250
+          ]
+        ],
+        "label": "",
+        "label_at": null
+      },
+      {
+        "source": "n1",
+        "target": "n2",
+        "points": [
+          [
+            540.0,
+            250
+          ],
+          [
+            590.0,
+            250
+          ]
+        ],
+        "label": "",
+        "label_at": null
+      },
+      {
+        "source": "n2",
+        "target": "n3",
+        "points": [
+          [
+            810.0,
+            250
+          ],
+          [
+            860.0,
+            250
+          ]
+        ],
+        "label": "",
+        "label_at": null
+      },
+      {
+        "source": "n3",
+        "target": "n4",
+        "points": [
+          [
+            1080.0,
+            250
+          ],
+          [
+            1130.0,
+            250
+          ]
+        ],
+        "label": "",
+        "label_at": null
+      },
+      {
+        "source": "n0",
+        "target": "n4",
+        "points": [
+          [
+            160,
+            300
+          ],
+          [
+            160,
+            410
+          ],
+          [
+            1240,
+            410
+          ],
+          [
+            1240,
+            300
+          ]
+        ],
+        "label": "off / observe：执行工具，保留原结果",
+        "label_at": [
+          700,
+          389
+        ]
+      }
+    ]
+  },
+  {
+    "id": "08-context-management-04",
+    "title": "按需补读完整工具结果",
+    "caption": "仅 enforce；不存在则返回工具错误，预算不足则中止。",
+    "width": 1400,
+    "height": 460,
+    "nodes": [
+      {
+        "id": "n0",
+        "title": "出现补读线索",
+        "sub": "引用或 truncated",
+        "x": 50.0,
+        "y": 200,
+        "width": 220,
+        "height": 100,
+        "kind": "rect",
+        "optional": false
+      },
+      {
+        "id": "n1",
+        "title": "模型选择补读",
+        "sub": "read_tool_result",
+        "x": 320.0,
+        "y": 200,
+        "width": 220,
+        "height": 100,
+        "kind": "rect",
+        "optional": false
+      },
+      {
+        "id": "n2",
+        "title": "校验归属与参数",
+        "sub": "仅当前会话",
+        "x": 590.0,
+        "y": 200,
+        "width": 220,
+        "height": 100,
+        "kind": "rect",
+        "optional": false
+      },
+      {
+        "id": "n3",
+        "title": "按预算读取",
+        "sub": "返回 next_offset",
+        "x": 860.0,
+        "y": 200,
+        "width": 220,
+        "height": 100,
+        "kind": "rect",
+        "optional": false
+      },
+      {
+        "id": "n4",
+        "title": "回填继续规划",
+        "sub": "再次检查证据预算",
+        "x": 1130.0,
+        "y": 200,
+        "width": 220,
+        "height": 100,
+        "kind": "rect",
+        "optional": false
+      }
+    ],
+    "edges": [
+      {
+        "source": "n0",
+        "target": "n1",
+        "points": [
+          [
+            270.0,
+            250
+          ],
+          [
+            320.0,
+            250
+          ]
+        ],
+        "label": "",
+        "label_at": null
+      },
+      {
+        "source": "n1",
+        "target": "n2",
+        "points": [
+          [
+            540.0,
+            250
+          ],
+          [
+            590.0,
+            250
+          ]
+        ],
+        "label": "",
+        "label_at": null
+      },
+      {
+        "source": "n2",
+        "target": "n3",
+        "points": [
+          [
+            810.0,
+            250
+          ],
+          [
+            860.0,
+            250
+          ]
+        ],
+        "label": "",
+        "label_at": null
+      },
+      {
+        "source": "n3",
+        "target": "n4",
+        "points": [
+          [
+            1080.0,
+            250
+          ],
+          [
+            1130.0,
+            250
+          ]
+        ],
+        "label": "",
+        "label_at": null
+      }
+    ]
+  },
+  {
+    "id": "09-verification-evaluation-01",
+    "title": "验证机制、集成与真实效果",
+    "caption": "三条支线独立；离线通过不等于真实模型质量达标。",
+    "width": 1400,
+    "height": 800,
+    "nodes": [
+      {
+        "id": "entry",
+        "title": "选择验证范围",
+        "sub": "三类证据各自回答不同问题",
+        "x": 60,
+        "y": 180,
+        "width": 1280,
+        "height": 100,
+        "kind": "rect",
+        "optional": false
+      },
+      {
+        "id": "offline",
+        "title": "离线机制",
+        "sub": "模拟外部依赖",
+        "x": 100,
+        "y": 380,
+        "width": 240,
+        "height": 100,
+        "kind": "rect",
+        "optional": false
+      },
+      {
+        "id": "integration",
+        "title": "集成验证",
+        "sub": "Docker / 浏览器",
+        "x": 580,
+        "y": 380,
+        "width": 240,
+        "height": 100,
+        "kind": "rect",
+        "optional": false
+      },
+      {
+        "id": "live",
+        "title": "真实模型评测",
+        "sub": "显式配置与预算",
+        "x": 1060,
+        "y": 380,
+        "width": 240,
+        "height": 100,
+        "kind": "rect",
+        "optional": false
+      },
+      {
+        "id": "decision",
+        "title": "分别审查证据，人工决定启用",
+        "sub": "评测报告不自动修改功能开关",
+        "x": 60,
+        "y": 600,
+        "width": 1280,
+        "height": 100,
+        "kind": "rect",
+        "optional": false
+      }
+    ],
+    "edges": [
+      {
+        "source": "entry",
+        "target": "offline",
+        "points": [
+          [
+            220,
+            280
+          ],
+          [
+            220,
+            380
+          ]
+        ],
+        "label": "",
+        "label_at": null
+      },
+      {
+        "source": "offline",
+        "target": "decision",
+        "points": [
+          [
+            220,
+            480
+          ],
+          [
+            220,
+            600
+          ]
+        ],
+        "label": "",
+        "label_at": null
+      },
+      {
+        "source": "entry",
+        "target": "integration",
+        "points": [
+          [
+            700,
+            280
+          ],
+          [
+            700,
+            380
+          ]
+        ],
+        "label": "",
+        "label_at": null
+      },
+      {
+        "source": "integration",
+        "target": "decision",
+        "points": [
+          [
+            700,
+            480
+          ],
+          [
+            700,
+            600
+          ]
+        ],
+        "label": "",
+        "label_at": null
+      },
+      {
+        "source": "entry",
+        "target": "live",
+        "points": [
+          [
+            1180,
+            280
+          ],
+          [
+            1180,
+            380
+          ]
+        ],
+        "label": "",
+        "label_at": null
+      },
+      {
+        "source": "live",
+        "target": "decision",
+        "points": [
+          [
+            1180,
+            480
+          ],
+          [
+            1180,
+            600
+          ]
+        ],
+        "label": "",
+        "label_at": null
+      }
+    ]
+  },
+  {
+    "id": "09-verification-evaluation-02",
+    "title": "Go 多智能体对照评测",
+    "caption": "开发后留出；每次调用前预占费用，不自动启用功能。",
+    "width": 1400,
+    "height": 460,
+    "nodes": [
+      {
+        "id": "n0",
+        "title": "冻结版本",
+        "sub": "源码 / 数据 / 环境",
+        "x": 50.0,
+        "y": 200,
+        "width": 220,
+        "height": 100,
+        "kind": "rect",
+        "optional": false
+      },
+      {
+        "id": "n1",
+        "title": "预检与预算",
+        "sub": "不足则 blocked",
+        "x": 320.0,
+        "y": 200,
+        "width": 220,
+        "height": 100,
+        "kind": "rect",
+        "optional": false
+      },
+      {
+        "id": "n2",
+        "title": "运行对照",
+        "sub": "留痕并结算",
+        "x": 590.0,
+        "y": 200,
+        "width": 220,
+        "height": 100,
+        "kind": "rect",
+        "optional": false
+      },
+      {
+        "id": "n3",
+        "title": "独立评分",
+        "sub": "服务端探针与 Docker",
+        "x": 860.0,
+        "y": 200,
+        "width": 220,
+        "height": 100,
+        "kind": "rect",
+        "optional": false
+      },
+      {
+        "id": "n4",
+        "title": "人工验收",
+        "sub": "质量 / 费用 / 延迟",
+        "x": 1130.0,
+        "y": 200,
+        "width": 220,
+        "height": 100,
+        "kind": "rect",
+        "optional": false
+      }
+    ],
+    "edges": [
+      {
+        "source": "n0",
+        "target": "n1",
+        "points": [
+          [
+            270.0,
+            250
+          ],
+          [
+            320.0,
+            250
+          ]
+        ],
+        "label": "",
+        "label_at": null
+      },
+      {
+        "source": "n1",
+        "target": "n2",
+        "points": [
+          [
+            540.0,
+            250
+          ],
+          [
+            590.0,
+            250
+          ]
+        ],
+        "label": "",
+        "label_at": null
+      },
+      {
+        "source": "n2",
+        "target": "n3",
+        "points": [
+          [
+            810.0,
+            250
+          ],
+          [
+            860.0,
+            250
+          ]
+        ],
+        "label": "",
+        "label_at": null
+      },
+      {
+        "source": "n3",
+        "target": "n4",
+        "points": [
+          [
+            1080.0,
+            250
+          ],
+          [
+            1130.0,
+            250
+          ]
+        ],
+        "label": "",
+        "label_at": null
+      }
+    ]
+  },
+  {
+    "id": "09-verification-evaluation-03",
+    "title": "上下文四组对照与验收",
+    "caption": "未完成才续跑，完整失败保留；门槛通过也不自动启用。",
+    "width": 1400,
+    "height": 460,
+    "nodes": [
+      {
+        "id": "n0",
+        "title": "A / B / C / D",
+        "sub": "生成各组原始报告",
+        "x": 50.0,
+        "y": 200,
+        "width": 220,
+        "height": 100,
+        "kind": "rect",
+        "optional": false
+      },
+      {
+        "id": "n1",
+        "title": "保存原始结果",
+        "sub": "质量 / 用量 / 延迟",
+        "x": 320.0,
+        "y": 200,
+        "width": 220,
+        "height": 100,
+        "kind": "rect",
+        "optional": false
+      },
+      {
+        "id": "n2",
+        "title": "按需续跑",
+        "sub": "原件与追加结果合并",
+        "x": 590.0,
+        "y": 200,
+        "width": 220,
+        "height": 100,
+        "kind": "rect",
+        "optional": false
+      },
+      {
+        "id": "n3",
+        "title": "自动比较门槛",
+        "sub": "可比性与质量效率",
+        "x": 860.0,
+        "y": 200,
+        "width": 220,
+        "height": 100,
+        "kind": "rect",
+        "optional": false
+      },
+      {
+        "id": "n4",
+        "title": "人工启用决策",
+        "sub": "未通过则保持 off",
+        "x": 1130.0,
+        "y": 200,
+        "width": 220,
+        "height": 100,
+        "kind": "rect",
+        "optional": false
+      }
+    ],
+    "edges": [
+      {
+        "source": "n0",
+        "target": "n1",
+        "points": [
+          [
+            270.0,
+            250
+          ],
+          [
+            320.0,
+            250
+          ]
+        ],
+        "label": "",
+        "label_at": null
+      },
+      {
+        "source": "n1",
+        "target": "n2",
+        "points": [
+          [
+            540.0,
+            250
+          ],
+          [
+            590.0,
+            250
+          ]
+        ],
+        "label": "",
+        "label_at": null
+      },
+      {
+        "source": "n2",
+        "target": "n3",
+        "points": [
+          [
+            810.0,
+            250
+          ],
+          [
+            860.0,
+            250
+          ]
+        ],
+        "label": "",
+        "label_at": null
+      },
+      {
+        "source": "n3",
+        "target": "n4",
+        "points": [
+          [
+            1080.0,
+            250
+          ],
+          [
+            1130.0,
+            250
+          ]
+        ],
+        "label": "",
+        "label_at": null
+      }
+    ]
+  }
+]

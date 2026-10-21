@@ -1,0 +1,16 @@
+flowchart LR
+    %% README 简版；完整分支见 notes 文档。
+    n0["tool_calls<br/>模型提出调用"]
+    n1["白名单校验<br/>工具与参数"]
+    n2["顺序执行<br/>检索 / 文章 / 规范"]
+    n3["ToolMessage<br/>成功或错误结果"]
+    n4["继续规划<br/>仍受轮次限制"]
+    budget["预算异常<br/>中止本轮"]
+    n0 --> n1
+    n1 --> n2
+    n2 --> n3
+    n3 --> n4
+    n2 -->|"预算不足"| budget
+    classDef default fill:#f9fafb,stroke:#d1d5db,color:#111827;
+    classDef optional fill:#ffffff,stroke:#d1d5db,stroke-dasharray:6 5,color:#111827;
+    linkStyle default stroke:#3b82f6;

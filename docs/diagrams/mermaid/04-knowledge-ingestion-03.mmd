@@ -1,0 +1,14 @@
+flowchart LR
+    %% README 简版；完整分支见 notes 文档。
+    n0["恢复知识分块<br/>重建已有索引"]
+    n1["检查空库样例<br/>符合条件才导入"]
+    n2["恢复文章<br/>本地正文重新分块"]
+    n3["按配置启消费<br/>AMQP_URL"]
+    n4["服务就绪<br/>开始接收请求"]
+    n0 --> n1
+    n1 --> n2
+    n2 --> n3
+    n3 --> n4
+    classDef default fill:#f9fafb,stroke:#d1d5db,color:#111827;
+    classDef optional fill:#ffffff,stroke:#d1d5db,stroke-dasharray:6 5,color:#111827;
+    linkStyle default stroke:#3b82f6;

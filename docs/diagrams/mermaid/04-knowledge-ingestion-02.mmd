@@ -1,0 +1,16 @@
+flowchart LR
+    %% README 简版；完整分支见 notes 文档。
+    n0["接收文章事件<br/>RabbitMQ"]
+    n1["校验与去重<br/>article_id"]
+    n2["取得正文<br/>优先使用本地"]
+    n3["保存正文<br/>pending"]
+    n4["分块与索引<br/>共享入库流程"]
+    n5["状态与确认<br/>ingested / ACK"]
+    n0 --> n1
+    n1 --> n2
+    n2 --> n3
+    n3 --> n4
+    n4 --> n5
+    classDef default fill:#f9fafb,stroke:#d1d5db,color:#111827;
+    classDef optional fill:#ffffff,stroke:#d1d5db,stroke-dasharray:6 5,color:#111827;
+    linkStyle default stroke:#3b82f6;

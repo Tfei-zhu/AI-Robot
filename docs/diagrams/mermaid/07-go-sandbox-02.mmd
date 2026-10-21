@@ -1,0 +1,14 @@
+flowchart LR
+    %% README 简版；完整分支见 notes 文档。
+    n0["策略检查<br/>policy / AST"]
+    n1["编译检查<br/>compile"]
+    n2["静态检查<br/>go vet"]
+    n3["单元测试<br/>go test"]
+    n4["阶段报告<br/>状态与日志"]
+    n0 --> n1
+    n1 --> n2
+    n2 --> n3
+    n3 --> n4
+    classDef default fill:#f9fafb,stroke:#d1d5db,color:#111827;
+    classDef optional fill:#ffffff,stroke:#d1d5db,stroke-dasharray:6 5,color:#111827;
+    linkStyle default stroke:#3b82f6;

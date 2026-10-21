@@ -1,0 +1,15 @@
+flowchart LR
+    %% README 简版；完整分支见 notes 文档。
+    n0["工具调用<br/>进入工具执行层"]
+    n1["复用或执行<br/>会话 / 参数 / 版本"]
+    n2["归档完整结果<br/>保留 result_id"]
+    n3["精简证据视图<br/>正文去重与预算"]
+    n4["ToolMessage<br/>回填继续规划"]
+    n0 --> n1
+    n1 --> n2
+    n2 --> n3
+    n3 --> n4
+    n0 -->|"off / observe：执行工具，保留原结果"| n4
+    classDef default fill:#f9fafb,stroke:#d1d5db,color:#111827;
+    classDef optional fill:#ffffff,stroke:#d1d5db,stroke-dasharray:6 5,color:#111827;
+    linkStyle default stroke:#3b82f6;

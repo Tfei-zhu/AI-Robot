@@ -1,0 +1,14 @@
+flowchart LR
+    %% README 简版；完整分支见 notes 文档。
+    n0["冻结版本<br/>源码 / 数据 / 环境"]
+    n1["预检与预算<br/>不足则 blocked"]
+    n2["运行对照<br/>留痕并结算"]
+    n3["独立评分<br/>服务端探针与 Docker"]
+    n4["人工验收<br/>质量 / 费用 / 延迟"]
+    n0 --> n1
+    n1 --> n2
+    n2 --> n3
+    n3 --> n4
+    classDef default fill:#f9fafb,stroke:#d1d5db,color:#111827;
+    classDef optional fill:#ffffff,stroke:#d1d5db,stroke-dasharray:6 5,color:#111827;
+    linkStyle default stroke:#3b82f6;

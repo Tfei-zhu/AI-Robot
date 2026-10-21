@@ -1,0 +1,16 @@
+flowchart LR
+    %% README 简版；完整分支见 notes 文档。
+    n0["HTTP 请求<br/>进入服务"]
+    n1["鉴权与读体<br/>仅受保护 API"]
+    n2["限流检查<br/>按 principal"]
+    n3["日志开始计时<br/>await call_next"]
+    n4["参数与会话<br/>校验后再占用"]
+    n5["业务路由<br/>JSON 或 SSE"]
+    n0 --> n1
+    n1 --> n2
+    n2 --> n3
+    n3 --> n4
+    n4 --> n5
+    classDef default fill:#f9fafb,stroke:#d1d5db,color:#111827;
+    classDef optional fill:#ffffff,stroke:#d1d5db,stroke-dasharray:6 5,color:#111827;
+    linkStyle default stroke:#3b82f6;

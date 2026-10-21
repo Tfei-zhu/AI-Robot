@@ -1,0 +1,14 @@
+flowchart LR
+    %% README 简版；完整分支见 notes 文档。
+    n0["出现补读线索<br/>引用或 truncated"]
+    n1["模型选择补读<br/>read_tool_result"]
+    n2["校验归属与参数<br/>仅当前会话"]
+    n3["按预算读取<br/>返回 next_offset"]
+    n4["回填继续规划<br/>再次检查证据预算"]
+    n0 --> n1
+    n1 --> n2
+    n2 --> n3
+    n3 --> n4
+    classDef default fill:#f9fafb,stroke:#d1d5db,color:#111827;
+    classDef optional fill:#ffffff,stroke:#d1d5db,stroke-dasharray:6 5,color:#111827;
+    linkStyle default stroke:#3b82f6;

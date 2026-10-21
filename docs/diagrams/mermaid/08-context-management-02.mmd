@@ -1,0 +1,14 @@
+flowchart LR
+    %% README 简版；完整分支见 notes 文档。
+    n0["历史与已有摘要<br/>准备本轮上下文"]
+    n1["按需增量摘要<br/>成功前保留草稿"]
+    n2["选择完整历史<br/>按子开关处理"]
+    n3["检查输入预算<br/>必要内容不可硬删"]
+    n4["模型消息视图<br/>每次调用前构建"]
+    n0 --> n1
+    n1 --> n2
+    n2 --> n3
+    n3 --> n4
+    classDef default fill:#f9fafb,stroke:#d1d5db,color:#111827;
+    classDef optional fill:#ffffff,stroke:#d1d5db,stroke-dasharray:6 5,color:#111827;
+    linkStyle default stroke:#3b82f6;

@@ -1,0 +1,42 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1400" height="800" viewBox="0 0 1400 800" data-generator="fireworks-tech-graph" data-style="4" data-quality-profile="showcase" role="img" aria-labelledby="diagram-title diagram-desc">
+<title id="diagram-title">上下文管理的三种模式</title>
+<desc id="diagram-desc">实验能力默认 off；enforce 压缩视图，不替代归档原文。。README 简版；完整分支和边界保留在对应 notes 文档。</desc>
+<style>text{font-family:"Microsoft YaHei","PingFang SC","Noto Sans CJK SC",Arial,sans-serif}path{stroke-linejoin:round}</style>
+<defs><marker id="arrow" viewBox="0 0 10 8" markerWidth="10" markerHeight="8" refX="9" refY="4" orient="auto" markerUnits="userSpaceOnUse"><path d="M0 0L10 4L0 8Z" fill="#3b82f6"/></marker></defs>
+<rect data-graph-role="background" width="1400" height="800" fill="white"/>
+<g id="heading" data-graph-role="reserved" data-graph-bounds="60 24 1340 123">
+<text x="60" y="64" font-size="34" font-weight="600" fill="#111827" text-anchor="start">上下文管理的三种模式</text>
+<text x="60" y="108" font-size="20" font-weight="400" fill="#6b7280" text-anchor="start">实验能力默认 off；enforce 压缩视图，不替代归档原文。</text>
+</g>
+<g id="context" data-node-id="context" data-graph-role="node" data-graph-bounds="60 180 1340 280">
+<rect x="60" y="180" width="1280" height="100" rx="4" fill="#f9fafb" stroke="#d1d5db" stroke-width="1.4"/>
+<text x="700.0" y="221" font-size="26" font-weight="600" fill="#111827" text-anchor="middle">上下文接入</text>
+<text x="700.0" y="254" font-size="19" font-weight="400" fill="#6b7280" text-anchor="middle">CONTEXT_MODE 默认 off</text>
+</g>
+<g id="off" data-node-id="off" data-graph-role="node" data-graph-bounds="100 380 340 480">
+<rect x="100" y="380" width="240" height="100" rx="4" fill="#f9fafb" stroke="#d1d5db" stroke-width="1.4"/>
+<text x="220.0" y="421" font-size="26" font-weight="600" fill="#111827" text-anchor="middle">off · 默认</text>
+<text x="220.0" y="454" font-size="19" font-weight="400" fill="#6b7280" text-anchor="middle">最近历史，不做压缩</text>
+</g>
+<g id="observe" data-node-id="observe" data-graph-role="node" data-graph-bounds="580 380 820 480">
+<rect x="580" y="380" width="240" height="100" rx="4" fill="#f9fafb" stroke="#d1d5db" stroke-width="1.4"/>
+<text x="700.0" y="421" font-size="26" font-weight="600" fill="#111827" text-anchor="middle">observe</text>
+<text x="700.0" y="454" font-size="19" font-weight="400" fill="#6b7280" text-anchor="middle">保持输入并计量</text>
+</g>
+<g id="enforce" data-node-id="enforce" data-graph-role="node" data-graph-bounds="1060 380 1300 480">
+<rect x="1060" y="380" width="240" height="100" rx="4" fill="white" stroke="#d1d5db" stroke-width="1.4" stroke-dasharray="6 5"/>
+<text x="1180.0" y="421" font-size="26" font-weight="600" fill="#111827" text-anchor="middle">enforce</text>
+<text x="1180.0" y="454" font-size="19" font-weight="400" fill="#6b7280" text-anchor="middle">预算 / 摘要 / 证据</text>
+</g>
+<g id="commit" data-node-id="commit" data-graph-role="node" data-graph-bounds="60 600 1340 700">
+<rect x="60" y="600" width="1280" height="100" rx="4" fill="#f9fafb" stroke="#d1d5db" stroke-width="1.4"/>
+<text x="700.0" y="641" font-size="26" font-weight="600" fill="#111827" text-anchor="middle">执行并成功提交</text>
+<text x="700.0" y="674" font-size="19" font-weight="400" fill="#6b7280" text-anchor="middle">按模式保存记忆或原文</text>
+</g>
+<path id="edge-0" data-graph-role="edge" data-edge-id="edge-0" data-source="context" data-target="off" d="M 220 280 L 220 380" fill="none" stroke="#3b82f6" stroke-width="1.9" marker-end="url(#arrow)"/>
+<path id="edge-1" data-graph-role="edge" data-edge-id="edge-1" data-source="off" data-target="commit" d="M 220 480 L 220 600" fill="none" stroke="#3b82f6" stroke-width="1.9" marker-end="url(#arrow)"/>
+<path id="edge-2" data-graph-role="edge" data-edge-id="edge-2" data-source="context" data-target="observe" d="M 700 280 L 700 380" fill="none" stroke="#3b82f6" stroke-width="1.9" marker-end="url(#arrow)"/>
+<path id="edge-3" data-graph-role="edge" data-edge-id="edge-3" data-source="observe" data-target="commit" d="M 700 480 L 700 600" fill="none" stroke="#3b82f6" stroke-width="1.9" marker-end="url(#arrow)"/>
+<path id="edge-4" data-graph-role="edge" data-edge-id="edge-4" data-source="context" data-target="enforce" d="M 1180 280 L 1180 380" fill="none" stroke="#3b82f6" stroke-width="1.9" marker-end="url(#arrow)"/>
+<path id="edge-5" data-graph-role="edge" data-edge-id="edge-5" data-source="enforce" data-target="commit" d="M 1180 480 L 1180 600" fill="none" stroke="#3b82f6" stroke-width="1.9" marker-end="url(#arrow)"/>
+</svg>

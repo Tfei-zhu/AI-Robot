@@ -1,0 +1,40 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1400" height="620" viewBox="0 0 1400 620" data-generator="fireworks-tech-graph" data-style="4" data-quality-profile="showcase" role="img" aria-labelledby="diagram-title diagram-desc">
+<title id="diagram-title">索引与存储边界</title>
+<desc id="diagram-desc">Milvus 只替代内存向量；BM25 始终留在进程内。。README 简版；完整分支和边界保留在对应 notes 文档。</desc>
+<style>text{font-family:"Microsoft YaHei","PingFang SC","Noto Sans CJK SC",Arial,sans-serif}path{stroke-linejoin:round}</style>
+<defs><marker id="arrow" viewBox="0 0 10 8" markerWidth="10" markerHeight="8" refX="9" refY="4" orient="auto" markerUnits="userSpaceOnUse"><path d="M0 0L10 4L0 8Z" fill="#3b82f6"/></marker></defs>
+<rect data-graph-role="background" width="1400" height="620" fill="white"/>
+<g id="heading" data-graph-role="reserved" data-graph-bounds="60 24 1340 123">
+<text x="60" y="64" font-size="34" font-weight="600" fill="#111827" text-anchor="start">索引与存储边界</text>
+<text x="60" y="108" font-size="20" font-weight="400" fill="#6b7280" text-anchor="start">Milvus 只替代内存向量；BM25 始终留在进程内。</text>
+</g>
+<g id="services" data-node-id="services" data-graph-role="node" data-graph-bounds="60 180 1340 280">
+<rect x="60" y="180" width="1280" height="100" rx="4" fill="#f9fafb" stroke="#d1d5db" stroke-width="1.4"/>
+<text x="700.0" y="221" font-size="26" font-weight="600" fill="#111827" text-anchor="middle">业务组件</text>
+<text x="700.0" y="254" font-size="19" font-weight="400" fill="#6b7280" text-anchor="middle">各自维护索引、状态与持久化数据</text>
+</g>
+<g id="memory" data-node-id="memory" data-graph-role="node" data-graph-bounds="100 420 340 520">
+<rect x="100" y="420" width="240" height="100" rx="4" fill="#f9fafb" stroke="#d1d5db" stroke-width="1.4"/>
+<text x="220.0" y="461" font-size="26" font-weight="600" fill="#111827" text-anchor="middle">进程内</text>
+<text x="220.0" y="494" font-size="19" font-weight="400" fill="#6b7280" text-anchor="middle">索引 / 会话 / 缓存</text>
+</g>
+<g id="sqlite" data-node-id="sqlite" data-graph-role="node" data-graph-bounds="420 420 660 520">
+<rect x="420" y="420" width="240" height="100" rx="4" fill="#f9fafb" stroke="#d1d5db" stroke-width="1.4"/>
+<text x="540.0" y="461" font-size="26" font-weight="600" fill="#111827" text-anchor="middle">SQLite</text>
+<text x="540.0" y="494" font-size="19" font-weight="400" fill="#6b7280" text-anchor="middle">分块 / 文章 / Go 报告</text>
+</g>
+<g id="milvus" data-node-id="milvus" data-graph-role="node" data-graph-bounds="740 420 980 520">
+<rect x="740" y="420" width="240" height="100" rx="4" fill="white" stroke="#d1d5db" stroke-width="1.4" stroke-dasharray="6 5"/>
+<text x="860.0" y="461" font-size="26" font-weight="600" fill="#111827" text-anchor="middle">Milvus</text>
+<text x="860.0" y="494" font-size="19" font-weight="400" fill="#6b7280" text-anchor="middle">可选向量后端</text>
+</g>
+<g id="context" data-node-id="context" data-graph-role="node" data-graph-bounds="1060 420 1300 520">
+<rect x="1060" y="420" width="240" height="100" rx="4" fill="white" stroke="#d1d5db" stroke-width="1.4" stroke-dasharray="6 5"/>
+<text x="1180.0" y="461" font-size="26" font-weight="600" fill="#111827" text-anchor="middle">上下文库</text>
+<text x="1180.0" y="494" font-size="19" font-weight="400" fill="#6b7280" text-anchor="middle">默认 off</text>
+</g>
+<path id="edge-0" data-graph-role="edge" data-edge-id="edge-0" data-source="services" data-target="memory" d="M 220 280 L 220 420" fill="none" stroke="#3b82f6" stroke-width="1.9" marker-end="url(#arrow)"/>
+<path id="edge-1" data-graph-role="edge" data-edge-id="edge-1" data-source="services" data-target="sqlite" d="M 540 280 L 540 420" fill="none" stroke="#3b82f6" stroke-width="1.9" marker-end="url(#arrow)"/>
+<path id="edge-2" data-graph-role="edge" data-edge-id="edge-2" data-source="services" data-target="milvus" d="M 860 280 L 860 420" fill="none" stroke="#3b82f6" stroke-width="1.9" marker-end="url(#arrow)"/>
+<path id="edge-3" data-graph-role="edge" data-edge-id="edge-3" data-source="services" data-target="context" d="M 1180 280 L 1180 420" fill="none" stroke="#3b82f6" stroke-width="1.9" marker-end="url(#arrow)"/>
+</svg>

@@ -1,0 +1,15 @@
+flowchart LR
+    %% README 简版；完整分支见 notes 文档。
+    services["业务组件<br/>各自维护索引、状态与持久化数据"]
+    memory["进程内<br/>索引 / 会话 / 缓存"]
+    sqlite["SQLite<br/>分块 / 文章 / Go 报告"]
+    milvus["Milvus<br/>可选向量后端"]
+    context["上下文库<br/>默认 off"]
+    services --> memory
+    services --> sqlite
+    services --> milvus
+    services --> context
+    classDef default fill:#f9fafb,stroke:#d1d5db,color:#111827;
+    classDef optional fill:#ffffff,stroke:#d1d5db,stroke-dasharray:6 5,color:#111827;
+    linkStyle default stroke:#3b82f6;
+    class milvus,context optional;

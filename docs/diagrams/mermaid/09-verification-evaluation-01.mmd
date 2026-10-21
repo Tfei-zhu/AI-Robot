@@ -1,0 +1,16 @@
+flowchart LR
+    %% README 简版；完整分支见 notes 文档。
+    entry["选择验证范围<br/>三类证据各自回答不同问题"]
+    offline["离线机制<br/>模拟外部依赖"]
+    integration["集成验证<br/>Docker / 浏览器"]
+    live["真实模型评测<br/>显式配置与预算"]
+    decision["分别审查证据，人工决定启用<br/>评测报告不自动修改功能开关"]
+    entry --> offline
+    offline --> decision
+    entry --> integration
+    integration --> decision
+    entry --> live
+    live --> decision
+    classDef default fill:#f9fafb,stroke:#d1d5db,color:#111827;
+    classDef optional fill:#ffffff,stroke:#d1d5db,stroke-dasharray:6 5,color:#111827;
+    linkStyle default stroke:#3b82f6;

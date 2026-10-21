@@ -1,0 +1,17 @@
+flowchart LR
+    %% README 简版；完整分支见 notes 文档。
+    run["执行业务<br/>聊天 / Go / 其他"]
+    release["路由收尾<br/>Chat / Go 释放会话"]
+    json["JSON 序列化<br/>校验输出"]
+    handled["已处理异常<br/>HTTPException 等"]
+    log["请求日志<br/>状态与耗时头"]
+    send["发送 JSON<br/>返回客户端"]
+    run --> release
+    release --> json
+    release -->|"已注册异常"| handled
+    handled --> log
+    json --> log
+    log --> send
+    classDef default fill:#f9fafb,stroke:#d1d5db,color:#111827;
+    classDef optional fill:#ffffff,stroke:#d1d5db,stroke-dasharray:6 5,color:#111827;
+    linkStyle default stroke:#3b82f6;

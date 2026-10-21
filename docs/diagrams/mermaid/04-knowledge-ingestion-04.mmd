@@ -1,0 +1,14 @@
+flowchart LR
+    %% README 简版；完整分支见 notes 文档。
+    n0["分块去重<br/>正文 + 元数据"]
+    n1["保存分块原文<br/>persist=true 时"]
+    n2["向量化与写入<br/>内存或 Milvus"]
+    n3["更新 BM25<br/>进程内关键词索引"]
+    n4["更新内存状态<br/>数量 / ID / revision"]
+    n0 --> n1
+    n1 --> n2
+    n2 --> n3
+    n3 --> n4
+    classDef default fill:#f9fafb,stroke:#d1d5db,color:#111827;
+    classDef optional fill:#ffffff,stroke:#d1d5db,stroke-dasharray:6 5,color:#111827;
+    linkStyle default stroke:#3b82f6;

@@ -1,0 +1,58 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1400" height="660" viewBox="0 0 1400 660" data-generator="fireworks-tech-graph" data-style="4" data-quality-profile="showcase" role="img" aria-labelledby="diagram-title diagram-desc">
+<title id="diagram-title">服务端成功与修复门禁</title>
+<desc id="diagram-desc">这里只展开有效证据后的判定；模型审查不直接设置任务成功。。README 简版；完整分支和边界保留在对应 notes 文档。</desc>
+<style>text{font-family:"Microsoft YaHei","PingFang SC","Noto Sans CJK SC",Arial,sans-serif}path{stroke-linejoin:round}</style>
+<defs><marker id="arrow" viewBox="0 0 10 8" markerWidth="10" markerHeight="8" refX="9" refY="4" orient="auto" markerUnits="userSpaceOnUse"><path d="M0 0L10 4L0 8Z" fill="#3b82f6"/></marker></defs>
+<rect data-graph-role="background" width="1400" height="660" fill="white"/>
+<g id="heading" data-graph-role="reserved" data-graph-bounds="60 24 1340 123">
+<text x="60" y="64" font-size="34" font-weight="600" fill="#111827" text-anchor="start">服务端成功与修复门禁</text>
+<text x="60" y="108" font-size="20" font-weight="400" fill="#6b7280" text-anchor="start">这里只展开有效证据后的判定；模型审查不直接设置任务成功。</text>
+</g>
+<g id="evidence" data-node-id="evidence" data-graph-role="node" data-graph-bounds="100 200 340 300">
+<rect x="100" y="200" width="240" height="100" rx="4" fill="#f9fafb" stroke="#d1d5db" stroke-width="1.4"/>
+<text x="220.0" y="241" font-size="26" font-weight="600" fill="#111827" text-anchor="middle">有效验证与审查</text>
+<text x="220.0" y="274" font-size="19" font-weight="400" fill="#6b7280" text-anchor="middle">结构、版本已校验</text>
+</g>
+<g id="passed-check" data-node-id="passed-check" data-graph-role="node" data-graph-bounds="580 200 820 300">
+<rect x="580" y="200" width="240" height="100" rx="4" fill="white" stroke="#9ca3af" stroke-width="1.4"/>
+<text x="700.0" y="241" font-size="26" font-weight="600" fill="#111827" text-anchor="middle">成功门禁？</text>
+<text x="700.0" y="274" font-size="19" font-weight="400" fill="#6b7280" text-anchor="middle">机器 + 审查 + 需求</text>
+</g>
+<g id="passed" data-node-id="passed" data-graph-role="node" data-graph-bounds="1060 200 1300 300">
+<rect x="1060" y="200" width="240" height="100" rx="4" fill="#f9fafb" stroke="#d1d5db" stroke-width="1.4"/>
+<text x="1180.0" y="241" font-size="26" font-weight="600" fill="#111827" text-anchor="middle">passed</text>
+<text x="1180.0" y="274" font-size="19" font-weight="400" fill="#6b7280" text-anchor="middle">通过服务端判定</text>
+</g>
+<g id="repair-check" data-node-id="repair-check" data-graph-role="node" data-graph-bounds="580 440 820 540">
+<rect x="580" y="440" width="240" height="100" rx="4" fill="white" stroke="#9ca3af" stroke-width="1.4"/>
+<text x="700.0" y="481" font-size="26" font-weight="600" fill="#111827" text-anchor="middle">还能修复？</text>
+<text x="700.0" y="514" font-size="19" font-weight="400" fill="#6b7280" text-anchor="middle">预算 / 轮次 / 进展</text>
+</g>
+<g id="repair" data-node-id="repair" data-graph-role="node" data-graph-bounds="1060 440 1300 540">
+<rect x="1060" y="440" width="240" height="100" rx="4" fill="#f9fafb" stroke="#d1d5db" stroke-width="1.4"/>
+<text x="1180.0" y="481" font-size="26" font-weight="600" fill="#111827" text-anchor="middle">继续 repair</text>
+<text x="1180.0" y="514" font-size="19" font-weight="400" fill="#6b7280" text-anchor="middle">生成下一版产物</text>
+</g>
+<g id="stop" data-node-id="stop" data-graph-role="node" data-graph-bounds="100 440 340 540">
+<rect x="100" y="440" width="240" height="100" rx="4" fill="#f9fafb" stroke="#d1d5db" stroke-width="1.4"/>
+<text x="220.0" y="481" font-size="26" font-weight="600" fill="#111827" text-anchor="middle">终止并报告</text>
+<text x="220.0" y="514" font-size="19" font-weight="400" fill="#6b7280" text-anchor="middle">保留实际失败原因</text>
+</g>
+<path id="edge-0" data-graph-role="edge" data-edge-id="edge-0" data-source="evidence" data-target="passed-check" d="M 340 250 L 580 250" fill="none" stroke="#3b82f6" stroke-width="1.9" marker-end="url(#arrow)"/>
+<path id="edge-1" data-graph-role="edge" data-edge-id="edge-1" data-source="passed-check" data-target="passed" d="M 820 250 L 1060 250" fill="none" stroke="#3b82f6" stroke-width="1.9" marker-end="url(#arrow)"/>
+<g id="edge-1-label" data-graph-role="label" data-owner="edge-1" data-graph-bounds="929.0 200 951.0 226">
+<text x="940" y="221" font-size="18" font-weight="400" fill="#374151" text-anchor="middle">是</text>
+</g>
+<path id="edge-2" data-graph-role="edge" data-edge-id="edge-2" data-source="passed-check" data-target="repair-check" d="M 700 300 L 700 440" fill="none" stroke="#3b82f6" stroke-width="1.9" marker-end="url(#arrow)"/>
+<g id="edge-2-label" data-graph-role="label" data-owner="edge-2" data-graph-bounds="759.0 358 781.0 384">
+<text x="770" y="379" font-size="18" font-weight="400" fill="#374151" text-anchor="middle">否</text>
+</g>
+<path id="edge-3" data-graph-role="edge" data-edge-id="edge-3" data-source="repair-check" data-target="repair" d="M 820 490 L 1060 490" fill="none" stroke="#3b82f6" stroke-width="1.9" marker-end="url(#arrow)"/>
+<g id="edge-3-label" data-graph-role="label" data-owner="edge-3" data-graph-bounds="929.0 440 951.0 466">
+<text x="940" y="461" font-size="18" font-weight="400" fill="#374151" text-anchor="middle">是</text>
+</g>
+<path id="edge-4" data-graph-role="edge" data-edge-id="edge-4" data-source="repair-check" data-target="stop" d="M 580 490 L 340 490" fill="none" stroke="#3b82f6" stroke-width="1.9" marker-end="url(#arrow)"/>
+<g id="edge-4-label" data-graph-role="label" data-owner="edge-4" data-graph-bounds="449.0 440 471.0 466">
+<text x="460" y="461" font-size="18" font-weight="400" fill="#374151" text-anchor="middle">否</text>
+</g>
+</svg>

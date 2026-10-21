@@ -1,0 +1,62 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1400" height="740" viewBox="0 0 1400 740" data-generator="fireworks-tech-graph" data-style="4" data-quality-profile="showcase" role="img" aria-labelledby="diagram-title diagram-desc">
+<title id="diagram-title">三条业务主线</title>
+<desc id="diagram-desc">聊天与 Go 任务分别编排；知识入库直接进入 kb。。README 简版；完整分支和边界保留在对应 notes 文档。</desc>
+<style>text{font-family:"Microsoft YaHei","PingFang SC","Noto Sans CJK SC",Arial,sans-serif}path{stroke-linejoin:round}</style>
+<defs><marker id="arrow" viewBox="0 0 10 8" markerWidth="10" markerHeight="8" refX="9" refY="4" orient="auto" markerUnits="userSpaceOnUse"><path d="M0 0L10 4L0 8Z" fill="#3b82f6"/></marker></defs>
+<rect data-graph-role="background" width="1400" height="740" fill="white"/>
+<g id="heading" data-graph-role="reserved" data-graph-bounds="60 24 1340 123">
+<text x="60" y="64" font-size="34" font-weight="600" fill="#111827" text-anchor="start">三条业务主线</text>
+<text x="60" y="108" font-size="20" font-weight="400" fill="#6b7280" text-anchor="start">聊天与 Go 任务分别编排；知识入库直接进入 kb。</text>
+</g>
+<g id="r0c0" data-node-id="r0c0" data-graph-role="node" data-graph-bounds="100 180 340 280">
+<rect x="100" y="180" width="240" height="100" rx="4" fill="#f9fafb" stroke="#d1d5db" stroke-width="1.4"/>
+<text x="220.0" y="221" font-size="26" font-weight="600" fill="#111827" text-anchor="middle">普通聊天</text>
+<text x="220.0" y="254" font-size="19" font-weight="400" fill="#6b7280" text-anchor="middle">JSON / SSE</text>
+</g>
+<g id="r0c1" data-node-id="r0c1" data-graph-role="node" data-graph-bounds="580 180 820 280">
+<rect x="580" y="180" width="240" height="100" rx="4" fill="#f9fafb" stroke="#d1d5db" stroke-width="1.4"/>
+<text x="700.0" y="221" font-size="26" font-weight="600" fill="#111827" text-anchor="middle">聊天服务</text>
+<text x="700.0" y="254" font-size="19" font-weight="400" fill="#6b7280" text-anchor="middle">缓存或单智能体</text>
+</g>
+<g id="r0c2" data-node-id="r0c2" data-graph-role="node" data-graph-bounds="1060 180 1300 280">
+<rect x="1060" y="180" width="240" height="100" rx="4" fill="#f9fafb" stroke="#d1d5db" stroke-width="1.4"/>
+<text x="1180.0" y="221" font-size="26" font-weight="600" fill="#111827" text-anchor="middle">回答与来源</text>
+<text x="1180.0" y="254" font-size="19" font-weight="400" fill="#6b7280" text-anchor="middle">JSON / SSE 返回</text>
+</g>
+<g id="r1c0" data-node-id="r1c0" data-graph-role="node" data-graph-bounds="100 360 340 460">
+<rect x="100" y="360" width="240" height="100" rx="4" fill="#f9fafb" stroke="#d1d5db" stroke-width="1.4"/>
+<text x="220.0" y="401" font-size="26" font-weight="600" fill="#111827" text-anchor="middle">Go 专用任务</text>
+<text x="220.0" y="434" font-size="19" font-weight="400" fill="#6b7280" text-anchor="middle">JSON / SSE</text>
+</g>
+<g id="r1c1" data-node-id="r1c1" data-graph-role="node" data-graph-bounds="580 360 820 460">
+<rect x="580" y="360" width="240" height="100" rx="4" fill="#f9fafb" stroke="#d1d5db" stroke-width="1.4"/>
+<text x="700.0" y="401" font-size="26" font-weight="600" fill="#111827" text-anchor="middle">GoTaskService</text>
+<text x="700.0" y="434" font-size="19" font-weight="400" fill="#6b7280" text-anchor="middle">生成、验证与修复</text>
+</g>
+<g id="r1c2" data-node-id="r1c2" data-graph-role="node" data-graph-bounds="1060 360 1300 460">
+<rect x="1060" y="360" width="240" height="100" rx="4" fill="#f9fafb" stroke="#d1d5db" stroke-width="1.4"/>
+<text x="1180.0" y="401" font-size="26" font-weight="600" fill="#111827" text-anchor="middle">任务报告</text>
+<text x="1180.0" y="434" font-size="19" font-weight="400" fill="#6b7280" text-anchor="middle">可按账户重新读取</text>
+</g>
+<g id="r2c0" data-node-id="r2c0" data-graph-role="node" data-graph-bounds="100 540 340 640">
+<rect x="100" y="540" width="240" height="100" rx="4" fill="#f9fafb" stroke="#d1d5db" stroke-width="1.4"/>
+<text x="220.0" y="581" font-size="26" font-weight="600" fill="#111827" text-anchor="middle">文件 / 文章</text>
+<text x="220.0" y="614" font-size="19" font-weight="400" fill="#6b7280" text-anchor="middle">管理员上传或事件</text>
+</g>
+<g id="r2c1" data-node-id="r2c1" data-graph-role="node" data-graph-bounds="580 540 820 640">
+<rect x="580" y="540" width="240" height="100" rx="4" fill="#f9fafb" stroke="#d1d5db" stroke-width="1.4"/>
+<text x="700.0" y="581" font-size="26" font-weight="600" fill="#111827" text-anchor="middle">知识库 kb</text>
+<text x="700.0" y="614" font-size="19" font-weight="400" fill="#6b7280" text-anchor="middle">解析、分块与索引</text>
+</g>
+<g id="r2c2" data-node-id="r2c2" data-graph-role="node" data-graph-bounds="1060 540 1300 640">
+<rect x="1060" y="540" width="240" height="100" rx="4" fill="#f9fafb" stroke="#d1d5db" stroke-width="1.4"/>
+<text x="1180.0" y="581" font-size="26" font-weight="600" fill="#111827" text-anchor="middle">可检索知识</text>
+<text x="1180.0" y="614" font-size="19" font-weight="400" fill="#6b7280" text-anchor="middle">原文与来源</text>
+</g>
+<path id="edge-0" data-graph-role="edge" data-edge-id="edge-0" data-source="r0c0" data-target="r0c1" d="M 340 230 L 580 230" fill="none" stroke="#3b82f6" stroke-width="1.9" marker-end="url(#arrow)"/>
+<path id="edge-1" data-graph-role="edge" data-edge-id="edge-1" data-source="r0c1" data-target="r0c2" d="M 820 230 L 1060 230" fill="none" stroke="#3b82f6" stroke-width="1.9" marker-end="url(#arrow)"/>
+<path id="edge-2" data-graph-role="edge" data-edge-id="edge-2" data-source="r1c0" data-target="r1c1" d="M 340 410 L 580 410" fill="none" stroke="#3b82f6" stroke-width="1.9" marker-end="url(#arrow)"/>
+<path id="edge-3" data-graph-role="edge" data-edge-id="edge-3" data-source="r1c1" data-target="r1c2" d="M 820 410 L 1060 410" fill="none" stroke="#3b82f6" stroke-width="1.9" marker-end="url(#arrow)"/>
+<path id="edge-4" data-graph-role="edge" data-edge-id="edge-4" data-source="r2c0" data-target="r2c1" d="M 340 590 L 580 590" fill="none" stroke="#3b82f6" stroke-width="1.9" marker-end="url(#arrow)"/>
+<path id="edge-5" data-graph-role="edge" data-edge-id="edge-5" data-source="r2c1" data-target="r2c2" d="M 820 590 L 1060 590" fill="none" stroke="#3b82f6" stroke-width="1.9" marker-end="url(#arrow)"/>
+</svg>

@@ -1,0 +1,15 @@
+flowchart LR
+    %% README 简版；完整分支见 notes 文档。
+    n0["需求评估与规划<br/>proceed 后按需检索"]
+    n1["CodeAgent<br/>生成或修复代码"]
+    n2["Docker 验证<br/>代码失败也可审查"]
+    n3["Supervisor 审查<br/>需求与验证证据"]
+    n4["服务端判定<br/>通过 / 修复 / 终止"]
+    n0 --> n1
+    n1 --> n2
+    n2 --> n3
+    n3 --> n4
+    n4 -->|"允许继续才修复"| n1
+    classDef default fill:#f9fafb,stroke:#d1d5db,color:#111827;
+    classDef optional fill:#ffffff,stroke:#d1d5db,stroke-dasharray:6 5,color:#111827;
+    linkStyle default stroke:#3b82f6;

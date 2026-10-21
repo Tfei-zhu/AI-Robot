@@ -1,0 +1,14 @@
+flowchart LR
+    %% README 简版；完整分支见 notes 文档。
+    n0["管理员上传<br/>/api/v1/ingest"]
+    n1["校验文件<br/>权限 / 大小 / 类型"]
+    n2["解析与分块<br/>保留来源元数据"]
+    n3["写入索引<br/>共享入库流程"]
+    n4["清理并返回<br/>删除临时文件"]
+    n0 --> n1
+    n1 --> n2
+    n2 --> n3
+    n3 --> n4
+    classDef default fill:#f9fafb,stroke:#d1d5db,color:#111827;
+    classDef optional fill:#ffffff,stroke:#d1d5db,stroke-dasharray:6 5,color:#111827;
+    linkStyle default stroke:#3b82f6;

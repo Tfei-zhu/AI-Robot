@@ -1,0 +1,14 @@
+flowchart LR
+    %% README 简版；完整分支见 notes 文档。
+    n0["代码包校验<br/>实现与模型测试"]
+    n1["注入验收测试<br/>编排层负责"]
+    n2["DockerGoRunner<br/>发送代码包"]
+    n3["固定容器<br/>禁网 / 只读 / 限额"]
+    n4["验证报告<br/>包含清理结果"]
+    n0 --> n1
+    n1 --> n2
+    n2 --> n3
+    n3 --> n4
+    classDef default fill:#f9fafb,stroke:#d1d5db,color:#111827;
+    classDef optional fill:#ffffff,stroke:#d1d5db,stroke-dasharray:6 5,color:#111827;
+    linkStyle default stroke:#3b82f6;

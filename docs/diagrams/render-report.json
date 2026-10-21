@@ -1,0 +1,170 @@
+{
+  "style": "4 / Notion Clean",
+  "renderer": "sharp/librsvg",
+  "diagramCount": 27,
+  "canonicalSource": "readme_specs.py",
+  "output": [
+    {
+      "id": "01-architecture-01",
+      "width": 1400,
+      "height": 740,
+      "bytes": 68683
+    },
+    {
+      "id": "01-architecture-02",
+      "width": 1400,
+      "height": 620,
+      "bytes": 48919
+    },
+    {
+      "id": "02-request-lifecycle-01",
+      "width": 1400,
+      "height": 660,
+      "bytes": 51561
+    },
+    {
+      "id": "02-request-lifecycle-02",
+      "width": 1400,
+      "height": 650,
+      "bytes": 53967
+    },
+    {
+      "id": "02-request-lifecycle-03",
+      "width": 1400,
+      "height": 620,
+      "bytes": 50011
+    },
+    {
+      "id": "02-request-lifecycle-04",
+      "width": 1400,
+      "height": 660,
+      "bytes": 53179
+    },
+    {
+      "id": "03-chat-agent-01",
+      "width": 1400,
+      "height": 650,
+      "bytes": 65993
+    },
+    {
+      "id": "03-chat-agent-02",
+      "width": 1400,
+      "height": 620,
+      "bytes": 52845
+    },
+    {
+      "id": "04-knowledge-ingestion-01",
+      "width": 1400,
+      "height": 460,
+      "bytes": 41330
+    },
+    {
+      "id": "04-knowledge-ingestion-02",
+      "width": 1400,
+      "height": 660,
+      "bytes": 49784
+    },
+    {
+      "id": "04-knowledge-ingestion-03",
+      "width": 1400,
+      "height": 460,
+      "bytes": 45257
+    },
+    {
+      "id": "04-knowledge-ingestion-04",
+      "width": 1400,
+      "height": 460,
+      "bytes": 42718
+    },
+    {
+      "id": "05-rag-retrieval-01",
+      "width": 1400,
+      "height": 520,
+      "bytes": 46270
+    },
+    {
+      "id": "05-rag-retrieval-02",
+      "width": 1400,
+      "height": 460,
+      "bytes": 42889
+    },
+    {
+      "id": "06-go-orchestration-01",
+      "width": 1400,
+      "height": 870,
+      "bytes": 60016
+    },
+    {
+      "id": "06-go-orchestration-02",
+      "width": 1400,
+      "height": 520,
+      "bytes": 54103
+    },
+    {
+      "id": "06-go-orchestration-03",
+      "width": 1400,
+      "height": 660,
+      "bytes": 64742
+    },
+    {
+      "id": "07-go-sandbox-01",
+      "width": 1400,
+      "height": 460,
+      "bytes": 46072
+    },
+    {
+      "id": "07-go-sandbox-02",
+      "width": 1400,
+      "height": 460,
+      "bytes": 36249
+    },
+    {
+      "id": "07-go-sandbox-03",
+      "width": 1400,
+      "height": 460,
+      "bytes": 48156
+    },
+    {
+      "id": "08-context-management-01",
+      "width": 1400,
+      "height": 800,
+      "bytes": 61720
+    },
+    {
+      "id": "08-context-management-02",
+      "width": 1400,
+      "height": 460,
+      "bytes": 47146
+    },
+    {
+      "id": "08-context-management-03",
+      "width": 1400,
+      "height": 520,
+      "bytes": 50161
+    },
+    {
+      "id": "08-context-management-04",
+      "width": 1400,
+      "height": 460,
+      "bytes": 45835
+    },
+    {
+      "id": "09-verification-evaluation-01",
+      "width": 1400,
+      "height": 800,
+      "bytes": 67586
+    },
+    {
+      "id": "09-verification-evaluation-02",
+      "width": 1400,
+      "height": 460,
+      "bytes": 44783
+    },
+    {
+      "id": "09-verification-evaluation-03",
+      "width": 1400,
+      "height": 460,
+      "bytes": 47038
+    }
+  ]
+}

@@ -1,0 +1,59 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1400" height="650" viewBox="0 0 1400 650" data-generator="fireworks-tech-graph" data-style="4" data-quality-profile="showcase" role="img" aria-labelledby="diagram-title diagram-desc">
+<title id="diagram-title">普通聊天：缓存与智能体</title>
+<desc id="diagram-desc">缓存检查先于完整历史加载；规划文本不直接作为最终答复。。README 简版；完整分支和边界保留在对应 notes 文档。</desc>
+<style>text{font-family:"Microsoft YaHei","PingFang SC","Noto Sans CJK SC",Arial,sans-serif}path{stroke-linejoin:round}</style>
+<defs><marker id="arrow" viewBox="0 0 10 8" markerWidth="10" markerHeight="8" refX="9" refY="4" orient="auto" markerUnits="userSpaceOnUse"><path d="M0 0L10 4L0 8Z" fill="#3b82f6"/></marker></defs>
+<rect data-graph-role="background" width="1400" height="650" fill="white"/>
+<g id="heading" data-graph-role="reserved" data-graph-bounds="60 24 1340 123">
+<text x="60" y="64" font-size="34" font-weight="600" fill="#111827" text-anchor="start">普通聊天：缓存与智能体</text>
+<text x="60" y="108" font-size="20" font-weight="400" fill="#6b7280" text-anchor="start">缓存检查先于完整历史加载；规划文本不直接作为最终答复。</text>
+</g>
+<g id="input" data-node-id="input" data-graph-role="node" data-graph-bounds="60 200 320 300">
+<rect x="60" y="200" width="260" height="100" rx="4" fill="#f9fafb" stroke="#d1d5db" stroke-width="1.4"/>
+<text x="190.0" y="241" font-size="26" font-weight="600" fill="#111827" text-anchor="middle">输入问题</text>
+<text x="190.0" y="274" font-size="19" font-weight="400" fill="#6b7280" text-anchor="middle">内部会话键</text>
+</g>
+<g id="cache" data-node-id="cache" data-graph-role="node" data-graph-bounds="400 200 660 300">
+<rect x="400" y="200" width="260" height="100" rx="4" fill="#f9fafb" stroke="#d1d5db" stroke-width="1.4"/>
+<text x="530.0" y="241" font-size="26" font-weight="600" fill="#111827" text-anchor="middle">首轮缓存</text>
+<text x="530.0" y="274" font-size="19" font-weight="400" fill="#6b7280" text-anchor="middle">满足条件才查询</text>
+</g>
+<g id="history" data-node-id="history" data-graph-role="node" data-graph-bounds="740 200 1000 300">
+<rect x="740" y="200" width="260" height="100" rx="4" fill="#f9fafb" stroke="#d1d5db" stroke-width="1.4"/>
+<text x="870.0" y="241" font-size="26" font-weight="600" fill="#111827" text-anchor="middle">加载历史</text>
+<text x="870.0" y="274" font-size="19" font-weight="400" fill="#6b7280" text-anchor="middle">按需准备摘要</text>
+</g>
+<g id="agent" data-node-id="agent" data-graph-role="node" data-graph-bounds="1080 200 1340 300">
+<rect x="1080" y="200" width="260" height="100" rx="4" fill="#f9fafb" stroke="#d1d5db" stroke-width="1.4"/>
+<text x="1210.0" y="241" font-size="26" font-weight="600" fill="#111827" text-anchor="middle">单智能体循环</text>
+<text x="1210.0" y="274" font-size="19" font-weight="400" fill="#6b7280" text-anchor="middle">规划与只读工具</text>
+</g>
+<g id="cached" data-node-id="cached" data-graph-role="node" data-graph-bounds="400 420 660 520">
+<rect x="400" y="420" width="260" height="100" rx="4" fill="#f9fafb" stroke="#d1d5db" stroke-width="1.4"/>
+<text x="530.0" y="461" font-size="26" font-weight="600" fill="#111827" text-anchor="middle">缓存答复</text>
+<text x="530.0" y="494" font-size="19" font-weight="400" fill="#6b7280" text-anchor="middle">不调用生成模型</text>
+</g>
+<g id="final" data-node-id="final" data-graph-role="node" data-graph-bounds="1080 420 1340 520">
+<rect x="1080" y="420" width="260" height="100" rx="4" fill="#f9fafb" stroke="#d1d5db" stroke-width="1.4"/>
+<text x="1210.0" y="461" font-size="26" font-weight="600" fill="#111827" text-anchor="middle">finalize 回答</text>
+<text x="1210.0" y="494" font-size="19" font-weight="400" fill="#6b7280" text-anchor="middle">独立生成最终答案</text>
+</g>
+<g id="commit" data-node-id="commit" data-graph-role="node" data-graph-bounds="740 420 1000 520">
+<rect x="740" y="420" width="260" height="100" rx="4" fill="#f9fafb" stroke="#d1d5db" stroke-width="1.4"/>
+<text x="870.0" y="461" font-size="26" font-weight="600" fill="#111827" text-anchor="middle">提交并返回</text>
+<text x="870.0" y="494" font-size="19" font-weight="400" fill="#6b7280" text-anchor="middle">会话与运行轨迹</text>
+</g>
+<path id="edge-0" data-graph-role="edge" data-edge-id="edge-0" data-source="input" data-target="cache" d="M 320 250 L 400 250" fill="none" stroke="#3b82f6" stroke-width="1.9" marker-end="url(#arrow)"/>
+<path id="edge-1" data-graph-role="edge" data-edge-id="edge-1" data-source="cache" data-target="history" d="M 660 250 L 740 250" fill="none" stroke="#3b82f6" stroke-width="1.9" marker-end="url(#arrow)"/>
+<g id="edge-1-label" data-graph-role="label" data-owner="edge-1" data-graph-bounds="671.0 199 729.0 225">
+<text x="700" y="220" font-size="18" font-weight="400" fill="#374151" text-anchor="middle">未命中</text>
+</g>
+<path id="edge-2" data-graph-role="edge" data-edge-id="edge-2" data-source="history" data-target="agent" d="M 1000 250 L 1080 250" fill="none" stroke="#3b82f6" stroke-width="1.9" marker-end="url(#arrow)"/>
+<path id="edge-3" data-graph-role="edge" data-edge-id="edge-3" data-source="agent" data-target="final" d="M 1210 300 L 1210 420" fill="none" stroke="#3b82f6" stroke-width="1.9" marker-end="url(#arrow)"/>
+<path id="edge-4" data-graph-role="edge" data-edge-id="edge-4" data-source="final" data-target="commit" d="M 1080 470 L 1000 470" fill="none" stroke="#3b82f6" stroke-width="1.9" marker-end="url(#arrow)"/>
+<path id="edge-5" data-graph-role="edge" data-edge-id="edge-5" data-source="cache" data-target="cached" d="M 530 300 L 530 420" fill="none" stroke="#3b82f6" stroke-width="1.9" marker-end="url(#arrow)"/>
+<g id="edge-5-label" data-graph-role="label" data-owner="edge-5" data-graph-bounds="580.0 344 620.0 370">
+<text x="600" y="365" font-size="18" font-weight="400" fill="#374151" text-anchor="middle">命中</text>
+</g>
+<path id="edge-6" data-graph-role="edge" data-edge-id="edge-6" data-source="cached" data-target="commit" d="M 660 470 L 740 470" fill="none" stroke="#3b82f6" stroke-width="1.9" marker-end="url(#arrow)"/>
+</svg>

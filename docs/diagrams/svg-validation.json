@@ -1,0 +1,677 @@
+[
+  {
+    "id": "01-architecture-01",
+    "checks": {
+      "xml": {
+        "ok": true,
+        "details": []
+      },
+      "markers": {
+        "ok": true,
+        "details": []
+      },
+      "collisions": {
+        "ok": true,
+        "details": []
+      },
+      "geometry": {
+        "ok": true,
+        "details": []
+      },
+      "composition": {
+        "ok": true,
+        "details": []
+      }
+    }
+  },
+  {
+    "id": "01-architecture-02",
+    "checks": {
+      "xml": {
+        "ok": true,
+        "details": []
+      },
+      "markers": {
+        "ok": true,
+        "details": []
+      },
+      "collisions": {
+        "ok": true,
+        "details": []
+      },
+      "geometry": {
+        "ok": true,
+        "details": []
+      },
+      "composition": {
+        "ok": true,
+        "details": []
+      }
+    }
+  },
+  {
+    "id": "02-request-lifecycle-01",
+    "checks": {
+      "xml": {
+        "ok": true,
+        "details": []
+      },
+      "markers": {
+        "ok": true,
+        "details": []
+      },
+      "collisions": {
+        "ok": true,
+        "details": []
+      },
+      "geometry": {
+        "ok": true,
+        "details": []
+      },
+      "composition": {
+        "ok": true,
+        "details": []
+      }
+    }
+  },
+  {
+    "id": "02-request-lifecycle-02",
+    "checks": {
+      "xml": {
+        "ok": true,
+        "details": []
+      },
+      "markers": {
+        "ok": true,
+        "details": []
+      },
+      "collisions": {
+        "ok": true,
+        "details": []
+      },
+      "geometry": {
+        "ok": true,
+        "details": []
+      },
+      "composition": {
+        "ok": true,
+        "details": []
+      }
+    }
+  },
+  {
+    "id": "02-request-lifecycle-03",
+    "checks": {
+      "xml": {
+        "ok": true,
+        "details": []
+      },
+      "markers": {
+        "ok": true,
+        "details": []
+      },
+      "collisions": {
+        "ok": true,
+        "details": []
+      },
+      "geometry": {
+        "ok": true,
+        "details": []
+      },
+      "composition": {
+        "ok": true,
+        "details": []
+      }
+    }
+  },
+  {
+    "id": "02-request-lifecycle-04",
+    "checks": {
+      "xml": {
+        "ok": true,
+        "details": []
+      },
+      "markers": {
+        "ok": true,
+        "details": []
+      },
+      "collisions": {
+        "ok": true,
+        "details": []
+      },
+      "geometry": {
+        "ok": true,
+        "details": []
+      },
+      "composition": {
+        "ok": true,
+        "details": []
+      }
+    }
+  },
+  {
+    "id": "03-chat-agent-01",
+    "checks": {
+      "xml": {
+        "ok": true,
+        "details": []
+      },
+      "markers": {
+        "ok": true,
+        "details": []
+      },
+      "collisions": {
+        "ok": true,
+        "details": []
+      },
+      "geometry": {
+        "ok": true,
+        "details": []
+      },
+      "composition": {
+        "ok": true,
+        "details": []
+      }
+    }
+  },
+  {
+    "id": "03-chat-agent-02",
+    "checks": {
+      "xml": {
+        "ok": true,
+        "details": []
+      },
+      "markers": {
+        "ok": true,
+        "details": []
+      },
+      "collisions": {
+        "ok": true,
+        "details": []
+      },
+      "geometry": {
+        "ok": true,
+        "details": []
+      },
+      "composition": {
+        "ok": true,
+        "details": []
+      }
+    }
+  },
+  {
+    "id": "04-knowledge-ingestion-01",
+    "checks": {
+      "xml": {
+        "ok": true,
+        "details": []
+      },
+      "markers": {
+        "ok": true,
+        "details": []
+      },
+      "collisions": {
+        "ok": true,
+        "details": []
+      },
+      "geometry": {
+        "ok": true,
+        "details": []
+      },
+      "composition": {
+        "ok": true,
+        "details": []
+      }
+    }
+  },
+  {
+    "id": "04-knowledge-ingestion-02",
+    "checks": {
+      "xml": {
+        "ok": true,
+        "details": []
+      },
+      "markers": {
+        "ok": true,
+        "details": []
+      },
+      "collisions": {
+        "ok": true,
+        "details": []
+      },
+      "geometry": {
+        "ok": true,
+        "details": []
+      },
+      "composition": {
+        "ok": true,
+        "details": []
+      }
+    }
+  },
+  {
+    "id": "04-knowledge-ingestion-03",
+    "checks": {
+      "xml": {
+        "ok": true,
+        "details": []
+      },
+      "markers": {
+        "ok": true,
+        "details": []
+      },
+      "collisions": {
+        "ok": true,
+        "details": []
+      },
+      "geometry": {
+        "ok": true,
+        "details": []
+      },
+      "composition": {
+        "ok": true,
+        "details": []
+      }
+    }
+  },
+  {
+    "id": "04-knowledge-ingestion-04",
+    "checks": {
+      "xml": {
+        "ok": true,
+        "details": []
+      },
+      "markers": {
+        "ok": true,
+        "details": []
+      },
+      "collisions": {
+        "ok": true,
+        "details": []
+      },
+      "geometry": {
+        "ok": true,
+        "details": []
+      },
+      "composition": {
+        "ok": true,
+        "details": []
+      }
+    }
+  },
+  {
+    "id": "05-rag-retrieval-01",
+    "checks": {
+      "xml": {
+        "ok": true,
+        "details": []
+      },
+      "markers": {
+        "ok": true,
+        "details": []
+      },
+      "collisions": {
+        "ok": true,
+        "details": []
+      },
+      "geometry": {
+        "ok": true,
+        "details": []
+      },
+      "composition": {
+        "ok": true,
+        "details": []
+      }
+    }
+  },
+  {
+    "id": "05-rag-retrieval-02",
+    "checks": {
+      "xml": {
+        "ok": true,
+        "details": []
+      },
+      "markers": {
+        "ok": true,
+        "details": []
+      },
+      "collisions": {
+        "ok": true,
+        "details": []
+      },
+      "geometry": {
+        "ok": true,
+        "details": []
+      },
+      "composition": {
+        "ok": true,
+        "details": []
+      }
+    }
+  },
+  {
+    "id": "06-go-orchestration-01",
+    "checks": {
+      "xml": {
+        "ok": true,
+        "details": []
+      },
+      "markers": {
+        "ok": true,
+        "details": []
+      },
+      "collisions": {
+        "ok": true,
+        "details": []
+      },
+      "geometry": {
+        "ok": true,
+        "details": []
+      },
+      "composition": {
+        "ok": true,
+        "details": []
+      }
+    }
+  },
+  {
+    "id": "06-go-orchestration-02",
+    "checks": {
+      "xml": {
+        "ok": true,
+        "details": []
+      },
+      "markers": {
+        "ok": true,
+        "details": []
+      },
+      "collisions": {
+        "ok": true,
+        "details": []
+      },
+      "geometry": {
+        "ok": true,
+        "details": []
+      },
+      "composition": {
+        "ok": true,
+        "details": []
+      }
+    }
+  },
+  {
+    "id": "06-go-orchestration-03",
+    "checks": {
+      "xml": {
+        "ok": true,
+        "details": []
+      },
+      "markers": {
+        "ok": true,
+        "details": []
+      },
+      "collisions": {
+        "ok": true,
+        "details": []
+      },
+      "geometry": {
+        "ok": true,
+        "details": []
+      },
+      "composition": {
+        "ok": true,
+        "details": []
+      }
+    }
+  },
+  {
+    "id": "07-go-sandbox-01",
+    "checks": {
+      "xml": {
+        "ok": true,
+        "details": []
+      },
+      "markers": {
+        "ok": true,
+        "details": []
+      },
+      "collisions": {
+        "ok": true,
+        "details": []
+      },
+      "geometry": {
+        "ok": true,
+        "details": []
+      },
+      "composition": {
+        "ok": true,
+        "details": []
+      }
+    }
+  },
+  {
+    "id": "07-go-sandbox-02",
+    "checks": {
+      "xml": {
+        "ok": true,
+        "details": []
+      },
+      "markers": {
+        "ok": true,
+        "details": []
+      },
+      "collisions": {
+        "ok": true,
+        "details": []
+      },
+      "geometry": {
+        "ok": true,
+        "details": []
+      },
+      "composition": {
+        "ok": true,
+        "details": []
+      }
+    }
+  },
+  {
+    "id": "07-go-sandbox-03",
+    "checks": {
+      "xml": {
+        "ok": true,
+        "details": []
+      },
+      "markers": {
+        "ok": true,
+        "details": []
+      },
+      "collisions": {
+        "ok": true,
+        "details": []
+      },
+      "geometry": {
+        "ok": true,
+        "details": []
+      },
+      "composition": {
+        "ok": true,
+        "details": []
+      }
+    }
+  },
+  {
+    "id": "08-context-management-01",
+    "checks": {
+      "xml": {
+        "ok": true,
+        "details": []
+      },
+      "markers": {
+        "ok": true,
+        "details": []
+      },
+      "collisions": {
+        "ok": true,
+        "details": []
+      },
+      "geometry": {
+        "ok": true,
+        "details": []
+      },
+      "composition": {
+        "ok": true,
+        "details": []
+      }
+    }
+  },
+  {
+    "id": "08-context-management-02",
+    "checks": {
+      "xml": {
+        "ok": true,
+        "details": []
+      },
+      "markers": {
+        "ok": true,
+        "details": []
+      },
+      "collisions": {
+        "ok": true,
+        "details": []
+      },
+      "geometry": {
+        "ok": true,
+        "details": []
+      },
+      "composition": {
+        "ok": true,
+        "details": []
+      }
+    }
+  },
+  {
+    "id": "08-context-management-03",
+    "checks": {
+      "xml": {
+        "ok": true,
+        "details": []
+      },
+      "markers": {
+        "ok": true,
+        "details": []
+      },
+      "collisions": {
+        "ok": true,
+        "details": []
+      },
+      "geometry": {
+        "ok": true,
+        "details": []
+      },
+      "composition": {
+        "ok": true,
+        "details": []
+      }
+    }
+  },
+  {
+    "id": "08-context-management-04",
+    "checks": {
+      "xml": {
+        "ok": true,
+        "details": []
+      },
+      "markers": {
+        "ok": true,
+        "details": []
+      },
+      "collisions": {
+        "ok": true,
+        "details": []
+      },
+      "geometry": {
+        "ok": true,
+        "details": []
+      },
+      "composition": {
+        "ok": true,
+        "details": []
+      }
+    }
+  },
+  {
+    "id": "09-verification-evaluation-01",
+    "checks": {
+      "xml": {
+        "ok": true,
+        "details": []
+      },
+      "markers": {
+        "ok": true,
+        "details": []
+      },
+      "collisions": {
+        "ok": true,
+        "details": []
+      },
+      "geometry": {
+        "ok": true,
+        "details": []
+      },
+      "composition": {
+        "ok": true,
+        "details": []
+      }
+    }
+  },
+  {
+    "id": "09-verification-evaluation-02",
+    "checks": {
+      "xml": {
+        "ok": true,
+        "details": []
+      },
+      "markers": {
+        "ok": true,
+        "details": []
+      },
+      "collisions": {
+        "ok": true,
+        "details": []
+      },
+      "geometry": {
+        "ok": true,
+        "details": []
+      },
+      "composition": {
+        "ok": true,
+        "details": []
+      }
+    }
+  },
+  {
+    "id": "09-verification-evaluation-03",
+    "checks": {
+      "xml": {
+        "ok": true,
+        "details": []
+      },
+      "markers": {
+        "ok": true,
+        "details": []
+      },
+      "collisions": {
+        "ok": true,
+        "details": []
+      },
+      "geometry": {
+        "ok": true,
+        "details": []
+      },
+      "composition": {
+        "ok": true,
+        "details": []
+      }
+    }
+  }
+]

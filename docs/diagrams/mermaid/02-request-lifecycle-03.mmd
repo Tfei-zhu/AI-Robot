@@ -1,0 +1,17 @@
+flowchart LR
+    %% README 简版；完整分支见 notes 文档。
+    n0["校验与会话<br/>路由前置检查"]
+    n1["建立 SSE<br/>HTTP 200"]
+    n2["消费业务流<br/>持续推送事件"]
+    n3["按接口清理<br/>Go / 聊天有差异"]
+    n4["释放会话<br/>响应层 finally"]
+    interrupted["断开 / 异常<br/>或实际任务取消"]
+    n0 --> n1
+    n1 --> n2
+    n2 --> n3
+    n3 --> n4
+    n2 --> interrupted
+    interrupted --> n3
+    classDef default fill:#f9fafb,stroke:#d1d5db,color:#111827;
+    classDef optional fill:#ffffff,stroke:#d1d5db,stroke-dasharray:6 5,color:#111827;
+    linkStyle default stroke:#3b82f6;

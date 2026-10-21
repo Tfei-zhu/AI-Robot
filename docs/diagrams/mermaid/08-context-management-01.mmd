@@ -1,0 +1,17 @@
+flowchart LR
+    %% README 简版；完整分支见 notes 文档。
+    context["上下文接入<br/>CONTEXT_MODE 默认 off"]
+    off["off · 默认<br/>最近历史，不做压缩"]
+    observe["observe<br/>保持输入并计量"]
+    enforce["enforce<br/>预算 / 摘要 / 证据"]
+    commit["执行并成功提交<br/>按模式保存记忆或原文"]
+    context --> off
+    off --> commit
+    context --> observe
+    observe --> commit
+    context --> enforce
+    enforce --> commit
+    classDef default fill:#f9fafb,stroke:#d1d5db,color:#111827;
+    classDef optional fill:#ffffff,stroke:#d1d5db,stroke-dasharray:6 5,color:#111827;
+    linkStyle default stroke:#3b82f6;
+    class enforce optional;

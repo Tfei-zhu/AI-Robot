@@ -1,0 +1,47 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1400" height="870" viewBox="0 0 1400 870" data-generator="fireworks-tech-graph" data-style="4" data-quality-profile="showcase" role="img" aria-labelledby="diagram-title diagram-desc">
+<title id="diagram-title">Go 专用任务的两条分支</title>
+<desc id="diagram-desc">普通聊天不进入此分支；报告可重读，任务不能恢复执行。。README 简版；完整分支和边界保留在对应 notes 文档。</desc>
+<style>text{font-family:"Microsoft YaHei","PingFang SC","Noto Sans CJK SC",Arial,sans-serif}path{stroke-linejoin:round}</style>
+<defs><marker id="arrow" viewBox="0 0 10 8" markerWidth="10" markerHeight="8" refX="9" refY="4" orient="auto" markerUnits="userSpaceOnUse"><path d="M0 0L10 4L0 8Z" fill="#3b82f6"/></marker></defs>
+<rect data-graph-role="background" width="1400" height="870" fill="white"/>
+<g id="heading" data-graph-role="reserved" data-graph-bounds="60 24 1340 123">
+<text x="60" y="64" font-size="34" font-weight="600" fill="#111827" text-anchor="start">Go 专用任务的两条分支</text>
+<text x="60" y="108" font-size="20" font-weight="400" fill="#6b7280" text-anchor="start">普通聊天不进入此分支；报告可重读，任务不能恢复执行。</text>
+</g>
+<g id="service" data-node-id="service" data-graph-role="node" data-graph-bounds="580 150 820 250">
+<rect x="580" y="150" width="240" height="100" rx="4" fill="#f9fafb" stroke="#d1d5db" stroke-width="1.4"/>
+<text x="700.0" y="191" font-size="26" font-weight="600" fill="#111827" text-anchor="middle">GoTaskService</text>
+<text x="700.0" y="224" font-size="19" font-weight="400" fill="#6b7280" text-anchor="middle">任务创建与排队</text>
+</g>
+<g id="switch" data-node-id="switch" data-graph-role="node" data-graph-bounds="580 320 820 420">
+<rect x="580" y="320" width="240" height="100" rx="4" fill="white" stroke="#9ca3af" stroke-width="1.4"/>
+<text x="700.0" y="361" font-size="26" font-weight="600" fill="#111827" text-anchor="middle">多智能体？</text>
+<text x="700.0" y="394" font-size="19" font-weight="400" fill="#6b7280" text-anchor="middle">默认关闭</text>
+</g>
+<g id="single" data-node-id="single" data-graph-role="node" data-graph-bounds="100 500 340 600">
+<rect x="100" y="500" width="240" height="100" rx="4" fill="#f9fafb" stroke="#d1d5db" stroke-width="1.4"/>
+<text x="220.0" y="541" font-size="26" font-weight="600" fill="#111827" text-anchor="middle">single-v1</text>
+<text x="220.0" y="574" font-size="19" font-weight="400" fill="#6b7280" text-anchor="middle">生成 → 验证 → 修复</text>
+</g>
+<g id="multi" data-node-id="multi" data-graph-role="node" data-graph-bounds="1060 500 1300 600">
+<rect x="1060" y="500" width="240" height="100" rx="4" fill="white" stroke="#d1d5db" stroke-width="1.4" stroke-dasharray="6 5"/>
+<text x="1180.0" y="541" font-size="26" font-weight="600" fill="#111827" text-anchor="middle">multi-v1</text>
+<text x="1180.0" y="574" font-size="19" font-weight="400" fill="#6b7280" text-anchor="middle">规划 → 生成 → 审查</text>
+</g>
+<g id="report" data-node-id="report" data-graph-role="node" data-graph-bounds="580 680 820 780">
+<rect x="580" y="680" width="240" height="100" rx="4" fill="#f9fafb" stroke="#d1d5db" stroke-width="1.4"/>
+<text x="700.0" y="721" font-size="26" font-weight="600" fill="#111827" text-anchor="middle">报告与响应</text>
+<text x="700.0" y="754" font-size="19" font-weight="400" fill="#6b7280" text-anchor="middle">SQLite + JSON / SSE</text>
+</g>
+<path id="edge-0" data-graph-role="edge" data-edge-id="edge-0" data-source="service" data-target="switch" d="M 700 250 L 700 320" fill="none" stroke="#3b82f6" stroke-width="1.9" marker-end="url(#arrow)"/>
+<path id="edge-1" data-graph-role="edge" data-edge-id="edge-1" data-source="switch" data-target="single" d="M 580 370 L 220 370 L 220 500" fill="none" stroke="#3b82f6" stroke-width="1.9" marker-end="url(#arrow)"/>
+<g id="edge-1-label" data-graph-role="label" data-owner="edge-1" data-graph-bounds="308.5 326 401.5 352">
+<text x="355" y="347" font-size="18" font-weight="400" fill="#374151" text-anchor="middle">false · 默认</text>
+</g>
+<path id="edge-2" data-graph-role="edge" data-edge-id="edge-2" data-source="switch" data-target="multi" d="M 820 370 L 1180 370 L 1180 500" fill="none" stroke="#3b82f6" stroke-width="1.9" marker-end="url(#arrow)"/>
+<g id="edge-2-label" data-graph-role="label" data-owner="edge-2" data-graph-bounds="977.5 326 1102.5 352">
+<text x="1040" y="347" font-size="18" font-weight="400" fill="#374151" text-anchor="middle">true · 显式启用</text>
+</g>
+<path id="edge-3" data-graph-role="edge" data-edge-id="edge-3" data-source="single" data-target="report" d="M 220 600 L 220 730 L 580 730" fill="none" stroke="#3b82f6" stroke-width="1.9" marker-end="url(#arrow)"/>
+<path id="edge-4" data-graph-role="edge" data-edge-id="edge-4" data-source="multi" data-target="report" d="M 1180 600 L 1180 730 L 820 730" fill="none" stroke="#3b82f6" stroke-width="1.9" marker-end="url(#arrow)"/>
+</svg>

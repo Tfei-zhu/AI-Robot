@@ -1,0 +1,14 @@
+flowchart LR
+    %% README 简版；完整分支见 notes 文档。
+    n0["A / B / C / D<br/>生成各组原始报告"]
+    n1["保存原始结果<br/>质量 / 用量 / 延迟"]
+    n2["按需续跑<br/>原件与追加结果合并"]
+    n3["自动比较门槛<br/>可比性与质量效率"]
+    n4["人工启用决策<br/>未通过则保持 off"]
+    n0 --> n1
+    n1 --> n2
+    n2 --> n3
+    n3 --> n4
+    classDef default fill:#f9fafb,stroke:#d1d5db,color:#111827;
+    classDef optional fill:#ffffff,stroke:#d1d5db,stroke-dasharray:6 5,color:#111827;
+    linkStyle default stroke:#3b82f6;

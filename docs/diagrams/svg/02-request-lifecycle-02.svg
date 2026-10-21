@@ -1,0 +1,50 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1400" height="650" viewBox="0 0 1400 650" data-generator="fireworks-tech-graph" data-style="4" data-quality-profile="showcase" role="img" aria-labelledby="diagram-title diagram-desc">
+<title id="diagram-title">普通 JSON 返回</title>
+<desc id="diagram-desc">正常与已处理错误的回程；外层 500 和取消边界见说明。。README 简版；完整分支和边界保留在对应 notes 文档。</desc>
+<style>text{font-family:"Microsoft YaHei","PingFang SC","Noto Sans CJK SC",Arial,sans-serif}path{stroke-linejoin:round}</style>
+<defs><marker id="arrow" viewBox="0 0 10 8" markerWidth="10" markerHeight="8" refX="9" refY="4" orient="auto" markerUnits="userSpaceOnUse"><path d="M0 0L10 4L0 8Z" fill="#3b82f6"/></marker></defs>
+<rect data-graph-role="background" width="1400" height="650" fill="white"/>
+<g id="heading" data-graph-role="reserved" data-graph-bounds="60 24 1340 123">
+<text x="60" y="64" font-size="34" font-weight="600" fill="#111827" text-anchor="start">普通 JSON 返回</text>
+<text x="60" y="108" font-size="20" font-weight="400" fill="#6b7280" text-anchor="start">正常与已处理错误的回程；外层 500 和取消边界见说明。</text>
+</g>
+<g id="run" data-node-id="run" data-graph-role="node" data-graph-bounds="100 200 340 300">
+<rect x="100" y="200" width="240" height="100" rx="4" fill="#f9fafb" stroke="#d1d5db" stroke-width="1.4"/>
+<text x="220.0" y="241" font-size="26" font-weight="600" fill="#111827" text-anchor="middle">执行业务</text>
+<text x="220.0" y="274" font-size="19" font-weight="400" fill="#6b7280" text-anchor="middle">聊天 / Go / 其他</text>
+</g>
+<g id="release" data-node-id="release" data-graph-role="node" data-graph-bounds="580 200 820 300">
+<rect x="580" y="200" width="240" height="100" rx="4" fill="#f9fafb" stroke="#d1d5db" stroke-width="1.4"/>
+<text x="700.0" y="241" font-size="26" font-weight="600" fill="#111827" text-anchor="middle">路由收尾</text>
+<text x="700.0" y="274" font-size="19" font-weight="400" fill="#6b7280" text-anchor="middle">Chat / Go 释放会话</text>
+</g>
+<g id="json" data-node-id="json" data-graph-role="node" data-graph-bounds="1060 200 1300 300">
+<rect x="1060" y="200" width="240" height="100" rx="4" fill="#f9fafb" stroke="#d1d5db" stroke-width="1.4"/>
+<text x="1180.0" y="241" font-size="26" font-weight="600" fill="#111827" text-anchor="middle">JSON 序列化</text>
+<text x="1180.0" y="274" font-size="19" font-weight="400" fill="#6b7280" text-anchor="middle">校验输出</text>
+</g>
+<g id="handled" data-node-id="handled" data-graph-role="node" data-graph-bounds="100 420 340 520">
+<rect x="100" y="420" width="240" height="100" rx="4" fill="#f9fafb" stroke="#d1d5db" stroke-width="1.4"/>
+<text x="220.0" y="461" font-size="26" font-weight="600" fill="#111827" text-anchor="middle">已处理异常</text>
+<text x="220.0" y="494" font-size="19" font-weight="400" fill="#6b7280" text-anchor="middle">HTTPException 等</text>
+</g>
+<g id="log" data-node-id="log" data-graph-role="node" data-graph-bounds="580 420 820 520">
+<rect x="580" y="420" width="240" height="100" rx="4" fill="#f9fafb" stroke="#d1d5db" stroke-width="1.4"/>
+<text x="700.0" y="461" font-size="26" font-weight="600" fill="#111827" text-anchor="middle">请求日志</text>
+<text x="700.0" y="494" font-size="19" font-weight="400" fill="#6b7280" text-anchor="middle">状态与耗时头</text>
+</g>
+<g id="send" data-node-id="send" data-graph-role="node" data-graph-bounds="1060 420 1300 520">
+<rect x="1060" y="420" width="240" height="100" rx="4" fill="#f9fafb" stroke="#d1d5db" stroke-width="1.4"/>
+<text x="1180.0" y="461" font-size="26" font-weight="600" fill="#111827" text-anchor="middle">发送 JSON</text>
+<text x="1180.0" y="494" font-size="19" font-weight="400" fill="#6b7280" text-anchor="middle">返回客户端</text>
+</g>
+<path id="edge-0" data-graph-role="edge" data-edge-id="edge-0" data-source="run" data-target="release" d="M 340 250 L 580 250" fill="none" stroke="#3b82f6" stroke-width="1.9" marker-end="url(#arrow)"/>
+<path id="edge-1" data-graph-role="edge" data-edge-id="edge-1" data-source="release" data-target="json" d="M 820 250 L 1060 250" fill="none" stroke="#3b82f6" stroke-width="1.9" marker-end="url(#arrow)"/>
+<path id="edge-2" data-graph-role="edge" data-edge-id="edge-2" data-source="release" data-target="handled" d="M 700 300 L 700 330 L 220 330 L 220 420" fill="none" stroke="#3b82f6" stroke-width="1.9" marker-end="url(#arrow)"/>
+<g id="edge-2-label" data-graph-role="label" data-owner="edge-2" data-graph-bounds="353.0 346 447.0 372">
+<text x="400" y="367" font-size="18" font-weight="400" fill="#374151" text-anchor="middle">已注册异常</text>
+</g>
+<path id="edge-3" data-graph-role="edge" data-edge-id="edge-3" data-source="handled" data-target="log" d="M 340 470 L 580 470" fill="none" stroke="#3b82f6" stroke-width="1.9" marker-end="url(#arrow)"/>
+<path id="edge-4" data-graph-role="edge" data-edge-id="edge-4" data-source="json" data-target="log" d="M 1180 300 L 1180 370 L 700 370 L 700 420" fill="none" stroke="#3b82f6" stroke-width="1.9" marker-end="url(#arrow)"/>
+<path id="edge-5" data-graph-role="edge" data-edge-id="edge-5" data-source="log" data-target="send" d="M 820 470 L 1060 470" fill="none" stroke="#3b82f6" stroke-width="1.9" marker-end="url(#arrow)"/>
+</svg>

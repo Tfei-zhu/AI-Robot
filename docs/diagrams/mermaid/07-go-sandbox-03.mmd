@@ -1,0 +1,14 @@
+flowchart LR
+    %% README 简版；完整分支见 notes 文档。
+    n0["执行结束<br/>收集实际状态"]
+    n1["删除容器<br/>docker rm -f"]
+    n2["回收客户端<br/>必要时终止并等待"]
+    n3["确认清理结果<br/>未确认不判成功"]
+    n4["返回或继续抛出<br/>取消继续传播"]
+    n0 --> n1
+    n1 --> n2
+    n2 --> n3
+    n3 --> n4
+    classDef default fill:#f9fafb,stroke:#d1d5db,color:#111827;
+    classDef optional fill:#ffffff,stroke:#d1d5db,stroke-dasharray:6 5,color:#111827;
+    linkStyle default stroke:#3b82f6;

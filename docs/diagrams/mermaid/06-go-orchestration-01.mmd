@@ -1,0 +1,16 @@
+flowchart LR
+    %% README 简版；完整分支见 notes 文档。
+    service["GoTaskService<br/>任务创建与排队"]
+    switch["多智能体？<br/>默认关闭"]
+    single["single-v1<br/>生成 → 验证 → 修复"]
+    multi["multi-v1<br/>规划 → 生成 → 审查"]
+    report["报告与响应<br/>SQLite + JSON / SSE"]
+    service --> switch
+    switch -->|"false · 默认"| single
+    switch -->|"true · 显式启用"| multi
+    single --> report
+    multi --> report
+    classDef default fill:#f9fafb,stroke:#d1d5db,color:#111827;
+    classDef optional fill:#ffffff,stroke:#d1d5db,stroke-dasharray:6 5,color:#111827;
+    linkStyle default stroke:#3b82f6;
+    class multi optional;

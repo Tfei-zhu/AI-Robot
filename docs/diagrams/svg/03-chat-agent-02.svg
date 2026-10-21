@@ -1,0 +1,49 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1400" height="620" viewBox="0 0 1400 620" data-generator="fireworks-tech-graph" data-style="4" data-quality-profile="showcase" role="img" aria-labelledby="diagram-title diagram-desc">
+<title id="diagram-title">一轮只读工具调用</title>
+<desc id="diagram-desc">工具由模型选择，服务端校验后顺序执行；预算异常直接中止。。README 简版；完整分支和边界保留在对应 notes 文档。</desc>
+<style>text{font-family:"Microsoft YaHei","PingFang SC","Noto Sans CJK SC",Arial,sans-serif}path{stroke-linejoin:round}</style>
+<defs><marker id="arrow" viewBox="0 0 10 8" markerWidth="10" markerHeight="8" refX="9" refY="4" orient="auto" markerUnits="userSpaceOnUse"><path d="M0 0L10 4L0 8Z" fill="#3b82f6"/></marker></defs>
+<rect data-graph-role="background" width="1400" height="620" fill="white"/>
+<g id="heading" data-graph-role="reserved" data-graph-bounds="60 24 1340 123">
+<text x="60" y="64" font-size="34" font-weight="600" fill="#111827" text-anchor="start">一轮只读工具调用</text>
+<text x="60" y="108" font-size="20" font-weight="400" fill="#6b7280" text-anchor="start">工具由模型选择，服务端校验后顺序执行；预算异常直接中止。</text>
+</g>
+<g id="n0" data-node-id="n0" data-graph-role="node" data-graph-bounds="50.0 200 270.0 300">
+<rect x="50.0" y="200" width="220" height="100" rx="4" fill="#f9fafb" stroke="#d1d5db" stroke-width="1.4"/>
+<text x="160.0" y="241" font-size="26" font-weight="600" fill="#111827" text-anchor="middle">tool_calls</text>
+<text x="160.0" y="274" font-size="19" font-weight="400" fill="#6b7280" text-anchor="middle">模型提出调用</text>
+</g>
+<g id="n1" data-node-id="n1" data-graph-role="node" data-graph-bounds="320.0 200 540.0 300">
+<rect x="320.0" y="200" width="220" height="100" rx="4" fill="#f9fafb" stroke="#d1d5db" stroke-width="1.4"/>
+<text x="430.0" y="241" font-size="26" font-weight="600" fill="#111827" text-anchor="middle">白名单校验</text>
+<text x="430.0" y="274" font-size="19" font-weight="400" fill="#6b7280" text-anchor="middle">工具与参数</text>
+</g>
+<g id="n2" data-node-id="n2" data-graph-role="node" data-graph-bounds="590.0 200 810.0 300">
+<rect x="590.0" y="200" width="220" height="100" rx="4" fill="#f9fafb" stroke="#d1d5db" stroke-width="1.4"/>
+<text x="700.0" y="241" font-size="26" font-weight="600" fill="#111827" text-anchor="middle">顺序执行</text>
+<text x="700.0" y="274" font-size="19" font-weight="400" fill="#6b7280" text-anchor="middle">检索 / 文章 / 规范</text>
+</g>
+<g id="n3" data-node-id="n3" data-graph-role="node" data-graph-bounds="860.0 200 1080.0 300">
+<rect x="860.0" y="200" width="220" height="100" rx="4" fill="#f9fafb" stroke="#d1d5db" stroke-width="1.4"/>
+<text x="970.0" y="241" font-size="26" font-weight="600" fill="#111827" text-anchor="middle">ToolMessage</text>
+<text x="970.0" y="274" font-size="19" font-weight="400" fill="#6b7280" text-anchor="middle">成功或错误结果</text>
+</g>
+<g id="n4" data-node-id="n4" data-graph-role="node" data-graph-bounds="1130.0 200 1350.0 300">
+<rect x="1130.0" y="200" width="220" height="100" rx="4" fill="#f9fafb" stroke="#d1d5db" stroke-width="1.4"/>
+<text x="1240.0" y="241" font-size="26" font-weight="600" fill="#111827" text-anchor="middle">继续规划</text>
+<text x="1240.0" y="274" font-size="19" font-weight="400" fill="#6b7280" text-anchor="middle">仍受轮次限制</text>
+</g>
+<g id="budget" data-node-id="budget" data-graph-role="node" data-graph-bounds="590 420 810 520">
+<rect x="590" y="420" width="220" height="100" rx="4" fill="#f9fafb" stroke="#d1d5db" stroke-width="1.4"/>
+<text x="700.0" y="461" font-size="26" font-weight="600" fill="#111827" text-anchor="middle">预算异常</text>
+<text x="700.0" y="494" font-size="19" font-weight="400" fill="#6b7280" text-anchor="middle">中止本轮</text>
+</g>
+<path id="edge-0" data-graph-role="edge" data-edge-id="edge-0" data-source="n0" data-target="n1" d="M 270.0 250 L 320.0 250" fill="none" stroke="#3b82f6" stroke-width="1.9" marker-end="url(#arrow)"/>
+<path id="edge-1" data-graph-role="edge" data-edge-id="edge-1" data-source="n1" data-target="n2" d="M 540.0 250 L 590.0 250" fill="none" stroke="#3b82f6" stroke-width="1.9" marker-end="url(#arrow)"/>
+<path id="edge-2" data-graph-role="edge" data-edge-id="edge-2" data-source="n2" data-target="n3" d="M 810.0 250 L 860.0 250" fill="none" stroke="#3b82f6" stroke-width="1.9" marker-end="url(#arrow)"/>
+<path id="edge-3" data-graph-role="edge" data-edge-id="edge-3" data-source="n3" data-target="n4" d="M 1080.0 250 L 1130.0 250" fill="none" stroke="#3b82f6" stroke-width="1.9" marker-end="url(#arrow)"/>
+<path id="edge-4" data-graph-role="edge" data-edge-id="edge-4" data-source="n2" data-target="budget" d="M 700 300 L 700 420" fill="none" stroke="#3b82f6" stroke-width="1.9" marker-end="url(#arrow)"/>
+<g id="edge-4-label" data-graph-role="label" data-owner="edge-4" data-graph-bounds="767.0 344 843.0 370">
+<text x="805" y="365" font-size="18" font-weight="400" fill="#374151" text-anchor="middle">预算不足</text>
+</g>
+</svg>

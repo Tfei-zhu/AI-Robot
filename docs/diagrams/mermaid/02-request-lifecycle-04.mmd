@@ -1,0 +1,16 @@
+flowchart LR
+    %% README 简版；完整分支见 notes 文档。
+    n0["初始报告<br/>running"]
+    n1["首次事件<br/>go_start"]
+    n2["排队与执行<br/>Semaphore(2)"]
+    n3["清理与释放槽<br/>取得槽后才适用"]
+    n4["保存终态报告<br/>成功 / 失败 / 超时"]
+    n5["记录与返回<br/>trace → go_done"]
+    n0 --> n1
+    n1 --> n2
+    n2 --> n3
+    n3 --> n4
+    n4 --> n5
+    classDef default fill:#f9fafb,stroke:#d1d5db,color:#111827;
+    classDef optional fill:#ffffff,stroke:#d1d5db,stroke-dasharray:6 5,color:#111827;
+    linkStyle default stroke:#3b82f6;

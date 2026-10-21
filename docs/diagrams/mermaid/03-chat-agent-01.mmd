@@ -1,0 +1,19 @@
+flowchart LR
+    %% README 简版；完整分支见 notes 文档。
+    input["输入问题<br/>内部会话键"]
+    cache["首轮缓存<br/>满足条件才查询"]
+    history["加载历史<br/>按需准备摘要"]
+    agent["单智能体循环<br/>规划与只读工具"]
+    cached["缓存答复<br/>不调用生成模型"]
+    final["finalize 回答<br/>独立生成最终答案"]
+    commit["提交并返回<br/>会话与运行轨迹"]
+    input --> cache
+    cache -->|"未命中"| history
+    history --> agent
+    agent --> final
+    final --> commit
+    cache -->|"命中"| cached
+    cached --> commit
+    classDef default fill:#f9fafb,stroke:#d1d5db,color:#111827;
+    classDef optional fill:#ffffff,stroke:#d1d5db,stroke-dasharray:6 5,color:#111827;
+    linkStyle default stroke:#3b82f6;

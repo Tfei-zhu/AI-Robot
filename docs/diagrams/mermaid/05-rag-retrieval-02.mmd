@@ -1,0 +1,14 @@
+flowchart LR
+    %% README 简版；完整分支见 notes 文档。
+    n0["知识检索<br/>search_knowledge"]
+    n1["原文与来源<br/>空结果也可正常返回"]
+    n2["工具消息<br/>enforce 可精简"]
+    n3["Agent 规划<br/>可继续调用工具"]
+    n4["finalize 回答<br/>汇总来源"]
+    n0 --> n1
+    n1 --> n2
+    n2 --> n3
+    n3 --> n4
+    classDef default fill:#f9fafb,stroke:#d1d5db,color:#111827;
+    classDef optional fill:#ffffff,stroke:#d1d5db,stroke-dasharray:6 5,color:#111827;
+    linkStyle default stroke:#3b82f6;

@@ -1,0 +1,15 @@
+flowchart LR
+    %% README 简版；完整分支见 notes 文档。
+    n0["向量召回<br/>混合 15 / 纯向量 5"]
+    n1["关键词召回<br/>BM25 · 最多 15"]
+    n2["排名融合<br/>RRF · 最多 10"]
+    n3["可选重排<br/>不可用则保留排序"]
+    n4["原文证据<br/>默认最多 5 条"]
+    n0 --> n1
+    n1 --> n2
+    n2 --> n3
+    n3 --> n4
+    n0 -->|"混合关闭或 BM25 未就绪：仅向量"| n3
+    classDef default fill:#f9fafb,stroke:#d1d5db,color:#111827;
+    classDef optional fill:#ffffff,stroke:#d1d5db,stroke-dasharray:6 5,color:#111827;
+    linkStyle default stroke:#3b82f6;
